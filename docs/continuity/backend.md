@@ -310,3 +310,7 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Código efetivo: uploadclipimutável,processorinline reencode/decode/probe/storeseparado,fencing e1recorteporinstância,semcliporiginal.003aindanãoaplicada90+clipcheck/imutabilidade;001/002intactas. Importers3disabled.
 - Testesnovos provam errostore/trim/oversize antesupload,preservaçãofonte,staleattemptnãopublica,concorrência entre mídiasretentável. Não é E2EStorage/DBreal. SmokeempacotadoWindows90 e1080 medido acima;LinuxCI/root eVercelruntime continuam pendentes.
 - Próxima ação root executar CI (semsegredos/deploy): npmciignore-scripts;build;typecheck;test;tsx scripts/trim-smoke.ts;/usr/bin/time-v tsx scripts/trim-stress.ts;NFTfileList+X_OKffmpeg/probe. Flagsremotasnãoalteradas;MEDIA_TRIMMING_ENABLEDdefaultfalse. Aguardar revisão/resultadoCI apóscommit/push.
+
+## Ordem de publicação revisada —29/10
+- Root informou autorização usuário para pushmain/dispensaLinux; este chat não publica nem aplicaSQL. Revisão payload: semclipomitecoluna, nãoenvia null;003ausente não quebraINSERToriginal<=20comtrimfalse. Comclipativoantes003 podePGRST204; anunciar90antestrigger90 gera falha ready>20 (catchpodefailedINVALID_MEDIA),semalterargranadaanterior.
+- Recomendação enviada: aplicar003revisada antesdeploy,alinharenv90,mantertrimfalse atétestecontrolado; env20existentecontinua20atéajuste. ConfirmarSQL/contratos e sóentãoflag. Não alegarLinuxouVercelrecortevalidado. Próximaaçãoaguardarrevisãoroot/resultado,semproduçãoaqui.
