@@ -140,3 +140,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Evidência fonte Vercel serverless-handler.mts: intercepta Server.listen retornando this sem listening durante await import. Repro local com stub real http.Server.listen: antes moduleEvaluated=false/listenCaptured=true após1.5s.
 - Mudança mínima server.ts remove top-level await (void listen com catch). Repro após: módulo avaliado e listen capturado; 13 testes/typecheck/build passam. Script backend/scripts/bootstrap-smoke.mjs sem rede reproduz contrato loader.
 - Próximo: enviar SHA para redeploy/HTTP real pelo orquestrador. API ainda não declarada saudável; nenhum ajuste env/SQL. Registro em README e checkpoint; sem arquivos de mídia/segredos.
+
+## Redeploy informado pelo usuário — HTTP real 29/10
+- Verificado https://pcdnades-api.vercel.app: /health200 {status:ok,configured:false}; capabilities200 upload.enabled=false, limite20s, importadores false; /api/v1/maps503 SERVICE_UNAVAILABLE.
+- Bootstrap agora responde; configuração do fornecedor permanece incompleta neste deployment. Não inferir chave faltante específica: configured exige URL+publishable+service role. Nenhum segredo lido.
+- Próxima ação: orquestrador confirmar SHA/ambiente e presença das três variáveis no deployment, sem enviar valores no chat. Persistência/upload ainda não operacionais. Sem mudança de código nesta etapa.
