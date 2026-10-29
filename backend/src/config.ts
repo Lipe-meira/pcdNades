@@ -6,9 +6,11 @@ export function readMediaLimits(env: Record<string,string|undefined> = process.e
   if(!/^[1-9][0-9]*$/.test(value)||!Number.isSafeInteger(Number(value)))throw new Error(`${name} deve ser um inteiro positivo seguro.`);
   return Number(value);
  }
- const duration=positiveInteger('MEDIA_MAX_DURATION_SECONDS',20);
- if(duration>20)throw new Error('MEDIA_MAX_DURATION_SECONDS deve ser no máximo 20 segundos.');
- return Object.freeze({maxBytes:positiveInteger('MEDIA_MAX_BYTES',50000000),maxDurationSeconds:duration});
+ const bytes=positiveInteger('MEDIA_MAX_BYTES',50000000);
+ if(bytes>50000000)throw new Error('MEDIA_MAX_BYTES deve ser no máximo 50000000.');
+ const duration=positiveInteger('MEDIA_MAX_DURATION_SECONDS',40);
+ if(duration>40)throw new Error('MEDIA_MAX_DURATION_SECONDS deve ser no máximo 40 segundos.');
+ return Object.freeze({maxBytes:bytes,maxDurationSeconds:duration});
 }
 
 export function readUploadEnabled(env: Record<string,string|undefined> = process.env): boolean {
