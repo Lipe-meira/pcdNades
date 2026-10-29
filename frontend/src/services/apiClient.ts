@@ -44,7 +44,8 @@ export class ApiClient {
   constructor(
     private readonly baseUrl: string,
     private readonly getToken: () => Promise<string | null>,
-    private readonly fetcher: typeof fetch = fetch,
+    private readonly fetcher: typeof fetch = (input, init) =>
+      fetch(input, init),
   ) {}
   async request<T>(path: string, options: Options = {}): Promise<T> {
     options.signal?.throwIfAborted();

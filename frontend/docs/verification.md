@@ -20,3 +20,15 @@ Não há alegação de correspondência perfeita ao conceito rejeitado nem de in
 ## Pendências
 
 API real, autenticação/permissões, capabilities, transferência e processamento, URLs assinadas renováveis, seed de mapas com o backend, testes entre dispositivos reais e Safari/iOS. Não foram criados serviços ou segredos. A importação por link não é operacional.
+
+## 29/10 — Integração opcional API/Auth/Mídia
+
+- Modos demo/API separados por VITE_DATA_MODE. API incompleta, vazia ou indisponível não é substituída por fixtures.
+- Executado: 20 testes unitários/contrato/pipeline; build/typecheck; 22 fluxos Chromium (12 demo + 10 API com respostas controladas), desktop/mobile. npm audit: zero vulnerabilidades. git diff --check: sem erros.
+- Cenários API controlados: login/logout Supabase, capabilities desabilitando upload/importadores, consulta vazia/503/retry, escrita com Bearer, falha/reenvio de upload com nova sessão, pausa/retomada do job sem novo upload, publicação após ready, reload de dados remotos controlados, 403 sem apagar conteúdo e renovação de URL mantendo posição.
+- Bug encontrado pelo navegador e corrigido: fetch nativo guardado como método de ApiClient recebia this incorreto e falhava antes de iniciar a rede. Default agora usa wrapper de chamada global. O cenário API vazio/retry falhou antes da correção e passou depois.
+- Retomada de mídia guarda IDs apenas para queued/processing/ready. UPLOAD_FAILED, UPLOAD_INCOMPLETE, awaiting_upload e troca de mídia limpam o vínculo. QA verificou nova sessão após upload falhar e retomada sem reupload quando já processando.
+- O mock inicial de MP4 ignorava Range e não permitia seek. A fixture passou a ser servida pelo HTTP local do Vite, com suporte a Range. O teste de renovação usa contador de base para não confundir as duas montagens de StrictMode com renovação real, aguarda a nova solicitação agendada e verifica posição depois da troca de URL.
+- Screenshots API desktop/formulário e mobile/login revisados com view_image. Foram gerados por respostas controladas de Auth/API, sem credenciais reais.
+- Consulta HTTP real, somente leitura, feita em https://pcdnades-api.vercel.app: /health, /api/v1/maps, /api/v1/grenades?limit=100&offset=0 e /api/v1/media/capabilities retornaram200. CORS retornou https://pcdnades.vercel.app para essa Origin. Três mapas canônicos, biblioteca vazia, upload anunciado disponível,20s e importadoresfalse. Isso não valida login/upload/worker reais nem o frontend publicado.
+- Pendências reais: conta admin autorizada, upload/Storage/worker hospedado, processamento e reprodução assinada/renovação entre dispositivos e Safari/iOS. Publicação e ativação VITE_DATA_MODE=api pertencem ao orquestrador.
