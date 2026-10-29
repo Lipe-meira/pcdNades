@@ -12,3 +12,33 @@ test('expired claim resumes and exhausted claims fail',async()=>{for(const attem
 test('validation error is persisted failed and does not publish',async()=>{const f=fake({status:'queued'});f.deps.probe=async()=>{throw new MediaError('UNSUPPORTED_CODEC');};const r=await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:20},f.deps);assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,'UNSUPPORTED_CODEC');});
 
 test('concurrent callers do not both download the original',async()=>{const f=fake({status:'queued'});const result=await Promise.all([completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:20},f.deps),completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:20},f.deps)]);assert.equal(f.downloads(),1);assert.ok(result.some(r=>r.status===200));});
+
+test('clip output replaces only media reference after verified storage; replay is idempotent',async()=>{
+ const previous=process.env.MEDIA_TRIMMING_ENABLED;process.env.MEDIA_TRIMMING_ENABLED='true';let stores=0;
+ const f=fake({status:'queued',clip:{startSeconds:1,endSeconds:3}});
+ const deps={...f.deps,trim:async(_input:string,output:string)=>{await writeFile(output,'clip');return {durationSeconds:2,width:320,height:240,mimeType:'video/mp4',bytes:4,clip:{startSeconds:1,endSeconds:3},sourceDurationSeconds:4};},store:async(_db:any,key:string)=>{assert.equal(key,'media/clip-1.mp4');stores++;}};
+ try{const r=await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},deps);assert.equal(r.asset.status,'ready');assert.equal(r.asset.storage_key,'media/clip-1.mp4');assert.deepEqual(r.asset.clip,{startSeconds:1,endSeconds:3});assert.equal(r.asset.metadata.bytes,4);await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},deps);assert.equal(stores,1);}finally{if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;}
+});
+test('failed clip never changes source key or stores output',async()=>{
+ const previous=process.env.MEDIA_TRIMMING_ENABLED;process.env.MEDIA_TRIMMING_ENABLED='true';const f=fake({status:'queued',clip:{startSeconds:0,endSeconds:1}});let stored=false;
+ try{const r=await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},{...f.deps,trim:async()=>{throw new MediaError('CLIP_PROCESSING_FAILED');},store:async()=>{stored=true;}});assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,'CLIP_PROCESSING_FAILED');assert.equal(r.asset.storage_key,'source.mp4');assert.equal(stored,false);}finally{if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;}
+});
+test('stale clip attempt cannot store or publish over a reclaimed lease',async()=>{
+ const previous=process.env.MEDIA_TRIMMING_ENABLED;process.env.MEDIA_TRIMMING_ENABLED='true';const f=fake({status:'queued',clip:{startSeconds:0,endSeconds:1}});let stored=false;
+ try{const r=await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},{...f.deps,trim:async(_input,output)=>{await writeFile(output,'clip');f.get().attempts++;return {durationSeconds:1,width:320,height:240,mimeType:'video/mp4',bytes:4,clip:{startSeconds:0,endSeconds:1},sourceDurationSeconds:2};},store:async()=>{stored=true;}});assert.equal(r.status,202);assert.equal(r.asset.status,'processing');assert.equal(r.asset.attempts,2);assert.equal(r.asset.storage_key,'source.mp4');assert.equal(stored,false);}finally{if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;}
+});
+test('clip store failure preserves original media and never reaches ready',async()=>{
+ const previous=process.env.MEDIA_TRIMMING_ENABLED;process.env.MEDIA_TRIMMING_ENABLED='true';const f=fake({status:'queued',clip:{startSeconds:0,endSeconds:1}});
+ try{const r=await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},{...f.deps,trim:async(_i,o)=>{await writeFile(o,'clip');return {durationSeconds:1,width:320,height:240,mimeType:'video/mp4',bytes:4,clip:{startSeconds:0,endSeconds:1},sourceDurationSeconds:2};},store:async()=>{throw new MediaError('STORAGE_UNAVAILABLE');}});assert.equal(r.asset.status,'failed');assert.equal(r.asset.storage_key,'source.mp4');assert.equal(r.asset.error.code,'STORAGE_UNAVAILABLE');}finally{if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;}
+});
+
+test('oversized encoded file is rejected before storage',async()=>{
+ const previous=process.env.MEDIA_TRIMMING_ENABLED;process.env.MEDIA_TRIMMING_ENABLED='true';const f=fake({status:'queued',clip:{startSeconds:0,endSeconds:1}});let stored=false;
+ try{const r=await completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},{...f.deps,trim:async(_i,o)=>{await writeFile(o,Buffer.alloc(101));return {durationSeconds:1,width:320,height:240,mimeType:'video/mp4',bytes:101,clip:{startSeconds:0,endSeconds:1},sourceDurationSeconds:2};},store:async()=>{stored=true;}});assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,'FILE_TOO_LARGE');assert.equal(stored,false);assert.equal(r.asset.storage_key,'source.mp4');}finally{if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;}
+});
+test('only one clip runs per instance; other session can retry without losing input',async()=>{
+ const previous=process.env.MEDIA_TRIMMING_ENABLED;process.env.MEDIA_TRIMMING_ENABLED='true';const f=fake({status:'queued',clip:{startSeconds:0,endSeconds:1}}),other=fake({id:'other',status:'queued',clip:{startSeconds:0,endSeconds:1}});
+ let entered!:()=>void,release!:()=>void;const started=new Promise<void>(r=>{entered=r;}),hold=new Promise<void>(r=>{release=r;});
+ const running=completeInline(f.db,'media',{maxBytes:100,maxDurationSeconds:90},{...f.deps,trim:async(_i,o)=>{entered();await hold;await writeFile(o,'clip');return {durationSeconds:1,width:320,height:240,mimeType:'video/mp4',bytes:4,clip:{startSeconds:0,endSeconds:1},sourceDurationSeconds:2};},store:async()=>{}});
+ try{await started;await assert.rejects(completeInline(other.db,'other',{maxBytes:100,maxDurationSeconds:90},other.deps),(e:any)=>e.code==='PROCESSOR_BUSY');assert.equal(other.get().status,'queued');assert.equal(other.get().storage_key,'source.mp4');}finally{release();await running;if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;}
+});

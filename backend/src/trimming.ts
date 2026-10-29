@@ -1,0 +1,15 @@
+import {execFile} from 'node:child_process';import {promisify} from 'node:util';import {createRequire} from 'node:module';import {stat} from 'node:fs/promises';import {MediaError,probeOriginal} from './probe.js';import type {Clip} from './importers.js';import type {MediaLimits} from './config.js';
+const run=promisify(execFile),require=createRequire(import.meta.url);
+export const sourceLimits={maxDurationSeconds:180,maxBytes:50000000} as const;
+export function ffmpegBinaryPath(){if(process.platform==='linux'&&process.arch==='x64')return require.resolve('ffmpeg-static/ffmpeg');if(process.platform==='win32'&&process.arch==='x64')return require.resolve('ffmpeg-static/ffmpeg.exe');throw new Error('UNSUPPORTED_FFMPEG_PLATFORM');}
+export function checkClip(clip:Clip,sourceDuration:number,finalLimit:number){const duration=clip.endSeconds-clip.startSeconds;if(!Number.isFinite(sourceDuration)||sourceDuration>180)throw new MediaError('SOURCE_DURATION_EXCEEDED');if(clip.startSeconds<0||clip.endSeconds>sourceDuration||duration<0.1-1e-8||duration>finalLimit)throw new MediaError('CLIP_OUT_OF_RANGE');return duration;}
+export async function decodeVideo(path:string,signal:AbortSignal){try{await run(ffmpegBinaryPath(),['-nostdin','-v','error','-xerror','-err_detect','explode','-protocol_whitelist','file','-threads','1','-i',path,'-map','0:v:0','-map','0:a:0?','-threads','1','-f','null','-'],{signal,timeout:20000,maxBuffer:65536});}catch{throw new MediaError(signal.aborted?'PROCESSING_TIMEOUT':'INVALID_MEDIA');}}
+export async function trimVideo(input:string,output:string,clip:Clip,limits:MediaLimits,signal:AbortSignal){
+ let source;try{source=await probeOriginal(input,{maxBytes:sourceLimits.maxBytes,maxDurationSeconds:sourceLimits.maxDurationSeconds},signal);}catch(error){if(error instanceof MediaError&&error.code==='DURATION_EXCEEDED')throw new MediaError('SOURCE_DURATION_EXCEEDED');throw error;}
+ const duration=checkClip(clip,source.durationSeconds,limits.maxDurationSeconds);
+ try{await run(ffmpegBinaryPath(),['-nostdin','-v','error','-xerror','-err_detect','explode','-protocol_whitelist','file','-ss',String(clip.startSeconds),'-threads','1','-i',input,'-t',String(duration),'-map','0:v:0','-map','0:a:0?','-c:v','libx264','-preset','veryfast','-crf','23','-threads','1','-filter_threads','1','-pix_fmt','yuv420p','-c:a','aac','-movflags','+faststart','-fs',String(limits.maxBytes+1048576),output],{signal,timeout:65000,maxBuffer:65536});}
+ catch(error){throw new MediaError(signal.aborted||((error as NodeJS.ErrnoException).code==='ETIMEDOUT'||(error as {killed?:boolean}).killed)?'PROCESSING_TIMEOUT':'CLIP_PROCESSING_FAILED');}
+ const bytes=(await stat(output)).size;if(bytes>limits.maxBytes)throw new MediaError('FILE_TOO_LARGE');
+ const metadata=await probeOriginal(output,limits,signal);if(Math.abs(metadata.durationSeconds-duration)>0.1)throw new MediaError('CLIP_PROCESSING_FAILED');
+ await decodeVideo(output,signal);return {...metadata,bytes,clip,sourceDurationSeconds:source.durationSeconds};
+}

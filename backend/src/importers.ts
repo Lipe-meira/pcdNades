@@ -1,8 +1,9 @@
 import {z} from 'zod';
 export type ImportProvider='youtube'|'tiktok'|'instagram';
 export type Clip={startSeconds:number;endSeconds:number};
-export const clipSchema=z.object({startSeconds:z.number().finite().min(0),endSeconds:z.number().finite().positive()}).strict().refine(v=>v.endSeconds>v.startSeconds&&v.endSeconds-v.startSeconds<=40,{message:'Escolha um intervalo crescente de até 40 segundos.'});
+export const clipSchema=z.object({startSeconds:z.number().finite().min(0),endSeconds:z.number().finite().positive()}).strict().refine(v=>v.endSeconds-v.startSeconds>=0.1-1e-8&&v.endSeconds-v.startSeconds<=90&&v.endSeconds<=180&&[v.startSeconds,v.endSeconds].every(n=>Math.abs(n*1000-Math.round(n*1000))<1e-6),{message:'Escolha intervalo de 0,1 a 90 segundos, em fonte até 180 segundos e precisão de 0,001 segundo.'});
 export const importRequest=z.object({sourceUrl:z.string().min(1).max(2048),clip:clipSchema.optional()}).strict();
+export const completeRequest=z.object({}).strict();
 export const uploadRequest=z.object({clip:clipSchema.optional()}).strict();
 export type SourceLink={provider:ImportProvider;sourceUrl:string;canonicalUrl:string;videoId:string;shortLink:boolean};
 export class SourceUrlError extends Error {readonly statusCode=400;readonly code='INVALID_SOURCE_URL';constructor(){super('Informe um link HTTPS válido de Shorts, TikTok ou Instagram Reels.');}}

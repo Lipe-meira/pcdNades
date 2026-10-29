@@ -4,6 +4,7 @@
     "@ffprobe-installer/ffprobe": "2.1.2",
     "@supabase/supabase-js": "^2.118.0",
     "fastify": "^5.12.7",
+    "ffmpeg-static": "5.3.0",
     "pg": "^8.23.1",
     "zod": "^4.6.7"
   },
@@ -17,7 +18,7 @@
   "type": "module",
   "private": "true",
   "scripts": {
-    "build": "tsc && node scripts/prepare-probe.mjs",
+    "build": "tsc && node scripts/prepare-probe.mjs && node scripts/prepare-ffmpeg.mjs",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "dev": "tsx watch src/server.ts",
