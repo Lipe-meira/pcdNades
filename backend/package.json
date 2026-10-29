@@ -7,6 +7,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@ffprobe-installer/ffprobe": "2.1.2",
     "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",
     "tsx": "^4.23.15",
@@ -16,7 +17,7 @@
   "type": "module",
   "private": "true",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/prepare-probe.mjs",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "dev": "tsx watch src/server.ts",
