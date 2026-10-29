@@ -1,8 +1,16 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: diagnóstico do MP4 concluído e cópia compatível entregue para reteste; demais implementações pausadas.
+Estado: avaliação do MVP concluída; cadastro real compatível e leitura parcial do vídeo confirmados. Implementações continuam pausadas.
 
+## Avaliação solicitada após alterações do usuário (29/10)
+
+- Objetivo: avaliar progresso e pendências, sem implementar novas funcionalidades. Main/worktree F:\projetos\nadesCs2, base/push a8aa9ee; Git limpo na retomada.
+- Mudanças do usuário: 3b06bbc e a8aa9ee adicionam radaresPNG e catálogo demo com7mapas. Código backend não alterado nesses commits.
+- HTTP real /maps confirmou7mapas com URLs/maps/valve e versõesvalve-v1; /grenades confirmou smoke tapete CT publicada emMirage, vídeo ready19.8s1080p14.6MB. Primeiro upload compatível chegou a cadastro persistido real; checkpoints anteriores estavam desatualizados nesse ponto.
+- Verificações concluídas: frontend build/typecheck PASSOU e30testesPASSARAM na basea8aa9ee. Playback público resolveuURLassinada e Rangebytes0-1023 retornou206video/mp4,1024bytes; URL não registrada. Isso confirma entrega parcial do arquivo, não reprodução visual/seek real emoutrodispositivo.
+- Avaliação: aproximadamente80% do MVP por upload, estimativa de escopo e não métrica de testes. Pendências: QA realoutrodispositivo/mobile/CRUD; orientação clara decodec/resolução; Nuke2andares e conferência de coordenadas após troca de radar; registrar origem/versão dosPNG e migração/catálogo emdisco; órfãosStorage/limitesoperacionais. Importadores porlink continuamindisponíveis e fora dessaestimativa.
+- Próxima ação: aguardar usuário escolher próximo bloco. Sem nova funcionalidade/deploy solicitado nestaavaliação; somente checkpointcommit/push.
 ## Feedback vigente: MP4 recusado na validação (29/10)
 
 - Usuário informou arquivo C:\Users\felip\Downloads\testeTapete.mp4 e banner MP4 inválido/danificado. Verificar metadados locais e estado real na API antes de concluir causa.
