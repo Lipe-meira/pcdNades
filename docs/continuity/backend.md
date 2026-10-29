@@ -1,7 +1,7 @@
 # Checkpoint — backend
 
-Atualizado em: 28/10/2026, America/Sao_Paulo.
-Estado: aguardando alinhamento de ambiente; implementação inicial entregue, integração real não validada.
+Atualizado em: 29/10/2026, America/Sao_Paulo.
+Estado: em andamento; retomada autorizada para seed e correções upload/fila/worker.
 
 ## Objetivo e pedido atual
 
@@ -73,3 +73,14 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - 68d01d4: limites únicos configuráveis/validados.
 - c50a3f2: teto de vídeo 20s, 8 testes locais passaram; push confirmado.
 - 28/10/2026: checkpoint criado seguindo regra de continuidade de origin/main; somente docs/continuity/backend.md alterado nesta tarefa.
+
+## Marco de retomada 29/10
+- Git limpo em 00c97cb no início; fetch e checkpoints lidos. Próximo: conferir tipos/catálogo frontend e enviar achados antes de alterar fluxo. Autorizado seed e correções locais/testes; sem provisionamento.
+
+
+## Marco implementado 29/10 — revisão local
+- Feito: seed 002_maps.sql (mirage/inferno/ancient); coordinateVersion string alinhada ao front; FRONTEND_URL resolve imagem para origem absoluta. complete verifica objeto/tamanho e é idempotente em queued/processing/ready.
+- Worker: streaming limitado/timeout, reinspeção saída, chaves por tentativa e atualizações condicionadas a tentativa/lease; expired attempts>=3 vira failed. Fontes mantidas para recuperação; reconciliação/limpeza continuam pendentes.
+- Verificações: 10 testes locais passaram, typecheck e build passaram. Testes novos cobrem mapas e transferência limitada com fetch substituído, não provam Storage/SQL/FFmpeg reais. diff check detectou linha vazia no checkpoint e será corrigida antes do commit.
+- Estado: alterações prontas para revisão local, sem remoto aplicado. Próxima ação: revisar cobertura de complete/autorização e worker com dependências injetadas, depois testar ambiente real quando autorizado. Testes de concorrência PostgreSQL continuam pendentes.
+- Arquivos desta etapa: backend/migrations/002_maps.sql, src/maps.ts, src/transfer.ts, src/app.ts, src/worker.ts, tests/maps.test.ts, tests/transfer.test.ts, .env.example, README.md e este checkpoint; serão commitados/push na feat/backend. Sem alterações em frontend/raiz.

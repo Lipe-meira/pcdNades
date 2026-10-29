@@ -1,0 +1,2 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {mapView} from '../src/maps.js';
+test('radar uses frontend origin and preserves canonical version',()=>{const r=mapView({id:'mirage',radar:{imageUrl:'/maps/mirage.svg',coordinateVersion:'setpos-mirage-ba5f793'}},'https://example.com');assert.equal(r.radar.imageUrl,'https://example.com/maps/mirage.svg');assert.equal(r.radar.coordinateVersion,'setpos-mirage-ba5f793');assert.throws(()=>mapView({},undefined),/FRONTEND_URL_REQUIRED/);});
