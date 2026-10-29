@@ -12,6 +12,7 @@ import {
   contractError,
   mapApiGrenade,
   mapApiMap,
+  clipLimits,
 } from "./apiContracts";
 import type {
   ApiGrenade,
@@ -24,6 +25,9 @@ import type {
 } from "./apiContracts";
 import type { LineupService } from "./lineupService";
 import { safeHttpUrl } from "./runtimeConfig";
+import { recognizeVideoSource } from "../domain/videoSource";
+import { sameClip, selectionDurationError, validateClip } from "../domain/clip";
+import type { Clip } from "../domain/clip";
 
 export type SignedUploader = (
   session: UploadSession,
@@ -66,10 +70,13 @@ export function createApiService(
   async function poll(
     media: MediaRecord,
     options: SaveOptions,
+    expectedClip?: Clip,
   ): Promise<string> {
     for (let index = 0; index < (settings.maxPolls ?? 300); index++) {
       options.signal?.throwIfAborted();
       checkMedia(media);
+      if (!sameClip(media.clip, expectedClip))
+        throw new ApiError("MEDIA_SELECTION_CHANGED");
       options.onProgress?.({
         status: media.status,
         mediaId: media.id,
@@ -110,36 +117,46 @@ export function createApiService(
     draft: LineupDraft,
     options: SaveOptions,
   ): Promise<string> {
+    const clip = draft.media.kind === "keep" ? undefined : draft.media.clip;
     if (options.mediaId) {
       const media = await client.request<Envelope<MediaRecord>>(
         `/media/${encodeURIComponent(options.mediaId)}`,
         { authenticated: true, signal: options.signal },
       );
+      if (!sameClip(media.data.clip, clip))
+        throw new ApiError("MEDIA_SELECTION_CHANGED");
       if (checkMedia(media.data).status === "awaiting_upload")
-        return confirmMedia(options.mediaId, options);
-      return poll(media.data, options);
+        return confirmMedia(options.mediaId, options, clip);
+      return poll(media.data, options, clip);
     }
     const caps = await capabilities(options.signal);
     if (draft.media.kind === "link") {
       const error = validateSourceUrl(draft.media.sourceUrl);
       if (error) throw new Error(error);
-      const platform = new URL(draft.media.sourceUrl).hostname.includes(
-        "tiktok",
-      )
-        ? "tiktok"
-        : "youtube";
-      if (!caps.importers[platform].enabled)
+      const source = recognizeVideoSource(draft.media.sourceUrl);
+      if (!source || !caps.importers[source.platform]?.enabled)
         throw new ApiError("PLATFORM_UNSUPPORTED", 422);
+      if (clip) {
+        if (!caps.trimming?.enabled) throw new ApiError("CLIP_UNSUPPORTED");
+        const message = validateClip(clip, {
+          ...clipLimits(caps),
+          sourceDurationSeconds: caps.trimming.maxSourceDurationSeconds,
+        });
+        if (message) throw new Error(message);
+      }
       const result = await client.request<Envelope<MediaRecord>>(
         "/media/imports",
         {
           method: "POST",
           authenticated: true,
-          body: { sourceUrl: draft.media.sourceUrl.trim() },
+          body: {
+            sourceUrl: draft.media.sourceUrl.trim(),
+            ...(clip ? { clip } : {}),
+          },
           signal: options.signal,
         },
       );
-      return poll(result.data, options);
+      return poll(result.data, options, clip);
     }
     if (draft.media.kind !== "file" || !draft.media.file)
       throw new Error("Selecione um MP4 para publicar a granada.");
@@ -150,22 +167,26 @@ export function createApiService(
         undefined,
         "O envio de arquivos está indisponível no servidor.",
       );
-    const error = await validateMp4(draft.media.file, caps.upload.maxBytes);
+    if (clip && !caps.trimming?.enabled) throw new ApiError("CLIP_UNSUPPORTED");
+    const error = await validateMp4(
+      draft.media.file,
+      clip
+        ? Math.min(caps.upload.maxBytes, caps.trimming!.maxSourceBytes)
+        : caps.upload.maxBytes,
+    );
     if (error) throw new Error(error);
-    if (
-      !validateDuration(
-        draft.media.durationSeconds ?? NaN,
-        caps.upload.maxDurationSeconds,
-      )
-    )
-      throw new Error(
-        `Escolha um vídeo de até ${caps.upload.maxDurationSeconds} segundos e aguarde a prévia carregar.`,
-      );
+    const durationError = selectionDurationError(
+      draft.media.durationSeconds ?? NaN,
+      clip,
+      clipLimits(caps),
+    );
+    if (durationError) throw new Error(durationError);
     const session = (
       await client.request<Envelope<UploadSession>>("/media/uploads", {
         method: "POST",
         authenticated: true,
         signal: options.signal,
+        ...(clip ? { body: { clip } } : {}),
       })
     ).data;
     if (
@@ -187,8 +208,10 @@ export function createApiService(
     if (
       draft.media.file.size > session.limits.maxBytes ||
       !validateDuration(
-        draft.media.durationSeconds ?? NaN,
-        Math.min(20, session.limits.maxDurationSeconds),
+        clip
+          ? clip.endSeconds - clip.startSeconds
+          : (draft.media.durationSeconds ?? NaN),
+        Math.min(90, session.limits.maxDurationSeconds),
       )
     )
       throw new Error(
@@ -198,11 +221,12 @@ export function createApiService(
     options.signal?.throwIfAborted();
     await upload(session, draft.media.file);
     options.signal?.throwIfAborted();
-    return confirmMedia(session.mediaId, options);
+    return confirmMedia(session.mediaId, options, clip);
   }
   async function confirmMedia(
     mediaId: string,
     options: SaveOptions,
+    expectedClip?: Clip,
   ): Promise<string> {
     options.signal?.throwIfAborted();
     options.onProgress?.({ status: "confirming", mediaId });
@@ -229,7 +253,7 @@ export function createApiService(
       ).data;
       if (checkMedia(media).status === "awaiting_upload") throw error;
     }
-    return poll(media, options);
+    return poll(media, options, expectedClip);
   }
   async function save(
     draft: LineupDraft,

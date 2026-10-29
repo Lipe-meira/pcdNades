@@ -1,74 +1,63 @@
 # Checkpoint — frontend
 
-Atualizado em: 29/10/2026 13:15, America/Sao_Paulo
-Estado: implementação pausada por pedido explícito do usuário; aguardando publicação e testes dele
+Atualizado em: 29/10/2026 18:10, America/Sao_Paulo
+Estado: core recorte90 concluído/controlado; próxima etapa autorizada é identidade visual com emote original
 
-## Pausa solicitada pelo usuário — 29/10/2026
-
-- Instrução transmitida pelo orquestrador: ao existir versão utilizável, parar alterações para o usuário testar. Implementação pausada por pedido dele.
-- Código inline a3033c8 já enviado em origin/feat/frontend;30unitários/serviço e26browser passaram, build/typecheck/audit concluídos. Não repetir testes amplos ou iniciar melhorias/features.
-- Orquestrador está finalizando publicação inline e liberação controlada de upload. URL pronta/liberação ainda não confirmadas neste chat; não presumir sucesso remoto a partir dos testes controlados.
-- Próxima ação: aguardar confirmação do orquestrador e testes do usuário. Somente corrigir bloqueio concreto se solicitado. Não publicar, habilitar serviços ou realizar mutações reais.
-- Limitações mantidas: validação real de MP4/ffprobe/Vercel/Storage, formatos/dispositivos e comportamento sob timeout precisam de confirmação no ambiente; importadores continuam indisponíveis. Não anunciar conversão automática.
 ## Objetivo e pedido atual
 
-Adaptar frontend ao MVP sem novo host de worker: backend valida MP4 original inline com ffprobe, sem transcodificar. Frontend deve exibir formatos via capabilities, dar150s somente ao complete, manter30s nos outros endpoints, preservar retomada sem reupload e orientar erros. Não publicar, habilitar upload, criar serviços/segredos/workflows nem alterar backend/main.
+Dois objetivos vigentes: (1) seletor início/fim com prévia MP4 local, saída<=90s,contrato clip/capabilities e semrecorte preservado; (2) emote original como logo e estética de timeCS com tipografia condensada, grafite/azul/areia,menos painéis genéricos. Não abandonar recorte ao trabalhar estética. Sem backend/main/deploy/env/migrations remotas.
 
 ## Localização do trabalho
 
-- Worktree: C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2; branch feat/frontend.
-- Base desta tarefa: e65ea71, remoto já enviado. Código anterior API: fa80ccf e28085f8; checkpoints018af5a/5104c55/e65ea71.
-- Este incremento será commitado com o checkpoint e enviado na operação de fechamento; obter SHA pelo Git e conferir origin/feat/frontend antes da entrega.
-- Arquivos deste incremento: frontend/src/services/{apiClient,apiContracts,apiService}.ts, frontend/src/components/Dialog.tsx, frontend/src/features/admin/{LineupForm,MediaInput}.tsx, frontend/tests/{api,pipeline}.test.ts, frontend/tests/browser/api.spec.ts, frontend/README.md, frontend/docs/verification.md e este arquivo. Nenhuma mudança parcial fora desses arquivos; depois do commit/push conferir status limpo.
-- AGENTS e checkpoint do orquestrador da main remota foram relidos. Nenhum merge/troca de branch ou alteração em checkout alheio.
+- Worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2; branch feat/frontend; base desta retomada7e0490b, último código anteriora3033c8.
+- Core atual será commitado/enviado com este checkpoint; conferir SHA/local/remoto depois do push. Sem identidade visual nova no core ainda.
+- Arquivos core: src/domain/{clip,videoSource,types,validation}.ts; src/features/admin/{ClipSelector,LocalVideoPreview,MediaInput,LineupForm}.tsx; src/services/{apiClient,apiContracts,apiService,lineupService}.ts; src/styles.css; tests/{clip,mediaClip,admin,api}.test.ts; tests/browser/{api,flows}.spec.ts; tests/fixtures/source-91s.mp4; README e docs/verification.md (todos em frontend/),mais estecheckpoint.
+- Main do usuário tem7PNG em3b06bbc/a8aa9ee. Não alterei frontend/public/maps nem src/services/demoData.ts; diff desses caminhos vazio. Não fazer merge/trocar branch para copiar catálogo.
 
 ## Feito
 
-- RequestOptions.timeoutMs implementado com default30000. Apenas POST /media/:id/complete passa150000; demais métodos mantêm30s. REQUEST_TIMEOUT e cancelamento permanecem preservados.
-- capabilities.upload.processingMode opcional aceita inline-original|worker-transcode; ausência não presume modo. UI inline orienta MP4 original, vídeo H.264/yuv420p, áudio AAC ou sem áudio, sem conversão automática. Limites seguem servidor/teto20s.
-- Após bytes enviados, progresso LOCAL confirming informa Confirmando envio sem fingir status do servidor e retém mediaId. Timeout/perda da confirmação permite novo Salvar consultar mídia e repetir apenas complete no mesmoID se awaiting_upload; queued/processing acompanha; ready publica; failed orienta nova escolha.409 reconcilia por GET, sem reupload automático.
-- Erros UNSUPPORTED_CODEC,INVALID_MEDIA,DURATION_EXCEEDED,FILE_TOO_LARGE,PROCESSING_TIMEOUT têm mensagens locais compreensíveis e seguras. Stack/caminhos do servidor não aparecem. Validação falha preserva cadastro anterior; nova seleção reinicia sessão.
-- Corrigido cancel propagado pelo seletor de arquivo que fechava Dialog ao reselecionar mesmo arquivo. Agora somente cancel do próprio diálogo fecha a janela; Escape antigo continua testado.
-- Testes:30unitários/serviço e26browser verdes, build/typecheck verdes, audit zero, diff check sem erros. Nenhuma validação ffprobe/Storage/Vercel real nesta tarefa.
+- Contrato90 final recebido do orquestrador e implementado. Saída90s/50MB; semclip origem<=90s; comclip origem<=180s/50MB; intervalo0,1..90s,0<=início<fim<=duração,precisão0,001(até3decimais).
+- Capabilities.trimming opcional com enabled/reasonCode,maxSourceDurationSeconds,maxSourceBytes,maxDurationSeconds,minDurationSeconds,timePrecisionSeconds. Ausência/disabled não habilita recorte. Limites antigos menores continuam respeitados.
+- Prévia real delimitada no original local (sem gerar/cortar arquivo no browser), início/fim em números/sliders e botão Reproduzir trecho. Impede intervalos inválidos. Vídeo inteiro sem seleção continua disponível.
+- Clip só entra na sessão uploads/imports habilitados; complete apenas ID. Retomada exige MediaRecord.clip equivalente ao solicitado; mudança de arquivo/trecho limpa ID para impedir publicação de seleção antiga.
+- YouTube/TikTok/Instagram reconhecidos por host/path exatos; estados/reasons disabled apresentados, sem embed/download/prévia remota fictícia. Três importers continuam indisponíveis quando capabilities não habilita.
+-39testes unitários/controlados verdes,build/typecheck verdes,30browserPC/mobile verdes. Primeiro fullrun tinha2asserções de texto antigo; atualizadas e novo fullrun30/30 passou. Radares/CRUD/reseleção/retomada/semclip cobertos.
+- Emote fornecido inspecionado com view_image, ainda não copiado para repo. Original C:/Users/felip/AppData/Local/Temp/codex-clipboard-62b4321f-b530-4238-b01e-160df37bf2f7.png,1881198bytes,CTSAScadeirante contorno branco; usar original sem gerar substituto.
 
 ## Em andamento
 
-- Apenas registrar/enviar este checkpoint de pausa. Nenhuma alteração de produto em andamento.
-- Aguardar testes do usuário; não iniciar melhorias nem testes amplos adicionais.
+- Commit/push do core recorte90 e checkpoint.
+- Em seguida estética em commit separado: copiar original para frontend/public/brand; header legível com wordmarkpcdNades, favicon simples sem esmagar emote; fonteBarlowCondensed para títulos eBarlow para texto; grafite/azul/areia extraídos do logo. Preservar UI/radar/teclado/mobile.
 
 ## Retomar daqui
 
-1. Ler AGENTS/guia/checkpoints; conferir Git/branch/log/remotos e este arquivo. Usar npm na pasta frontend/ ou --prefix frontend.
-2. Conferir SHA/push deste incremento em feat/frontend e status limpo; informar ao orquestrador. Não assumir que ele integrou/publicou.
-3. Respeitar a pausa explícita do usuário: aguardar publicação e testes dele. Somente retomar se houver solicitação de correção de bloqueio concreto. Não habilitar upload nem publicar por este chat.
-4. Os testes da versão utilizável serão assumidos pelo usuário após confirmação da URL pelo orquestrador. Não iniciar validações extras por conta própria. Importadores permanecem desabilitados.
+1. Conferir AGENTS/checkpoints/Git,branch/log e mensagem do orquestrador; preservar alterações. Npm em frontend/ ou --prefix frontend.
+2. Conferir commit/push core e informar SHA ao orquestrador.
+3. Copiar asset original antes que Temp expire; verificar hash idêntico. Fontes escolhidas têm OFL1.1 verificada nos repositórios GoogleFonts; baixar arquivos locais+licença, não depender de font externa em runtime.
+4. Simplificar estética sem mudar lógica/catálogo. Usar skills brainstorming/no-ai-design-slop já lidas; direção concreta já autorizada, sem aprovação extra.
+5. Verificar render real desktop/mobile e screenshots,logo/header/filtros/formulário/recorte; rodar suites pertinentes/build/typecheck;commit/push visual e checkpoint por marco. Sem deploy próprio.
 
 ## Decisões e contrato
 
-- processingMode é opcional e está dentro de capabilities.upload: inline-original|worker-transcode. NÃO validationMode.
-- Inline usa original MP4 H.264/yuv420p com áudio AAC ou sem áudio. Sem conversão automática. Max20s/tamanho por capabilities.
-- Complete200 contém media ready/failed;202 indica operação em curso. Backend claim muda awaiting_upload→queued→processing com lease antes de validar; prazo servidor120s, cliente150s apenas para complete.
-- ID retido depois de upload bem-sucedido e localconfirming. Awaiting_upload nessa retomada pode repetir complete idempotente;409 consulta GET para reconciliação. UPLOAD_FAILED/UPLOAD_INCOMPLETE reais limpam vínculo e permitem nova sessão. Failed terminal e troca de arquivo também limpam.
-- Demais contratos permanecem /api/v1,data/pagination,Bearer Supabase,videoIdready para publicar,playback só publicado com URL renovável. Sem fallback API→demo ou embed.
-- Runtime VITE_DATA_MODE demo|api; VITE_API_URL incluindo/api/v1,VITE_SUPABASE_URL,VITE_SUPABASE_PUBLISHABLE_KEY sb_publishable_. Nenhuma credencial real/.env neste worktree.
-- Catálogo mirage/inferno/ancient,/maps/{id}.svg,1024×1024,coordinateVersion setpos-{id}-ba5f793; artworkCCBY4.0 com atribuição e snapshot documentados.
+- POSTuploads{clip?:{startSeconds,endSeconds}},POSTimports{sourceUrl,clip?} só se enabled. Complete não recebe clip. MediaRecord.clip null|obj; metadata.durationSeconds final.
+- Final90 substitui20/40. Source comclip180é limite operacional backend. min0,1 e precision0,001 sem presumir fps.
+- Trimming flag defaultfalse até revisão/runtime;3importersdisabled,sem anunciar corte/download operacional. Demo trimmingfalse para não fingir arquivo cortado.
+- Timeouts preservados:complete150s,demais30s;confirminglocal retémID,GETawaiting→retrycomplete sembytes,409reconciliaGET,failed/nova seleção limpam sessão. Só publicar com ready e seleção correspondente.
+- Identidade adicional: usar emote original do usuário, títulos condensados/marcantes,texto legível,azul/areia/grafite,radar como foco,poucas caixas; não gerar arte substituta ou favicon ilegível.
 
 ## Validação
 
-- Executado nesta tarefa: npm test30/30; npm run build(inclui typecheck); npm run test:browser26/26; npm auditzero; git diff --check sem erros.
-- Testes configuram sinais de prazo em vez de esperar150s; verificam150s somente complete e30s nos demais. Timeout de complete é simulado com AbortSignal expirado, depois GETawaiting/retrycomplete sem reupload.409 concorrente reconciliado por GETready também coberto.
-- Browser PC/celular: perda de confirmação→mesma sessão/sem bytes extras; codec inválido→orientação sem stack; seleção de arquivo reexportado→segunda sessão; cancel de filepicker não fecha formulário. Suites anteriores demo/API/auth/permissões/renovação continuam verdes.
-- Falhas observadas antes dos fixes: prazo permanecia30s; cinco códigos eram genéricos; confirming/resume ausente; cancel do filepicker fechava form. Corrigidas e cobertas por regressões.
-- Não executado: qualquer login/mutação/upload remoto ou ffprobe/Vercel real. Não chamar resultados controlados de E2E real.
+- Executado core: npm test39/39; npm run build(typecheck); npm run test:browser30/30. Sem mutação/serviço remoto nesta etapa.
+- Casos novos:90/91,precisão,minintervalo,início/fim inválido,origem maior que saída,preview pára em91 após iniciar90,1,disabled,semclip,reseleção,clip imutável e futuro link apenas quando explicitamente enabled (transporte controlado).
+- E2E real ffmpeg/Vercel/Storage/links/corte não validado. Screenshots de test-results mostram renderer real com API controlada; não prova operação remota.
+- Estética ainda NÃO implementada/testada; próximo marco.
 
 ## Bloqueios e dependências
 
-- Nenhum bloqueio de frontend para revisão. Backend inline e eventual flag MEDIA_UPLOAD_ENABLED=false até QA são responsabilidade dele/orquestrador.
-- Usuário escolheu GitHub gratuito, mas orquestrador corrigiu a proposta: Actions não será host produtivo. Nenhum workflow criado por este chat. Worker Docker fica futuro.
-- Conta administrativa e execução real dependem da coordenação; não solicitar senha em texto ou inserir segredos.
+- Nenhum bloqueio de frontend para estética. Backend/runtime/flagtrim e integração/publicação são do orquestrador.
+- Não editar backend/main/radares7PNG/checkpoint alheio. Não criar credenciais/serviços/workflows.
 
-## Entrega e histórico curto
+## Histórico curto
 
-- Primeira prévia:056eea8,e3b66c0,953a2ad,3c220c3. API:fa80ccf,28085f8; checkpoints018af5a,5104c55,e65ea71.
-- Produção anterior atribuída ao orquestrador: https://pcdnades.vercel.app modoAPI commit1b2416c, consulta dos3mapas/vazio/login vistos por IAB; APIe6731f5 comuploadfalse. Não revalidada nesta tarefa.
--29/10: contrato inline/timeout/retomada alinhado explicitamente,30unit+26browser passaram. Incremento e este checkpoint aguardam commit/push de fechamento.
+- Atéa3033c8:API/inline,timeouts/erros e30unit+26browser;7e0490b pausa.
+- Nova autorização:coreclip90+prévia concluído39unit/30browser; direção estética adicional recebida e assetinspecionado. Registro por marco antes da identidade visual.

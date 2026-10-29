@@ -150,6 +150,10 @@ export function LineupForm({
                 "DURATION_EXCEEDED",
                 "FILE_TOO_LARGE",
                 "PROCESSING_TIMEOUT",
+                "MEDIA_SELECTION_CHANGED",
+                "CLIP_INVALID",
+                "CLIP_OUT_OF_RANGE",
+                "CLIP_UNSUPPORTED",
               ].includes(error.code)
             )
               setResumeMediaId(undefined);

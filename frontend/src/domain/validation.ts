@@ -1,9 +1,11 @@
 import type { LineupDraft } from "./types";
 import { isTarget } from "./lineups";
+import { recognizeVideoSource } from "./videoSource";
+import { validateClip } from "./clip";
 
 // Demonstration guard only. Production limits and server validation are pending.
 export const DEMO_MAX_BYTES = 50_000_000;
-export const DEMO_MAX_SECONDS = 20;
+export const DEMO_MAX_SECONDS = 90;
 export function validateDuration(
   duration: number,
   maxSeconds = DEMO_MAX_SECONDS,
@@ -12,25 +14,9 @@ export function validateDuration(
 }
 
 export function validateSourceUrl(value: string): string | null {
-  try {
-    const url = new URL(value);
-    if (url.protocol !== "https:" || url.username || url.password || url.port)
-      throw new Error();
-    const youtube =
-      ["youtube.com", "www.youtube.com", "m.youtube.com"].includes(
-        url.hostname,
-      ) && /^\/shorts\/[a-zA-Z0-9_-]{11}\/?$/.test(url.pathname);
-    const tiktok =
-      ["tiktok.com", "www.tiktok.com", "m.tiktok.com"].includes(url.hostname) &&
-      /^\/@[\w.-]+\/video\/\d+\/?$/.test(url.pathname);
-    const shortTikTok =
-      ["vm.tiktok.com", "vt.tiktok.com"].includes(url.hostname) &&
-      /^\/[a-zA-Z0-9]+\/?$/.test(url.pathname);
-    if (youtube || tiktok || shortTikTok) return null;
-  } catch {
-    /* Input is intentionally treated as untrusted text. */
-  }
-  return "Cole um link HTTPS de um YouTube Shorts ou vídeo do TikTok.";
+  return recognizeVideoSource(value)
+    ? null
+    : "Cole um link HTTPS de YouTube Shorts, TikTok ou Instagram Reels.";
 }
 
 export async function validateMp4(
@@ -72,6 +58,10 @@ export function validateDraft(
     errors.media = "Selecione um arquivo MP4.";
   if (draft.media.kind === "link") {
     const message = validateSourceUrl(draft.media.sourceUrl);
+    if (message) errors.media = message;
+  }
+  if (draft.media.kind !== "keep" && draft.media.clip) {
+    const message = validateClip(draft.media.clip, { maxDurationSeconds: 90 });
     if (message) errors.media = message;
   }
   return errors;

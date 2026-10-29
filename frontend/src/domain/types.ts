@@ -1,3 +1,4 @@
+import type { Clip } from "./clip";
 export type GrenadeType = "smoke" | "flashbang" | "molotov";
 export type Side = "T" | "CT";
 export type Target = { x: number; y: number };
@@ -46,8 +47,8 @@ export type Filters = {
 };
 export type MediaDraft =
   | { kind: "keep" }
-  | { kind: "file"; file: File | null; durationSeconds?: number }
-  | { kind: "link"; sourceUrl: string };
+  | { kind: "file"; file: File | null; durationSeconds?: number; clip?: Clip }
+  | { kind: "link"; sourceUrl: string; clip?: Clip };
 export type LineupDraft = Omit<
   Lineup,
   "id" | "video" | "target" | "createdAt" | "updatedAt"

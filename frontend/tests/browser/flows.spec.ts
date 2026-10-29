@@ -133,7 +133,7 @@ test("importação indisponível mantém formulário e não publica cadastro", a
     .getByRole("button", { name: "Importar por link", exact: true })
     .click();
   await page
-    .getByLabel("Link do YouTube Shorts ou TikTok")
+    .getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels")
     .fill("https://www.youtube.com/shorts/abcdefghijk");
   await page.getByRole("button", { name: "Verificar importação" }).click();
   await expect(page.getByRole("alert").first()).toContainText(

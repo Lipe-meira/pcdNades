@@ -20,7 +20,11 @@ const messages: Record<string, string> = {
   INVALID_MEDIA:
     "O arquivo MP4 é inválido ou está danificado. Exporte novamente com vídeo H.264 (yuv420p), áudio AAC ou sem áudio.",
   DURATION_EXCEEDED:
-    "O vídeo excede a duração permitida. Exporte um trecho dentro do limite do formulário, de até 20 segundos.",
+    "O vídeo excede a duração permitida. Respeite o limite de origem e o trecho final informado no formulário, de até 90 segundos.",
+  CLIP_UNSUPPORTED: 'O recorte está indisponível neste ambiente. Envie o MP4 inteiro dentro do limite ou aguarde a liberação do recurso.',
+  CLIP_INVALID: 'Revise início e fim do trecho: pelo menos 0,1s, até 90s e até três casas decimais.',
+  CLIP_OUT_OF_RANGE: 'O trecho ultrapassa a duração do vídeo de origem. Ajuste o início e o fim.',
+  MEDIA_SELECTION_CHANGED: 'A seleção deste vídeo mudou. Salve novamente para iniciar uma nova sessão com o arquivo e trecho atuais.',
   FILE_TOO_LARGE:
     "O arquivo excede o tamanho permitido. Exporte um MP4 menor, respeitando o limite indicado no formulário.",
   PROCESSING_TIMEOUT:

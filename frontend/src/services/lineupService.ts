@@ -33,6 +33,10 @@ export function createDemoService(): LineupService {
       !!existing,
     );
     if (Object.keys(errors).length) throw new Error(Object.values(errors)[0]);
+    if (draft.media.kind !== "keep" && draft.media.clip)
+      throw new Error(
+        "O recorte de arquivo não está disponível na demonstração. Envie o vídeo inteiro ou use a API quando o recurso estiver habilitado.",
+      );
     let video: Video;
     if (draft.media.kind === "keep") video = structuredClone(existing!.video);
     else if (draft.media.kind === "file" && draft.media.file) {
@@ -72,8 +76,21 @@ export function createDemoService(): LineupService {
     async capabilities(signal) {
       signal?.throwIfAborted();
       return {
-        upload: { enabled: true, maxBytes: 50_000_000, maxDurationSeconds: 20 },
-        importers: { youtube: { enabled: false }, tiktok: { enabled: false } },
+        upload: { enabled: true, maxBytes: 50_000_000, maxDurationSeconds: 90 },
+        importers: {
+          youtube: { enabled: false },
+          tiktok: { enabled: false },
+          instagram: { enabled: false },
+        },
+        trimming: {
+          enabled: false,
+          reasonCode: "CLIP_UNSUPPORTED",
+          maxSourceDurationSeconds: 180,
+          maxSourceBytes: 50_000_000,
+          maxDurationSeconds: 90,
+          minDurationSeconds: 0.1,
+          timePrecisionSeconds: 0.001,
+        },
       };
     },
     async playback(video, signal) {

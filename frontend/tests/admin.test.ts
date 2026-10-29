@@ -33,9 +33,9 @@ const local: LineupDraft = {
 };
 
 describe("validação do formulário", () => {
-  it("limita o vídeo a vinte segundos inclusive e rejeita duração inválida", () => {
-    expect(validateDuration(20)).toBe(true);
-    expect(validateDuration(20.01)).toBe(false);
+  it("limita o vídeo a noventa segundos inclusive e rejeita duração inválida", () => {
+    expect(validateDuration(90)).toBe(true);
+    expect(validateDuration(90.001)).toBe(false);
     expect(validateDuration(0)).toBe(false);
     expect(validateDuration(Infinity)).toBe(false);
     expect(validateDuration(NaN)).toBe(false);

@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import type { MediaDraft, Video } from "../../domain/types";
-import { validateDuration, validateMp4 } from "../../domain/validation";
+import { validateMp4 } from "../../domain/validation";
+import { selectionDurationError, validateClip } from "../../domain/clip";
+import { recognizeVideoSource } from "../../domain/videoSource";
 import type { LineupService } from "../../services/lineupService";
+import { clipLimits } from "../../services/apiContracts";
 import type { MediaCapabilities } from "../../services/apiContracts";
 import { Icon } from "../../components/Icon";
 import { VideoPlayer } from "../library/VideoPlayer";
+import { ClipSelector } from "./ClipSelector";
+import { LocalVideoPreview } from "./LocalVideoPreview";
 
 export function MediaInput({
   value,
@@ -23,12 +28,43 @@ export function MediaInput({
   onFileReady: (ready: boolean) => void;
   error?: string;
 }) {
-  const [fileError, setFileError] = useState<string>();
+  const [fileIssue, setFileIssue] = useState<string>();
   const [preview, setPreview] = useState<string>();
   const [checking, setChecking] = useState(false);
+  const [playable, setPlayable] = useState(false);
   const sequence = useRef(0);
   const file = value.kind === "file" ? value.file : null;
   const demo = service.mode === "demo";
+  const trim = capabilities.trimming;
+  const duration = value.kind === "file" ? value.durationSeconds : undefined;
+  const clip = value.kind !== "keep" ? value.clip : undefined;
+  const source =
+    value.kind === "link" ? recognizeVideoSource(value.sourceUrl) : null;
+  const importer = source ? capabilities.importers[source.platform] : undefined;
+  const selectionError =
+    file && duration !== undefined
+      ? clip && !trim?.enabled
+        ? "O recorte está indisponível no servidor. Remova a seleção ou aguarde a liberação."
+        : selectionDurationError(duration, clip, clipLimits(capabilities))
+      : undefined;
+  const byteLimit =
+    clip && trim
+      ? Math.min(trim.maxSourceBytes, capabilities.upload.maxBytes)
+      : capabilities.upload.maxBytes;
+  const bytesError =
+    file && file.size > byteLimit
+      ? "O arquivo excede o tamanho permitido para esta seleção."
+      : undefined;
+  const ready =
+    playable &&
+    !fileIssue &&
+    !selectionError &&
+    !bytesError &&
+    !!file &&
+    duration !== undefined;
+  useEffect(() => {
+    onFileReady(ready);
+  }, [ready, onFileReady]);
   useEffect(() => {
     if (!file) {
       setPreview(undefined);
@@ -46,8 +82,9 @@ export function MediaInput({
   );
   function changeMode(next: MediaDraft) {
     sequence.current++;
-    setFileError(undefined);
+    setFileIssue(undefined);
     setChecking(false);
+    setPlayable(false);
     onFileReady(false);
     onChange(next);
   }
@@ -89,7 +126,7 @@ export function MediaInput({
           <p className="field-hint">
             {demo
               ? "O vídeo atual será mantido. Arquivos locais só existem nesta sessão."
-              : "O vídeo atual é mantido até a substituição ser processada e o cadastro salvo com sucesso."}
+              : "O vídeo atual será mantido até o novo arquivo ser validado e o cadastro salvo."}
           </p>
         </>
       )}
@@ -98,8 +135,8 @@ export function MediaInput({
           {capabilities.upload.processingMode === "inline-original" && (
             <p className="inline-notice">
               Envie o MP4 original com vídeo H.264 (yuv420p), áudio AAC ou sem
-              áudio. Não há conversão automática; o servidor valida o arquivo
-              antes da publicação.
+              áudio. Sem seleção, o original será validado sem conversão. Um
+              trecho só será gerado se o recorte estiver habilitado.
             </p>
           )}
           {!capabilities.upload.enabled && (
@@ -115,24 +152,30 @@ export function MediaInput({
               disabled={!capabilities.upload.enabled}
               aria-describedby="file-hint"
               onChange={async (event) => {
-                const nextFile = event.currentTarget.files?.[0] ?? null;
+                const selected = event.currentTarget.files?.[0] ?? null;
                 const current = ++sequence.current;
-                setFileError(undefined);
+                setFileIssue(undefined);
+                setPlayable(false);
                 onFileReady(false);
                 onChange({ kind: "file", file: null });
-                if (!nextFile) return;
+                if (!selected) return;
                 setChecking(true);
                 try {
-                  const message = await validateMp4(
-                    nextFile,
-                    capabilities.upload.maxBytes,
+                  const issue = await validateMp4(
+                    selected,
+                    trim?.enabled
+                      ? Math.max(
+                          capabilities.upload.maxBytes,
+                          trim.maxSourceBytes,
+                        )
+                      : capabilities.upload.maxBytes,
                   );
                   if (current !== sequence.current) return;
-                  if (message) setFileError(message);
-                  else onChange({ kind: "file", file: nextFile });
+                  if (issue) setFileIssue(issue);
+                  else onChange({ kind: "file", file: selected });
                 } catch {
                   if (current === sequence.current)
-                    setFileError(
+                    setFileIssue(
                       "Não foi possível ler o arquivo. Selecione-o novamente.",
                     );
                 } finally {
@@ -142,12 +185,13 @@ export function MediaInput({
             />
           </label>
           <p className="field-hint" id="file-hint">
-            Até{" "}
+            Vídeo final: até {capabilities.upload.maxDurationSeconds}s e{" "}
             {(capabilities.upload.maxBytes / 1_000_000).toLocaleString("pt-BR")}{" "}
-            MB e {capabilities.upload.maxDurationSeconds} segundos
-            {demo
-              ? " nesta demonstração. O arquivo será aberto localmente; nenhum upload ou armazenamento no servidor é feito."
-              : ". O arquivo será enviado para validação antes da publicação."}
+            MB.
+            {trim?.enabled &&
+              ` Com recorte, a origem pode ter até ${trim.maxSourceDurationSeconds}s e ${(trim.maxSourceBytes / 1_000_000).toLocaleString("pt-BR")} MB.`}
+            {demo &&
+              " Demonstração local: nenhum arquivo será enviado ao servidor."}
           </p>
           {checking && (
             <p role="status" className="field-hint">
@@ -156,38 +200,36 @@ export function MediaInput({
           )}
           {preview && (
             <>
-              <video
-                className="media-preview"
+              <LocalVideoPreview
                 src={preview}
-                controls
-                playsInline
-                preload="metadata"
-                aria-label="Prévia do MP4 selecionado"
-                onLoadedMetadata={(event) => {
-                  const duration = event.currentTarget.duration;
-                  const valid = validateDuration(
-                    duration,
-                    capabilities.upload.maxDurationSeconds,
-                  );
-                  setFileError(
-                    valid
-                      ? undefined
-                      : `Escolha um vídeo com duração de até ${capabilities.upload.maxDurationSeconds} segundos.`,
-                  );
-                  if (valid && file)
-                    onChange({ kind: "file", file, durationSeconds: duration });
-                  onFileReady(valid);
+                clip={clip}
+                duration={duration}
+                valid={ready}
+                onMetadata={(seconds) => {
+                  setPlayable(true);
+                  setFileIssue(undefined);
+                  if (
+                    file &&
+                    value.kind === "file" &&
+                    value.durationSeconds !== seconds
+                  )
+                    onChange({ ...value, durationSeconds: seconds });
                 }}
-                onError={() => {
-                  setFileError(
-                    "Este navegador não conseguiu reproduzir o arquivo. Use MP4 com codecs compatíveis, como H.264/AAC.",
+                onFailure={() => {
+                  setPlayable(false);
+                  setFileIssue(
+                    "Não foi possível reproduzir este MP4. Exporte com codecs compatíveis, como H.264/AAC.",
                   );
-                  onFileReady(false);
                 }}
               />
-              <p className="field-hint">
-                Prévia local · confirme o vídeo antes de enviar.
-              </p>
+              <ClipSelector
+                clip={clip}
+                duration={duration}
+                limits={trim}
+                onChange={(selection) =>
+                  onChange({ ...value, kind: "file", file, clip: selection })
+                }
+              />
             </>
           )}
         </>
@@ -195,28 +237,79 @@ export function MediaInput({
       {value.kind === "link" && (
         <>
           <label>
-            Link do YouTube Shorts ou TikTok
+            Link do YouTube Shorts, TikTok ou Instagram Reels
             <input
               type="url"
               value={value.sourceUrl}
               onChange={(event) =>
-                onChange({ kind: "link", sourceUrl: event.target.value })
+                onChange({ ...value, sourceUrl: event.target.value })
               }
-              placeholder="https://www.youtube.com/shorts/…"
-              aria-describedby="link-hint"
+              placeholder="Cole o link do vídeo"
             />
           </label>
-          <p className="inline-notice" id="link-hint">
-            {!capabilities.importers.youtube.enabled &&
-            !capabilities.importers.tiktok.enabled
-              ? `Importação indisponível ${demo ? "nesta prévia" : "no servidor"}. O link não será baixado e a granada não será publicada. Escolha Enviar MP4 quando disponível.`
-              : `Importadores: YouTube ${capabilities.importers.youtube.enabled ? "disponível" : "indisponível"}; TikTok ${capabilities.importers.tiktok.enabled ? "disponível" : "indisponível"}. A importação precisa concluir antes da publicação.`}
+          <div className="importer-status">
+            {(["youtube", "tiktok", "instagram"] as const).map((platform) => {
+              const available = capabilities.importers[platform];
+              return (
+                <p key={platform}>
+                  <strong>
+                    {platform === "youtube"
+                      ? "YouTube Shorts"
+                      : platform === "tiktok"
+                        ? "TikTok"
+                        : "Instagram Reels"}
+                  </strong>{" "}
+                  — {available?.enabled ? "Disponível" : "Indisponível"}
+                  {!available?.enabled && (
+                    <span>
+                      {" "}
+                      ·{" "}
+                      {available?.message ||
+                        "Integração ainda não habilitada. Use MP4 quando disponível."}
+                    </span>
+                  )}
+                </p>
+              );
+            })}
+          </div>
+          {(!source || !importer?.enabled) && (
+            <p className="inline-notice">
+              {demo
+                ? "Importação indisponível nesta prévia."
+                : "Importação indisponível no servidor para a fonte selecionada."}{" "}
+              Nenhum vídeo é baixado ou publicado nesta tela. Escolha Enviar MP4
+              quando disponível.
+            </p>
+          )}
+          <ClipSelector
+            clip={clip}
+            limits={trim}
+            disabledReason={
+              !importer?.enabled
+                ? "Definição de trecho indisponível: a plataforma precisa estar habilitada no servidor."
+                : undefined
+            }
+            onChange={(selection) => onChange({ ...value, clip: selection })}
+          />
+          <p className="field-hint">
+            Não há prévia de vídeo para links. Quando habilitado, o servidor
+            verifica a duração da origem e o trecho solicitado.
           </p>
+          {clip &&
+            importer?.enabled &&
+            validateClip(clip, {
+              ...clipLimits(capabilities),
+              sourceDurationSeconds: trim?.maxSourceDurationSeconds,
+            }) && (
+              <p className="field-error" role="alert">
+                Revise o intervalo solicitado.
+              </p>
+            )}
         </>
       )}
-      {(fileError || error) && (
+      {(fileIssue || selectionError || bytesError || error) && (
         <p className="field-error" role="alert">
-          {fileError || error}
+          {fileIssue || selectionError || bytesError || error}
         </p>
       )}
     </div>
