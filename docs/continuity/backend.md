@@ -152,3 +152,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Isso comprova bootstrap/configuração e leitura pública, NÃO upload/processamento/E2E. Capabilities habilitado não comprova worker operacional.
 - Nenhuma mutação/usuário criado. Admin será criado pelo usuário no painel e concedido pelo orquestrador; não registrar senhas. Host Docker/scheduler, DATABASE_URL e secrets do worker continuam pendentes.
 - Próxima ação: aguardar QA integração/review ou definição host pelo orquestrador, reler checkpoint/conferir Git antes de executar. Nenhuma mudança de código necessária agora. Checkpoint enviado em commit docs próprio; sem alterações locais restantes após push.
+
+## Início guard operacional upload — 29/10
+- Pedido orquestrador: MEDIA_UPLOAD_ENABLED defaultfalse/bool estrito; capabilities e novas sessões devem depender da flag e clients. Auth antes guard preserva401. Leitura/status/playback inalterados.
+- Git limpo em c4a6f80; próximo editar config/API, testar admin sem Storage quando false e disponibilidade true apenas com clients. Sem mudança remota/env.
+
+## Guard operacional upload entregue — 29/10
+- MEDIA_UPLOAD_ENABLED estrita true/false defaultfalse, API capabilities exige flag+clients; criação sessão autentica antes de retornar503 UPLOAD_UNAVAILABLE, sem gravar DB/Storage. Leituras/status/complete/playback preservados.
+- 16 testes locais/typecheck/build/diff check passaram. Testes com admin substituído garantem zero acesso Storage/DB quando flagfalse e401 sem token; flagtrue exige clients. Não comprova integração Storage.
+- Env/example e README documentam habilitar apenas após worker testado; nenhuma env remota alterada. Próximo: orquestrador integrar/deploy e confirmar capabilitiesfalse; aguardar host/config do worker antes de habilitar. Código/checkpoint enviados em commit próprio; sem mudanças locais esperadas após push.

@@ -45,3 +45,6 @@ Upload vai direto ao Supabase por URL assinada; não trafega MP4 no corpo de uma
 
 ## Causa do timeout no bootstrap — verificação local 29/10
 O loader Vercel intercepta http.Server.listen e retorna sem emitir listening durante o import: https://github.com/vercel/vercel/blob/main/packages/node/src/serverless-functions/serverless-handler.mts . Top-level await Fastify.listen espera esse evento e bloqueia o import. Entrada corrigida sem await global, com catch para rejeição. Execute npm run build e node scripts/bootstrap-smoke.mjs: antes moduleEvaluated=false/listenCaptured=true, depois true/true. A reprodução não substitui o teste HTTP real do deploy pelo orquestrador.
+
+## Disponibilidade operacional de novos uploads
+MEDIA_UPLOAD_ENABLED é false por padrão e aceita somente true/false (valores inválidos impedem startup). Capabilities anuncia upload somente quando flag=true e clients Supabase disponíveis. POST uploads autentica/autoriza primeiro, depois responde503 UPLOAD_UNAVAILABLE se desabilitado, sem criar linha ou sessão Storage. Leituras, status, complete e playback não são bloqueados pela flag. Habilitar no host API somente após worker configurado/testado. Não muda automaticamente após teste local Docker. Desabilitar não revoga sessões assinadas já emitidas.

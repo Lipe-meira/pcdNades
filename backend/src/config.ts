@@ -10,3 +10,10 @@ export function readMediaLimits(env: Record<string,string|undefined> = process.e
  if(duration>20)throw new Error('MEDIA_MAX_DURATION_SECONDS deve ser no máximo 20 segundos.');
  return Object.freeze({maxBytes:positiveInteger('MEDIA_MAX_BYTES',50000000),maxDurationSeconds:duration});
 }
+
+export function readUploadEnabled(env: Record<string,string|undefined> = process.env): boolean {
+ const value=env.MEDIA_UPLOAD_ENABLED;
+ if(value===undefined||value==='false')return false;
+ if(value==='true')return true;
+ throw new Error('MEDIA_UPLOAD_ENABLED deve ser true ou false.');
+}

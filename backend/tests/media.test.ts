@@ -8,3 +8,20 @@ function clients(status:string,role=true){
 test('missing token denied before administrative data access',async()=>{const app=buildApp(clients('queued'));try{assert.equal((await app.inject({method:'POST',url:`/api/v1/media/${id}/complete`})).statusCode,401);}finally{await app.close();}});
 test('viewer denied administrative write',async()=>{const app=buildApp(clients('queued',false));try{assert.equal((await app.inject({method:'POST',url:`/api/v1/media/${id}/complete`,headers:{authorization:'Bearer token'}})).statusCode,403);}finally{await app.close();}});
 test('complete repeated for queued and ready returns current state',async()=>{for(const status of ['queued','processing','ready']){const app=buildApp(clients(status));try{const r=await app.inject({method:'POST',url:`/api/v1/media/${id}/complete`,headers:{authorization:'Bearer token'}});assert.equal(r.statusCode,status==='ready'?200:202);assert.equal(r.json().data.status,status);}finally{await app.close();}}});
+
+test('disabled upload authenticates first and never creates a Storage session',async()=>{
+ const previous=process.env.MEDIA_UPLOAD_ENABLED;process.env.MEDIA_UPLOAD_ENABLED='false';
+ const c=clients('queued');c.service.from=()=>{throw new Error('unexpected database mutation');};c.service.storage.from=()=>{throw new Error('unexpected storage access');};
+ const app=buildApp(c);
+ try{
+ assert.equal((await app.inject({method:'POST',url:'/api/v1/media/uploads'})).statusCode,401);
+ const r=await app.inject({method:'POST',url:'/api/v1/media/uploads',headers:{authorization:'Bearer token'}});
+ assert.equal(r.statusCode,503);assert.equal(r.json().error.code,'UPLOAD_UNAVAILABLE');
+ assert.equal((await app.inject('/api/v1/media/capabilities')).json().data.upload.enabled,false);
+ }finally{await app.close();if(previous===undefined)delete process.env.MEDIA_UPLOAD_ENABLED;else process.env.MEDIA_UPLOAD_ENABLED=previous;}
+});
+test('enabled flag advertises upload only with configured clients',async()=>{
+ const previous=process.env.MEDIA_UPLOAD_ENABLED;process.env.MEDIA_UPLOAD_ENABLED='true';
+ try{for(const [c,enabled] of [[clients('queued'),true],[undefined,false]] as const){const app=buildApp(c);try{assert.equal((await app.inject('/api/v1/media/capabilities')).json().data.upload.enabled,enabled);}finally{await app.close();}}}
+ finally{if(previous===undefined)delete process.env.MEDIA_UPLOAD_ENABLED;else process.env.MEDIA_UPLOAD_ENABLED=previous;}
+});
