@@ -224,3 +224,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Removido functions glob inválido do vercel.json; timeout120 será configurado no projeto pelo root. Runtime usa createRequire+require.resolveliteral Linuxx64/win32x64; wrapper fixado movido para dependencies.
 - Após npmci: build/typecheck22testes/probe-smokeWindows/diffcheck passam. NFT0.30.4 printdist/server.js incluiu node_modules/@ffprobe-installer/win32-x64/ffprobe.exe; warnings Linuxausente Windows e tentativa de parse doexe comoJS registradas, não ocultadas. CI/root devem conferir traceLinux/bundlefinal; não declarar Vercelvalidado.
 - Próxima ação enviar SHA para integraçãoCI+deployflagfalse. Root define timeout projeto. Nenhumwrapper/SQL/envremoto. vendor inspeção continua mas caminho runtime não depende dele/includeFiles.
+
+## CI Linux permissão executável — início29/10
+- Root reportou run40910741421: tracing inclui assetLinux, mas X_OK falhou EACCES no original node_modules; prepare chmod somente cópia vendor.
+- Próxima ação chmod explícito binary.path no build alémcópia, mantendo npmciignore-scripts. Sem scriptsglobais/env/SQL. ValidaçãoLinux será pelo CIroot, não Windows.
+- Correção aplicada: await chmod(binary.path,0o755) antes da cópia, somente binário selecionado explicitamente. Build/typecheck22testes/diffcheck locais passaram; Windows não prova permissãoPOSIX, repetir LinuxCIroot. Próximo enviarSHA e aguardar X_OK/probe noLinux, flagfalse.
