@@ -171,3 +171,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Alternativa Actions documentada com5min mínimo, atraso/descarte, default branch/inatividade60dias e CI exclusivo do orquestrador após decisão. Nenhum arquivo .github criado.
 - Verificações desta tarefa: documentação oficial Render/GitHub consultada, diff check passou. Só docs; não repetidos testes código ou container, já verificados nos marcos anteriores.
 - Próxima ação: aguardar decisão de provedor/custo via orquestrador; depois configurar segredos no host e validar job/fila/Storage real antes de habilitar MEDIA_UPLOAD_ENABLED. Sem valores secretos/usuários/remoto alterados.
+
+## Investigação Render gratuito sob demanda — início29/10
+- Orquestrador descartou Actions produtivo após termos oficiais; NÃO criar workflow ou hospedar processamento de usuários em runners Actions.
+- Nova tarefa somente proposta: Render Free HTTP autenticado acordado após complete, lifecycle/fila/512MB. Próxima ação: verificar docs oficiais e reportar limites antes de arquitetura/código. Raiz/.github intactas.
+
+## Proposta gratuita revisada — 29/10
+- Actions produtivo retirado por termos conforme orquestrador. Render Free sob demanda avaliado somente documentalmente; não implementado.
+- Achado: webhook202 não garante sobrevivência FFmpeg nem recuperação sem novo tráfego; precisa wake durável/retry e controles single-run/fencing/shutdown.512MB não validado pelo smoke1GB anterior. Secret/HMAC proposto sem valores.
+- Próxima ação: enviar tradeoffs e aguardar alinhamento antes de arquitetura/CI/provisão. Upload continua desabilitado. Diff check de docs, sem testes código novos pois não alterado.
