@@ -1,3 +1,9 @@
+## Identidade visual adicionada ao escopo — 29/10
+
+- Usuário pediu usar emoteCTcadeirante como logo e mudar estética/fonte para reduzir aparência genérica. Imagem original em C:\Users\felip\AppData\Local\Temp\codex-clipboard-62b4321f-b530-4238-b01e-160df37bf2f7.png.
+- Encaminhadofront: originalcomoasset,wordmarkpcdNades,títulosmarcantes/textolegível,grafite/azul/areia,radarfoco,simplificarpainéis,enfeites. Preservarfunções/mobile/acessibilidade. Commitsseparadosrecorte90 quando possível, screenshotsreais; semdeploy. Recorte90 permaneceemexecução.
+- Próximaação: revisar entregasfrontend/backend e testes, mantendo produçãointacta.
+
 ## Retomada após limite — 29/10
 
 - Usuário pediu continuar. Gitmainlimpo,baseb68d003,4commitscheckpointlocaissem push porautodeploy. Fetchconfirmou backend39745c5 efront7e0490b.
