@@ -13,13 +13,13 @@ Escopo autorizado pelo orquestrador: demonstração React + TypeScript + Vite, e
 
 ## Etapas
 
-1. Escrever testes de filtros/coordenadas; observar falha; implementar domínio. Construir base navegável, radar esquemático autoral (explicitamente identificado), lista acessível, filtros e seleção sincronizada. Verificar tipos, testes e build; commit coeso.
-2. Escrever testes de validação/serviço; observar falha; implementar cadastro, edição e exclusão em memória. Formulário permite MP4 local ou pedido de importação identificado como indisponível. Estados de mídia refletem apenas condições reais da demo; não simular transferência/processamento do servidor. Player HTML nativo usa URL de objeto de MP4 local. Administração é demonstração explícita, sem coletar senha. Verificar; commit coeso.
+1. Escrever testes de filtros/coordenadas; observar falha; implementar domínio. Construir base navegável, radar, lista acessível, filtros e seleção sincronizada. Após feedback do usuário, substituir esquema ilustrativo por plantas licenciadas de mapas reais, registrando fonte, versão e limitações. Verificar tipos, testes e build; commit coeso.
+2. Escrever testes de validação/serviço; observar falha; implementar cadastro, edição e exclusão em memória. Formulário permite MP4 local de até 20 segundos ou pedido de importação identificado como indisponível, sem publicar antes de mídia pronta. Estados de mídia refletem apenas condições reais da demo; não simular transferência/processamento do servidor. Player HTML nativo usa URL de objeto de MP4 local. Administração é demonstração explícita, sem coletar senha. Verificar; commit coeso.
 3. Testar PC e celular: filtros, mapa vazio, pontos sobrepostos, detalhes, fechar/voltar/foco, CRUD temporário, arquivo/link, reload sem persistência, limites e erros. Revisar screenshot, acessibilidade básica, console e overflow. Documentar resultados e pendências; commit e push da feat/frontend.
 
 ## Direção visual
 
-Ferramenta escura de treino: grafite, verde sálvia para ações/seleção, lista com divisórias, radar como foco. Texto em português, marca própria, sem fotos nem assets de jogos. Controles de pelo menos 44px no toque; cor reforçada por ícone e texto. Layout PC em colunas, celular empilhado. Todo conteúdo fictício é rotulado e não contém instruções reais de lançamento.
+Ferramenta escura de treino: grafite, verde sálvia para ações/seleção, lista com divisórias, radar como foco. Texto em português, marca própria, plantas setpos.gg CC BY 4.0 com crédito e snapshot fixado. Controles de pelo menos 44px no toque; cor reforçada por ícone e texto. Layout PC em colunas, celular empilhado. Todo conteúdo fictício é rotulado e não contém instruções reais de lançamento.
 
 ## Verificações essenciais
 
