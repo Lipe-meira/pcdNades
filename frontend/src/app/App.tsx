@@ -101,8 +101,8 @@ export function App({
           href="#biblioteca"
           aria-label="pcdNades, biblioteca"
         >
-          pcd<span>Nades</span>
-          <Icon name="crosshair" size={28} />
+          <img className="brand-emote" src="/brand/pcd-sas-emote.png" alt="" width="96" height="104" fetchPriority="high" />
+          <span className="brand-wordmark">pcd<strong>Nades</strong></span>
         </a>
         <nav aria-label="Navegação principal">
           <a
