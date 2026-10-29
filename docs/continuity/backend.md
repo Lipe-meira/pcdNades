@@ -242,3 +242,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Front publicado https://pcdnades.vercel.app ; usuário assume teste real. NÃO afirmar E2Eremoto/uploadcompletovalidado.
 - Trabalho PAUSADO por pedido explícito do usuário: não iniciar alterações,deploys,testes ou backlog. Próxima ação é aguardar feedback; ao retomar ler checkpoints/conferirGit e agir somente no escopo solicitado.
 - Apenas preservação deste checkpoint neste marco, sem código/env/remoto de aplicação. Commitdocs próprio enviado na feat/backend.
+
+## Bloqueio pontual DATABASE_ERROR — investigação autorizada29/10
+- Pausa geral mantida; somente diagnóstico/correção bloqueio solicitado pelo orquestrador. Screenshot Nova granada DATABASE_ERROR; root logPOST/media/uploads503 antesbytes,media/grenadesvazios. SQLservice_roleinsert+rollback passou conforme root, sem confirmação causaREST/key.
+- Código checked atualmente mascara erro retornado por insert; não altera RLS/grants sem evidência. Nenhuma mudança de aplicação feita nesta etapa.
+- Próxima ação aguardar logsSupabase/root, propor logger estruturado só códigoDB allowlist (sem payloadheaderskeysSQL/mensagembruta) e testecliente substituído se autorizado. Não continuar melhorias/testesamplos. Formulário deve ser preservado pelo frontend.
