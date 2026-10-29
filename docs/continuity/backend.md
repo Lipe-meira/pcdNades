@@ -1,7 +1,7 @@
 # Checkpoint — backend
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: em andamento; retomada autorizada para seed e correções upload/fila/worker.
+Estado: API pública validada por HTTP; aguardando admin e host/configuração worker para QA de mídia.
 
 ## Objetivo e pedido atual
 
@@ -140,3 +140,24 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Evidência fonte Vercel serverless-handler.mts: intercepta Server.listen retornando this sem listening durante await import. Repro local com stub real http.Server.listen: antes moduleEvaluated=false/listenCaptured=true após1.5s.
 - Mudança mínima server.ts remove top-level await (void listen com catch). Repro após: módulo avaliado e listen capturado; 13 testes/typecheck/build passam. Script backend/scripts/bootstrap-smoke.mjs sem rede reproduz contrato loader.
 - Próximo: enviar SHA para redeploy/HTTP real pelo orquestrador. API ainda não declarada saudável; nenhum ajuste env/SQL. Registro em README e checkpoint; sem arquivos de mídia/segredos.
+
+## Redeploy informado pelo usuário — HTTP real 29/10
+- Verificado https://pcdnades-api.vercel.app: /health200 {status:ok,configured:false}; capabilities200 upload.enabled=false, limite20s, importadores false; /api/v1/maps503 SERVICE_UNAVAILABLE.
+- Bootstrap agora responde; configuração do fornecedor permanece incompleta neste deployment. Não inferir chave faltante específica: configured exige URL+publishable+service role. Nenhum segredo lido.
+- Próxima ação: orquestrador confirmar SHA/ambiente e presença das três variáveis no deployment, sem enviar valores no chat. Persistência/upload ainda não operacionais. Sem mudança de código nesta etapa.
+
+## API configurada e leitura real confirmada — 29/10
+- Orquestrador reportou deploy dpl_AQtb95WHtEYpcmgTbWLCHbPVZNqb, commit7793aeb, trio de env no destino correto e remoção da key do frontend (somente metadados, nenhum valor lido).
+- Este chat verificou HTTP independente: health200 configured:true; maps200 com3 radares canônicos/URLs absolutas frontend; grenades200 biblioteca vazia/pagination total0; capabilities200 upload.enabled:true,maxDurationSeconds20,importersfalse.
+- Isso comprova bootstrap/configuração e leitura pública, NÃO upload/processamento/E2E. Capabilities habilitado não comprova worker operacional.
+- Nenhuma mutação/usuário criado. Admin será criado pelo usuário no painel e concedido pelo orquestrador; não registrar senhas. Host Docker/scheduler, DATABASE_URL e secrets do worker continuam pendentes.
+- Próxima ação: aguardar QA integração/review ou definição host pelo orquestrador, reler checkpoint/conferir Git antes de executar. Nenhuma mudança de código necessária agora. Checkpoint enviado em commit docs próprio; sem alterações locais restantes após push.
+
+## Início guard operacional upload — 29/10
+- Pedido orquestrador: MEDIA_UPLOAD_ENABLED defaultfalse/bool estrito; capabilities e novas sessões devem depender da flag e clients. Auth antes guard preserva401. Leitura/status/playback inalterados.
+- Git limpo em c4a6f80; próximo editar config/API, testar admin sem Storage quando false e disponibilidade true apenas com clients. Sem mudança remota/env.
+
+## Guard operacional upload entregue — 29/10
+- MEDIA_UPLOAD_ENABLED estrita true/false defaultfalse, API capabilities exige flag+clients; criação sessão autentica antes de retornar503 UPLOAD_UNAVAILABLE, sem gravar DB/Storage. Leituras/status/complete/playback preservados.
+- 16 testes locais/typecheck/build/diff check passaram. Testes com admin substituído garantem zero acesso Storage/DB quando flagfalse e401 sem token; flagtrue exige clients. Não comprova integração Storage.
+- Env/example e README documentam habilitar apenas após worker testado; nenhuma env remota alterada. Próximo: orquestrador integrar/deploy e confirmar capabilitiesfalse; aguardar host/config do worker antes de habilitar. Código/checkpoint enviados em commit próprio; sem mudanças locais esperadas após push.

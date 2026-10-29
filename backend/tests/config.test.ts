@@ -27,3 +27,9 @@ test('duration may be reduced but never exceed 20 seconds',()=>{
  assert.equal(readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'20'}).maxDurationSeconds,20);
  assert.throws(()=>readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'21'}),/MEDIA_MAX_DURATION_SECONDS/);
 });
+
+import {readUploadEnabled} from '../src/config.js';
+test('upload flag defaults off and rejects ambiguous env',()=>{
+ assert.equal(readUploadEnabled({}),false);assert.equal(readUploadEnabled({MEDIA_UPLOAD_ENABLED:'false'}),false);assert.equal(readUploadEnabled({MEDIA_UPLOAD_ENABLED:'true'}),true);
+ for(const value of ['','1','0','TRUE',' false'])assert.throws(()=>readUploadEnabled({MEDIA_UPLOAD_ENABLED:value}),/MEDIA_UPLOAD_ENABLED/);
+});
