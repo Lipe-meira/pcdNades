@@ -3,6 +3,22 @@
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: em andamento; frontend demonstrativo publicado, backend ainda sem infraestrutura configurada.
 
+## Checkpoint da retomada de 29/10 (estado mais recente)
+
+- Usuário autorizou projeto Supabase dedicado em Lipe-meira's Org, São Paulo. Criado `kdyzxxgzvgiffluyjjxu` ACTIVE_HEALTHY; URL oficial https://kdyzxxgzvgiffluyjjxu.supabase.co .
+- Main integrou front `3c220c3` (merge `0dd5051`), backend `258b4ae` e revisão SQL `b8ce041` (merge `af81b4f`). README atualizado em `c0fe3cc`. Algumas integrações posteriores a c0fe3cc aguardam push junto deste checkpoint.
+- Orquestrador confirmou build/typecheck front, 10 testes unitários e 12 testes Playwright. Backend build e 10 testes passaram. Não confundir com mídia real.
+- Migrations `initial_schema` (001 revisada b8ce041) e `canonical_maps` (002) aplicadas no projeto dedicado. **Não reescrever/reaplicar 001**; correções futuras precisam novas migrations coordenadas.
+- Teste real `docs/verification/database-smoke.sql` passou com papéis anon/viewer/admin e fluxo de estados, usando transação com rollback de todos os usuários/fixtures. Verificação posterior: 3 mapas e zero grenadas, mídias e administradores. Primeiro teste foi ajustado porque trigger nega INSERT viewer antes da política RLS, com erro específico esperado.
+- Advisors de segurança: somente INFO RLS sem política em private.administrators, intencional para negar acesso direto. Não há permissão de leitura cliente nessa tabela.
+- Deploy front revisado `dpl_9FPJDnA2s3ZWSDUv9usgfjG2SbZ6`, commit c0fe3cc, READY em https://pcdnades.vercel.app . Continua DEMO. Outro deploy de docs 17ae50b foi iniciado antes do push da integração; foi sucedido pelo deploy correto c0fe3cc.
+- API Vercel projeto separado `pcdnades-api`, ID `prj_XN83T2MeneH8LokYpKbn6iRa93C4`, root backend, framework fastify, node24. Ainda sem deploy. Env produção/preview configuradas: URL e chave PUBLICÁVEL Supabase, FRONTEND_URL, CORS e teto20s. Nenhuma chave privada obtida/configurada.
+- Backend prepara entrada Fastify compatível Vercel e disponibilidade separada de leitura pública sem service key. Front implementa adaptador API/auth/mídia e deve confirmar nomes env. Não ativar modo API no site antes de API responder.
+- Usuário recebeu pergunta assíncrona sobre e-mail da conta administrativa; resposta pendente. Chave servidor e DATABASE_URL exigem configuração segura pelo responsável no host, não pelo chat.
+- Próxima ação: consultar entregas dos dois chats/checkpoints, revisar e testar, integrar e publicar API de leitura; depois integrar frontend real. Mídia continua dependente de service key/worker FFmpeg/configuração de conta. A hospedagem do worker permanece pendente.
+
+Os registros abaixo preservam o contexto anterior; em caso de divergência de estado, prevalece este checkpoint e a conferência do Git/serviços.
+
 ## Objetivo e pedido atual
 
 Coordenar os chats de frontend/backend do pcdNades. Pedido atual: continuar após interrupção por créditos. Checkpoints lidos, Git limpo na retomada e responsáveis acionados para continuação.
