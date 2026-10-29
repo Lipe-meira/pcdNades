@@ -1,15 +1,16 @@
 import { mapView } from './maps.js';
 import { readMediaLimits } from './config.js';
 import cors from '@fastify/cors';
-import Fastify from 'fastify';
+import Fastify, { type FastifyInstance } from 'fastify';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { ZodError } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { body, filters, uuid, dbBody, grenadeView, mediaView } from './model.js';
 const failure=(code:string,statusCode:number)=>Object.assign(new Error(code),{statusCode,code});
-export function buildApp(clients?:{public:SupabaseClient;service:SupabaseClient;user:(token:string)=>SupabaseClient}) {
+type Clients={public:SupabaseClient;service:SupabaseClient;user:(token:string)=>SupabaseClient};
+export function buildApp(clients?:Clients){return configureApp(Fastify({logger:true,bodyLimit:16384}),clients);}
+export function configureApp(app:FastifyInstance,clients?:Clients) {
  const limits=readMediaLimits();
- const app=Fastify({logger:true,bodyLimit:16384});
  app.register(cors,{origin:(process.env.CORS_ORIGINS??'http://localhost:5173').split(',')});
  const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_PUBLISHABLE_KEY;
  const opts={auth:{persistSession:false,autoRefreshToken:false}};
