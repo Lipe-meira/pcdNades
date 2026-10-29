@@ -1,3 +1,9 @@
+## Push funcional autorizado — 29/10
+
+- 39testesbackend+39frontend/buildpassaram. Browser28passaram;2falhaseram expectativaSVGantiga. CorrigidaexpectativaparaPNGusuário emb554c2c;2rerunsdesktop/mobilePASSARAM.
+- SQLrealtransaçãorollback:ready90aceito,91rejeitado,clipimutávelconfirmado,semfixturepersistido.003aplicada. Envmax90salvo. PublicarpelaautointegraçãoGit;trimdefaultfalse atéconferirdeploy. Estéticaaindaemexecuçãofront eentraráseparadamente.
+- Próximaação: verificarREADYAPI/front ecapabilities,habilitartrimcomdeploypequenoautorizadoeorientarteste;Linuxdispensadopelousuário,Vercelrecorterealpendente.
+
 ## Publicação autorizada em andamento — 29/10
 
 - Usuário dispensouesperaLinux eautorizoupushmain; confirmouexplicitamente aplicar003e publicar. Mainintegroubackendfcf58f5 por6a3f5bf efrontddda8de pord446b47. Buildbackend/front39testescadaPASSARAM;30browseremexecução.
