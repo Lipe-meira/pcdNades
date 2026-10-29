@@ -1,7 +1,7 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: em andamento; frontend demonstrativo publicado, backend ainda sem infraestrutura configurada.
+Estado: em andamento; frontend revisado publicado; Supabase provisionado/testado por papéis; API em preparação de deploy e mídia ainda dependente de segredo/worker.
 
 ## Checkpoint da retomada de 29/10 (estado mais recente)
 
@@ -16,6 +16,10 @@ Estado: em andamento; frontend demonstrativo publicado, backend ainda sem infrae
 - Backend prepara entrada Fastify compatível Vercel e disponibilidade separada de leitura pública sem service key. Front implementa adaptador API/auth/mídia e deve confirmar nomes env. Não ativar modo API no site antes de API responder.
 - Usuário recebeu pergunta assíncrona sobre e-mail da conta administrativa; resposta pendente. Chave servidor e DATABASE_URL exigem configuração segura pelo responsável no host, não pelo chat.
 - Próxima ação: consultar entregas dos dois chats/checkpoints, revisar e testar, integrar e publicar API de leitura; depois integrar frontend real. Mídia continua dependente de service key/worker FFmpeg/configuração de conta. A hospedagem do worker permanece pendente.
+- Atualização posterior: API integrada até `8eccb63` via merge `15408da`, 13 testes e build confirmados. Deploy `dpl_DV96PW8n512vn8GgLWcP6XzY55Md` falhou: "No entrypoint found which imports fastify. Found possible entrypoint: src/server.ts". Backend foi acionado para instanciar Fastify diretamente na entrada e compartilhar configureApp com os testes. Aguardar SHA e repetir deploy; não considerar API online.
+- Separação de leitura sem service key foi considerada e adiada: enriquecimento da mídia usa cliente servidor. O usuário recebeu solicitação para configurar `SUPABASE_SERVICE_ROLE_KEY` diretamente no projeto Vercel API em Production/Preview e avisar (nunca enviar chave no chat); resposta pendente. E-mail admin também pendente.
+- Front confirmou nomes de configuração: `VITE_DATA_MODE=demo|api`, `VITE_API_URL` incluindo `/api/v1`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`. Não configurados/ativados ainda; manter demo até API healthy.
+- Guia de operação concreto criado em `docs/operations.md`, com recursos/env/limites de validação. Backend recebeu tarefa seguinte de container/guia worker e possível teste FFmpeg local sintético, pausada pela falha de deploy.
 
 Os registros abaixo preservam o contexto anterior; em caso de divergência de estado, prevalece este checkpoint e a conferência do Git/serviços.
 
