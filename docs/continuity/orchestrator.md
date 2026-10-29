@@ -1,7 +1,20 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: integração de leitura publicada e validada; aguardando usuário criar conta provisória e escolher host do worker para habilitar/verificar mídia.
+Estado: integração de leitura publicada; conta provisória autorizada; proposta de hospedagem automática pronta, aguardando escolha de provedor/custo para habilitar e validar mídia.
+
+## Atualização vigente — administrador e worker externo (29/10)
+
+- Usuário confirmou criação da conta provisória e escolheu hospedagem separada do PC, funcionando automaticamente. Depois pediu continuar após novo reset de limite.
+- Identidade `admin.pcdnades@example.com`, UUID `e141915b-3a1c-45fd-ac99-75e8556369cf`, encontrada com email confirmado. Concessão idempotente em private.administrators concluída; consulta por papel authenticated com esse subject retornou public.is_admin()=true. Nenhuma senha lida/gerada e login HTTP ainda não testado pelo orquestrador.
+- Proposta concreta criada na raiz `render.yaml` e explicada em `docs/worker-hosting.md`: Render Cron Docker, 1 CPU/2GB, Virginia, a cada minuto, segredos sync:false. Não foi provisionado nem cobrado.
+- Preços oficiais consultados: mínimo US$1/mês por cron, plano1c-2g listado US$0,00058/minuto ativo, não teto/fixo; demais recursos seguem cobrança do provedor. Alternativa GitHub Actions com runners padrão no repo público tem gratuidade atual, mas scheduler pode atrasar e não equivale a worker sempre ligado.
+- Plugin Render encontrado pelo search_plugins: disponível mas não instalado (`plugin_asdk_app_6a624c56bfe081918f7544f7d58f6faf`). Nenhum plugin instalado por conta própria; aguardar escolha antes de conectar/provisionar.
+- Backend atualizou WORKER.md/checkpoint com comparativo em origin/feat/backend166be0c; considerar integração docs após revisão. Orquestrador valida Blueprint contra schema oficial antes de solicitar decisão final do usuário.
+- Próxima ação: concluir validação/commit/push da proposta e apresentar escolha Render pago vs agendamento GitHub com maior latência. Não ativar uploads ou contratar serviço antes da escolha; depois configurar credenciais diretamente no host e exercitar mídia real.
+- Validação concluída: render.yaml carregado com PyYAML e validado com jsonschema contra https://render.com/schema/render.yaml.json, sem erros. Validadores instalados isoladamente em TEMP/pcdnades-validation, sem adicionar dependências ao projeto. git diff --check limpo. Docs backend166be0c integradas. Proposta e checkpoint seguem para main no commit desta entrega; obter SHA via Git.
+
+As pendências de conta nos blocos anteriores estão resolvidas; prevalece este bloco.
 
 ## Ponto de retomada final desta etapa (29/10)
 

@@ -1,0 +1,24 @@
+# Proposta revisável: criar este Blueprint inicia um serviço PAGO.
+# Não provisionado. Aguardar escolha do usuário e configurar os segredos no host.
+services:
+  - type: cron
+    name: pcdnades-media-worker
+    runtime: docker
+    repo: https://github.com/Lipe-meira/pcdNades
+    branch: main
+    region: virginia
+    plan: 1c-2g
+    schedule: "* * * * *"
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: SUPABASE_URL
+        value: https://kdyzxxgzvgiffluyjjxu.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: MEDIA_MAX_BYTES
+        value: "50000000"
+      - key: MEDIA_MAX_DURATION_SECONDS
+        value: "20"
