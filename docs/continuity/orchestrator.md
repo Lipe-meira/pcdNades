@@ -1,8 +1,15 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: avaliação do MVP concluída; cadastro real compatível e leitura parcial do vídeo confirmados. Implementações continuam pausadas.
+Estado: escopo de importação por links encaminhado ao backend; aguardando diagnóstico. Produção/deploys não autorizados.
 
+## Delegação vigente: importação por links (29/10)
+
+- Usuário pediu encaminhar ao backend o escopo de importação TikTok/InstagramReels/YouTubeShorts, primeiro diagnóstico por plataforma, depois máximo autorizado/testável, fontes não suportadas desabilitadas; MP4 deve ser preservado.
+- Pedido integral encaminhado ao chat backend 01a1853b-dc21-73c1-ac42-d997b4b7c794. Backend trabalha no próprio worktree/feat/backend, mantém checkpoint e commits/push convencionaisPT-BR. Front apenas inspeção/contratos nesta delegação; alteraçõesUI devem ser coordenadas com responsável.
+- Nenhuma autorização para produção, migrations remotas, deploys ou serviços pagos. Pausa anterior revogada somente para esse escopo debackend. Orquestrador não publicou nem integrou código.
+- Main F:\projetos\nadesCs2 base/push74d5ddd. Somente este checkpoint alterado/commitado localmente; pushmain adiado porque Git integration dispara deploy automático, proibido neste pedido. Branchbackend pode fazerpushconforme fluxo autorizado, sem executar deploy.
+- Próxima ação: aguardar diagnóstico/contrato do backend, revisar viabilidade e coordenar eventuais alteraçõesfrontend após alinhamento; não confundir scaffold/testes controlados com download autorizado e funcional.
 ## Avaliação solicitada após alterações do usuário (29/10)
 
 - Objetivo: avaliar progresso e pendências, sem implementar novas funcionalidades. Main/worktree F:\projetos\nadesCs2, base/push a8aa9ee; Git limpo na retomada.
