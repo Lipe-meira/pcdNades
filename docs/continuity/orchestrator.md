@@ -1,9 +1,18 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: API republicada após troca da chave confirmada pelo usuário; aguardando reteste real. Demais implementações continuam pausadas.
+Estado: diagnóstico do MP4 concluído e cópia compatível entregue para reteste; demais implementações pausadas.
 
-## Feedback vigente: falha ao iniciar cadastro do vídeo (29/10)
+## Feedback vigente: MP4 recusado na validação (29/10)
+
+- Usuário informou arquivo C:\Users\felip\Downloads\testeTapete.mp4 e banner MP4 inválido/danificado. Verificar metadados locais e estado real na API antes de concluir causa.
+- Main/worktree F:\projetos\nadesCs2, base/push7e8672e; somente checkpoint alterado localmente. Nenhuma alteração de código/schema ou conversão feita.
+- ffprobe local confirmou original HEVC/H265,yuv420p,2560x1440,19.8s,29.117.025bytes,semáudio. Rejeição por resolução>1920 antes do testecodec é coerente; arquivo não aparenta corrupção. Mensagem frontend genérica é imprecisa.
+- Banco real: mídia b65f9731-ba42-4175-bf6f-5b8daa681b97 failed/INVALID_MEDIA,attempts1, criada17:18:01UTC e finalizada17:18:09UTC. Fluxo com chave corrigida chegou à validação; cadastro pronto/playback ainda não comprovados.
+- Cópia local criada por ffmpeg libx264/crf21/yuv420p1080p/faststart, sem alterar original: C:\Users\felip\Downloads\testeTapete-compativel.mp4. Validação pela função real backend/dist/probe.js PASSOU:19.8s,1920x1080,14.610.846bytes. Não equivale ao processamento no runtime Vercel.
+- Backend avisado; nenhuma mudança código/schema. Próxima ação: usuário seleciona cópia compatível e tenta Salvar; conferir ready/granada/playback após reteste. Checkpoint commit/push desta entrega.
+
+## Feedback anterior: falha ao iniciar cadastro do vídeo (29/10)
 
 - Objetivo: resolver banner DATABASE_ERROR no teste real do usuário, preservando formulário e pausa de novas funcionalidades.
 - Branch/worktree: main em F:\projetos\nadesCs2, base e último push e80fc19; somente este checkpoint alterado localmente neste marco.
