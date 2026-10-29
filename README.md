@@ -11,7 +11,7 @@ Este documento reúne contexto de produto e coordenação. Confira `AGENTS.md` e
 
 ## Executar e acompanhar
 
-- Site publicado: https://pcdnades.vercel.app em modo API, consultando o Supabase dedicado por https://pcdnades-api.vercel.app . A biblioteca está vazia até os primeiros cadastros reais; uploads aguardam configuração do worker e conta administrativa. O modo demo continua disponível para desenvolvimento, com cadastros apenas em memória.
+- Site publicado: https://pcdnades.vercel.app em modo API, consultando o Supabase dedicado por https://pcdnades-api.vercel.app . A conta administrativa provisória foi autorizada. A validação direta de MP4 original está em revisão de deploy para liberar uploads sem outro host; confira o checkpoint antes de assumir disponibilidade. O modo demo continua disponível para desenvolvimento, com cadastros apenas em memória.
 - Frontend: `npm --prefix frontend ci`, `npm --prefix frontend run dev`. Operação e testes em `frontend/README.md`.
 - Backend: `npm --prefix backend ci`, `npm --prefix backend run build`. Contrato, variáveis e worker em `backend/README.md`.
 - Continuidade: `docs/continuity/orchestrator.md`, `frontend.md` e `backend.md`; cada responsável atualiza seu checkpoint durante o trabalho.
@@ -110,7 +110,7 @@ Favoritos, coleções de treino, marcação de origem e comandos de prática pod
 2. **Importadores de vídeo:** upload de MP4 e a intenção de baixar/guardar por link estão confirmados. Validar quais plataformas podem ser suportadas e definir processamento, armazenamento, limites e tratamento de falhas. Embed não é a solução escolhida.
 3. **Integração:** backend autorizado em TypeScript/Fastify/PostgreSQL/Supabase. Projeto dedicado `pcdNades` criado com autorização do usuário na organização Lipe-meira's Org, região São Paulo. Configuração e validação reais ainda em andamento.
 4. **Mapas e assets:** Mirage, Inferno e Ancient usam plantas vetoriais setpos.gg, com licença CC BY 4.0, atribuição e snapshot em `frontend/public/maps/`. Não são as texturas oficiais extraídas do jogo. Catálogo da API deve preservar a versão/enquadramento dessas imagens.
-5. **Publicação:** frontend e API na Vercel, leitura real validada e `main` como branch padrão. Faltam worker operacional, conta administrativa e validação de mídia real. Não inserir segredos no Git.
+5. **Publicação:** frontend e API na Vercel, leitura real validada e `main` como branch padrão. Para o MVP, a API validará MP4 H.264/yuv420p com áudio AAC ou sem áudio e guardará o original, sem reconversão nem host extra. Falta concluir o teste real do fluxo de mídia. Não inserir segredos no Git.
 
 ## Alinhamento técnico proposto
 
@@ -189,4 +189,4 @@ docs: documenta escopo e referências do projeto
 
 ## Situação atual
 
-Frontend conectado e API publicados, com mapas licenciados, Supabase dedicado provisionado e leitura real validada em 29/10. Permissões do banco testadas por papéis; testes desktop/mobile e de integração controlada passaram. Upload está desativado até configurar o worker. Conta provisória e hospedagem do worker aguardam o usuário; mídia remota e persistência de um cadastro completo entre dispositivos ainda exigem teste real. Importadores de links permanecem indisponíveis.
+Frontend conectado e API publicados, com mapas licenciados, Supabase dedicado provisionado e conta provisória autorizada. Permissões do banco, testes desktop/mobile e integração controlada passaram. O processamento inline do MP4 original evita um worker externo no MVP; testes de binário e deploy estão registrados no checkpoint. Mídia remota e persistência de um cadastro completo entre dispositivos ainda exigem teste real. Importadores de links permanecem indisponíveis.

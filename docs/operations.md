@@ -20,7 +20,8 @@ As variáveis ficam no projeto **pcdnades-api** da Vercel, em Settings → Envir
 | `FRONTEND_URL` | `https://pcdnades.vercel.app`, para resolver radares. |
 | `CORS_ORIGINS` | Lista explícita de origens autorizadas; incluir localhost apenas quando necessário. |
 | `MEDIA_MAX_DURATION_SECONDS` | `20`; API e worker devem usar limites compatíveis. |
-| `MEDIA_UPLOAD_ENABLED` | Default `false`. Habilitar como `true` somente quando o worker estiver configurado e o fluxo tiver sido exercitado. Controla capabilities e criação de novas sessões de upload. |
+| `MEDIA_UPLOAD_ENABLED` | Default `false`. Habilitar de forma coordenada após verificar o processador selecionado e acompanhar o teste real. Controla capabilities e criação de novas sessões de upload. |
+| `MEDIA_PROCESSOR_MODE` | `inline-original` no MVP: valida o MP4 compatível e preserva o original na API, sem host extra. `worker-transcode` fica como alternativa futura com worker separado. |
 
 Sem a configuração completa, a API atual retorna indisponibilidade para dados/mídia; isso não deve fazer o frontend trocar silenciosamente para dados demonstrativos. `/health` indica inicialização e configuração, mas sozinho não comprova conexão ao banco nem upload operacional.
 
@@ -32,7 +33,13 @@ O usuário deve escolher o e-mail. Criar/convidar a conta pelo Supabase Auth e i
 
 Um usuário autenticado comum não se torna administrador por fazer login. As permissões dependem da lista privada no banco. Confirmar URLs de redirecionamento/Auth, política de cadastro e login antes de disponibilizar administração.
 
-## Worker e vídeos
+## Validação do MP4 no MVP
+
+O modo `inline-original` recebe o arquivo diretamente no Storage e, na confirmação, baixa temporariamente com limite, valida metadados/codecs com ffprobe e conclui como pronto ou falho. Não há reconversão. MP4 deve conter H.264/yuv420p e AAC ou nenhum áudio, até20s/50MB. A API usa as credenciais de servidor já configuradas; não precisa `DATABASE_URL` nem scheduler neste modo. Veja `docs/media-inline-mvp.md` e o checkpoint para o estado de liberação.
+
+O tempo da Function está configurado como120s no projeto Vercel; apenas a confirmação tem timeout150s no cliente. Em caso de perda da resposta, o cliente retoma a mesma sessão sem reenviar o vídeo. GitHub Actions verifica código/binário em Linux e não consome a fila de produção.
+
+## Worker e vídeos — alternativa futura
 
 O upload envia um MP4 ao bucket privado `videos-staging`. O pedido `complete` enfileira o processamento; um worker com FFmpeg/ffprobe deve consumir a fila, validar, converter e guardar a saída. Só depois o vídeo pode ser publicado em uma lineup.
 
@@ -47,4 +54,4 @@ Não habilitar upload de produção como pronto sem confirmar worker ativo, proc
 - Esse teste não cria arquivo no Storage, não executa FFmpeg e não substitui teste HTTP com login real.
 - Aviso informativo do advisor sobre `private.administrators` sem políticas é intencional: a tabela não concede acesso cliente; somente a função privada consulta a lista.
 
-Para concluir: configurar segredo servidor e conta administrativa; testar API/autenticação; configurar worker; exercitar upload/complete/processamento/playback e consulta em dois clientes. Registrar cada etapa no checkpoint correspondente.
+Para concluir o MVP: validar binário empacotado na Vercel, liberar teste controlado com a conta administrativa já criada e exercitar upload/complete/validação/playback e consulta em dois clientes. O segredo servidor já foi configurado pelo usuário. Registrar cada etapa no checkpoint correspondente.

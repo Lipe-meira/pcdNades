@@ -4,7 +4,9 @@
 
 O usuário escolheu a opção gratuita com espera, mas a recomendação inicial de usar runners como hospedagem de processamento produtivo foi retirada após revisar os [termos de Actions](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features). A gratuidade de runners públicos não equivale a uma oferta de hospedagem do backend. Nenhum workflow produtivo foi criado ou habilitado.
 
-As opções abaixo são histórico de investigação, não decisão vigente. Está em avaliação uma alternativa mais simples para o MVP: validar MP4 já compatível na própria API Vercel e guardar o original, sem reconversão nem outro host. Isso preserva upload/armazenamento próprio; arquivos incompatíveis precisariam ser recusados com instrução clara. Viabilidade de tempo, binário e codecs ainda precisa confirmação antes de implementar/publicar.
+As opções abaixo são histórico de investigação, não decisão vigente. O MVP passou a validar MP4 já compatível na própria API Vercel e guardar o original, sem reconversão nem outro host. Isso preserva upload/armazenamento próprio; arquivos incompatíveis são recusados com instrução clara. Código e testes locais foram implementados; o checkpoint registra validação de Linux, deploy e liberação do teste real. Consulte `docs/media-inline-mvp.md` e `docs/operations.md`.
+
+O GitHub Actions foi configurado exclusivamente para CI (build, testes e binário Linux), sem segredos Supabase ou consumo da fila produtiva. Nenhum serviço Render foi contratado; `render.yaml` é uma proposta futura não ativada.
 
 Pedido do usuário em 29/10/2026: hospedar separado do PC para funcionar automaticamente. Nenhum serviço pago foi provisionado.
 

@@ -3,6 +3,17 @@
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: backend implementa validação inline do MP4 original na Vercel; frontend ajusta confirmação/timeout; envio ainda desabilitado até revisão e teste real.
 
+## Liberação para teste do usuário — parar após deploy (29/10)
+
+- Orientação explícita nova: quando existir versão utilizável, parar alterações para o usuário testar. Front/backend avisados: não iniciar melhorias ou novos recursos; apenas fechar checkpoint e aguardar.
+- Hotfix e322fe2 deu chmod no binário original; main integrou por1a1dec2. CI Linux run https://github.com/Lipe-meira/pcdNades/actions/runs/40911202329 PASSOU, incluindo trace do asset, X_OK e fixtures. Backend22testes, front30unitários/26browser confirmados no checkout do orquestrador.
+- API corrigida dpl_4UjH6kTTexrH7h5hb5yMavsHPiC9 READY com código1a1dec2; front dpl_78mUriud4yYpRtYyrMCrZBcMHQgV READY comcódigo2fa4a9c (inclui frontend a3033c8).
+- MEDIA_UPLOAD_ENABLED=true configurado pelo orquestrador para a versão de teste. Redeploy API dpl_8f87KGm2zcH1wocmnp2T1FuBY5wz mesmoSHA1a1dec2 iniciado; confirmar READY e capabilitiesenabledtrue antes de dizer liberado.
+- Usuário está logado em admin.pcdnades@example.com. Após confirmar publicação, instruir atualizar página e cadastrar MP4 H264/yuv420p comAAC/semáudio,até20s/50MB, para primeiro teste real. Upload/Storage/ffprobe no runtime/playback de um cadastro completo ainda NÃO foram exercitados pelo orquestrador; não declarar E2E aprovado.
+- Depois da publicação: pausar trabalho conforme pedido e aguardar feedback. Não disparar novos testes amplos/deploys/melhorias. Imports YouTube/TikTok seguemdesabilitados; nenhuma hospedagempaga ou workflowprod criado. Actions somenteCI.
+
+Este bloco é o estado vigente; registros abaixo preservam o histórico.
+
 ## Estado mais recente — empacotamento inline (29/10)
 
 - Código integrado/push até main2fa4a9c: backend0c1b577/f5a102d/e5e4a3f e fronta3033c8. Orquestrador confirmou build22testesbackend e build30testesfront+26browser, smokeWindows de MP4 válido/limite/codec/corrupção.
