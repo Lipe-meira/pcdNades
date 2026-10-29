@@ -3,6 +3,17 @@
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: backend implementa validação inline do MP4 original na Vercel; frontend ajusta confirmação/timeout; envio ainda desabilitado até revisão e teste real.
 
+## Estado mais recente — empacotamento inline (29/10)
+
+- Código integrado/push até main2fa4a9c: backend0c1b577/f5a102d/e5e4a3f e fronta3033c8. Orquestrador confirmou build22testesbackend e build30testesfront+26browser, smokeWindows de MP4 válido/limite/codec/corrupção.
+- API deploy dpl_FWmfVXTKvRd7ZJnzEWQE4HotERbC e front dpl_78mUriud4yYpRtYyrMCrZBcMHQgV, ambosREADY commit2fa4a9c. HTTPcapabilities200: processingModeinline-original,enabledfalse,20s/50MB. Não habilitar ainda.
+- CI Linux antigo40909575037 passou. NovoCI com verificação NFT+X_OK run40910741421 falhou: assetLinux está no trace, mas executável ORIGINAL em node_modules não tem permissão de execução após npmciignore-scripts. prepare-probe só chmod na cópiavendor; runtime agora usa require.resolve do original. Backend recebeu hotfix para chmod explícito original antesbuild. AguardarSHA.
+- HelperdeCI em .github/scripts/check-probe-trace.cjs usa NFT0.30.4,mixedModulestrue comoCLI,normalizaWindows e confirma fileListreal+acessoX_OK; não relaxar a asserção para esconderfalha. Linux precisa ficarverde novamente e Vercelredeploy incorporar correção.
+- Usuário confirmou que já entrou na administração. Após pipeline/runtimepassar, liberar teste controlado de upload e pedir cadastro de vídeo real no site; senha não é necessária ao orquestrador. Teste Storage/ffprobeVercel/playbackainda nãofeito.
+- Próxima ação concreta: receberhotfixchmod, integrar, build/test, push e aguardarCI Linux; depois deploy API e conferircaps/health antes de habilitar flag para testeautorizado. Atualizar checkpoint ao próximo marco.
+
+Este bloco prevalece sobre os registros históricos abaixo.
+
 ## Retomada vigente — preferência por gratuito (29/10)
 
 - Usuário escolheu GitHub Actions gratuito e aceita espera. Nenhum workflow produtivo foi criado, nenhum segredo de Actions cadastrado e uploads continuam desabilitados.
