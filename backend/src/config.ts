@@ -17,3 +17,8 @@ export function readUploadEnabled(env: Record<string,string|undefined> = process
  if(value==='true')return true;
  throw new Error('MEDIA_UPLOAD_ENABLED deve ser true ou false.');
 }
+export function readProcessorMode(env:Record<string,string|undefined>=process.env):'inline-original'|'worker-transcode'{
+ const value=env.MEDIA_PROCESSOR_MODE??'inline-original';
+ if(value!=='inline-original'&&value!=='worker-transcode')throw new Error('MEDIA_PROCESSOR_MODE inválido.');
+ return value;
+}

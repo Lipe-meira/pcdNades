@@ -4,6 +4,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY tsconfig.json ./
 COPY src ./src
+COPY scripts ./scripts
 RUN npm run build && npm prune --omit=dev --ignore-scripts
 
 FROM node:22-bookworm-slim
