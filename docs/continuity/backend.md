@@ -236,3 +236,9 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Limitações: somenteMP4H264/yuv420p/AACousemáudio20s/50MB; sem reconversão/importadores. ffprobe não decodeintegral; Storage/E2E e runtimefinal dependem QAcoordenado. Dockerworker permanece futuro, não necessário noinline. Nenhum segredo/conta/env alterado neste marco.
 - Estado: aguardando confirmação URLpronta pelo orquestrador, depois implementação pausada por pedido explícito para usuário testar. Próxima ação: ler checkpoint+conferirGit e aguardar relato/testes; não continuar backlog automaticamente.
 - Alteração desta tarefa somente checkpoint, commit/push docs na feat/backend; não repetidos testes pois código intacto.
+
+## Publicação confirmada; implementação pausada —29/10
+- Orquestrador confirmou API deploy dpl_8f87KGm2zcH1wocmnp2T1FuBY5wz READY,código1a1dec2; health200/configuredtrue,capabilities200/uploadtrue/inline-original/20s/50MB. Resultado reportado pelo root, não retestado aqui conforme pausa.
+- Front publicado https://pcdnades.vercel.app ; usuário assume teste real. NÃO afirmar E2Eremoto/uploadcompletovalidado.
+- Trabalho PAUSADO por pedido explícito do usuário: não iniciar alterações,deploys,testes ou backlog. Próxima ação é aguardar feedback; ao retomar ler checkpoints/conferirGit e agir somente no escopo solicitado.
+- Apenas preservação deste checkpoint neste marco, sem código/env/remoto de aplicação. Commitdocs próprio enviado na feat/backend.
