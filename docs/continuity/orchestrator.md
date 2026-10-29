@@ -9,6 +9,7 @@ Estado: escopo de importação por links encaminhado ao backend; aguardando diag
 - Pedido integral encaminhado ao chat backend 01a1853b-dc21-73c1-ac42-d997b4b7c794. Backend trabalha no próprio worktree/feat/backend, mantém checkpoint e commits/push convencionaisPT-BR. Front apenas inspeção/contratos nesta delegação; alteraçõesUI devem ser coordenadas com responsável.
 - Nenhuma autorização para produção, migrations remotas, deploys ou serviços pagos. Pausa anterior revogada somente para esse escopo debackend. Orquestrador não publicou nem integrou código.
 - Main F:\projetos\nadesCs2 base/push74d5ddd. Somente este checkpoint alterado/commitado localmente; pushmain adiado porque Git integration dispara deploy automático, proibido neste pedido. Branchbackend pode fazerpushconforme fluxo autorizado, sem executar deploy.
+- Atualização explícita do usuário: escolher intervalo início/fim e permitir vídeo final até40s, substituindo teto20s;50MBmantidos. Encaminhada ao backend no mesmochat. Corte porseleção explícita, fonte maior somente comlimitesindependentes seguros eviabilidade; sem corteautomáticosilencioso. Diagnóstico deve cobrirFFmpeg/Vercel e contrato seletorfrontend, preservando uploadsemrecorte.
 - Próxima ação: aguardar diagnóstico/contrato do backend, revisar viabilidade e coordenar eventuais alteraçõesfrontend após alinhamento; não confundir scaffold/testes controlados com download autorizado e funcional.
 ## Avaliação solicitada após alterações do usuário (29/10)
 
