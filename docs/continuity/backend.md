@@ -252,3 +252,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Root obteve postgres_logs16:31:39.333Z: permission denied for table media_assets, correlacionadoPOSTuploads503. Grantsservice_role incluemINSERTSELECTUPDATEDELETE e insertSQLASservice_role+rollback passou. authenticatedSELECTintencional.
 - Root verifica credencial/configAPI sem lerkey; não concluir qual papelREST sem evidência. Não alterarRLS/grants nem adicionarloggernovo: causa de negação já identificada no banco. Nenhuma mudança de aplicação nesta tarefa.
 - Próximo aguardar diagnóstico/config pelo orquestrador e feedback usuário; pausa geral preservada. Checkpointdocs apenas.
+
+## Causa confirmada pelo orquestrador —29/10
+- edge_logs da mesma requisiçãoRESTmedia_assets401 confirmaram tipo de apikey publicável, não secret, sem leitura do valor. Variável de serviçoAPI continha chave publicável; não era defeito de grants/RLS.
+- Usuário orientado pelo root a corrigir chave servidor no projetoAPIprod/preview; aguarda confirmação/redeploy coordenado. Nenhuma correçãoSQL/código necessária. Não repetir valores de segredo nem testar mutações neste chat.
+- Estado permanece pausado; próxima ação aguardar confirmação configuração/redeploy e usuário testar. Checkpointdocs atualizado, sem aplicação alterada.
