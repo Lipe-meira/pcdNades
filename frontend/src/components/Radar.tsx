@@ -26,6 +26,6 @@ export function Radar({ map, lineups = [], selectedId, onSelect, target, onTarge
         {target && <div className="target-marker" style={{ left: `${target.x * 100}%`, top: `${target.y * 100}%` }} aria-hidden="true"><Icon name="crosshair" size={32} /></div>}
       </div>}
     </div>
-    <p className="radar-caption"><Icon name="info" size={16} />{map.illustrative ? 'Radar ilustrativo. Não representa o mapa real; não usar para treinar.' : 'Os pontos indicam onde as granadas caem.'}</p>
+    <p className="radar-caption"><Icon name="info" size={16} /><span>{map.illustrative ? 'Radar ilustrativo. Não representa o mapa real; não usar para treinar.' : 'Os pontos desta demonstração são fictícios.'}{map.credit && <> <a href={map.credit.url} target="_blank" rel="noreferrer">{map.credit.label}</a> · <a href="/maps/ATTRIBUTION.md" target="_blank" rel="noreferrer">Créditos e licença</a>.</>}{map.note && <span className="radar-version">{map.note}</span>}</span></p>
   </>
 }
