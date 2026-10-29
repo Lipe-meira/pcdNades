@@ -1,0 +1,56 @@
+name: Verificar backend e mídia em Linux
+
+'on':
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-linux.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-linux.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-linux-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Build, testes e ffprobe empacotado
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Obter código
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Preparar Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependências fixadas
+        run: npm ci --ignore-scripts
+      - name: Compilar e empacotar ffprobe Linux
+        run: npm run build
+      - name: Executar testes
+        run: npm test
+      - name: Verificar bootstrap serverless
+        run: node scripts/bootstrap-smoke.mjs
+      - name: Preparar gerador de fixtures sintéticas
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
+      - name: Verificar MP4 válido, limite, codec e corrupção
+        run: npx --no-install tsx scripts/probe-smoke.ts
+
+# Somente CI: não acessa Supabase, não lê segredos e não consome fila produtiva.
