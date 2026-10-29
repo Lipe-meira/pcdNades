@@ -1,7 +1,7 @@
 # Checkpoint — backend
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: API pública validada por HTTP; aguardando admin e host/configuração worker para QA de mídia.
+Estado: marco links/40s preparado localmente; importadores e recorte efetivo permanecem indisponíveis. Sem deploy/migration remota autorizados.
 
 ## Objetivo e pedido atual
 
@@ -266,3 +266,20 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Root reportou arquivo testeTapete.mp4 válido:HEVC2560x1440,yuv420p,19.8s,29MB,semáudio; produção mídia b65f9731-ba42-4175-bf6f-5b8daa681b97 failedINVALID_MEDIA.
 - Rejeição atual ocorre por resolução>1920 antes de avaliar codec; não prova corrupção. UX inválido/danificado é imprecisa neste caso, mas nenhuma mudança produto autorizada agora. Root prepara cópia local1080pH264 para usuário testar.
 - Marco real: chave corrigida permitiu upload/Storage chegar à validação. Ainda NÃO comprovado ready/playback/cadastro. Pausa preservada; próxima ação aguardar reteste/feedback, sem testes ou código adicional.
+
+## Importação por links — retomada autorizada29/10
+- Pausa revogada somente neste escopo. Git limpo em196bd8a nafeat/backend. Ler fontesmain/frontend e APIs oficiais; sem editar frontend/raiz/remoto ou migrationshistóricas.
+- Rootcheckpoint mais recente confirma cadastro MP4compatível persistido e Range206 de playback, não E2Evisualmobile. Preservar fluxo uploadfuncional e dados existentes.
+- Próxima ação diagnóstico porplataforma+contrato antes mudanças, depois reconhecerURLs com segurança/adaptadoresdesabilitados e migrationInstagram nãoaplicada. Nenhum OAuth/provedoraprovado disponível ainda.
+
+## Marco links/40s local — em andamento
+- Reconhecimento seguro três plataformas, semfetch/redirect. Capabilities motivo disabled e trimmingfalse; clip explícito validado/rejeitadoCLIP_UNSUPPORTED, não entregue como recorte. Admin antesvalidação; falhas não tocam DBStorage/grenadas.
+- Configdefault/teto40 e50MB; nova003 alarga source_typeInstagram/triggerready<=40, nãoaplicada.28testes/build passaram. Smoke40s primeirofalhou por substituição textual yuv420p->yuv440p no script, corrigida; repetir antesentrega.
+- Recorte sintético1080p45s->intervalo5..45 emexecuçãosessão81912; não representa runtimeVercel. Próximo conferir evidência e documentar custos/bundle/pendências, testaruploadsemclip.
+
+## Marco implementado/testado29/10 — links40s e diagnóstico de recorte
+- 30 testes passam: URLs inválidas/SSRFsintático,admin,3disabled,concurrencysemfetchmutação,clipinválido/rejeiçãoexplícita,uploadoriginalsessão201preservado,50MBteto/40s. Build/typecheck passam; probe-smoke real40s passou após corrigir scriptpixfmt.
+- Recorte somente diagnóstico local: fonte45s1080p,intervalo5..45,reencode1thread,saída40s/23750857bytes,15.123sWindowsFFmpeg. NÃO implementado naAPI/NÃO validado Vercel. Requirementrecorte seguependente. Nenhum pacoteFFmpeg adicional instalado.
+- IMPORTS.md contém diagnóstico fontesoficiais,contrato,SSRFfuturo,propostasfonte120s(nãoativa),próximospassos e custos/infra. Fonte120s é hipótese técnica, não preferência do usuário.
+- Nova003SQL nãoaplicada alargaInstagram/trigger40s;001/002 intactas,50MBbucketinalterado. Nenhum OAuth/download/mutação/deployremoto.
+- Próximo: enviarSHAs/contrato para rootfront; revisar/applicar003/env40 apenascomautorização; seguir spikeFFmpegLinux/preview antes recorteefetivo. Primeiroadaptador dependeráappAPIoficial/aprovação/permissões, todosdisabledatéentão.
