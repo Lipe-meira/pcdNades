@@ -1,11 +1,11 @@
 # Checkpoint — orquestrador
 
-Atualizado em: 28/10/2026, America/Sao_Paulo.
+Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: em andamento; frontend demonstrativo publicado, backend ainda sem infraestrutura configurada.
 
 ## Objetivo e pedido atual
 
-Coordenar os chats de frontend/backend do pcdNades. Pedido atual: tornar obrigatório o registro de progresso e retomada em toda tarefa, para sobreviver a limites de uso e mudanças de sessão.
+Coordenar os chats de frontend/backend do pcdNades. Pedido atual: continuar após interrupção por créditos. Checkpoints lidos, Git limpo na retomada e responsáveis acionados para continuação.
 
 ## Localização do trabalho
 
@@ -27,6 +27,9 @@ Coordenar os chats de frontend/backend do pcdNades. Pedido atual: tornar obrigat
 
 ## Em andamento
 
+- Retomada 29/10: main em `d8c643b`; remoto frontend em `f124ac6`, porém branch local contém `3c220c3` com revisão/testes/SPA/20s ainda sem push no momento da inspeção. Solicitei ao front concluir/push e atualizar checkpoint antes da integração.
+- Próximo incremento atribuído ao front: adaptador HTTP, auth Supabase e fluxo remoto de mídia configuráveis, mantendo demo explícita. Sem provisionamento ou alegação de E2E real.
+- Backend remoto em `00c97cb`, código `c50a3f2`; solicitado seed canônico e revisão concreta de idempotência/lease/estados/transferência/saída do pipeline. Divergência de tipo `coordinateVersion` identificada para resolver em contrato.
 - Front conclui testes, fallback SPA/documentação e ajuste do limite para 20s; aguardar commits e relatório antes da próxima integração.
 - Backend informou ajuste de duração para teto de 20s com 8 testes passando; confirmar SHA remoto e diff ao revisar.
 - Instituir os checkpoints próprios dos dois chats e preservar as mudanças em suas branches.
