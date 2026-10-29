@@ -1,10 +1,10 @@
 # Frontend pcdNades
 
-Prévia navegável em React + TypeScript + Vite. **Este incremento é uma demonstração**, não uma biblioteca compartilhada pronta: o serviço padrão é em memória, não usa localStorage e perde alterações ao recarregar. Nenhum vídeo é enviado ou baixado. Não há credenciais nem variáveis de ambiente de produção nesta entrega.
+React + TypeScript + Vite, com modos separados de demonstração e API. A integração remota depende de ambiente configurado; testes com respostas controladas não comprovam Supabase/Storage/worker reais.
 
-## Rodar e verificar
+## Executar e verificar
 
-Requer Node 22.12+ (validado com Node 24). Execute nesta pasta:
+Node 22.12+ (validado com Node 24), nesta pasta:
 
 ```powershell
 npm ci
@@ -15,48 +15,55 @@ npm run build
 npm run test:browser
 ```
 
-O servidor de desenvolvimento usa http://127.0.0.1:5173. Os testes de navegador iniciam ou reutilizam http://127.0.0.1:5174. Se o Chromium do Playwright ainda não estiver instalado: `npx playwright install chromium`. O arquivo tests/fixtures/test-pattern.mp4 já está incluído: é um padrão audiovisual sintético de dois segundos, sem gameplay, usado apenas para testar o player. Não é um vídeo de execução de granada.
+Dev: http://127.0.0.1:5173. Playwright: portas 5174 (demo) e 5175 (API controlada, quando configurada nos testes). Instale Chromium se necessário: `npx playwright install chromium`. tests/fixtures/test-pattern.mp4 é um padrão sintético de dois segundos, sem gameplay, exclusivamente para QA.
 
-Vercel: diretório raiz `frontend`, instalação `npm ci`, build `npm run build`, saída `dist`. O arquivo vercel.json contém fallback de SPA preservando os caminhos de assets e mapas. Publicação e integração na main são responsabilidade do orquestrador.
+Vercel: root `frontend`, instalação `npm ci`, build `npm run build`, saída `dist`; fallback SPA em vercel.json. Integração/publicação da main são do orquestrador.
 
-## Fluxos disponíveis
+## Modos e configuração
 
-- Seleção de Mirage, Inferno e Ancient, filtros combinados por smoke/flashbang/molotov e lado T/CT.
-- Destinos clicáveis e lista acessível. Dois exemplos sobrepostos abrem uma lista de escolha.
-- Detalhes com instruções fictícias e player HTML de arquivo, sem iframe/embed.
-- Administração explicitamente demonstrativa, sem solicitar senha nem simular segurança real.
-- Cadastro/edição/exclusão temporários, validação, confirmação antes de excluir, foco restaurado ao fechar diálogos, alternativa de coordenadas pelo teclado.
-- MP4 local: limite de 50.000.000 bytes e 20 segundos, extensão/MIME/assinatura verificados e prévia reproduzível exigida. O browser usa URLs de objeto, liberadas ao substituir/excluir/encerrar a página.
-- Formulário de link Shorts/TikTok com aviso de indisponibilidade. Tentar importar gera PLATFORM_UNSUPPORTED; nenhum download, cadastro publicável ou substituição de vídeo anterior ocorre.
-- Estados provisórios de mídia definidos em src/domain/types.ts; o fluxo integrado previsto aparece na administração. Progresso de upload e processamento não é simulado.
+Copie .env.example para .env.local, não versionado, e reinicie o Vite. Os nomes VITE_* vão para o bundle público: nunca incluir service_role, sb_secret_, senha administrativa, token JWT de sessão ou URL assinada.
 
-## Mapas
+- `VITE_DATA_MODE=demo`: padrão quando ausente. Serviço em memória, avisos permanentes, sem credenciais, sem banco. Alterações/MP4 local desaparecem ao recarregar. Não usa localStorage para cadastros.
+- `VITE_DATA_MODE=api`: exige `VITE_API_URL` incluindo `/api/v1`, `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` (sb_publishable_). URLs HTTPS, exceto localhost/loopback em desenvolvimento. Configuração incompleta exibe erro, sem criar serviço demo.
+- Não há fallback de API para fixtures quando a consulta falha ou retorna vazia. Erros exibem tentativa de reconexão; nenhum cadastro demonstrativo é misturado ao banco.
+- Auth Supabase guarda apenas a sessão pelo mecanismo do SDK (persistSession/autoRefreshToken). Nenhuma senha é salva pelo app e nenhum cadastro de granada fica no localStorage. O backend valida administrador em toda escrita; o frontend não usa claims editáveis como autorização.
+- A origem do frontend precisa constar no CORS da API. A configuração do SDK/API não provisiona banco, bucket, worker, usuário ou permissão.
 
-As plantas de Mirage/Inferno/Ancient são desenhos vetoriais dos mapas CS2 feitos por setpos.gg, licenciados explicitamente sob CC BY 4.0. Não são o esquema fictício inicial nem texturas oficiais extraídas. Crédito visível junto ao radar e documentação completa em public/maps/ATTRIBUTION.md. Snapshot ba5f793883e1ce13076dd6919aa1601099c247cf, publicado em 23/10/2026. Podem não refletir alterações recentes do jogo.
+## Recursos
 
-As imagens são preservadas integralmente em 1024×1024. Cada mapa possui radarVersion para evitar trocar enquadramento sem rever pontos. Coordenadas x/y de 0 a 1, origem superior esquerda. O clique mede o próprio elemento img sem padding ou letterbox. Os destinos demonstrativos foram reposicionados para as novas artes e continuam fictícios, não validados para treinar.
+Seleção de mapa, filtros tipo/lado, radar proporcional, lista acessível e escolha de destinos sobrepostos. Detalhes com player nativo e instruções. Administração com login real no modo API, CRUD, confirmação de exclusão, validação e coordenadas por clique/toque ou teclado. No demo, acesso administrativo é identificado e não coleta senha.
 
-## Estrutura e próxima integração
+MP4: teto confirmado de 20 segundos. No demo, 50.000.000 bytes; no modo API, GET capabilities determina tamanho e duração (nunca acima de 20s). Cliente verifica extensão/MIME/contêiner e prévia/duração; servidor/worker são autoridade sobre o conteúdo.
 
-- `src/domain`: modelo provisório e funções de filtros/coordenadas/validação.
-- `src/services/lineupService.ts`: interface assíncrona e implementação temporária. Trocar por adaptador de API, sem mover persistência para o navegador.
-- `src/features/library`: consulta, seleção e detalhes de vídeo.
-- `src/features/admin`: CRUD e formulário de mídia.
-- `src/components`: radar, diálogo nativo e ícones.
-- `tests`: domínio/serviço e fluxos de navegador desktop/mobile.
+Fluxo API: criar sessão de upload assinada → uploadToSignedUrl no bucket videos-staging → complete → consultar tarefa a cada 3s → publicar com videoId somente ready. Sem porcentagens inventadas. Aguardar no formulário; em queued/processing é possível pausar acompanhamento e retomar com Salvar. Pausar não cancela a tarefa no servidor. Falha não publica nem substitui vídeo anterior. Uma tarefa pronta é reaproveitada se a publicação falhar e o usuário tentar novamente na mesma janela. Fechar a janela perde esse vínculo local; limpeza de mídias órfãs é responsabilidade do backend.
 
-O contrato v1 foi fornecido pelo orquestrador e lido no README do backend. **O cliente HTTP e a autenticação ainda não estão ligados à interface.** Esta entrega prioriza a primeira prévia publicada. Não existe configuração por env que transforme a demo em API automaticamente; um próximo incremento deve implementar e testar esse adaptador explicitamente.
+Playback é solicitado somente para mídia ligada a granada publicada, com renovação antes de expiresAt. Nova URL preserva posição/estado de reprodução quando possível. Erro oferece nova tentativa; nunca iframe/embed. A prévia do arquivo escolhido continua local até publicação e não solicita playback de mídia não publicada.
 
-Pontos de integração confirmados:
+Shorts/TikTok: disponibilidade pelo GET capabilities. Importadores inicialmente desabilitados; UI informa indisponibilidade e oferece MP4 explicitamente. Não há download de vídeo no navegador nem fallback para embed.
 
-- Base `/api/v1`; mapas em `{data:[{id,name,radar:{imageUrl,width,height,coordinateVersion}}]}`.
-- Granadas paginadas em GET `/grenades`; escrita autenticada via Supabase Bearer e `videoId` somente quando ready.
-- GET `/media/capabilities` é a autoridade para limites e disponibilidade. O teto confirmado pelo usuário é 20 segundos; não assumir os defaults antigos de 180 segundos.
-- POST `/media/uploads` cria sessão assinada Supabase; upload do arquivo, POST `/media/:id/complete`, acompanhamento a cada 3s até ready/failed. Não inventar porcentagem.
-- Playback é obtido em GET `/media/:id/playback` apenas depois de vincular mídia pronta à granada publicada; renovar URLs quando expirarem.
-- Importadores continuam desabilitados. Manter vídeo anterior até substituição bem-sucedida. Enviar MP4 é alternativa explícita.
-- Alinhar IDs/caminhos/coordinateVersion dos mapas com o seed do backend antes de usar cadastros reais. As fontes/versões estão em public/maps.
+## Mapas canônicos
 
-## Limites da verificação
+Plantas vetoriais de mapas CS2 por setpos.gg, licença explícita de artwork CC BY 4.0. Não são texturas oficiais extraídas. Crédito visível e documentação em public/maps/ATTRIBUTION.md. Snapshot ba5f793883e1ce13076dd6919aa1601099c247cf (23/10/2026), possível defasagem frente ao jogo.
 
-Build/typecheck, testes unitários e testes Chromium em desktop/mobile validam esta demo. A integração real ainda depende de projeto Supabase, migrations, administrador, API, storage e worker configurados pelo backend; persistência entre dispositivos, permissões do servidor, upload real e reprodução Safari/iOS não foram validados. Erros/carregamento da consulta estão implementados, mas a demo não depende de rede para os cadastros.
+| id      | imagem na origem do frontend | tamanho   | coordinateVersion      |
+| ------- | ---------------------------- | --------- | ---------------------- |
+| mirage  | /maps/mirage.svg             | 1024×1024 | setpos-mirage-ba5f793  |
+| inferno | /maps/inferno.svg            | 1024×1024 | setpos-inferno-ba5f793 |
+| ancient | /maps/ancient.svg            | 1024×1024 | setpos-ancient-ba5f793 |
+
+Sem corte/giro; target x/y [0,1] relativo a toda a imagem, origem superior esquerda e y para baixo. A versão é string. Coordenar o seed com backend; mudar enquadramento exige migrar ou rever destinos. No modo API os mapas vêm do servidor; ausência de seed não é substituída pelo catálogo demo. Pontos de demo são fictícios e reposicionados para essas artes, sem lineups de execução inventadas.
+
+## Estrutura
+
+- src/domain: modelo de tela, filtros/coordenadas/validação e agendamento de renovação.
+- src/services: runtime/config, cliente HTTP, contrato/adaptador v1, porta auth e SDK Supabase isolado em chunk carregado somente no modo API. O serviço demo continua separado.
+- src/features/library: consulta/seleção/player com renovação.
+- src/features/admin: autenticação, CRUD, formulário/mídia/acompanhamento.
+- src/components: radar/diálogo nativo/ícones.
+- tests: domínio/serviços e fluxos de browser. Respostas controladas sempre identificadas como tais.
+
+## Limites de validação
+
+A primeira demo teve 10 testes unitários, 12 Playwright desktop/mobile, build/typecheck e audit zero. O incremento API adiciona testes de contrato/pipeline/configuração; a verificação é registrada no checkpoint e em docs/verification.md. Nenhum resultado controlado deve ser chamado de E2E real.
+
+Dependências de validação real: API saudável e CORS, projeto/usuário administrador Supabase, permissões/RLS, bucket privado, worker FFmpeg, upload completo e reprodução/renovação em navegadores reais, persistência entre dispositivos. Não presumir que o deploy publicado usa esta versão ou modo API até confirmação do orquestrador.

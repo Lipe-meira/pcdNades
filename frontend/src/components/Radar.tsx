@@ -11,6 +11,7 @@ type Props = {
   onSelect?: (ids: string[]) => void;
   target?: Target | null;
   onTargetChange?: (point: Target) => void;
+  demo?: boolean;
 };
 
 export function Radar({
@@ -20,6 +21,7 @@ export function Radar({
   onSelect,
   target,
   onTargetChange,
+  demo = true,
 }: Props) {
   const [broken, setBroken] = useState<string | null>(null);
   const groups = new Map<string, Lineup[]>();
@@ -104,7 +106,9 @@ export function Radar({
         <span>
           {map.illustrative
             ? "Radar ilustrativo. Não representa o mapa real; não usar para treinar."
-            : "Os pontos desta demonstração são fictícios."}
+            : demo
+              ? "Os pontos desta demonstração são fictícios."
+              : "Os pontos indicam o destino das granadas cadastradas."}
           {map.credit && (
             <>
               {" "}

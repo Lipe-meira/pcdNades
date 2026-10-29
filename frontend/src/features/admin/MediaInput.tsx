@@ -1,18 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import type { MediaDraft, Video } from "../../domain/types";
 import { validateDuration, validateMp4 } from "../../domain/validation";
+import type { LineupService } from "../../services/lineupService";
+import type { MediaCapabilities } from "../../services/apiContracts";
 import { Icon } from "../../components/Icon";
 import { VideoPlayer } from "../library/VideoPlayer";
 
 export function MediaInput({
   value,
   existing,
+  service,
+  capabilities,
   onChange,
   onFileReady,
   error,
 }: {
   value: MediaDraft;
   existing?: Video;
+  service: LineupService;
+  capabilities: MediaCapabilities;
   onChange: (value: MediaDraft) => void;
   onFileReady: (ready: boolean) => void;
   error?: string;
@@ -22,6 +28,7 @@ export function MediaInput({
   const [checking, setChecking] = useState(false);
   const sequence = useRef(0);
   const file = value.kind === "file" ? value.file : null;
+  const demo = service.mode === "demo";
   useEffect(() => {
     if (!file) {
       setPreview(undefined);
@@ -78,20 +85,28 @@ export function MediaInput({
       </div>
       {value.kind === "keep" && existing && (
         <>
-          <VideoPlayer video={existing} />
+          <VideoPlayer key={existing.id} video={existing} service={service} />
           <p className="field-hint">
-            O vídeo atual será mantido. Arquivos locais só existem nesta sessão.
+            {demo
+              ? "O vídeo atual será mantido. Arquivos locais só existem nesta sessão."
+              : "O vídeo atual é mantido até a substituição ser processada e o cadastro salvo com sucesso."}
           </p>
         </>
       )}
       {value.kind === "file" && (
         <>
+          {!capabilities.upload.enabled && (
+            <p className="inline-notice" role="status">
+              O servidor não está aceitando novos arquivos neste momento.
+            </p>
+          )}
           <label className="file-drop">
             Arquivo MP4
             <input
               type="file"
               accept="video/mp4,.mp4"
-              aria-describedby="file-hint media-error"
+              disabled={!capabilities.upload.enabled}
+              aria-describedby="file-hint"
               onChange={async (event) => {
                 const nextFile = event.currentTarget.files?.[0] ?? null;
                 const current = ++sequence.current;
@@ -101,7 +116,10 @@ export function MediaInput({
                 if (!nextFile) return;
                 setChecking(true);
                 try {
-                  const message = await validateMp4(nextFile);
+                  const message = await validateMp4(
+                    nextFile,
+                    capabilities.upload.maxBytes,
+                  );
                   if (current !== sequence.current) return;
                   if (message) setFileError(message);
                   else onChange({ kind: "file", file: nextFile });
@@ -117,8 +135,12 @@ export function MediaInput({
             />
           </label>
           <p className="field-hint" id="file-hint">
-            Até 50 MB e 20 segundos nesta demonstração. O arquivo será aberto
-            localmente; nenhum upload ou armazenamento no servidor é feito.
+            Até{" "}
+            {(capabilities.upload.maxBytes / 1_000_000).toLocaleString("pt-BR")}{" "}
+            MB e {capabilities.upload.maxDurationSeconds} segundos
+            {demo
+              ? " nesta demonstração. O arquivo será aberto localmente; nenhum upload ou armazenamento no servidor é feito."
+              : ". O arquivo será enviado para validação antes da publicação."}
           </p>
           {checking && (
             <p role="status" className="field-hint">
@@ -135,12 +157,18 @@ export function MediaInput({
                 preload="metadata"
                 aria-label="Prévia do MP4 selecionado"
                 onLoadedMetadata={(event) => {
-                  const valid = validateDuration(event.currentTarget.duration);
+                  const duration = event.currentTarget.duration;
+                  const valid = validateDuration(
+                    duration,
+                    capabilities.upload.maxDurationSeconds,
+                  );
                   setFileError(
                     valid
                       ? undefined
-                      : "Escolha um vídeo com duração de até 20 segundos.",
+                      : `Escolha um vídeo com duração de até ${capabilities.upload.maxDurationSeconds} segundos.`,
                   );
+                  if (valid && file)
+                    onChange({ kind: "file", file, durationSeconds: duration });
                   onFileReady(valid);
                 }}
                 onError={() => {
@@ -151,7 +179,7 @@ export function MediaInput({
                 }}
               />
               <p className="field-hint">
-                Prévia local · confirme o vídeo antes de salvar.
+                Prévia local · confirme o vídeo antes de enviar.
               </p>
             </>
           )}
@@ -168,18 +196,19 @@ export function MediaInput({
                 onChange({ kind: "link", sourceUrl: event.target.value })
               }
               placeholder="https://www.youtube.com/shorts/…"
-              aria-describedby="link-hint media-error"
+              aria-describedby="link-hint"
             />
           </label>
           <p className="inline-notice" id="link-hint">
-            Importação indisponível nesta prévia. O link não será baixado e a
-            granada não será publicada. Para testar a reprodução agora, escolha
-            Enviar MP4.
+            {!capabilities.importers.youtube.enabled &&
+            !capabilities.importers.tiktok.enabled
+              ? `Importação indisponível ${demo ? "nesta prévia" : "no servidor"}. O link não será baixado e a granada não será publicada. Escolha Enviar MP4 quando disponível.`
+              : `Importadores: YouTube ${capabilities.importers.youtube.enabled ? "disponível" : "indisponível"}; TikTok ${capabilities.importers.tiktok.enabled ? "disponível" : "indisponível"}. A importação precisa concluir antes da publicação.`}
           </p>
         </>
       )}
       {(fileError || error) && (
-        <p id="media-error" className="field-error" role="alert">
+        <p className="field-error" role="alert">
           {fileError || error}
         </p>
       )}
