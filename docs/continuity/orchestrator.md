@@ -3,6 +3,12 @@
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: PAUSADO a pedido do usuário, com versão publicada e upload liberado para seu teste. Aguardar feedback antes de novas alterações.
 
+## Feedback: aviso de upload desabilitado (29/10)
+
+- Usuário enviou screenshot do formulário mostrando servidor sem aceitar arquivos. Diagnóstico somente leitura: API pública /health200configuredtrue e /media/capabilities200enabledtrue/inline-original/20s/50MB no momento da inspeção.
+- Código frontend carrega capabilities com a biblioteca e mantém em estado; aba aberta antes da liberação pode preservar enabledfalse. Screenshot também não mostra orientação inline nova. Hipótese principal: estado da aba anterior à liberação; não afirmar causa definitivamente sem reteste.
+- Próxima ação orientada: fechar formulário, atualizar página comCtrl+F5 e reabrir cadastro (ou Atualizarbiblioteca). Se persistir, conferir URL usada e resposta de capabilities na sessão. Nenhuma mudança de produto feita; pausa para teste preservada.
+
 ## Liberação para teste do usuário — parar após deploy (29/10)
 
 - Orientação explícita nova: quando existir versão utilizável, parar alterações para o usuário testar. Front/backend avisados: não iniciar melhorias ou novos recursos; apenas fechar checkpoint e aguardar.
