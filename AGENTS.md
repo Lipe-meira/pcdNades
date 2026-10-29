@@ -35,6 +35,7 @@ Ao retomar, confira `git status`, branch e commits antes de executar o próximo 
 - Versione e faça push dos checkpoints junto das entregas. Se a tarefa não terminou, use commit de documentação/checkpoint para trabalho documentado; não declare código incompleto como pronto.
 - Mudanças locais não commitadas devem ser listadas com precisão no checkpoint. Preserve o trabalho parcial e informe se ainda existe apenas localmente.
 - Front/backend fazem push nas próprias branches; integração e publicação são coordenadas pelo orquestrador. Sem force push.
+- Main só recebe integração e push quando a pendência inteira estiver concluída e testada. Agrupe código, documentação e checkpoints na entrega; não faça pushes isolados na main durante execução ou para atualizações de status. Checkpoints do orquestrador ficam commitados localmente até a entrega seguinte. Evite deploys manuais repetidos; push de branch ainda pode gerar preview enquanto a configuração automática não for ajustada.
 - Ao reportar entrega, inclua o caminho do checkpoint, commit, verificações e pendências.
 - Nunca chame testes simulados de integração real. Upload/Storage/Supabase e importadores precisam de validação no ambiente correspondente.
 

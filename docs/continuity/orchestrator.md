@@ -1,3 +1,9 @@
+## Política de entrega confirmada pelo usuário — 29/10
+
+- Main só deve receber integração/push quando pendência inteira finalizada e testada;agruparcódigo/docs/checkpoints.Nãoenviarepushmainparastatusduranteexecução. Front/backavisados,AGENTS.md atualizado.
+- Base45d0693,mainF:\projetos\nadesCs2;somenteAGENTS/checkpointalteradosnestaetapa,commitlocalSEMpush para respeitarregra. Próximopush juntoentregaconcluída.
+- Previewsautomáticosdasbranches AINDA NÃO desativados;essa configuraçãoépróximaação para impedir consumomesmocommainagrupada. Nenhumdeploy/mutaçãoremotaconfigfeitoaqui.
+
 ## Identidade integrada e pronta para push — 29/10
 
 - Fronta2db01aintegrado porf8edab7. Logoemoteoriginalhashidêntico;Barlow+BarlowCondensedlocais/OFL,grafiteazulareia. Catálogo/radaresPNGusuáriopreservados. Build39unitáriosrootPASSARAM;30/30browserrootPASSARAMapósintegração. Screenshotsreaisbranchfrontend desktop/mobile inspecionados;usamdemocatálogoantigodobranch,nãoprodução.
