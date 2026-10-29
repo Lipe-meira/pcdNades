@@ -257,3 +257,7 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - edge_logs da mesma requisiçãoRESTmedia_assets401 confirmaram tipo de apikey publicável, não secret, sem leitura do valor. Variável de serviçoAPI continha chave publicável; não era defeito de grants/RLS.
 - Usuário orientado pelo root a corrigir chave servidor no projetoAPIprod/preview; aguarda confirmação/redeploy coordenado. Nenhuma correçãoSQL/código necessária. Não repetir valores de segredo nem testar mutações neste chat.
 - Estado permanece pausado; próxima ação aguardar confirmação configuração/redeploy e usuário testar. Checkpointdocs atualizado, sem aplicação alterada.
+
+## Configuração corrigida e redeploy —29/10
+- Root reportou confirmação do usuário e deployAPIdpl_3DmM6JhuKosvGjTR8HvYDDKwXmP7 READY/mainfc3d07e; health200configuredtrue/caps200enabledtrue.
+- Escrita real com chave nova NÃO comprovada, aguarda reteste do usuário. Nenhuma mudança código/schema ou teste adicional por este chat. Pausa mantida; próxima ação aguardar feedback.
