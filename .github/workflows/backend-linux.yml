@@ -46,6 +46,10 @@ jobs:
         run: npm test
       - name: Verificar bootstrap serverless
         run: node scripts/bootstrap-smoke.mjs
+      - name: Preparar verificador de empacotamento isolado
+        run: npm install --prefix "$RUNNER_TEMP/pcdnades-nft" --ignore-scripts --no-audit --no-fund @vercel/nft@0.30.4
+      - name: Confirmar executável Linux no trace da função
+        run: node ../.github/scripts/check-probe-trace.cjs "$RUNNER_TEMP/pcdnades-nft"
       - name: Preparar gerador de fixtures sintéticas
         run: |
           sudo apt-get update
