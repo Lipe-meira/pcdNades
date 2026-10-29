@@ -11,7 +11,7 @@ Este documento reúne contexto de produto e coordenação. Confira `AGENTS.md` e
 
 ## Executar e acompanhar
 
-- Demonstração publicada: https://pcdnades.vercel.app ; os cadastros demonstrativos ficam em memória e ainda não comprovam persistência compartilhada.
+- Site publicado: https://pcdnades.vercel.app em modo API, consultando o Supabase dedicado por https://pcdnades-api.vercel.app . A biblioteca está vazia até os primeiros cadastros reais; uploads aguardam configuração do worker e conta administrativa. O modo demo continua disponível para desenvolvimento, com cadastros apenas em memória.
 - Frontend: `npm --prefix frontend ci`, `npm --prefix frontend run dev`. Operação e testes em `frontend/README.md`.
 - Backend: `npm --prefix backend ci`, `npm --prefix backend run build`. Contrato, variáveis e worker em `backend/README.md`.
 - Continuidade: `docs/continuity/orchestrator.md`, `frontend.md` e `backend.md`; cada responsável atualiza seu checkpoint durante o trabalho.
@@ -110,7 +110,7 @@ Favoritos, coleções de treino, marcação de origem e comandos de prática pod
 2. **Importadores de vídeo:** upload de MP4 e a intenção de baixar/guardar por link estão confirmados. Validar quais plataformas podem ser suportadas e definir processamento, armazenamento, limites e tratamento de falhas. Embed não é a solução escolhida.
 3. **Integração:** backend autorizado em TypeScript/Fastify/PostgreSQL/Supabase. Projeto dedicado `pcdNades` criado com autorização do usuário na organização Lipe-meira's Org, região São Paulo. Configuração e validação reais ainda em andamento.
 4. **Mapas e assets:** Mirage, Inferno e Ancient usam plantas vetoriais setpos.gg, com licença CC BY 4.0, atribuição e snapshot em `frontend/public/maps/`. Não são as texturas oficiais extraídas do jogo. Catálogo da API deve preservar a versão/enquadramento dessas imagens.
-5. **Publicação:** frontend demonstrativo na Vercel e `main` como branch padrão. Faltam ambiente operacional da API/worker, conta administrativa e integração com mídia real. Não inserir segredos no Git.
+5. **Publicação:** frontend e API na Vercel, leitura real validada e `main` como branch padrão. Faltam worker operacional, conta administrativa e validação de mídia real. Não inserir segredos no Git.
 
 ## Alinhamento técnico proposto
 
@@ -189,4 +189,4 @@ docs: documenta escopo e referências do projeto
 
 ## Situação atual
 
-Frontend demonstrativo implementado, com mapas licenciados e testes desktop/mobile; backend inicial implementado com API, migrations, upload e worker. Retomada em 29/10: integrar entregas, preparar Supabase dedicado e conectar a interface à API. Upload remoto, processamento FFmpeg e persistência entre dispositivos ainda exigem validação no ambiente real. Importadores de links permanecem indisponíveis.
+Frontend conectado e API publicados, com mapas licenciados, Supabase dedicado provisionado e leitura real validada em 29/10. Permissões do banco testadas por papéis; testes desktop/mobile e de integração controlada passaram. Upload está desativado até configurar o worker. Conta provisória e hospedagem do worker aguardam o usuário; mídia remota e persistência de um cadastro completo entre dispositivos ainda exigem teste real. Importadores de links permanecem indisponíveis.

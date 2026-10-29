@@ -20,6 +20,7 @@ As variáveis ficam no projeto **pcdnades-api** da Vercel, em Settings → Envir
 | `FRONTEND_URL` | `https://pcdnades.vercel.app`, para resolver radares. |
 | `CORS_ORIGINS` | Lista explícita de origens autorizadas; incluir localhost apenas quando necessário. |
 | `MEDIA_MAX_DURATION_SECONDS` | `20`; API e worker devem usar limites compatíveis. |
+| `MEDIA_UPLOAD_ENABLED` | Default `false`. Habilitar como `true` somente quando o worker estiver configurado e o fluxo tiver sido exercitado. Controla capabilities e criação de novas sessões de upload. |
 
 Sem a configuração completa, a API atual retorna indisponibilidade para dados/mídia; isso não deve fazer o frontend trocar silenciosamente para dados demonstrativos. `/health` indica inicialização e configuração, mas sozinho não comprova conexão ao banco nem upload operacional.
 

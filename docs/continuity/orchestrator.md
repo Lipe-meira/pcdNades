@@ -1,7 +1,20 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: em andamento; frontend revisado publicado; Supabase provisionado/testado por papéis; API em preparação de deploy e mídia ainda dependente de segredo/worker.
+Estado: integração de leitura publicada e validada; aguardando usuário criar conta provisória e escolher host do worker para habilitar/verificar mídia.
+
+## Ponto de retomada final desta etapa (29/10)
+
+- Front **modo API em produção**, https://pcdnades.vercel.app ; deploy `dpl_9X4hRBTME3q9x8aZh3hLRd9DWKgr` READY, commit `1b2416c`. UI real verificada por IAB: badge modoAPI, catálogo real Ancient/Inferno/Mirage, biblioteca vazia correta, seleção Mirage e página de login email/senha. Nenhum login/mutação feito pelo orquestrador.
+- API https://pcdnades-api.vercel.app ; deploy `dpl_UsZg7vPrtsUcVcYcxZECEHcoS1gi` READY, commit `e6731f5`. Upload **desabilitado** operacionalmente, confirmado HTTP200 capabilities enabled:false/20s/50MB; importadoresfalse. Leituras reais já validadas200 e escrita sem login401; CORS prod204.
+- Código front final `28085f8` (fetch binding e reenvio/retomada), checkpoint `018af5a`; backend flag operacional `8978692`. Integrados na main e push confirmado.
+- Orquestrador executou build/typecheck front,20 testes unitários/controlados e22 Playwright (12demo+10API controlada), todos passaram; backend build e16 testes passaram. Testes browserAPI usam transporte/Auth/Storage controlados, não upload remoto real. Banco real foi validado separadamente por SQL rollback.
+- Front VITE_DATA_MODE=api; URLAPI incluindo/api/v1, URLSupabase e chave publicável configuradas. Nenhum segredo servidor em env frontend atuais.
+- Esperando **duas respostas/ações do usuário**: criar Auth provisório `admin.pcdnades@example.com` com senha privada no painel/Auto Confirm; decidir worker no PC Docker ou host contínuo. Perguntas assíncronas foram enviadas. Não há autorização administrativa concedida ainda e não iniciar host persistente antes da escolha.
+- Ao retomar: conferir Git e respostas; consultar auth.users só para localizar o usuário informado e autorizar seu UUID em private.administrators. Não gerar/ler senha. Configurar worker com segredos fora de Git conforme `backend/WORKER.md`, então habilitar MEDIA_UPLOAD_ENABLED=true na API e fazer novo deploy **somente após teste operacional**. Validar upload→fila→FFmpeg→Storage→publicação→playback em dois clientes; importadores continuam não funcionais.
+- Checkpoints dos chats foram solicitados para registrar a publicação/QA; podem ter novos commits docs próprios ainda não integrados. Não há tarefa de produto adicional em andamento no orquestrador além dessas dependências.
+
+Os blocos seguintes são histórico; este é o ponto de retomada vigente.
 
 ## Estado atual após correções e configuração (29/10)
 
