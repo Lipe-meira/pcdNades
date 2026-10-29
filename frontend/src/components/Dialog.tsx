@@ -39,6 +39,7 @@ export function Dialog({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       onCancel={(event) => {
+        if (event.target !== event.currentTarget) return;
         event.preventDefault();
         if (!busy) onClose();
       }}

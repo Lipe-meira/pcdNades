@@ -32,3 +32,14 @@ API real, autenticação/permissões, capabilities, transferência e processamen
 - Screenshots API desktop/formulário e mobile/login revisados com view_image. Foram gerados por respostas controladas de Auth/API, sem credenciais reais.
 - Consulta HTTP real, somente leitura, feita em https://pcdnades-api.vercel.app: /health, /api/v1/maps, /api/v1/grenades?limit=100&offset=0 e /api/v1/media/capabilities retornaram200. CORS retornou https://pcdnades.vercel.app para essa Origin. Três mapas canônicos, biblioteca vazia, upload anunciado disponível,20s e importadoresfalse. Isso não valida login/upload/worker reais nem o frontend publicado.
 - Pendências reais: conta admin autorizada, upload/Storage/worker hospedado, processamento e reprodução assinada/renovação entre dispositivos e Safari/iOS. Publicação e ativação VITE_DATA_MODE=api pertencem ao orquestrador.
+
+## 29/10 — Validação inline do MP4 original
+
+- Contrato alinhado com orquestrador: capabilities.upload.processingMode opcional inline-original|worker-transcode. Ausência não presume modo. Inline exibe MP4 H.264/yuv420p e AAC ou sem áudio, limites de capabilities (teto20s), sem conversão automática.
+- ApiClient aceita timeout por requisição e preserva REQUEST_TIMEOUT. Default30s permanece; somente POST /media/:id/complete usa150s, tanto no primeiro envio quanto na retomada. Testes conferem os prazos efetivamente usados sem esperar150s.
+- Depois de enviar bytes, progresso local confirming retém mediaId e informa espera de confirmação. Em timeout/perda de conexão, novo Salvar consulta GET media; awaiting_upload repete apenas complete no mesmo ID; queued/processing acompanha; ready publica; failed orienta nova escolha.409 reconcilia por GET. Nenhum reupload automático de arquivo já enviado.
+- Mensagens locais seguras para UNSUPPORTED_CODEC,INVALID_MEDIA,DURATION_EXCEEDED,FILE_TOO_LARGE e PROCESSING_TIMEOUT; stack/caminho do servidor não é mostrado. Falha de validação preserva registro anterior e troca de arquivo reinicia sessão.
+- Bug exposto pela regressão: o evento cancel do seletor de arquivo propagava até Dialog e fechava o formulário ao selecionar o mesmo arquivo. Dialog agora trata apenas cancel disparado pelo próprio diálogo; Escape continua coberto pela suite anterior. O teste escolhe arquivo reexportado e comprova segunda sessão após erro de codec.
+- Resultado: npm test30/30; npm run build/typecheck; npm run test:browser26/26 (demo e API controlada em PC/celular); npm auditzero; git diff --check sem erros.
+- As regressões de prazo, erros e retomada falharam antes da implementação; cenários browser inline de perda da confirmação e erro/novo arquivo passaram após correções. Testes são controlados e não validam ffprobe/Vercel/Storage reais.
+- Sem publicação, segredos, workflow ou alteração de backend. Flag upload continua dependente da liberação e QA remoto coordenados pelo orquestrador.

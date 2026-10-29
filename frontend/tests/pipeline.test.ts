@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ApiClient } from "../src/services/apiClient";
 import { createApiService } from "../src/services/apiService";
 import type { LineupDraft } from "../src/domain/types";
@@ -40,6 +40,135 @@ const remote = {
 };
 
 describe("pipeline remoto com respostas controladas (não é E2E real)", () => {
+  it("reconcilia complete concorrente 409 consultando a mesma mídia", async () => {
+    let reads = 0,
+      complete = 0,
+      published = 0;
+    const client = new ApiClient(
+      "/api/v1",
+      async () => "test-token",
+      async (url, init) => {
+        if (String(url).endsWith("/media/media-id"))
+          return Response.json({
+            data: {
+              ...remoteVideo,
+              status: ++reads === 1 ? "awaiting_upload" : "ready",
+            },
+          });
+        if (String(url).endsWith("/complete")) {
+          complete++;
+          return Response.json(
+            {
+              error: {
+                code: "MEDIA_STATE_CONFLICT",
+                message: "MEDIA_STATE_CONFLICT",
+              },
+            },
+            { status: 409 },
+          );
+        }
+        if (String(url).endsWith("/grenades") && init?.method === "POST") {
+          published++;
+          return Response.json({ data: remote });
+        }
+        throw new Error("Unexpected");
+      },
+    );
+    await createApiService(client, async () => {
+      throw new Error("Não reenviar arquivo");
+    }).createLineup(draft, { mediaId: "media-id" });
+    expect(reads).toBe(2);
+    expect(complete).toBe(1);
+    expect(published).toBe(1);
+  });
+  it("retoma timeout de complete em awaiting_upload sem reenviar bytes", async () => {
+    let uploads = 0,
+      completes = 0,
+      submitted = 0,
+      uploaded = 0;
+    let resumeId: string | undefined;
+    let currentTimeout = 0;
+    let deadline = new AbortController();
+    const deadlines: { path: string; timeout: number }[] = [];
+    const timer = vi.spyOn(AbortSignal, "timeout").mockImplementation((ms) => {
+      currentTimeout = ms;
+      deadline = new AbortController();
+      return deadline.signal;
+    });
+    const client = new ApiClient(
+      "https://api.example/api/v1",
+      async () => "test-token",
+      async (url, init) => {
+        const path = new URL(String(url)).pathname.replace("/api/v1", "");
+        deadlines.push({ path, timeout: currentTimeout });
+        if (path === "/media/capabilities")
+          return Response.json({ data: caps });
+        if (path === "/media/uploads") {
+          uploads++;
+          return Response.json({
+            data: {
+              mediaId: "media-id",
+              upload: {
+                protocol: "supabase-signed",
+                url: "https://project.supabase.co/storage/signed",
+                path: "media-id/source.mp4",
+                token: "test-signed-token",
+              },
+              limits: caps.upload,
+            },
+          });
+        }
+        if (path === "/media/media-id/complete") {
+          completes++;
+          if (completes === 1) {
+            deadline.abort(new DOMException("Expired", "TimeoutError"));
+            throw deadline.signal.reason;
+          }
+          return Response.json({ data: remoteVideo });
+        }
+        if (path === "/media/media-id")
+          return Response.json({
+            data: { ...remoteVideo, status: "awaiting_upload" },
+          });
+        if (path === "/grenades" && init?.method === "POST") {
+          submitted++;
+          return Response.json({ data: remote });
+        }
+        throw new Error(`Unexpected ${path}`);
+      },
+    );
+    const service = createApiService(client, async () => {
+      uploaded++;
+    });
+    try {
+      await expect(
+        service.createLineup(draft, {
+          onProgress: (value) => {
+            if (value.status === "confirming") resumeId = value.mediaId;
+          },
+        }),
+      ).rejects.toMatchObject({ code: "REQUEST_TIMEOUT" });
+      expect(resumeId).toBe("media-id");
+      expect(submitted).toBe(0);
+      await service.createLineup(draft, { mediaId: resumeId });
+      expect(uploads).toBe(1);
+      expect(uploaded).toBe(1);
+      expect(completes).toBe(2);
+      expect(submitted).toBe(1);
+      expect(
+        deadlines
+          .filter((call) => call.path.endsWith("/complete"))
+          .every((call) => call.timeout === 150_000),
+      ).toBe(true);
+      expect(
+        deadlines
+          .filter((call) => !call.path.endsWith("/complete"))
+          .every((call) => call.timeout === 30_000),
+      ).toBe(true);
+    } finally {
+      timer.mockRestore();
+    }
+  });
   it("publica somente depois do upload, complete e status ready", async () => {
     const steps: string[] = [];
     let poll = 0;

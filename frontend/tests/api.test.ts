@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { readRuntimeConfig } from "../src/services/runtimeConfig";
 import { ApiClient, ApiError } from "../src/services/apiClient";
+import { checkCapabilities } from "../src/services/apiContracts";
 
 describe("seleção explícita de ambiente", () => {
   it("abre demo sem configuração e exige env completa para api", () => {
@@ -53,6 +54,81 @@ describe("seleção explícita de ambiente", () => {
 });
 
 describe("cliente API v1", () => {
+  it.each([
+    ["UNSUPPORTED_CODEC", "H.264"],
+    ["INVALID_MEDIA", "MP4"],
+    ["DURATION_EXCEEDED", "20 segundos"],
+    ["FILE_TOO_LARGE", "tamanho"],
+    ["PROCESSING_TIMEOUT", "validação"],
+  ])("orienta erro %s sem exibir stack do servidor", async (code, expected) => {
+    const client = new ApiClient(
+      "/api/v1",
+      async () => "test-token",
+      async () =>
+        Response.json(
+          { error: { code, message: "STACK_PRIVATE_PATH_MUST_NOT_BE_SHOWN" } },
+          { status: 422 },
+        ),
+    );
+    const error = await client
+      .request("/media/id/complete", { method: "POST" })
+      .catch((error) => error as Error);
+    if (!(error instanceof Error)) throw new Error("Esperado erro de mídia");
+    expect(error.message).toContain(expected);
+    expect(error.message).not.toContain("STACK_PRIVATE_PATH");
+  });
+  it("mantém timeout padrão de 30s e permite 150s na confirmação de mídia", async () => {
+    const timeouts: number[] = [];
+    const timer = vi.spyOn(AbortSignal, "timeout").mockImplementation((ms) => {
+      timeouts.push(ms);
+      return new AbortController().signal;
+    });
+    try {
+      const client = new ApiClient(
+        "/api/v1",
+        async () => "test-token",
+        async () => Response.json({ data: {} }),
+      );
+      await client.request("/maps");
+      await client.request("/media/id/complete", {
+        method: "POST",
+        authenticated: true,
+        timeoutMs: 150_000,
+      });
+      await client.request("/grenades/id", {
+        method: "PATCH",
+        authenticated: true,
+      });
+      expect(timeouts).toEqual([30_000, 150_000, 30_000]);
+    } finally {
+      timer.mockRestore();
+    }
+  });
+  it("preserva REQUEST_TIMEOUT mesmo com prazo estendido", async () => {
+    const expired = new AbortController();
+    expired.abort(new DOMException("Expired", "TimeoutError"));
+    const timer = vi
+      .spyOn(AbortSignal, "timeout")
+      .mockReturnValue(expired.signal);
+    try {
+      const client = new ApiClient(
+        "/api/v1",
+        async () => "test-token",
+        async (_url, options) => {
+          throw options?.signal?.reason;
+        },
+      );
+      await expect(
+        client.request("/media/id/complete", {
+          method: "POST",
+          authenticated: true,
+          timeoutMs: 150_000,
+        }),
+      ).rejects.toMatchObject({ code: "REQUEST_TIMEOUT" });
+    } finally {
+      timer.mockRestore();
+    }
+  });
   it("codifica filtros e adiciona token só nas chamadas autenticadas", async () => {
     const requests: { url: string; init?: RequestInit }[] = [];
     const client = new ApiClient(
@@ -134,5 +210,36 @@ describe("cliente API v1", () => {
     expect(called).toBe(false);
     await expect(client.request("/maps")).rejects.toBeInstanceOf(ApiError);
     expect(called).toBe(true);
+  });
+});
+
+describe("modo de processamento opcional", () => {
+  const caps = {
+    upload: { enabled: true, maxBytes: 50_000_000, maxDurationSeconds: 20 },
+    importers: { youtube: { enabled: false }, tiktok: { enabled: false } },
+  };
+  it("preserva ausência sem presumir worker ou inline", () => {
+    expect(checkCapabilities(caps).upload.processingMode).toBeUndefined();
+    expect(
+      checkCapabilities({
+        ...caps,
+        upload: { ...caps.upload, processingMode: "inline-original" },
+      }).upload.processingMode,
+    ).toBe("inline-original");
+    expect(
+      checkCapabilities({
+        ...caps,
+        upload: { ...caps.upload, processingMode: "worker-transcode" },
+      }).upload.processingMode,
+    ).toBe("worker-transcode");
+    expect(() =>
+      checkCapabilities({
+        ...caps,
+        upload: {
+          ...caps.upload,
+          processingMode: "unknown" as "inline-original",
+        },
+      }),
+    ).toThrow("contrato");
   });
 });
