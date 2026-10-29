@@ -1,3 +1,8 @@
+## Atualização autorizada: recorte e noventa segundos
+
+- Backend repassou autorização explícita do usuário em seu chat para implementar pendências e commit/push: seleção início/fim com prévia e recorte efetivo, final até90s,50MBmantidos. Substitui40s anterior. Front/back acionados em seus próprios chats/worktrees; contratos devem convergir. Importadores sem autorização continuamdisabled.
+- Nenhum deploy/produção/migrationremota/hostpago autorizado. Main checkpoints locais sempush por autodeploy; conferir gitstatus e branches antesretomar. Próximaação: obter contrato90 e progressobackend/frontend, revisar evidênciaLinux/FFmpeg e testes antes integração.
+
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
