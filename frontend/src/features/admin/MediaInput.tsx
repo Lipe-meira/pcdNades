@@ -95,6 +95,13 @@ export function MediaInput({
       )}
       {value.kind === "file" && (
         <>
+          {capabilities.upload.processingMode === "inline-original" && (
+            <p className="inline-notice">
+              Envie o MP4 original com vídeo H.264 (yuv420p), áudio AAC ou sem
+              áudio. Não há conversão automática; o servidor valida o arquivo
+              antes da publicação.
+            </p>
+          )}
           {!capabilities.upload.enabled && (
             <p className="inline-notice" role="status">
               O servidor não está aceitando novos arquivos neste momento.

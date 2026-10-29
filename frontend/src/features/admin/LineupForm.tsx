@@ -122,7 +122,9 @@ export function LineupForm({
               setProgress(value);
               if (
                 value.mediaId &&
-                ["queued", "processing", "ready"].includes(value.status)
+                ["confirming", "queued", "processing", "ready"].includes(
+                  value.status,
+                )
               )
                 setResumeMediaId(value.mediaId);
               if (
@@ -140,7 +142,15 @@ export function LineupForm({
           } catch (error) {
             if (
               error instanceof ApiError &&
-              ["UPLOAD_FAILED", "UPLOAD_INCOMPLETE"].includes(error.code)
+              [
+                "UPLOAD_FAILED",
+                "UPLOAD_INCOMPLETE",
+                "UNSUPPORTED_CODEC",
+                "INVALID_MEDIA",
+                "DURATION_EXCEEDED",
+                "FILE_TOO_LARGE",
+                "PROCESSING_TIMEOUT",
+              ].includes(error.code)
             )
               setResumeMediaId(undefined);
             setFailure(
@@ -342,17 +352,23 @@ export function LineupForm({
               {progress
                 ? progress.status === "publishing"
                   ? "Publicando granada…"
-                  : videoLabels[progress.status]
+                  : progress.status === "confirming"
+                    ? "Confirmando envio…"
+                    : videoLabels[progress.status]
                 : "Preparando envio…"}
             </strong>
             <p>
               {progress?.status === "queued"
                 ? "O vídeo está na fila. Aguarde o processamento."
                 : progress?.status === "processing"
-                  ? "O servidor está validando e preparando o vídeo."
-                  : progress?.status === "uploading"
-                    ? "Enviando o arquivo. Mantenha esta janela aberta."
-                    : "A granada só será publicada depois que o vídeo estiver pronto."}
+                  ? capabilities.upload.processingMode === "inline-original"
+                    ? "O servidor está validando o MP4 original, sem conversão automática."
+                    : "O servidor está validando e preparando o vídeo."
+                  : progress?.status === "confirming"
+                    ? "Aguardando a confirmação do servidor. A validação pode levar até dois minutos; o arquivo já foi enviado."
+                    : progress?.status === "uploading"
+                      ? "Enviando o arquivo. Mantenha esta janela aberta."
+                      : "A granada só será publicada depois que o vídeo estiver pronto."}
             </p>
             {(progress?.status === "queued" ||
               progress?.status === "processing") && (
@@ -365,6 +381,12 @@ export function LineupForm({
               </button>
             )}
           </div>
+        )}
+        {!busy && resumeMediaId && (
+          <p className="field-hint">
+            O arquivo já foi enviado. Salvar novamente retoma a confirmação ou o
+            acompanhamento, sem reenviar o vídeo.
+          </p>
         )}
         <div className="form-actions">
           <span>

@@ -15,6 +15,16 @@ const messages: Record<string, string> = {
   INVALID_REFERENCE:
     "O mapa ou vídeo não está disponível. Atualize e tente novamente.",
   VALIDATION_ERROR: "Revise os dados informados antes de continuar.",
+  UNSUPPORTED_CODEC:
+    "Formato incompatível. Exporte em MP4 com vídeo H.264 (yuv420p), áudio AAC ou sem áudio. Não há conversão automática neste modo.",
+  INVALID_MEDIA:
+    "O arquivo MP4 é inválido ou está danificado. Exporte novamente com vídeo H.264 (yuv420p), áudio AAC ou sem áudio.",
+  DURATION_EXCEEDED:
+    "O vídeo excede a duração permitida. Exporte um trecho dentro do limite do formulário, de até 20 segundos.",
+  FILE_TOO_LARGE:
+    "O arquivo excede o tamanho permitido. Exporte um MP4 menor, respeitando o limite indicado no formulário.",
+  PROCESSING_TIMEOUT:
+    "A validação do vídeo ultrapassou o tempo disponível. O cadastro anterior foi preservado. Selecione o arquivo novamente e tente outra vez.",
 };
 
 export class ApiError extends Error {
@@ -39,6 +49,7 @@ type Options = {
   query?: Record<string, string | number | undefined>;
   authenticated?: boolean;
   signal?: AbortSignal;
+  timeoutMs?: number;
 };
 export class ApiClient {
   constructor(
@@ -62,7 +73,7 @@ export class ApiClient {
       if (value !== undefined) query.set(key, String(value));
     });
     const url = `${this.baseUrl.replace(/\/$/, "")}${path}${query.size ? `?${query}` : ""}`;
-    const timeout = AbortSignal.timeout(30_000);
+    const timeout = AbortSignal.timeout(options.timeoutMs ?? 30_000);
     let response: Response;
     try {
       response = await this.fetcher(url, {

@@ -26,7 +26,12 @@ export type ApiMap = {
 };
 export type ApiGrenade = Omit<Lineup, "video"> & { video: MediaRecord | null };
 export type MediaCapabilities = {
-  upload: { enabled: boolean; maxBytes: number; maxDurationSeconds: number };
+  upload: {
+    enabled: boolean;
+    maxBytes: number;
+    maxDurationSeconds: number;
+    processingMode?: "inline-original" | "worker-transcode";
+  };
   importers: { youtube: { enabled: boolean }; tiktok: { enabled: boolean } };
 };
 export type UploadSession = {
@@ -41,7 +46,7 @@ export type UploadSession = {
 };
 export type Playback = { url: string; expiresAt?: string; mimeType: string };
 export type Progress = {
-  status: VideoStatus | "publishing";
+  status: VideoStatus | "publishing" | "confirming";
   mediaId?: string;
   stage?: string | null;
 };
@@ -142,6 +147,13 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
   };
 }
 export function checkCapabilities(value: MediaCapabilities): MediaCapabilities {
+  if (
+    value?.upload?.processingMode !== undefined &&
+    !["inline-original", "worker-transcode"].includes(
+      value.upload.processingMode,
+    )
+  )
+    contractError();
   if (
     !value ||
     typeof value.upload?.enabled !== "boolean" ||

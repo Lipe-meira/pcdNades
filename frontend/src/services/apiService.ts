@@ -115,6 +115,8 @@ export function createApiService(
         `/media/${encodeURIComponent(options.mediaId)}`,
         { authenticated: true, signal: options.signal },
       );
+      if (checkMedia(media.data).status === "awaiting_upload")
+        return confirmMedia(options.mediaId, options);
       return poll(media.data, options);
     }
     const caps = await capabilities(options.signal);
@@ -196,11 +198,38 @@ export function createApiService(
     options.signal?.throwIfAborted();
     await upload(session, draft.media.file);
     options.signal?.throwIfAborted();
-    const completed = await client.request<Envelope<MediaRecord>>(
-      `/media/${encodeURIComponent(session.mediaId)}/complete`,
-      { method: "POST", authenticated: true, signal: options.signal },
-    );
-    return poll(completed.data, options);
+    return confirmMedia(session.mediaId, options);
+  }
+  async function confirmMedia(
+    mediaId: string,
+    options: SaveOptions,
+  ): Promise<string> {
+    options.signal?.throwIfAborted();
+    options.onProgress?.({ status: "confirming", mediaId });
+    let media: MediaRecord;
+    try {
+      media = (
+        await client.request<Envelope<MediaRecord>>(
+          `/media/${encodeURIComponent(mediaId)}/complete`,
+          {
+            method: "POST",
+            authenticated: true,
+            signal: options.signal,
+            timeoutMs: 150_000,
+          },
+        )
+      ).data;
+    } catch (error) {
+      if (!(error instanceof ApiError) || error.status !== 409) throw error;
+      media = (
+        await client.request<Envelope<MediaRecord>>(
+          `/media/${encodeURIComponent(mediaId)}`,
+          { authenticated: true, signal: options.signal },
+        )
+      ).data;
+      if (checkMedia(media).status === "awaiting_upload") throw error;
+    }
+    return poll(media, options);
   }
   async function save(
     draft: LineupDraft,

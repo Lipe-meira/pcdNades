@@ -1,75 +1,66 @@
 # Checkpoint — frontend
 
-Atualizado em: 29/10/2026 08:10, America/Sao_Paulo
-Estado: produção em modo API confirmada pelo orquestrador; aguardando próxima tarefa e decisões de admin/worker
+Atualizado em: 29/10/2026 13:15, America/Sao_Paulo
+Estado: incremento de validação inline concluído e testado controladamente; envio para revisão do orquestrador
 
 ## Objetivo e pedido atual
 
-Integração opcional React/TypeScript com API real autorizada: HTTP por env, Supabase auth de admin, capabilities, upload assinado/complete/polling, publicação somente ready e playback renovável. Entrega de código e QA concluída nesta etapa; não provisionar serviços nem alterar main/deploy. Conta admin/worker/validação remota completa permanecem pendentes.
+Adaptar frontend ao MVP sem novo host de worker: backend valida MP4 original inline com ffprobe, sem transcodificar. Frontend deve exibir formatos via capabilities, dar150s somente ao complete, manter30s nos outros endpoints, preservar retomada sem reupload e orientar erros. Não publicar, habilitar upload, criar serviços/segredos/workflows nem alterar backend/main.
 
 ## Localização do trabalho
 
-- Worktree gerenciado: C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2.
-- Branch feat/frontend. Base histórica e889e3b. Código API fa80ccf; correção e QA final 28085f8.
-- Push do código confirmado em origin/feat/frontend até 28085f8. Git limpo antes de atualizar este checkpoint; somente este arquivo fica pendente para o commit/push de fechamento. O SHA do commit que contém este checkpoint deve ser obtido no Git, sem autorreferência.
-- AGENTS/guia/template/checkpoint do orquestrador foram lidos da main remota (d8c643b e evolução); sem merge/troca de branch neste worktree. Somente frontend/ e este arquivo foram alterados.
+- Worktree: C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2; branch feat/frontend.
+- Base desta tarefa: e65ea71, remoto já enviado. Código anterior API: fa80ccf e28085f8; checkpoints018af5a/5104c55/e65ea71.
+- Este incremento será commitado com o checkpoint e enviado na operação de fechamento; obter SHA pelo Git e conferir origin/feat/frontend antes da entrega.
+- Arquivos deste incremento: frontend/src/services/{apiClient,apiContracts,apiService}.ts, frontend/src/components/Dialog.tsx, frontend/src/features/admin/{LineupForm,MediaInput}.tsx, frontend/tests/{api,pipeline}.test.ts, frontend/tests/browser/api.spec.ts, frontend/README.md, frontend/docs/verification.md e este arquivo. Nenhuma mudança parcial fora desses arquivos; depois do commit/push conferir status limpo.
+- AGENTS e checkpoint do orquestrador da main remota foram relidos. Nenhum merge/troca de branch ou alteração em checkout alheio.
 
 ## Feito
 
-- Primeira prévia concluída/enviada: 056eea8 biblioteca, e3b66c0 plantas reais licenciadas,953a2ad CRUDdemo,3c220c3 QA/20s/SPA/docs; checkpoints f124ac6 e8890331. Orquestrador integrou/publicou a prévia; não presumir modo atual do deploy sem conferir.
-- fa80ccf: runtime explícito demo/API, cliente HTTP com token/timeouts/abort/erros PT-BR, adapter paginado e capabilities, Supabase auth/sessão/logout, mídia assinada/complete/poll3s/publicação ready e player com renovação.
-- 28085f8: corrigida invocação do fetch nativo no browser (this indevido); teste de consulta API vazio/503/retry passou após fix. Limpeza explícita de ID de retomada em UPLOAD_FAILED,UPLOAD_INCOMPLETE,awaiting_upload; troca de mídia também limpa.
-- QA comprovou upload falha→segunda sessão no próximo Salvar; queued/processing pausado→retomado sem terceiro upload; publicação apenas após ready;403 preserva registro e não anuncia sucesso. Player faz renovação agendada e preserva posição.
-- 20 testes unitários/contrato/serviço e22 browser passaram (12 demo+10API controlada, desktop/mobile). Build/typecheck e npm audit zero; diff check sem erros.
-- Screenshots API/controlados revisados com view_image (desktop formulário/mobile login). Cópias persistidas fora do Git em C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/api-login-controlado.png e api-form-controlado.png.
-- Leitura REAL HTTP somente leitura em https://pcdnades-api.vercel.app: /health200 configured:true; /api/v1/maps200 com três mapas absolutos/versionados; /api/v1/grenades?limit=100&offset=0 200 vazio; capabilities200 uploadtrue,50000000bytes,20s,importersfalse. CORS conferido para Origin https://pcdnades.vercel.app. Não houve login ou mutação remota por este chat.
-- Relatório enviado ao orquestrador com 28085f8 e pendências; ele possui autorização para revisão/merge/deploy. Frontend não publicou nem alterou main.
+- RequestOptions.timeoutMs implementado com default30000. Apenas POST /media/:id/complete passa150000; demais métodos mantêm30s. REQUEST_TIMEOUT e cancelamento permanecem preservados.
+- capabilities.upload.processingMode opcional aceita inline-original|worker-transcode; ausência não presume modo. UI inline orienta MP4 original, vídeo H.264/yuv420p, áudio AAC ou sem áudio, sem conversão automática. Limites seguem servidor/teto20s.
+- Após bytes enviados, progresso LOCAL confirming informa Confirmando envio sem fingir status do servidor e retém mediaId. Timeout/perda da confirmação permite novo Salvar consultar mídia e repetir apenas complete no mesmoID se awaiting_upload; queued/processing acompanha; ready publica; failed orienta nova escolha.409 reconcilia por GET, sem reupload automático.
+- Erros UNSUPPORTED_CODEC,INVALID_MEDIA,DURATION_EXCEEDED,FILE_TOO_LARGE,PROCESSING_TIMEOUT têm mensagens locais compreensíveis e seguras. Stack/caminhos do servidor não aparecem. Validação falha preserva cadastro anterior; nova seleção reinicia sessão.
+- Corrigido cancel propagado pelo seletor de arquivo que fechava Dialog ao reselecionar mesmo arquivo. Agora somente cancel do próprio diálogo fecha a janela; Escape antigo continua testado.
+- Testes:30unitários/serviço e26browser verdes, build/typecheck verdes, audit zero, diff check sem erros. Nenhuma validação ffprobe/Storage/Vercel real nesta tarefa.
 
-## Produção confirmada pelo orquestrador — 29/10/2026
-
-- Fonte das observações abaixo: mensagem do orquestrador, que verificou pelo navegador integrado real; este chat não repetiu o teste nem fez login/mutações.
-- Frontend produção: https://pcdnades.vercel.app, modo API, deploy dpl_9X4hRBTME3q9x8aZh3hLRd9DWKgr, commit1b2416c.
-- Observado por ele: indicação Biblioteca compartilhada · modo API; catálogo Ancient/Inferno/Mirage; zero granadas com mensagem correta; troca para Mirage funcionando; Administração abrindo e-mail/senha reais sem simulação.
-- API: deploy final do commit e6731f5, flag do worker/upload desabilitada enquanto não há worker ativo. Não anunciar upload pronto.
-- Não iniciar novos recursos. Admin temporário e hospedagem do worker dependem das respostas do usuário. Worktree disponível para a próxima tarefa coordenada.
 ## Em andamento
 
-- Somente registro e envio deste checkpoint. Nenhuma alteração de produto em andamento.
-- Aguardar próxima tarefa coordenada; sem login/mutação real ou início de novos recursos.
+- Commit/push deste incremento e comunicação ao orquestrador. Implementação e QA controlado encerrados; sem novos recursos em andamento.
 
 ## Retomar daqui
 
-1. Ler AGENTS/guia/checkpoints, conferir git status/branch/log/remotos; não sobrescrever alterações ou trocar branch. Npm nesta pasta frontend/ ou --prefix frontend.
-2. Conferir se este checkpoint foi enviado além de 28085f8; comunicar SHA real do checkpoint na entrega.
-3. Consultar o próximo pedido do usuário/orquestrador. Modo API publicado e consulta visual já foram confirmados por ele acima; não iniciar novos recursos ou repetir verificações sem necessidade.
-4. Somente com nova coordenação e ambiente pronto, validar login administrador/403. Não solicitar senha em chat nem criar credenciais.
-5. Quando worker/Storage estiverem prontos, validar upload MP4 real de até20s,complete/processamento/publicação/playback/seek/renovação e consulta em outro dispositivo. Registrar resultado separado dos testes controlados. Importadores continuam desabilitados.
+1. Ler AGENTS/guia/checkpoints; conferir Git/branch/log/remotos e este arquivo. Usar npm na pasta frontend/ ou --prefix frontend.
+2. Conferir SHA/push deste incremento em feat/frontend e status limpo; informar ao orquestrador. Não assumir que ele integrou/publicou.
+3. Aguardar revisão e backend com contrato inline implementado. Não habilitar flag de upload ou publicar por este chat.
+4. Com ambiente e autorização coordenados, validar MP4 real compatível/incompatível,20s/50MB,timeout/retomada,publicação/playback/consulta em outro dispositivo. Separar esses resultados dos controlados. Importadores permanecem desabilitados.
 
 ## Decisões e contrato
 
-- VITE_DATA_MODE=demo|api. Demo é padrão sem modo explícito; API incompleta mostra erro, sem fallback. API vazia/503 nunca usa fixtures.
-- Env confirmadas ao orquestrador: VITE_API_URL=https://pcdnades-api.vercel.app/api/v1, VITE_SUPABASE_URL=https://kdyzxxgzvgiffluyjjxu.supabase.co e VITE_SUPABASE_PUBLISHABLE_KEY sb_publishable_. Nenhuma chave real ou .env existe neste worktree. Nunca inserir service role/secret/senha/URL assinada no Git ou checkpoint.
-- SDK Supabase2.118.0 exato em chunk dinâmico; localStorage apenas para sessão gerida pelo SDK, jamais fonte de granadas. Backend valida admin em toda escrita. Não confiar em user_metadata para autorização.
-- API /api/v1,data/pagination; POST/PATCH videoId ready. UploadSession mediaId/upload(protocol,url,path,token)/limits; bucket videos-staging. Assinatura de upload validada contra origin Supabase configurada. GET media admin; playback público só vinculado a granada publicada; expiresAt renovado.
-- Capabilities é autoridade dos limites, teto do usuário20s nunca relaxado. Importadores inicialmente false/PLATFORM_UNSUPPORTED. Sem download no navegador ou embed substituto.
-- Retomada de job existe na mesma janela do formulário; parar acompanhamento não cancela job. Fechar janela perde vínculo local; limpeza de mídia órfã é do backend. Não publicar se processamento falhar nem substituir vídeo anterior antes do sucesso.
-- Mapas: mirage/inferno/ancient; /maps/{id}.svg na origem FRONTEND,1024×1024, coordinateVersion setpos-{id}-ba5f793. Artwork CC BY4.0 snapshot ba5f793883e1ce13076dd6919aa1601099c247cf de23/10, integral/sem giro. Crédito/limitações em public/maps/ATTRIBUTION.md. Fixtures fictícias somente demo.
+- processingMode é opcional e está dentro de capabilities.upload: inline-original|worker-transcode. NÃO validationMode.
+- Inline usa original MP4 H.264/yuv420p com áudio AAC ou sem áudio. Sem conversão automática. Max20s/tamanho por capabilities.
+- Complete200 contém media ready/failed;202 indica operação em curso. Backend claim muda awaiting_upload→queued→processing com lease antes de validar; prazo servidor120s, cliente150s apenas para complete.
+- ID retido depois de upload bem-sucedido e localconfirming. Awaiting_upload nessa retomada pode repetir complete idempotente;409 consulta GET para reconciliação. UPLOAD_FAILED/UPLOAD_INCOMPLETE reais limpam vínculo e permitem nova sessão. Failed terminal e troca de arquivo também limpam.
+- Demais contratos permanecem /api/v1,data/pagination,Bearer Supabase,videoIdready para publicar,playback só publicado com URL renovável. Sem fallback API→demo ou embed.
+- Runtime VITE_DATA_MODE demo|api; VITE_API_URL incluindo/api/v1,VITE_SUPABASE_URL,VITE_SUPABASE_PUBLISHABLE_KEY sb_publishable_. Nenhuma credencial real/.env neste worktree.
+- Catálogo mirage/inferno/ancient,/maps/{id}.svg,1024×1024,coordinateVersion setpos-{id}-ba5f793; artworkCCBY4.0 com atribuição e snapshot documentados.
 
 ## Validação
 
-- Executado final: npm test20/20; npm run build (typecheck incluso); npm run test:browser22/22; npm audit zero; git diff --check sem erros. QA de API controla Auth/HTTP/Storage e usa vídeo sintético via HTTP local com Range. Não chamar de E2E real.
-- O primeiro mock de vídeo não suportava Range e impedia seek: fixture passou ao HTTP local do Vite. Teste de renovação usa contador de base para não confundir dupla montagem StrictMode com renovação real; aguarda timer/novaURL e confere posição.
-- Verificação real executada: GET públicos/cors descritos acima. Pendente: auth/admin/RLS real pelo frontend, upload/storage/worker, playback assinado e persistência entre dispositivos/Safari/iOS. Capabilities anunciar upload não comprova worker hospedado.
-- Relatório detalhado: frontend/docs/verification.md; configuração/arquitetura: frontend/README.md; testes API: frontend/tests/browser/api.spec.ts.
+- Executado nesta tarefa: npm test30/30; npm run build(inclui typecheck); npm run test:browser26/26; npm auditzero; git diff --check sem erros.
+- Testes configuram sinais de prazo em vez de esperar150s; verificam150s somente complete e30s nos demais. Timeout de complete é simulado com AbortSignal expirado, depois GETawaiting/retrycomplete sem reupload.409 concorrente reconciliado por GETready também coberto.
+- Browser PC/celular: perda de confirmação→mesma sessão/sem bytes extras; codec inválido→orientação sem stack; seleção de arquivo reexportado→segunda sessão; cancel de filepicker não fecha formulário. Suites anteriores demo/API/auth/permissões/renovação continuam verdes.
+- Falhas observadas antes dos fixes: prazo permanecia30s; cinco códigos eram genéricos; confirming/resume ausente; cancel do filepicker fechava form. Corrigidas e cobertas por regressões.
+- Não executado: qualquer login/mutação/upload remoto ou ffprobe/Vercel real. Não chamar resultados controlados de E2E real.
 
 ## Bloqueios e dependências
 
-- Nenhum bloqueio de código para revisão/integração. Não publicar por este chat.
-- Conta admin será criada pelo usuário e autorizada pelo orquestrador. Worker ainda sem host, conforme última mensagem. Sem validação ponta a ponta de mídia.
-- Orquestrador gerencia Supabase/schema/env/deploy, backend gerencia serviço/worker. Não editar worktree ou checkpoint alheio.
+- Nenhum bloqueio de frontend para revisão. Backend inline e eventual flag MEDIA_UPLOAD_ENABLED=false até QA são responsabilidade dele/orquestrador.
+- Usuário escolheu GitHub gratuito, mas orquestrador corrigiu a proposta: Actions não será host produtivo. Nenhum workflow criado por este chat. Worker Docker fica futuro.
+- Conta administrativa e execução real dependem da coordenação; não solicitar senha em texto ou inserir segredos.
 
-## Histórico curto
+## Entrega e histórico curto
 
-- 28/10: primeira prévia e plantas licenciadas, até3c220c3.
-- 29/10:8890331 checkpoint/push da prévia;fa80ccf adapter+auth+pipeline e checkpoint.
-- 29/10:28085f8 correçãofetch+retomada e22testesbrowser enviados; leituraHTTPreal200 confirmada; fechamento deste checkpoint para revisão do orquestrador.
+- Primeira prévia:056eea8,e3b66c0,953a2ad,3c220c3. API:fa80ccf,28085f8; checkpoints018af5a,5104c55,e65ea71.
+- Produção anterior atribuída ao orquestrador: https://pcdnades.vercel.app modoAPI commit1b2416c, consulta dos3mapas/vazio/login vistos por IAB; APIe6731f5 comuploadfalse. Não revalidada nesta tarefa.
+-29/10: contrato inline/timeout/retomada alinhado explicitamente,30unit+26browser passaram. Incremento e este checkpoint aguardam commit/push de fechamento.

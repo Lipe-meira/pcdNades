@@ -2,6 +2,7 @@
 import { expect, test } from "@playwright/test";
 import type { Page, Route } from "@playwright/test";
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 
 function reply(route: Route, options: Parameters<Route["fulfill"]>[0]) {
   return route.fulfill({
@@ -51,6 +52,9 @@ async function setup(
     upload?: boolean;
     forbidden?: boolean;
     failFirstUpload?: boolean;
+    inlineOriginal?: boolean;
+    loseFirstComplete?: boolean;
+    failFirstValidation?: boolean;
   } = {},
 ) {
   const state = {
@@ -64,6 +68,7 @@ async function setup(
     uploadSessions: 0,
     uploadAttempts: 0,
     allowLongLease: false,
+    completes: 0,
   };
   const b64 = (value: unknown) =>
     Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -156,6 +161,9 @@ async function setup(
               enabled: options.upload !== false,
               maxBytes: 50_000_000,
               maxDurationSeconds: 20,
+              ...(options.inlineOriginal
+                ? { processingMode: "inline-original" }
+                : {}),
             },
             importers: {
               youtube: { enabled: false },
@@ -214,7 +222,25 @@ async function setup(
     }
     if (path.endsWith("/complete")) {
       expect(state.signedUpload).toBe(true);
+      state.completes++;
+      if (options.loseFirstComplete && state.completes === 1)
+        return route.abort("failed");
+      if (options.failFirstValidation && state.completes === 1)
+        return reply(route, {
+          json: {
+            data: {
+              ...media,
+              status: "failed",
+              error: {
+                code: "UNSUPPORTED_CODEC",
+                message: "STACK_PRIVATE_PATH_MUST_NOT_BE_SHOWN",
+              },
+            },
+          },
+        });
       state.queued = true;
+      if (options.inlineOriginal)
+        return reply(route, { json: { data: media } });
       return reply(route, {
         status: 202,
         json: { data: { ...media, status: "queued" } },
@@ -222,6 +248,10 @@ async function setup(
     }
     if (path === `/media/${mediaId}`) {
       state.polls++;
+      if (options.loseFirstComplete && state.completes === 1)
+        return reply(route, {
+          json: { data: { ...media, status: "awaiting_upload" } },
+        });
       return reply(route, {
         json: {
           data: {
@@ -233,7 +263,8 @@ async function setup(
     }
     if (path === "/grenades" && method === "POST") {
       expect(state.queued).toBe(true);
-      expect(state.polls).toBeGreaterThanOrEqual(2);
+      if (!options.inlineOriginal)
+        expect(state.polls).toBeGreaterThanOrEqual(2);
       const body = route.request().postDataJSON();
       expect(body.videoId).toBe(mediaId);
       state.published = [{ ...grenade, ...body }];
@@ -466,4 +497,112 @@ test("403 não remove a granada nem afirma sucesso", async ({ page }) => {
   await expect(
     page.getByText("Granada excluída da biblioteca.", { exact: true }),
   ).toHaveCount(0);
+});
+
+async function fillInlineForm(page: Page) {
+  await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  await page
+    .getByLabel("Título", { exact: true })
+    .fill("Validação inline controlada");
+  await page
+    .getByLabel("Instruções", { exact: true })
+    .fill("Instruções de QA, sem execução real.");
+  await page.getByLabel("Coordenada X (%)").fill("40");
+  await page.getByLabel("Coordenada Y (%)").fill("60");
+  await expect(
+    page.getByText("Envie o MP4 original", { exact: false }),
+  ).toContainText("H.264");
+  await expect(
+    page.getByText("Envie o MP4 original", { exact: false }),
+  ).toContainText("sem áudio");
+  await page
+    .getByLabel("Arquivo MP4", { exact: true })
+    .setInputFiles(samplePath);
+  await expect
+    .poll(() =>
+      page
+        .getByLabel("Prévia do MP4 selecionado")
+        .evaluate((video: HTMLVideoElement) => video.readyState),
+    )
+    .toBeGreaterThanOrEqual(1);
+}
+
+test("inline: perda da confirmação retoma awaiting_upload sem reenviar o arquivo", async ({
+  page,
+}) => {
+  const state = await setup(page, {
+    inlineOriginal: true,
+    loseFirstComplete: true,
+  });
+  await page.goto("/");
+  await signIn(page);
+  await fillInlineForm(page);
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  await expect(page.getByRole("alert").first()).toContainText("conectar à API");
+  await expect(
+    page.getByText("O arquivo já foi enviado.", { exact: false }),
+  ).toBeVisible();
+  expect(state.published).toHaveLength(0);
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(state.uploadSessions).toBe(1);
+  expect(state.uploadAttempts).toBe(1);
+  expect(state.completes).toBe(2);
+  expect(
+    state.calls.filter((call) => call === `GET /media/${mediaId}`),
+  ).toHaveLength(1);
+  await expect(
+    page.getByRole("heading", {
+      name: "Validação inline controlada",
+      exact: true,
+    }),
+  ).toBeVisible();
+});
+
+test("inline: codec inválido orienta exportação e nova escolha inicia outra sessão", async ({
+  page,
+}) => {
+  const state = await setup(page, {
+    inlineOriginal: true,
+    failFirstValidation: true,
+  });
+  await page.goto("/");
+  await signIn(page);
+  await fillInlineForm(page);
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  await expect(page.getByRole("alert").first()).toContainText("H.264");
+  await expect(page.getByRole("alert").first()).not.toContainText(
+    "STACK_PRIVATE_PATH",
+  );
+  expect(state.published).toHaveLength(0);
+  await page
+    .getByLabel("Arquivo MP4", { exact: true })
+    .setInputFiles(samplePath);
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page
+    .getByLabel("Arquivo MP4", { exact: true })
+    .setInputFiles({
+      name: "reexportado.mp4",
+      mimeType: "video/mp4",
+      buffer: await readFile(samplePath),
+    });
+  await expect
+    .poll(() =>
+      page
+        .getByLabel("Prévia do MP4 selecionado")
+        .evaluate((video: HTMLVideoElement) => video.readyState),
+    )
+    .toBeGreaterThanOrEqual(1);
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(state.uploadSessions).toBe(2);
+  expect(state.uploadAttempts).toBe(2);
 });
