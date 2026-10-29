@@ -93,3 +93,9 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - 001_initial.sql revisada antes de aplicação: lookup admin privado DEFINER com uid guard/search_path vazio; RPC público INVOKER/grants authenticated; administrators RLS e grants privados mínimos. Trigger mídia valida transições/lease/metadata ready<=20. 002_maps.sql intacta.
 - SQL ainda não executado; não alegar validação de permissões/triggers. Orquestrador deve aplicar 001 e 002 no dedicado e executar advisors e testes SQL por papel.
 - Próxima ação: entregar SHA e aguardar resultados da revisão/aplicação do orquestrador. Atualizações código/SQL somente locais até commit desta etapa. Limites reais de Storage/FFmpeg ainda pendentes.
+
+## Conferência final do SQL — 29/10
+- SHA SQL final enviado: b8ce041. Orquestrador aceitou plano; main integrada até 258b4ae, sem incorporar main neste worktree.
+- Revisão estática: processing->processing permitido para retomada/stage, processing->failed permitido para erro/expiração esgotada; ready exige metadata, awaiting_upload/queued/processing não exigem metadata da fonte. Lease deve existir somente processing. Fencing permanece no WHERE do worker (attempts/status/lease).
+- Não há execução SQL local/remota nesta checagem; transições, permissões e trigger precisam de teste real pelo orquestrador no projeto dedicado antes de declarar validados.
+- Estado: aguardando revisão/aplicação e resultados SQL do orquestrador. Próxima ação executável: conferir git status/log e resposta do orquestrador; se houver falha, reproduzir e corrigir em nova migration coordenada, nunca reescrever migration aplicada.
