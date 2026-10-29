@@ -3,7 +3,7 @@
 ## Recursos dedicados
 
 - Frontend: https://pcdnades.vercel.app ; projeto Vercel `pcdnades`.
-- API: projeto Vercel `pcdnades-api`, raiz `backend/`, Fastify nativo. Conferir URL e estado do último deploy no checkpoint antes de configurar o cliente.
+- API: https://pcdnades-api.vercel.app ; projeto Vercel `pcdnades-api`, raiz `backend/`, Fastify nativo. Health, mapas, lista de granadas e capabilities responderam HTTP 200 após configuração em 29/10. Conferir estado atual antes de assumir disponibilidade.
 - Supabase: projeto `pcdNades`, referência `kdyzxxgzvgiffluyjjxu`, organização Lipe-meira's Org, região São Paulo.
 - URL Supabase: https://kdyzxxgzvgiffluyjjxu.supabase.co .
 - Painel: https://supabase.com/dashboard/project/kdyzxxgzvgiffluyjjxu .
@@ -16,14 +16,14 @@ As variáveis ficam no projeto **pcdnades-api** da Vercel, em Settings → Envir
 | --- | --- |
 | `SUPABASE_URL` | URL pública do projeto dedicado, configurada pelo orquestrador. |
 | `SUPABASE_PUBLISHABLE_KEY` | Chave publicável configurada pelo conector. Não confundir com chave de servidor. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Secret/service_role deve ser configurada diretamente no host pelo responsável, nunca em conversa, frontend ou Git. Ainda pendente no checkpoint inicial desta etapa. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Secret/service_role configurada diretamente no host pelo usuário em 29/10. Nunca colocar em conversa, frontend ou Git. O orquestrador conferiu apenas presença/nome/ambientes, sem ler seu valor. |
 | `FRONTEND_URL` | `https://pcdnades.vercel.app`, para resolver radares. |
 | `CORS_ORIGINS` | Lista explícita de origens autorizadas; incluir localhost apenas quando necessário. |
 | `MEDIA_MAX_DURATION_SECONDS` | `20`; API e worker devem usar limites compatíveis. |
 
 Sem a configuração completa, a API atual retorna indisponibilidade para dados/mídia; isso não deve fazer o frontend trocar silenciosamente para dados demonstrativos. `/health` indica inicialização e configuração, mas sozinho não comprova conexão ao banco nem upload operacional.
 
-Na Vercel, a aplicação HTTP usa a entrada `backend/src/server.ts`. A factory fica em `application.ts` para não ser confundida com a entrada do servidor. O worker não é parte da Function HTTP.
+Na Vercel, a aplicação HTTP usa a entrada `backend/src/server.ts`, que importa e instancia Fastify diretamente. A configuração compartilhada fica em `application.ts`. Não aguardar `app.listen()` no topo do módulo: o loader serverless intercepta o listen durante o import e isso bloqueava a inicialização. O teste `backend/scripts/bootstrap-smoke.mjs` reproduz essa interação. O worker não é parte da Function HTTP.
 
 ## Conta administrativa
 

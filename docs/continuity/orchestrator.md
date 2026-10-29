@@ -3,6 +3,20 @@
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: em andamento; frontend revisado publicado; Supabase provisionado/testado por papéis; API em preparação de deploy e mídia ainda dependente de segredo/worker.
 
+## Estado atual após correções e configuração (29/10)
+
+- API **respondendo de verdade** em https://pcdnades-api.vercel.app . Deploy `dpl_AQtb95WHtEYpcmgTbWLCHbPVZNqb`, commit `7793aeb`, READY. HTTP /health200 configured:true, /maps2003 itens, /grenades200 vazio com pagination, /media/capabilities200 uploadtrue/20s/importersfalse. Backend também confirmou leitura independentemente.
+- Foram duas falhas distintas de bootstrap: detecção exigia import direto Fastify na entrada; depois top-level await app.listen bloqueava o loader Vercel (stub Server.listen + await import). Corrigido em `16a8ef2` e `8e7b0b7`, integrado na main. Smoke `bootstrap-smoke.mjs` executado pelo orquestrador: moduleEvaluated:true/listenCaptured:true.
+- Usuário primeiro cadastrou a chave no frontend. Ele depois confirmou configuração no projeto API; metadados atuais confirmam variável sensitive em pcdnades-api/prod+preview e ausência no frontend. Nenhum valor privado lido. Tentativa de limpar cópia front por ferramenta retornou404 porque a variável já havia desaparecido; conferência posterior mostrou somente VITE_* no front.
+- Front `fa80ccf` integrado na main por `7793aeb`: adaptador API/auth/mídia. Orquestrador confirmou build/typecheck,20 testes e12 Playwright demo. Front continua QA de browser API com respostas controladas: encontrou/corrige binding fetch e retomada após upload falho. **Aguardar próximo SHA antes de publicar em modo API**.
+- Env frontend já configuradas: VITE_API_URL=https://pcdnades-api.vercel.app/api/v1, URL Supabase oficial, chave publicável, VITE_DATA_MODE=demo. Mudar modo só após integrar QA e verificar banco/UI reais.
+- Worker container/guia/smoke em `d412087`, integrado na main por `895496b`. Responsável confirmou Docker build e FFmpeg sintético no Windows/container isolado. Não é teste de fila/Storage real.
+- Usuário aceita conta provisória. Pedi criar no painel Auth a identidade `admin.pcdnades@example.com`, senha definida por ele e Auto Confirm. Aguardar aviso; então consultar UUID e conceder private.administrators via SQL. Nenhuma conta real criada até aqui.
+- Pergunta pendente de hospedagem do worker: PC com Docker enquanto ligado ou host separado contínuo. Não iniciar container persistente nem contratar host sem resolver essa escolha.
+- Próxima ação: obter commit QA frontend, revisar/testar e publicar modo API para biblioteca real. Conceder admin somente à conta confirmada; depois configurar e validar worker/upload real conforme escolha. Importadores seguem indisponíveis.
+
+O histórico abaixo detalha a sequência; este bloco é o estado mais recente.
+
 ## Checkpoint da retomada de 29/10 (estado mais recente)
 
 - Usuário autorizou projeto Supabase dedicado em Lipe-meira's Org, São Paulo. Criado `kdyzxxgzvgiffluyjjxu` ACTIVE_HEALTHY; URL oficial https://kdyzxxgzvgiffluyjjxu.supabase.co .
