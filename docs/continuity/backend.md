@@ -206,3 +206,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Deadline110s+5sfinalização,maxDuration120; timeoutUI150 sócomplete alinhado. Modo/capabilities e flag documentados. Sem migrations novas ou mudanças001/002.
 - Próxima ação: orquestrador revisar/envmode/preview e testar binárioLinux/Storage autorizado; só então habilitar flag. Mantidafalse. Dockerfile/.dockerignore ajustados para scripts necessários build, reconstrução pendente.
 - Arquivos deste marco serão enviados em commits de binário/config e processamento inline; conferir SHAs no log. Nenhum segredo ou binário em Git (vendor ignorado). Após push não devem restar mudanças locais.
+
+## Build limpo falhou —29/10
+- Orquestrador reportou TS18046 inline.checked. Reproduzido com npmciignore-scripts+build no worktree: generic bounded(any) infereunknown e acesso r.error/data falha.
+- Próxima ação tipar entrada checked como PromiseLike de envelope data/error, sem cast; repetir build/typecheck/tests/smoke após instalação limpa. Nenhum remoto/config alterado.
+
+## Build limpo corrigido —29/10
+- checked<T> agora recebe PromiseLike<{data:T;error:unknown}>, inferência preservada sem cast. Falha anterior confirmada, não era env.
+- Após npmciignore-scripts: build/typecheck/22testes/probe-smoke fixturesWindows/bootstrap-smoke/diffcheck passaram. LinuxCI/Vercel/Storage continuam pendentes, flagfalse.
+- Próxima ação orquestrador integrar commitcorretivo e executar LinuxCI/runtime. Apenas inline.ts e checkpoint alterados neste incremento; enviar push feat/backend.
