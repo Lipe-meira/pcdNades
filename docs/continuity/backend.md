@@ -84,3 +84,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Verificações: 10 testes locais passaram, typecheck e build passaram. Testes novos cobrem mapas e transferência limitada com fetch substituído, não provam Storage/SQL/FFmpeg reais. diff check detectou linha vazia no checkpoint e será corrigida antes do commit.
 - Estado: alterações prontas para revisão local, sem remoto aplicado. Próxima ação: revisar cobertura de complete/autorização e worker com dependências injetadas, depois testar ambiente real quando autorizado. Testes de concorrência PostgreSQL continuam pendentes.
 - Arquivos desta etapa: backend/migrations/002_maps.sql, src/maps.ts, src/transfer.ts, src/app.ts, src/worker.ts, tests/maps.test.ts, tests/transfer.test.ts, .env.example, README.md e este checkpoint; serão commitados/push na feat/backend. Sem alterações em frontend/raiz.
+
+## Revisão SQL antes da provisão — em andamento
+- Projeto dedicado criado pelo orquestrador, que fará aplicação remota. Este chat não executará SQL remoto.
+- Próxima ação: endurecer RPC admin/private RLS e transições de mídia em 001_initial.sql ainda não aplicada; 002 seed permanece. Orquestrador avisado para aguardar SHA final.
+
+## Marco SQL pronto para revisão — 29/10
+- 001_initial.sql revisada antes de aplicação: lookup admin privado DEFINER com uid guard/search_path vazio; RPC público INVOKER/grants authenticated; administrators RLS e grants privados mínimos. Trigger mídia valida transições/lease/metadata ready<=20. 002_maps.sql intacta.
+- SQL ainda não executado; não alegar validação de permissões/triggers. Orquestrador deve aplicar 001 e 002 no dedicado e executar advisors e testes SQL por papel.
+- Próxima ação: entregar SHA e aguardar resultados da revisão/aplicação do orquestrador. Atualizações código/SQL somente locais até commit desta etapa. Limites reais de Storage/FFmpeg ainda pendentes.
