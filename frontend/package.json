@@ -1,0 +1,26 @@
+{
+  "name": "pcdnades-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:browser": "playwright test"
+  },
+  "dependencies": { "react": "^19.3.1", "react-dom": "^19.3.1" },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "@playwright/test": "^1.56.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^4.0.0"
+  },
+  "engines": { "node": ">=22.12.0" }
+}
