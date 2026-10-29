@@ -1,7 +1,7 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: integração de leitura publicada; conta provisória autorizada; proposta de hospedagem automática pronta, aguardando escolha de provedor/custo para habilitar e validar mídia.
+Estado: backend implementa validação inline do MP4 original na Vercel; frontend ajusta confirmação/timeout; envio ainda desabilitado até revisão e teste real.
 
 ## Retomada vigente — preferência por gratuito (29/10)
 
@@ -10,6 +10,8 @@ Estado: integração de leitura publicada; conta provisória autorizada; propost
 - Backend está avaliando duas alternativas: Render Free HTTP sob demanda (sleep/restarts/512MB e necessidade de wake/retry durável; não equivalente a cron garantido) e simplificação MVP na API Vercel: validar MP4 compatível sem transcodificar e guardar original. Segunda hipótese evita outro host/DATABASE_URL, mas binário/tempo/codecs precisam confirmação. Não houve implementação dessa arquitetura ainda.
 - Próxima ação: receber avaliação técnica e escolher implementação que atenda preferência gratuita sem anunciar runnerCI como host. Não habilitar uploads antes de validar processamento real; manter checkpoints atualizados.
 - Decisão técnica posterior comunicada ao usuário: MVP validará MP4 original compatível na API Vercel, sem reconverter e sem outro host, respeitando quotas existentes. Plano em docs/media-inline-mvp.md. Backend autorizado a implementar inline síncrono/claim/ffprobe; frontend autorizado a ajustar orientação e timeout150s somentecomplete. Implementação ainda em andamento; flag uploadfalse. Aguardar SHAs/testes e validar empacotamento/runtime antes de publicar/habilitar.
+- Contrato alinhado: capabilities.upload.processingMode opcional inline-original|worker-transcode; complete200ready/failed ou202claimemcurso; progresso local confirming guarda mediaId após bytes. Se timeout, GETstatus; awaiting_upload repete complete no mesmo id sem reenviar arquivo, queued/processing acompanha, ready publica, failed orienta nova seleção. Deadline servidor120s/cliente150s sócomplete.
+- Env API MEDIA_PROCESSOR_MODE=inline-original configurada em Production/Preview pelo orquestrador; código publicado anterior ainda ignora esse campo. Não foi habilitado upload. Pergunta assíncrona pediu ao usuário entrar na administração para teste real futuro; senha só no site. Nenhum workflow Actions produtivo nem novo host criado.
 
 ## Atualização vigente — administrador e worker externo (29/10)
 
