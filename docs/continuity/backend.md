@@ -189,3 +189,20 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Recomendação enviada: piloto validação síncrona de original MP4 compatível por ffprobe na Function, sem transcode, em vez de webhook Renderfree; depende de spike binário/empacotamento/tempo e confirmação do usuário sobre formatos.
 - Fonte oficial FluidHobby300s/2GB/payload4.5MB e bundle250MB consultada; /tmp quota efetiva ainda deve ser confirmada no runtime, sem presumir512MB.
 - Só docs mudaram/diffcheck; nenhuma arquitetura implementada/flag habilitada. Próximo: orquestrador decidir aprovação de spike e depois validar bundle+fixture real antes de liberar upload.
+
+## Início implementação inline autorizada —29/10
+- Orquestrador autorizou MVP originalMP4 validado na Function, sem transcode/novohost. Flagfalse até revisão/runtime. Plano binário/fixtures, processor REST CAS/lease/deadline, integração complete/tests.
+- Próxima ação instalar ffprobe fixado com origem/licença e validar fixtures sintéticas. maxDuration120 proposto; frontend timeout150 sócomplete sob coordenação. Nenhuma migration aplicada será reescrita.
+
+## Marco inline parcial —29/10
+- Implementado processor REST CAS/lease2min/tentativas3,deadline110s+finalização5s,download limitado,ffprobe original H264/yuv420p/AACou semáudio,sem transcode. Complete inline aguarda seu claim, concorrente202. Modo env validado/capabilities. Sem migration nova necessária até agora.
+- Binário fixado @ffprobe-installer/ffprobe2.1.2, build copia plataforma para vendor; origem/licenças em FFPROBE-NOTICE. ffprobe-static4.0.2 investigado e descartado por antigo; não ficou dependência.
+- Smoke real Windows empacotado passou2s/20s,rejeita21s/codecMPEG4/corrompido.21 testes locais passaram antes do último ajuste deadline; repetir typecheck/test/build. Container futuro atualizado COPYscripts, precisa reconstrução pois build agora copia binário.
+- Próxima ação: conferir ajuste deadline/fixtures adicionais e smoke Linux do binário em build, docs, commit/push para revisão. Uploadfalse/remoto intocados. Arquivos inline/probe/transfer/config/API/scripts/testes/package/lock/vercel/Docker/docs locais ainda sem commit neste marco.
+
+## Inline pronto para revisão —29/10
+- 22 testes locais passaram (inclui concorrência fake, replayready,leaseativa/expirada/tentativas,errocodec). Typecheck/build/bootstrap-smoke passam; entrada semawaitglobal preservada.
+- Smoke real binário Windows empacotado: aceita2/20s e rejeita21s,MPEG4,corrompido. Sem Supabase/Storage/E2E. Linux não testado porque Docker daemon npipe indisponível; não iniciar serviço/pagar/provisionar. Bundle/execLinux/Vercel precisa revisão real antes flagtrue.
+- Deadline110s+5sfinalização,maxDuration120; timeoutUI150 sócomplete alinhado. Modo/capabilities e flag documentados. Sem migrations novas ou mudanças001/002.
+- Próxima ação: orquestrador revisar/envmode/preview e testar binárioLinux/Storage autorizado; só então habilitar flag. Mantidafalse. Dockerfile/.dockerignore ajustados para scripts necessários build, reconstrução pendente.
+- Arquivos deste marco serão enviados em commits de binário/config e processamento inline; conferir SHAs no log. Nenhum segredo ou binário em Git (vendor ignorado). Após push não devem restar mudanças locais.

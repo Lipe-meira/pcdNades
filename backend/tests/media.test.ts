@@ -1,3 +1,4 @@
+process.env.MEDIA_PROCESSOR_MODE='worker-transcode';
 import {test} from 'node:test';import assert from 'node:assert/strict';import {buildApp} from '../src/application.js';
 const id='123e4567-e89b-42d3-a456-426614174000';
 function clients(status:string,role=true){
