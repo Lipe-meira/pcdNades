@@ -261,3 +261,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 ## Configuração corrigida e redeploy —29/10
 - Root reportou confirmação do usuário e deployAPIdpl_3DmM6JhuKosvGjTR8HvYDDKwXmP7 READY/mainfc3d07e; health200configuredtrue/caps200enabledtrue.
 - Escrita real com chave nova NÃO comprovada, aguarda reteste do usuário. Nenhuma mudança código/schema ou teste adicional por este chat. Pausa mantida; próxima ação aguardar feedback.
+
+## Reteste real chegou à validação —29/10
+- Root reportou arquivo testeTapete.mp4 válido:HEVC2560x1440,yuv420p,19.8s,29MB,semáudio; produção mídia b65f9731-ba42-4175-bf6f-5b8daa681b97 failedINVALID_MEDIA.
+- Rejeição atual ocorre por resolução>1920 antes de avaliar codec; não prova corrupção. UX inválido/danificado é imprecisa neste caso, mas nenhuma mudança produto autorizada agora. Root prepara cópia local1080pH264 para usuário testar.
+- Marco real: chave corrigida permitiu upload/Storage chegar à validação. Ainda NÃO comprovado ready/playback/cadastro. Pausa preservada; próxima ação aguardar reteste/feedback, sem testes ou código adicional.
