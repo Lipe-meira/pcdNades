@@ -1,3 +1,4 @@
+import cors from '@fastify/cors';
 import Fastify from 'fastify';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { ZodError } from 'zod';
@@ -6,6 +7,7 @@ import { body, filters, uuid, dbBody, grenadeView, mediaView } from './model.js'
 const failure=(code:string,statusCode:number)=>Object.assign(new Error(code),{statusCode,code});
 export function buildApp(clients?:{public:SupabaseClient;service:SupabaseClient;user:(token:string)=>SupabaseClient}) {
  const app=Fastify({logger:true,bodyLimit:16384});
+ app.register(cors,{origin:(process.env.CORS_ORIGINS??'http://localhost:5173').split(',')});
  const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_PUBLISHABLE_KEY;
  const opts={auth:{persistSession:false,autoRefreshToken:false}};
  const configured=!!(url&&key&&process.env.SUPABASE_SERVICE_ROLE_KEY);
@@ -30,5 +32,6 @@ export function buildApp(clients?:{public:SupabaseClient;service:SupabaseClient;
  app.get('/api/v1/media/:id/playback',async(req:any)=>{const db=requireClients().service;const id=uuid.parse(req.params.id);const published=checked(await db.from('grenades').select('id').eq('video_id',id).limit(1));if(!published.length)throw failure('NOT_FOUND',404);const media=checked(await db.from('media_assets').select('*').eq('id',id).eq('status','ready').maybeSingle());if(!media)throw failure('NOT_FOUND',404);const r=await db.storage.from('videos-staging').createSignedUrl(media.storage_key,3600);if(r.error)throw failure('STORAGE_UNAVAILABLE',503);return {data:{url:r.data.signedUrl,expiresAt:new Date(Date.now()+3600000).toISOString(),mimeType:'video/mp4'}};});
  return app;
 }
+
 
 
