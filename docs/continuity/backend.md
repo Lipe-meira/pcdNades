@@ -247,3 +247,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Pausa geral mantida; somente diagnóstico/correção bloqueio solicitado pelo orquestrador. Screenshot Nova granada DATABASE_ERROR; root logPOST/media/uploads503 antesbytes,media/grenadesvazios. SQLservice_roleinsert+rollback passou conforme root, sem confirmação causaREST/key.
 - Código checked atualmente mascara erro retornado por insert; não altera RLS/grants sem evidência. Nenhuma mudança de aplicação feita nesta etapa.
 - Próxima ação aguardar logsSupabase/root, propor logger estruturado só códigoDB allowlist (sem payloadheaderskeysSQL/mensagembruta) e testecliente substituído se autorizado. Não continuar melhorias/testesamplos. Formulário deve ser preservado pelo frontend.
+
+## Evidência real recebida —29/10
+- Root obteve postgres_logs16:31:39.333Z: permission denied for table media_assets, correlacionadoPOSTuploads503. Grantsservice_role incluemINSERTSELECTUPDATEDELETE e insertSQLASservice_role+rollback passou. authenticatedSELECTintencional.
+- Root verifica credencial/configAPI sem lerkey; não concluir qual papelREST sem evidência. Não alterarRLS/grants nem adicionarloggernovo: causa de negação já identificada no banco. Nenhuma mudança de aplicação nesta tarefa.
+- Próximo aguardar diagnóstico/config pelo orquestrador e feedback usuário; pausa geral preservada. Checkpointdocs apenas.
