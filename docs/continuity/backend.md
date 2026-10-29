@@ -180,3 +180,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Actions produtivo retirado por termos conforme orquestrador. Render Free sob demanda avaliado somente documentalmente; não implementado.
 - Achado: webhook202 não garante sobrevivência FFmpeg nem recuperação sem novo tráfego; precisa wake durável/retry e controles single-run/fencing/shutdown.512MB não validado pelo smoke1GB anterior. Secret/HMAC proposto sem valores.
 - Próxima ação: enviar tradeoffs e aguardar alinhamento antes de arquitetura/CI/provisão. Upload continua desabilitado. Diff check de docs, sem testes código novos pois não alterado.
+
+## Investigação validação sem transcode na Vercel — início29/10
+- Orquestrador solicitou comparar MP4 compatível validado por ffprobe na Function, sem novo host, com Renderfree webhook. Somente proposta; não implementar nem habilitar upload.
+- Próxima ação: conferir limites oficiais Vercel duração/memória/tmp/bundle e documentar tradeoff/ciclo confiável de validação.
+
+## Comparação MVP sem novo host —29/10
+- Recomendação enviada: piloto validação síncrona de original MP4 compatível por ffprobe na Function, sem transcode, em vez de webhook Renderfree; depende de spike binário/empacotamento/tempo e confirmação do usuário sobre formatos.
+- Fonte oficial FluidHobby300s/2GB/payload4.5MB e bundle250MB consultada; /tmp quota efetiva ainda deve ser confirmada no runtime, sem presumir512MB.
+- Só docs mudaram/diffcheck; nenhuma arquitetura implementada/flag habilitada. Próximo: orquestrador decidir aprovação de spike e depois validar bundle+fixture real antes de liberar upload.
