@@ -17,10 +17,15 @@ import type { GameMap, Lineup } from "../domain/types";
 // }));
 
 // new style
+
 export const demoMaps: GameMap[] = [
   { id: "mirage", name: "Mirage" },
   { id: "inferno", name: "Inferno" },
   { id: "ancient", name: "Ancient" },
+  { id: "cache", name: "Cache" },
+  { id: "nuke", name: "Nuke" },
+  { id: "dust2", name: "Dust II" },
+  { id: "anubis", name: "Anubis" },
 ].map((map) => ({
   ...map,
   radarUrl: `/maps/valve/${map.id}.png`,
