@@ -161,3 +161,13 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - MEDIA_UPLOAD_ENABLED estrita true/false defaultfalse, API capabilities exige flag+clients; criação sessão autentica antes de retornar503 UPLOAD_UNAVAILABLE, sem gravar DB/Storage. Leituras/status/complete/playback preservados.
 - 16 testes locais/typecheck/build/diff check passaram. Testes com admin substituído garantem zero acesso Storage/DB quando flagfalse e401 sem token; flagtrue exige clients. Não comprova integração Storage.
 - Env/example e README documentam habilitar apenas após worker testado; nenhuma env remota alterada. Próximo: orquestrador integrar/deploy e confirmar capabilitiesfalse; aguardar host/config do worker antes de habilitar. Código/checkpoint enviados em commit próprio; sem mudanças locais esperadas após push.
+
+## Início proposta host automático — 29/10
+- Orquestrador confirmou admin concedido pelo root após usuário criar Auth, sem senha lida. Usuário escolheu execução fora do PC; nenhum provedor pago contratado.
+- Próxima ação: recomendar scheduler compatível com batch, documentar Render cron vs Actions e parâmetros concretos, sem criar CI raiz. Uploads continuam false até validação real.
+
+## Proposta host pronta — 29/10
+- WORKER.md atualizado: Render cron Docker recomendado para batch (1 execução ativa, env managed, schedule5min); custo mínimo oficial US$1/mês, sem contratação/provisão. Parâmetros concretos root backend/CMD/env/checklist documentados.
+- Alternativa Actions documentada com5min mínimo, atraso/descarte, default branch/inatividade60dias e CI exclusivo do orquestrador após decisão. Nenhum arquivo .github criado.
+- Verificações desta tarefa: documentação oficial Render/GitHub consultada, diff check passou. Só docs; não repetidos testes código ou container, já verificados nos marcos anteriores.
+- Próxima ação: aguardar decisão de provedor/custo via orquestrador; depois configurar segredos no host e validar job/fila/Storage real antes de habilitar MEDIA_UPLOAD_ENABLED. Sem valores secretos/usuários/remoto alterados.
