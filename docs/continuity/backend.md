@@ -124,3 +124,10 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Falha real de detecção Vercel reportada pelo orquestrador: server não importava Fastify diretamente.
 - Corrigido: server importa/instancia Fastify e chama configureApp compartilhado; buildApp dos testes usa configureApp, sem import morto. 13 testes, typecheck e build passaram; deploy será repetido pelo orquestrador, não comprovado aqui.
 - Container/Dockerfile/WORKER.md/script continuam alterações locais separadas, build Docker sessão69159 ainda precisa conferência. Próxima ação após enviar correção: aguardar resultado deploy e retomar container. Não incluir arquivos de worker neste commit urgente.
+
+## Marco worker concluído localmente — 29/10
+- Build Docker sessão69159 terminou exit0, imagem local pcdnades-worker:local. Smoke sintético no container --network none/read-only/tmpfs256m/memory1g/cpus1 passou:2.021s,23179bytes,H264/AAC,faststart. Windows smoke anterior:2s,17446bytes. Nenhuma fixture/segredo versionada.
+- Arquivos entregues: backend/Dockerfile,.dockerignore,WORKER.md,scripts/media-smoke.mjs. Não-root,multi-stage,comando batch node dist/worker.js. Nenhuma instância persistente/registry/remoto.
+- Proposta para host pequeno: job Docker em host existente/servidor pequeno, scheduler1min sem sobreposição, segredos pelo host; não provisionado. Custo/host e DATABASE_URL aguardam decisão/configuração.
+- Verificações código já passaram neste marco (13 testes/typecheck/build); Docker build e smoke adicionais reais locais, sem SQL/Storage/E2E. Próxima ação: revisar integração API pelo orquestrador e definir host/credenciais worker; depois teste real completo autorizado. Reconciliação/quotas continuam pendentes.
+- Checkpoint e arquivos worker serão enviados juntos na feat/backend; nenhum arquivo local restante esperado após commit. SHA desta entrega deve ser obtido no Git, sem autorreferência.
