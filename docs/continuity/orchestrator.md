@@ -3,6 +3,14 @@
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: integração de leitura publicada; conta provisória autorizada; proposta de hospedagem automática pronta, aguardando escolha de provedor/custo para habilitar e validar mídia.
 
+## Retomada vigente — preferência por gratuito (29/10)
+
+- Usuário escolheu GitHub Actions gratuito e aceita espera. Nenhum workflow produtivo foi criado, nenhum segredo de Actions cadastrado e uploads continuam desabilitados.
+- Antes de implementar, revisão dos termos oficiais mostrou orientação contra usar Actions como parte de aplicação serverless; gratuidade de runners não é hospedagem produtiva. Recomendação anterior foi corrigida explicitamente ao usuário e retirada dos planos operacionais.
+- Backend está avaliando duas alternativas: Render Free HTTP sob demanda (sleep/restarts/512MB e necessidade de wake/retry durável; não equivalente a cron garantido) e simplificação MVP na API Vercel: validar MP4 compatível sem transcodificar e guardar original. Segunda hipótese evita outro host/DATABASE_URL, mas binário/tempo/codecs precisam confirmação. Não houve implementação dessa arquitetura ainda.
+- Próxima ação: receber avaliação técnica e escolher implementação que atenda preferência gratuita sem anunciar runnerCI como host. Não habilitar uploads antes de validar processamento real; manter checkpoints atualizados.
+- Decisão técnica posterior comunicada ao usuário: MVP validará MP4 original compatível na API Vercel, sem reconverter e sem outro host, respeitando quotas existentes. Plano em docs/media-inline-mvp.md. Backend autorizado a implementar inline síncrono/claim/ffprobe; frontend autorizado a ajustar orientação e timeout150s somentecomplete. Implementação ainda em andamento; flag uploadfalse. Aguardar SHAs/testes e validar empacotamento/runtime antes de publicar/habilitar.
+
 ## Atualização vigente — administrador e worker externo (29/10)
 
 - Usuário confirmou criação da conta provisória e escolheu hospedagem separada do PC, funcionando automaticamente. Depois pediu continuar após novo reset de limite.
