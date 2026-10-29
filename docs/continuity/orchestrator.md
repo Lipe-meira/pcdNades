@@ -1,8 +1,18 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: PAUSADO a pedido do usuário, com versão publicada e upload liberado para seu teste. Aguardar feedback antes de novas alterações.
+Estado: aguardando usuário corrigir credencial do servidor na Vercel; causa do cadastro falho confirmada. Demais implementações continuam pausadas.
 
+## Feedback vigente: falha ao iniciar cadastro do vídeo (29/10)
+
+- Objetivo: resolver banner DATABASE_ERROR no teste real do usuário, preservando formulário e pausa de novas funcionalidades.
+- Branch/worktree: main em F:\projetos\nadesCs2, base e último push e80fc19; somente este checkpoint alterado localmente neste marco.
+- Vercel: POST /api/v1/media/uploads retornou503 em16:31:37UTC no deploy dpl_GxSMy2ERrA5xf1v1dvh6DQdjdtB8. Supabase confirmou às16:31:39 erro permission denied for table media_assets. Nenhum registro de mídia criado; falha anterior ao envio dos bytes.
+- SQL real com SET LOCAL ROLE service_role e INSERT equivalente seguido deROLLBACK passou. Grants service_role corretos; authenticated tem apenasSELECT de mídia por projeto. Não ampliar permissões nem alterarRLS por hipótese.
+- Backend avisado: investigação pontual, sem novas features/logging desnecessário. Hipótese de credencial de servidor com papel incorreto, ainda sem prova do valor configurado; nenhum segredo lido.
+- Causa confirmada por edge_logs do mesmo POST /rest/v1/media_assets: HTTP401, tipo da chave publicável (startsWith prefix sb_publishable_=true, sb_secret_=false). Valor da chave nunca lido. Não é problema de permissões do service_role; variável servidor contém credencial pública inadequada.
+- Usuário recebeu pergunta para substituir SUPABASE_SERVICE_ROLE_KEY por Secret key sb_secret_ diretamente no projeto Vercel pcdnades-api Production/Preview, sem enviar valor no chat. Aguardando confirmação; ação dependente não executada.
+- Próxima ação executável após conferir Git: aguardar confirmação da troca, fazer redeploy API main e conferir health/capabilities; orientar tentar salvar mantendo formulário. Validação completa Storage/ffprobe/publicação/playback continua pendente. Nenhum código/schema alterado.
 ## Feedback: aviso de upload desabilitado (29/10)
 
 - Usuário enviou screenshot do formulário mostrando servidor sem aceitar arquivos. Diagnóstico somente leitura: API pública /health200configuredtrue e /media/capabilities200enabledtrue/inline-original/20s/50MB no momento da inspeção.
