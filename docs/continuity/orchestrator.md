@@ -10,7 +10,9 @@ Estado: escopo de importação por links encaminhado ao backend; aguardando diag
 - Nenhuma autorização para produção, migrations remotas, deploys ou serviços pagos. Pausa anterior revogada somente para esse escopo debackend. Orquestrador não publicou nem integrou código.
 - Main F:\projetos\nadesCs2 base/push74d5ddd. Somente este checkpoint alterado/commitado localmente; pushmain adiado porque Git integration dispara deploy automático, proibido neste pedido. Branchbackend pode fazerpushconforme fluxo autorizado, sem executar deploy.
 - Atualização explícita do usuário: escolher intervalo início/fim e permitir vídeo final até40s, substituindo teto20s;50MBmantidos. Encaminhada ao backend no mesmochat. Corte porseleção explícita, fonte maior somente comlimitesindependentes seguros eviabilidade; sem corteautomáticosilencioso. Diagnóstico deve cobrirFFmpeg/Vercel e contrato seletorfrontend, preservando uploadsemrecorte.
-- Próxima ação: aguardar diagnóstico/contrato do backend, revisar viabilidade e coordenar eventuais alteraçõesfrontend após alinhamento; não confundir scaffold/testes controlados com download autorizado e funcional.
+- Diagnóstico preliminar backend: YouTube requer aprovação específica; TikTokDataPortability exige app/OAuth/elegibilidade; Instagram depende conta profissional/OAuth, nãoReel arbitrário. Manter3importadoresdisabled semautorizações. Backend avançará reconhecimentoestrito/capabilities/migrationnovaInstagram e40s, semprodução.
+- Recorte seguePENDENTE: backend avaliaráFFmpeg/bundle/CPU; aceitarclip e retornarCLIP_UNSUPPORTED é apenascontrato, não entrega do requisito. Orquestrador reforçou essa distinção e pediu evidências/próximopasso; fonte120s é hipótese técnica a documentar.
+- Próxima ação: aguardarSHAs/contrato/diagnóstico completo, revisar e coordenarfrontend após alinhamento; não confundir scaffold/testes controlados com download autorizado e funcional.
 ## Avaliação solicitada após alterações do usuário (29/10)
 
 - Objetivo: avaliar progresso e pendências, sem implementar novas funcionalidades. Main/worktree F:\projetos\nadesCs2, base/push a8aa9ee; Git limpo na retomada.
