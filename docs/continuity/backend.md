@@ -109,3 +109,18 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - 13 testes locais, typecheck/build/diff check passaram. Novos testes HTTP com clientes substituídos verificam 401/403 e complete repetido queued/processing/ready. Primeira execução falhou por estado do stub compartilhado, corrigido; não é validação Storage real.
 - Não executado vercel build/deploy. Próximo: orquestrador integrar SHA e validar preview com env. Host do worker ainda precisa decisão. API continua exigindo trio URL/publishable/service role para todos endpoints dependentes de fornecedor; separação leitura sem secret sugerida pelo orquestrador não incluída neste marco.
 - Projeto API criado pelo orquestrador; credenciais server-only serão configuradas pelo usuário diretamente no host. Não há segredo neste checkpoint. 001/002 aplicadas pelo orquestrador e smoke SQL real reportado anteriormente; Storage/FFmpeg permanecem sem validação.
+
+## Início container worker — 29/10
+- Pedido: Dockerfile/.dockerignore, operação batch/scheduler e fixture sintética FFmpeg local sem Supabase.
+- Git limpo em 8eccb63. Docker/ffmpeg/ffprobe encontrados no PATH; próxima ação executar fixture sintética em diretório temporário e preparar container sem segredos. Não instalar sistema nem publicar imagem.
+
+## Marco worker local — em andamento
+- Dockerfile multi-stage não-root e .dockerignore criados; WORKER.md documenta batch, scheduler sem sobreposição, env/segredos e host proposto para time pequeno.
+- Smoke FFmpeg sintético local passou: 2s,17446 bytes,H264/AAC,faststart; sem rede/banco/Storage. Script scripts/media-smoke.mjs remove fixtures temporárias.
+- 13 testes/typecheck/build passaram. Docker build em andamento na sessão69159; ainda não declarar imagem pronta. Nenhum pacote instalado no Windows, dependências FFmpeg somente dentro da imagem.
+- Próxima ação: aguardar build e testar smoke no container sem rede, depois commit/push/checkpoint. Hospedagem/credenciais/Storage real continuam pendentes.
+
+## Correção urgente entrypoint — 29/10
+- Falha real de detecção Vercel reportada pelo orquestrador: server não importava Fastify diretamente.
+- Corrigido: server importa/instancia Fastify e chama configureApp compartilhado; buildApp dos testes usa configureApp, sem import morto. 13 testes, typecheck e build passaram; deploy será repetido pelo orquestrador, não comprovado aqui.
+- Container/Dockerfile/WORKER.md/script continuam alterações locais separadas, build Docker sessão69159 ainda precisa conferência. Próxima ação após enviar correção: aguardar resultado deploy e retomar container. Não incluir arquivos de worker neste commit urgente.
