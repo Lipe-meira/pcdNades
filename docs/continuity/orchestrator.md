@@ -1,3 +1,9 @@
+## Publicação autorizada em andamento — 29/10
+
+- Usuário dispensouesperaLinux eautorizoupushmain; confirmouexplicitamente aplicar003e publicar. Mainintegroubackendfcf58f5 por6a3f5bf efrontddda8de pord446b47. Buildbackend/front39testescadaPASSARAM;30browseremexecução.
+- Migration media_import_sources_and_90_seconds aplicadaSupabasecomsucesso, campo clipJSONBconfirmado. EnvAPI MEDIA_MAX_DURATION_SECONDS=90 Production/Preview; segredo nãoacessado. Trimmingdefaultfalse ainda nãohabilitado. Novaestéticafrontpendente entrega.
+- Próximaação: fecharbrowser,recebervisual,commitarcheckpoint/pushmain,confirmardeploys ecapabilities; runtime recorteVercelaindanãoprovado.
+
 ## Marco backend: recorte local em validação — 29/10
 
 - Backend relatou implementaçãoefetiva ainda semSHA,37testes e smokeWindowsbinárioempacotado:90sAAC/fração/decode/abort/oversize/corrupt/endfonte180. Stress1080pemexecução; não é Vercel. Pedi commit/pushcheckpoint/SHA antes validaçãoLinux.
