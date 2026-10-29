@@ -32,6 +32,3 @@ export function buildApp(clients?:{public:SupabaseClient;service:SupabaseClient;
  app.get('/api/v1/media/:id/playback',async(req:any)=>{const db=requireClients().service;const id=uuid.parse(req.params.id);const published=checked(await db.from('grenades').select('id').eq('video_id',id).limit(1));if(!published.length)throw failure('NOT_FOUND',404);const media=checked(await db.from('media_assets').select('*').eq('id',id).eq('status','ready').maybeSingle());if(!media)throw failure('NOT_FOUND',404);const r=await db.storage.from('videos-staging').createSignedUrl(media.storage_key,3600);if(r.error)throw failure('STORAGE_UNAVAILABLE',503);return {data:{url:r.data.signedUrl,expiresAt:new Date(Date.now()+3600000).toISOString(),mimeType:'video/mp4'}};});
  return app;
 }
-
-
-
