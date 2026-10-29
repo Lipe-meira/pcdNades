@@ -93,3 +93,19 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - 001_initial.sql revisada antes de aplicação: lookup admin privado DEFINER com uid guard/search_path vazio; RPC público INVOKER/grants authenticated; administrators RLS e grants privados mínimos. Trigger mídia valida transições/lease/metadata ready<=20. 002_maps.sql intacta.
 - SQL ainda não executado; não alegar validação de permissões/triggers. Orquestrador deve aplicar 001 e 002 no dedicado e executar advisors e testes SQL por papel.
 - Próxima ação: entregar SHA e aguardar resultados da revisão/aplicação do orquestrador. Atualizações código/SQL somente locais até commit desta etapa. Limites reais de Storage/FFmpeg ainda pendentes.
+
+## Conferência final do SQL — 29/10
+- SHA SQL final enviado: b8ce041. Orquestrador aceitou plano; main integrada até 258b4ae, sem incorporar main neste worktree.
+- Revisão estática: processing->processing permitido para retomada/stage, processing->failed permitido para erro/expiração esgotada; ready exige metadata, awaiting_upload/queued/processing não exigem metadata da fonte. Lease deve existir somente processing. Fencing permanece no WHERE do worker (attempts/status/lease).
+- Não há execução SQL local/remota nesta checagem; transições, permissões e trigger precisam de teste real pelo orquestrador no projeto dedicado antes de declarar validados.
+- Estado: aguardando revisão/aplicação e resultados SQL do orquestrador. Próxima ação executável: conferir git status/log e resposta do orquestrador; se houver falha, reproduzir e corrigir em nova migration coordenada, nunca reescrever migration aplicada.
+
+## Início preparação Vercel — 29/10
+- Orquestrador reportou 001/002 aplicadas e smoke SQL transacional real (anon/viewer/admin/estados) com rollback; advisors somente INFO deny em administrators. Não representa teste de arquivos Storage.
+- Não editar migrations aplicadas. Próximo: entrypoint nativo Fastify (documentação Vercel consultada), separar fábrica para evitar detecção ambígua; docs/env e testes complete/auth. Nenhum deploy autorizado neste chat.
+
+## Marco Vercel preparado — 29/10
+- src/app.ts renomeado para src/application.ts: fábrica sem detecção ambígua; src/server.ts único entrypoint nativo. vercel.json framework fastify; docs Root Directory/backend/env/worker separado.
+- 13 testes locais, typecheck/build/diff check passaram. Novos testes HTTP com clientes substituídos verificam 401/403 e complete repetido queued/processing/ready. Primeira execução falhou por estado do stub compartilhado, corrigido; não é validação Storage real.
+- Não executado vercel build/deploy. Próximo: orquestrador integrar SHA e validar preview com env. Host do worker ainda precisa decisão. API continua exigindo trio URL/publishable/service role para todos endpoints dependentes de fornecedor; separação leitura sem secret sugerida pelo orquestrador não incluída neste marco.
+- Projeto API criado pelo orquestrador; credenciais server-only serão configuradas pelo usuário diretamente no host. Não há segredo neste checkpoint. 001/002 aplicadas pelo orquestrador e smoke SQL real reportado anteriormente; Storage/FFmpeg permanecem sem validação.

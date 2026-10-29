@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readMediaLimits} from '../src/config.js';
-import {buildApp} from '../src/app.js';
+import {buildApp} from '../src/application.js';
 test('limits have documented defaults and accept explicit overrides',()=>{
  assert.deepEqual(readMediaLimits({}),{maxBytes:50000000,maxDurationSeconds:20});
  assert.deepEqual(readMediaLimits({MEDIA_MAX_BYTES:'1234',MEDIA_MAX_DURATION_SECONDS:'10'}),{maxBytes:1234,maxDurationSeconds:10});
