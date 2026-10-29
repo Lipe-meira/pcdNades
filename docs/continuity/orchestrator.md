@@ -1,7 +1,7 @@
 # Checkpoint — orquestrador
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: backend implementa validação inline do MP4 original na Vercel; frontend ajusta confirmação/timeout; envio ainda desabilitado até revisão e teste real.
+Estado: PAUSADO a pedido do usuário, com versão publicada e upload liberado para seu teste. Aguardar feedback antes de novas alterações.
 
 ## Liberação para teste do usuário — parar após deploy (29/10)
 
@@ -11,6 +11,7 @@ Estado: backend implementa validação inline do MP4 original na Vercel; fronten
 - MEDIA_UPLOAD_ENABLED=true configurado pelo orquestrador para a versão de teste. Redeploy API dpl_8f87KGm2zcH1wocmnp2T1FuBY5wz mesmoSHA1a1dec2 iniciado; confirmar READY e capabilitiesenabledtrue antes de dizer liberado.
 - Usuário está logado em admin.pcdnades@example.com. Após confirmar publicação, instruir atualizar página e cadastrar MP4 H264/yuv420p comAAC/semáudio,até20s/50MB, para primeiro teste real. Upload/Storage/ffprobe no runtime/playback de um cadastro completo ainda NÃO foram exercitados pelo orquestrador; não declarar E2E aprovado.
 - Depois da publicação: pausar trabalho conforme pedido e aguardar feedback. Não disparar novos testes amplos/deploys/melhorias. Imports YouTube/TikTok seguemdesabilitados; nenhuma hospedagempaga ou workflowprod criado. Actions somenteCI.
+- Confirmação final: dpl_8f87KGm2zcH1wocmnp2T1FuBY5wz READY. HTTP /health200 configuredtrue e capabilities200 uploadenabledtrue,processingModeinline-original,20s/50MB. Versão acessível em https://pcdnades.vercel.app ; usuário deve atualizar página. Trabalho pausado após essa checagem; teste real de cadastro/Storage/ffprobe/playback será feito pelo usuário e continua não comprovado pelo orquestrador.
 
 Este bloco é o estado vigente; registros abaixo preservam o histórico.
 

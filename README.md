@@ -11,7 +11,7 @@ Este documento reúne contexto de produto e coordenação. Confira `AGENTS.md` e
 
 ## Executar e acompanhar
 
-- Site publicado: https://pcdnades.vercel.app em modo API, consultando o Supabase dedicado por https://pcdnades-api.vercel.app . A conta administrativa provisória foi autorizada. A validação direta de MP4 original está em revisão de deploy para liberar uploads sem outro host; confira o checkpoint antes de assumir disponibilidade. O modo demo continua disponível para desenvolvimento, com cadastros apenas em memória.
+- Site publicado: https://pcdnades.vercel.app em modo API, consultando o Supabase dedicado por https://pcdnades-api.vercel.app . A conta administrativa provisória foi autorizada e o upload de MP4 original foi liberado para teste do usuário, sem outro host. Implementação pausada por pedido dele; o teste real completo de cadastro e reprodução continua pendente. O modo demo continua disponível para desenvolvimento, com cadastros apenas em memória.
 - Frontend: `npm --prefix frontend ci`, `npm --prefix frontend run dev`. Operação e testes em `frontend/README.md`.
 - Backend: `npm --prefix backend ci`, `npm --prefix backend run build`. Contrato, variáveis e worker em `backend/README.md`.
 - Continuidade: `docs/continuity/orchestrator.md`, `frontend.md` e `backend.md`; cada responsável atualiza seu checkpoint durante o trabalho.
