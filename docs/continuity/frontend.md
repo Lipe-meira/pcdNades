@@ -1,3 +1,15 @@
+## Marco mais recente — identidade visual pronta para integração (29/10/2026)
+
+- Core recorte90 entregue e enviado em ddda8de (origin/feat/frontend). Identidade visual em commit separado nesta entrega; consultar git log para SHA.
+- Implementado: emote original inteiro no cabeçalho, wordmark, favicon pN simples, Barlow Condensed Bold em títulos e Barlow em texto, grafite/azul/areia, superfícies mais diretas, navegação mobile em segunda linha.
+- Original copiado para frontend/public/brand/pcd-sas-emote.png: 1.881.198 bytes; SHA256 5AD234022C9FA73CBD568D59444387EAAF307EF4098D32B1B2E6DECA9AF1FE39, idêntico ao anexo. Sem edição ou geração. ATTRIBUTION.md registra origem/autorização.
+- Fontes locais: Barlow regular82.624B, semibold85.876B, Condensed bold87.120B (total255.620B), OFL1.1 e fontes das URLs em public/fonts/ATTRIBUTION.md; nenhum runtime GoogleFonts.
+- Verificações finais: build/typecheck verdes;39 testes unitários/controlados verdes;30/30 Playwright PC/mobile verdes;git diff --check limpo. Primeira revisão encontrou resíduo sintático CSS e overflow de cabeçalho, ambos corrigidos antes do fullrun final.
+- Revisão render real: logo carregado(naturalWidth1254), fontes carregadas;320/390/768/1024/1440 sem overflow. Screenshots desktop/mobile e formulário/recorte inspecionados. Foco visível, labels, teclado e restauração de foco preservados/testados; contraste principal texto claro em grafite, botões areia com texto escuro. Não equivale a auditoria WCAG completa.
+- Screenshots fora do Git: C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/identity-1440.png,identity-390.png,identity-320.png,identity-clip-desktop.png,identity-clip-mobile.png. Biblioteca usa demonstração local; recorte usa API controlada/sintético, não prova produção.
+- Catálogo/demoData e assets maps intocados; sete PNG do usuário devem ser preservados pelo integrador. Não alterado flows.spec.ts: root ajustará expectativa ancient.svg para ancient.png na main após integrar.
+- Orquestrador informa core integrado main3120565,migration003 aplicada e env90/trimmingtrue preparados. Deploy API bloqueado por cota Vercel402 diária, sem upgrade. Nenhum deploy próprio ou validação remota de recorte nesta entrega. Importers continuam dependentes das capabilities.
+- Próximo passo: revisar git status/diff,commit visual+checkpoint,push apenas feat/frontend,informar SHA ao orquestrador para integração. Não fazer melhorias extras nem editar backend/main/radares. Registros abaixo anteriores a este marco são históricos.
 # Checkpoint — frontend
 
 Atualizado em: 29/10/2026 18:10, America/Sao_Paulo
@@ -61,3 +73,4 @@ Dois objetivos vigentes: (1) seletor início/fim com prévia MP4 local, saída<=
 
 - Atéa3033c8:API/inline,timeouts/erros e30unit+26browser;7e0490b pausa.
 - Nova autorização:coreclip90+prévia concluído39unit/30browser; direção estética adicional recebida e assetinspecionado. Registro por marco antes da identidade visual.
+
