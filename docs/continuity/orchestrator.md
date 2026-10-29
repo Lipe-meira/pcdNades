@@ -1,3 +1,9 @@
+## Marco backend: recorte local em validação — 29/10
+
+- Backend relatou implementaçãoefetiva ainda semSHA,37testes e smokeWindowsbinárioempacotado:90sAAC/fração/decode/abort/oversize/corrupt/endfonte180. Stress1080pemexecução; não é Vercel. Pedi commit/pushcheckpoint/SHA antes validaçãoLinux.
+- CIroot existente lida comffprobe; próximo passo apósSHA: incluirFFmpeg noNFT+X_OK e trim-smoke/trim-stress emLinuxCI semsegredos/deploy. Nãointegrarmain/pushmain enquantoautodeployproibido; prepararbranchCIisolada se necessário.
+- Front confirmou recorteantesvisual,commitsseparados e screenshotsdesktop/mobile; emexecução.
+
 ## Identidade visual adicionada ao escopo — 29/10
 
 - Usuário pediu usar emoteCTcadeirante como logo e mudar estética/fonte para reduzir aparência genérica. Imagem original em C:\Users\felip\AppData\Local\Temp\codex-clipboard-62b4321f-b530-4238-b01e-160df37bf2f7.png.
