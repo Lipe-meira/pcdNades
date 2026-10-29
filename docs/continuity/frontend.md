@@ -1,7 +1,7 @@
 # Checkpoint — frontend
 
 Atualizado em: 29/10/2026 08:10, America/Sao_Paulo
-Estado: aguardando confirmação READY/HTTP do deploy API para checagem visual somente leitura
+Estado: produção em modo API confirmada pelo orquestrador; aguardando próxima tarefa e decisões de admin/worker
 
 ## Objetivo e pedido atual
 
@@ -25,23 +25,24 @@ Integração opcional React/TypeScript com API real autorizada: HTTP por env, Su
 - Leitura REAL HTTP somente leitura em https://pcdnades-api.vercel.app: /health200 configured:true; /api/v1/maps200 com três mapas absolutos/versionados; /api/v1/grenades?limit=100&offset=0 200 vazio; capabilities200 uploadtrue,50000000bytes,20s,importersfalse. CORS conferido para Origin https://pcdnades.vercel.app. Não houve login ou mutação remota por este chat.
 - Relatório enviado ao orquestrador com 28085f8 e pendências; ele possui autorização para revisão/merge/deploy. Frontend não publicou nem alterou main.
 
-## Atualização do orquestrador — aguardando deploy
+## Produção confirmada pelo orquestrador — 29/10/2026
 
-- Orquestrador confirmou integração de28085f8+018af5a na main1b2416c e repetiu build,20unitários e22browser com sucesso. DATA_MODE=api configurado; deploy frontend iniciado, ainda sem confirmação READY/HTTP neste chat.
-- Redeploy API e6731f5 anunciado, com MEDIA_UPLOAD_ENABLED defaultfalse enquanto não há worker ativo. Não anunciar upload disponível nem fazer mutação real.
-- Próxima ação autorizada: aguardar confirmação READY/HTTP e pedido do orquestrador, então checar visualmente consulta pública real. Admin/hostworker permanecem pendentes.
-
+- Fonte das observações abaixo: mensagem do orquestrador, que verificou pelo navegador integrado real; este chat não repetiu o teste nem fez login/mutações.
+- Frontend produção: https://pcdnades.vercel.app, modo API, deploy dpl_9X4hRBTME3q9x8aZh3hLRd9DWKgr, commit1b2416c.
+- Observado por ele: indicação Biblioteca compartilhada · modo API; catálogo Ancient/Inferno/Mirage; zero granadas com mensagem correta; troca para Mirage funcionando; Administração abrindo e-mail/senha reais sem simulação.
+- API: deploy final do commit e6731f5, flag do worker/upload desabilitada enquanto não há worker ativo. Não anunciar upload pronto.
+- Não iniciar novos recursos. Admin temporário e hospedagem do worker dependem das respostas do usuário. Worktree disponível para a próxima tarefa coordenada.
 ## Em andamento
 
-- Commit/push deste checkpoint e conferência final de Git/remoto.
-- Depois: aguardar coordenação do orquestrador sobre ativação do modo API e validação com conta/worker reais. Nenhuma implementação parcial restante neste worktree.
+- Somente registro e envio deste checkpoint. Nenhuma alteração de produto em andamento.
+- Aguardar próxima tarefa coordenada; sem login/mutação real ou início de novos recursos.
 
 ## Retomar daqui
 
 1. Ler AGENTS/guia/checkpoints, conferir git status/branch/log/remotos; não sobrescrever alterações ou trocar branch. Npm nesta pasta frontend/ ou --prefix frontend.
 2. Conferir se este checkpoint foi enviado além de 28085f8; comunicar SHA real do checkpoint na entrega.
-3. Consultar status atual com orquestrador: se integrou28085f8, ativou VITE_DATA_MODE=api e publicou. Não presumir que publicação/configuração aconteceu durante a pausa.
-4. Com autorização/ambiente pronto, validar frontend publicado e consulta real no browser, depois login administrador/403. Não solicitar senha em chat nem criar credenciais.
+3. Consultar o próximo pedido do usuário/orquestrador. Modo API publicado e consulta visual já foram confirmados por ele acima; não iniciar novos recursos ou repetir verificações sem necessidade.
+4. Somente com nova coordenação e ambiente pronto, validar login administrador/403. Não solicitar senha em chat nem criar credenciais.
 5. Quando worker/Storage estiverem prontos, validar upload MP4 real de até20s,complete/processamento/publicação/playback/seek/renovação e consulta em outro dispositivo. Registrar resultado separado dos testes controlados. Importadores continuam desabilitados.
 
 ## Decisões e contrato
