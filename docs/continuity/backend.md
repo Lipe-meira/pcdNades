@@ -229,3 +229,10 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Root reportou run40910741421: tracing inclui assetLinux, mas X_OK falhou EACCES no original node_modules; prepare chmod somente cópia vendor.
 - Próxima ação chmod explícito binary.path no build alémcópia, mantendo npmciignore-scripts. Sem scriptsglobais/env/SQL. ValidaçãoLinux será pelo CIroot, não Windows.
 - Correção aplicada: await chmod(binary.path,0o755) antes da cópia, somente binário selecionado explicitamente. Build/typecheck22testes/diffcheck locais passaram; Windows não prova permissãoPOSIX, repetir LinuxCIroot. Próximo enviarSHA e aguardar X_OK/probe noLinux, flagfalse.
+
+## Pausa solicitada pelo usuário —29/10
+- Usuário pediu parar alterações quando houver versão utilizável para testar. Orquestrador finaliza publicação inline e liberação controlada; este chat NÃO inicia melhorias/features/testes amplos. Corrigir somente bloqueio concreto se solicitado.
+- Último código enviado e322fe2: chmod originalffprobe; estado anterior local22testes/build/typecheck passavam. LinuxCI/URLfinal/liberaçãoupload ainda precisam confirmação do orquestrador, não presumir sucesso.
+- Limitações: somenteMP4H264/yuv420p/AACousemáudio20s/50MB; sem reconversão/importadores. ffprobe não decodeintegral; Storage/E2E e runtimefinal dependem QAcoordenado. Dockerworker permanece futuro, não necessário noinline. Nenhum segredo/conta/env alterado neste marco.
+- Estado: aguardando confirmação URLpronta pelo orquestrador, depois implementação pausada por pedido explícito para usuário testar. Próxima ação: ler checkpoint+conferirGit e aguardar relato/testes; não continuar backlog automaticamente.
+- Alteração desta tarefa somente checkpoint, commit/push docs na feat/backend; não repetidos testes pois código intacto.
