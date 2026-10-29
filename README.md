@@ -7,7 +7,14 @@ Biblioteca compartilhada de granadas de Counter-Strike 2 para ajudar um time a a
 - Chat de frontend: **frontEnd CS2**
 - Chat de backend: **backend CS2**
 
-Este documento é a referência inicial de produto e coordenação. As propostas técnicas abaixo ainda não representam um contrato de API aprovado nem autorização para provisionar serviços. Atualizado em 28/10/2026.
+Este documento reúne contexto de produto e coordenação. Confira `AGENTS.md` e `docs/continuity/` antes de retomar trabalho: os checkpoints registram o estado atual de cada área. Atualizado em 29/10/2026.
+
+## Executar e acompanhar
+
+- Demonstração publicada: https://pcdnades.vercel.app ; os cadastros demonstrativos ficam em memória e ainda não comprovam persistência compartilhada.
+- Frontend: `npm --prefix frontend ci`, `npm --prefix frontend run dev`. Operação e testes em `frontend/README.md`.
+- Backend: `npm --prefix backend ci`, `npm --prefix backend run build`. Contrato, variáveis e worker em `backend/README.md`.
+- Continuidade: `docs/continuity/orchestrator.md`, `frontend.md` e `backend.md`; cada responsável atualiza seu checkpoint durante o trabalho.
 
 ## Objetivo
 
@@ -22,6 +29,7 @@ Exemplo de uso: cadastrar “Smoke janela — Mirage”, marcar o destino na jan
 - Frontend em **React com TypeScript**, por familiaridade do usuário.
 - Biblioteca para o time treinar granadas de CS2.
 - Cadastro de smokes, flashbangs e molotovs com vídeo curto demonstrativo.
+- Duração máxima de cada vídeo: **20 segundos**.
 - Upload de vídeo `.mp4` e fluxo desejado de importação por link do YouTube Shorts ou TikTok: baixar e armazenar uma cópia no projeto, em vez de apenas incorporar o player externo. O suporte de importação por plataforma depende de validação técnica.
 - Marcação do destino da granada no mapa.
 - Conteúdo salvo disponível para outras pessoas que abrirem o site, inclusive em outro dispositivo.
@@ -100,9 +108,9 @@ Favoritos, coleções de treino, marcação de origem e comandos de prática pod
 
 1. **Acesso:** a proposta é consulta pública pelo link e escrita restrita a administrador. O usuário ainda não confirmou se a leitura deve ser restrita ao time.
 2. **Importadores de vídeo:** upload de MP4 e a intenção de baixar/guardar por link estão confirmados. Validar quais plataformas podem ser suportadas e definir processamento, armazenamento, limites e tratamento de falhas. Embed não é a solução escolhida.
-3. **Backend e infraestrutura:** TypeScript é preferência proposta para o backend. Fastify com PostgreSQL e autenticação no Supabase foi sugerido pelo chat de backend, mas ainda não foi aprovado.
-4. **Mapas e assets:** definir os mapas iniciais, a origem permitida das imagens e um radar canônico para cada mapa.
-5. **Publicação:** definir hospedagem, ambientes, credenciais e conta administrativa. Não inserir segredos no Git.
+3. **Integração:** backend autorizado em TypeScript/Fastify/PostgreSQL/Supabase. Projeto dedicado `pcdNades` criado com autorização do usuário na organização Lipe-meira's Org, região São Paulo. Configuração e validação reais ainda em andamento.
+4. **Mapas e assets:** Mirage, Inferno e Ancient usam plantas vetoriais setpos.gg, com licença CC BY 4.0, atribuição e snapshot em `frontend/public/maps/`. Não são as texturas oficiais extraídas do jogo. Catálogo da API deve preservar a versão/enquadramento dessas imagens.
+5. **Publicação:** frontend demonstrativo na Vercel e `main` como branch padrão. Faltam ambiente operacional da API/worker, conta administrativa e integração com mídia real. Não inserir segredos no Git.
 
 ## Alinhamento técnico proposto
 
@@ -115,7 +123,7 @@ docs/        Especificações e contrato de integração; coordenação do orque
 README.md    Contexto geral; coordenação do orquestrador
 ```
 
-Arquivos de raiz e configurações compartilhadas devem ser coordenados pelo orquestrador para evitar mudanças conflitantes. Não há aplicação implementada neste momento.
+Arquivos de raiz e configurações compartilhadas devem ser coordenados pelo orquestrador para evitar mudanças conflitantes. Frontend e backend já possuem implementação inicial; consulte os checkpoints para distinguir código entregue de fluxos validados com serviços reais.
 
 ### Dados de uma lineup
 
@@ -156,7 +164,7 @@ Alinhamento técnico proposto pelos dois chats:
 6. Executar as verificações pertinentes e registrar seus resultados.
 7. Fazer push para a própria branch e informar branch, commits, verificações e pendências ao entregar.
 
-Não fazer push direto na `main`, merge ou force push. Não assumir que branches diferentes tornam seguro trabalhar simultaneamente no mesmo diretório: cada chat precisa de seu worktree.
+Chats de frontend/backend não fazem push direto na `main` nem merge; integração e publicação ficam com o orquestrador. Não fazer force push. Não assumir que branches diferentes tornam seguro trabalhar simultaneamente no mesmo diretório: cada chat precisa de seu worktree.
 
 ### Conventional Commits
 
@@ -181,4 +189,4 @@ docs: documenta escopo e referências do projeto
 
 ## Situação atual
 
-Repositório recém-criado e sem código de aplicação. Os chats apresentaram propostas e aguardam contrato, decisões de produto e organização dos worktrees. Este README registra o contexto para evitar suposições divergentes entre as equipes.
+Frontend demonstrativo implementado, com mapas licenciados e testes desktop/mobile; backend inicial implementado com API, migrations, upload e worker. Retomada em 29/10: integrar entregas, preparar Supabase dedicado e conectar a interface à API. Upload remoto, processamento FFmpeg e persistência entre dispositivos ainda exigem validação no ambiente real. Importadores de links permanecem indisponíveis.
