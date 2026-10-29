@@ -1,16 +1,30 @@
-export type ImportProvider = 'youtube' | 'tiktok';
-export interface ImportedFile { path: string; sourceUrl: string; provider: ImportProvider; }
-export interface MediaImporter {
- readonly provider: ImportProvider;
- readonly enabled: boolean;
- // Implementations must enforce outbound URL restrictions and byte/time limits.
- download(sourceUrl: URL, signal: AbortSignal): Promise<ImportedFile>;
+import {z} from 'zod';
+export type ImportProvider='youtube'|'tiktok'|'instagram';
+export type Clip={startSeconds:number;endSeconds:number};
+export const clipSchema=z.object({startSeconds:z.number().finite().min(0),endSeconds:z.number().finite().positive()}).strict().refine(v=>v.endSeconds>v.startSeconds&&v.endSeconds-v.startSeconds<=40,{message:'Escolha um intervalo crescente de até 40 segundos.'});
+export const importRequest=z.object({sourceUrl:z.string().min(1).max(2048),clip:clipSchema.optional()}).strict();
+export const uploadRequest=z.object({clip:clipSchema.optional()}).strict();
+export type SourceLink={provider:ImportProvider;sourceUrl:string;canonicalUrl:string;videoId:string;shortLink:boolean};
+export class SourceUrlError extends Error {readonly statusCode=400;readonly code='INVALID_SOURCE_URL';constructor(){super('Informe um link HTTPS válido de Shorts, TikTok ou Instagram Reels.');}}
+export function recognizeSource(input:string):SourceLink{
+ if(input!==input.trim()||input.length>2048||/[\s\\\u0000-\u001f\u007f]/u.test(input))throw new SourceUrlError();
+ let u:URL;try{u=new URL(input);}catch{throw new SourceUrlError();}
+ if(u.protocol!=='https:'||u.username||u.password||u.port||u.hash||/%/.test(u.pathname)||!/^https:\/\/[a-z0-9.-]+\//i.test(input))throw new SourceUrlError();
+ const host=u.hostname;let provider:ImportProvider,videoId:string,shortLink=false,match:RegExpMatchArray|null;
+ if(['youtube.com','www.youtube.com','m.youtube.com'].includes(host)&&(match=u.pathname.match(/^\/shorts\/([A-Za-z0-9_-]{11})\/?$/))){provider='youtube';videoId=match[1];u.hostname='www.youtube.com';u.pathname=`/shorts/${videoId}`;}
+ else if(['www.tiktok.com','tiktok.com','m.tiktok.com'].includes(host)&&(match=u.pathname.match(/^\/@[A-Za-z0-9._]{1,64}\/video\/([0-9]{10,24})\/?$/))){provider='tiktok';videoId=match[1];u.hostname='www.tiktok.com';}
+ else if(['vm.tiktok.com','vt.tiktok.com'].includes(host)&&(match=u.pathname.match(/^\/([A-Za-z0-9]{4,32})\/?$/))){provider='tiktok';videoId=match[1];shortLink=true;}
+ else if(['instagram.com','www.instagram.com'].includes(host)&&(match=u.pathname.match(/^\/reel\/([A-Za-z0-9_-]{3,64})\/?$/))){provider='instagram';videoId=match[1];u.hostname='www.instagram.com';u.pathname=`/reel/${videoId}/`;}
+ else throw new SourceUrlError();
+ u.search='';return {provider,videoId,shortLink,sourceUrl:input,canonicalUrl:u.href};
 }
-export class UnavailableImporter implements MediaImporter {
- readonly enabled = false;
- constructor(readonly provider: ImportProvider) {}
- async download(_sourceUrl: URL, _signal: AbortSignal): Promise<ImportedFile> {
-  throw new Error('PLATFORM_UNSUPPORTED');
- }
-}
-export const importers: readonly MediaImporter[] = [new UnavailableImporter('youtube'), new UnavailableImporter('tiktok')];
+export const importerCapabilities=Object.freeze({
+ youtube:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Download do YouTube não habilitado: exige método e aprovação aplicáveis. Envie um MP4 autorizado.'},
+ tiktok:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Importação do TikTok não habilitada. Portabilidade oficial exige aprovação e autorização do titular. Envie um MP4 autorizado.'},
+ instagram:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Importação do Instagram não habilitada. É necessária integração oficial com conta autorizada. Envie um MP4 autorizado.'}
+});
+export interface ImportedFile {path:string;sourceUrl:string;provider:ImportProvider;}
+export interface MediaImporter {readonly provider:ImportProvider;readonly enabled:boolean;download(sourceUrl:URL,signal:AbortSignal):Promise<ImportedFile>;}
+export class UnavailableImporter implements MediaImporter {readonly enabled=false;constructor(readonly provider:ImportProvider){}async download(_sourceUrl:URL,_signal:AbortSignal):Promise<ImportedFile>{throw Object.assign(new Error(importerCapabilities[this.provider].message),{code:'PLATFORM_UNSUPPORTED',statusCode:422});}}
+export const importers:readonly MediaImporter[]=['youtube','tiktok','instagram'].map(p=>new UnavailableImporter(p as ImportProvider));
+export function disabledImport(input:unknown):never {const request=importRequest.parse(input);const source=recognizeSource(request.sourceUrl);throw Object.assign(new Error(importerCapabilities[source.provider].message),{code:'PLATFORM_UNSUPPORTED',statusCode:422});}
