@@ -1,67 +1,67 @@
 # Checkpoint — frontend
 
-Atualizado em: 28/10/2026 22:48, America/Sao_Paulo
-Estado: em andamento — fechamento da primeira prévia demonstrativa
+Atualizado em: 29/10/2026, America/Sao_Paulo
+Estado: primeira prévia concluída; iniciando integração opcional com API
 
 ## Objetivo e pedido atual
 
-Construir frontend React/TypeScript do pcdNades, coordenado pelo chat “Criar site de lineups para CS2”. Etapa autorizada: prévia navegável com mapas reais licenciados, radar, filtros, detalhes, administração e MP4 local explicitamente demonstrativos. Registrar continuidade em disco imediatamente, conforme nova instrução do usuário, sem esperar a tarefa terminar. Orquestrador já publicou snapshot anterior; aguarda última revisão/testes/push para integrar melhorias.
+O usuário autorizou retomar e integrar o frontend com o contrato real: serviço HTTP opcional por env, autenticação Supabase de administrador, capabilities, upload assinado/complete/polling e playback com renovação. Não provisionar serviços, não inventar credenciais nem alegar E2E real com mocks. Primeiro enviar a entrega demonstrativa já concluída.
 
 ## Localização do trabalho
 
-- Branch: feat/frontend. Worktree gerenciado: C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2.
-- Base: e889e3b (docs/visao-projeto). Último commit implementado: 953a2ad.
-- Commits anteriores: 056eea8 biblioteca/radar; e3b66c0 plantas licenciadas reais; 953a2ad CRUD e MP4 local.
-- Push desta branch: ainda pendente. O orquestrador integrou 953a2ad a origin/main e publicou a demo, conforme mensagem; não alterei main nem publiquei.
-- Nova regra AGENTS.md e template lidos de origin/main, commit d8c643b, via git show. Ainda não incorporados à branch local (não fazer merge sem coordenação).
-- Sem commit neste momento: frontend/docs/implementation.md, frontend/package.json, frontend/vite.config.ts, frontend/src/app/App.tsx, frontend/src/components/{Dialog,Icon,Radar}.tsx, frontend/src/domain/{lineups,types,validation}.ts, frontend/src/features/admin/{Admin,LineupForm,MediaInput}.tsx, frontend/src/features/library/{Library,VideoPlayer}.tsx, frontend/src/main.tsx, frontend/src/services/{demoData,lineupService}.ts, frontend/src/styles.css, frontend/tests/{admin,domain}.test.ts.
-- Arquivos novos: frontend/README.md, frontend/docs/verification.md, frontend/playwright.config.ts, frontend/tests/browser/flows.spec.ts, frontend/tests/fixtures/test-pattern.mp4, frontend/vercel.json e este checkpoint. A maioria dos arquivos alterados acima tem apenas formatação Prettier; mudanças funcionais recentes estão em validação 20s, labels acessíveis e CSS contra overflow.
+- Worktree: C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2.
+- Branch: feat/frontend; base e889e3b. Último código: 3c220c3; checkpoint anterior f124ac6.
+- Ação de agora: commit deste checkpoint e push de feat/frontend, incluindo 3c220c3. Conferir log/remoto após o push; hash do próprio checkpoint deve ser obtido no Git.
+- Git estava limpo ao retomar; somente este checkpoint está sendo atualizado. Nenhum código da integração opcional foi escrito ainda.
+- AGENTS/guia/template e checkpoint do orquestrador lidos de origin/main d8c643b; não foram incorporados por merge nesta branch. Não alterar raiz/main/worktrees alheios.
 
 ## Feito
 
-- React 19 + TypeScript + Vite em frontend/, interface PT-BR responsiva, serviço assíncrono em memória substituível. Nunca usa localStorage como fonte de dados.
-- Mirage/Inferno/Ancient com plantas vetoriais reais do setpos.gg (CC BY 4.0, snapshot ba5f793883e1ce13076dd6919aa1601099c247cf); créditos/licença/versão em public/maps. Não são texturas oficiais extraídas; limitações do autor documentadas. Desenho fictício inicial removido e pontos demo reposicionados.
-- Radar proporcional, filtros tipo/lado, agrupamento de destinos sobrepostos, lista acessível e detalhes.
-- CRUD demonstrativo, foco e confirmação de exclusão. MP4 local com player nativo, validação contêiner/MIME/tamanho/duração. Importação de links explicitamente não operacional; tentativa não publica dados nem substitui mídia.
-- 12 testes Playwright passaram (6 cenários em desktop/mobile). Incluem filtros/vazio, pontos sobrepostos, formulário/radar/foco, link não suportado e MP4 com play/pause/seek/edição/exclusão/reload.
-- Corrigidos overflow em 320px e nome acessível do seletor. Duração máxima ajustada para 20s por instrução confirmada do usuário.
-- Dependência Supabase investigada e removida: nenhum adaptador real ou env criado neste incremento. Foco alinhado com orquestrador é primeira entrega demo, integração real em incremento posterior.
+- Commits 056eea8 biblioteca/radar; e3b66c0 plantas reais licenciadas; 953a2ad CRUD/MP4 demo; f124ac6 checkpoint; 3c220c3 testes, responsividade, teto de 20s, SPA e documentação.
+- 3c220c3 contém frontend/README.md, docs/verification.md, Playwright e fixture MP4 sintética de dois segundos (sem gameplay), vercel.json; código formatado.
+- Prévia React/TS/Vite em memória explicitamente identificada. Sem localStorage de cadastros, sem senha simulada, sem upload/download remoto.
+- Plantas vetoriais Mirage/Inferno/Ancient de setpos.gg, licença de artwork CC BY 4.0, snapshot ba5f793883e1ce13076dd6919aa1601099c247cf de 23/10/2026. Não são texturas extraídas oficiais e podem ficar defasadas. Crédito/versão/licença junto ao radar e em public/maps/ATTRIBUTION.md.
+- CRUD/MP4 local, assinatura/MIME/tamanho/duração, player play/pause/seek, agrupamento de destinos sobrepostos e alternativa de coordenadas pelo teclado.
+- Link indisponível não publica a granada nem substitui vídeo anterior. Teto 20s confirmado e testado.
+- Screenshot desktop/mobile/formulário revisado com view_image. Arquivos fora do Git: C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/frontend-{desktop,mobile,form}.png.
 
 ## Em andamento
 
-- Documentação, formatação e fechamento de verificações após ajustes finais de 20s.
-- Capturar/revisar screenshots desktop/celular/formulário, executar testes/build/typecheck/audit/diff, commit e push. Testes e docs/vercel.json ainda não commitados.
+- Enviar 3c220c3 e este checkpoint; comunicar catálogo canônico ao orquestrador.
+- Relendo contrato concreto backend e preparando arquitetura/testes do adaptador HTTP/auth/mídia. Sem serviços provisionados ou credenciais.
 
 ## Retomar daqui
 
-1. Ler AGENTS/guia/checkpoints atualizados na main remota, conferir git status/branch/log e este arquivo. Não trocar branch nem editar checkout alheio.
-2. No diretório frontend/, executar npm test e npm run build; depois npm run test:browser e npm audit. Os 12 testes browser passaram antes da formatação; repetir só porque houve ajustes recentes de tipos/20s/format.
-3. Revisar screenshot desktop 1440×1000, mobile 390×844 e formulário. Browser IAB da sessão pode não existir; confira antes de reutilizar. Servidor dev foi iniciado em 127.0.0.1:5174 (sessão exec 92059), mas não presumir que continua ativo.
-4. Atualizar docs de verificação e este checkpoint, commitar somente frontend/ e docs/continuity/frontend.md com descrição PT-BR; git push -u origin feat/frontend. Informar SHAs e resultado ao orquestrador.
-5. Aguardar coordenação para integração real; não provisionar serviços nem alegar persistência compartilhada funcionando.
+1. Conferir git status/branch/log, ler AGENTS/guia/checkpoints na main remota e este arquivo.
+2. Confirmar push de 3c220c3 e do checkpoint; informar ao orquestrador antes de iniciar código de integração.
+3. Ler backend/README.md e modelo/capabilities na origin/feat/backend, sem editar worktree alheio; confirmar ambiguidades via orquestrador.
+4. Implementar/testar seleção explícita de runtime demo/API, cliente HTTP e adapter com respostas controladas. Nunca fallback silencioso para demo após erro remoto.
+5. Integrar autenticação/admin, capabilities e pipeline de mídia por etapas com commits/checkpoints. Validar controladamente; ambiente remoto ainda é pendência.
 
 ## Decisões e contrato
 
-- Confirmado: limite 20s por vídeo; React+TS; mapas reais com atribuição; dados compartilhados via backend; sem embed como substituto de download.
-- Demonstração abre MP4 local e perde alterações ao reload. Login é uma porta de demonstração claramente identificada, sem senha ou segurança fingida.
-- Proposto/pendente: cliente HTTP e Supabase auth/storage ligados às telas. README backend 8904118 lido, sem editar worktree backend.
-- Contrato: /api/v1 maps/grenades, envelopes data/pagination, Bearer Supabase, videoId ready para publicar; uploads assinados, complete, polling 3s; playback somente após publicação e URL expira; capabilities é autoridade para limites; PLATFORM_UNSUPPORTED para importadores desabilitados.
-- IDs de demo: mirage/inferno/ancient; enviar ao backend para seed com URLs /maps/{id}.svg, 1024×1024 e coordinateVersion setpos-{id}-ba5f793. Não preservar coordenadas se trocar imagem/enquadramento.
-- Referências: frontend/README.md, frontend/docs/{implementation,verification}.md, frontend/public/maps/ATTRIBUTION.md e C:/Users/felip/.codex/worktrees/pcdnades-backend/nadesCs2/backend/README.md (somente leitura).
+- React+TS, português, limite 20s, mapas reais licenciados, banco compartilhado como fonte principal, sem embed.
+- IDs canônicos: mirage/inferno/ancient. Imagens /maps/mirage.svg, /maps/inferno.svg, /maps/ancient.svg; 1024×1024. coordinateVersion setpos-mirage-ba5f793 / setpos-inferno-ba5f793 / setpos-ancient-ba5f793. Preservar imagem inteira/orientação. Descartar ou migrar coordenadas se trocar enquadramento.
+- API /api/v1; mapas {data:[{id,name,radar:{imageUrl,width,height,coordinateVersion}}]}; granadas {data,pagination}; Bearer Supabase; POST/PATCH videoId somente ready.
+- POST /media/uploads retorna sessão supabase-signed; uploadToSignedUrl; complete; polling 3s; capacidades/limites pelo GET capabilities. Playback apenas após publicação, com URL expirada renovável. Importadores inicialmente PLATFORM_UNSUPPORTED.
+- Sem decisão de privacidade nova; leitura pública e admin seguem contrato provisório coordenado.
+- Referências: frontend/README.md e docs/verification.md; contrato backend na branch feat/backend. Integração real acaba de ser autorizada em 29/10.
 
 ## Validação
 
-- Executado: 9 testes unitários/serviço, typecheck e build verdes até 953a2ad; build verde após fallback SPA/testes adicionados; 12 testes navegador verdes após correção de overflow/labels.
-- Executado: npm audit encontrou 2 moderadas no Vitest inicial; npm audit fix atualizou a 4.1.12 e retornou zero vulnerabilidades.
-- Ainda executar novamente: suite unitária com novo teste de duração (esperado 10 testes), build/typecheck e audit após fechamento; inspeção final de screenshots.
-- Não validado: API/Supabase real, storage/worker, permissões, upload remoto, playback assinado, persistência em dois dispositivos e Safari/iOS. Nenhum segredo existe na entrega.
+- Última execução pré-pausa, sem mudanças de código depois: npm test 10/10; npm run build (inclui typecheck) passou; npm run test:browser 12/12; npm audit zero vulnerabilidades; git diff --check sem erros.
+- Browser integrado usado na revisão visual primária; Playwright fez testes repetíveis em 1440×1000/390×844, mais overflow 320/390/768/1440px. Corrigidos overflow de 4px e label do seletor.
+- Comandos npm precisam rodar em frontend/ ou usar npm --prefix frontend. Tentativas na raiz retornaram ENOENT e foram refeitas corretamente.
+- Não validado: API/Supabase, auth/RLS, upload/Storage/worker real, playback assinado, persistência em dois dispositivos, Safari/iOS. Não existe .env nem segredo de produção.
 
 ## Bloqueios e dependências
 
-- Sem bloqueio para concluir demo e push.
-- API real depende de ambiente Supabase/API/worker e seed; coordenar com orquestrador. Publicação é responsabilidade dele.
+- Sem bloqueio para escrever/testar adaptador com respostas controladas.
+- E2E real depende de Supabase/API/worker/seed e coordenação; não provisionar nem inserir credenciais.
+- Publicação e integração main são do orquestrador. Não alterar main nem efetuar deploy.
 
 ## Entrega e histórico curto
 
-- 28/10/2026: commits 056eea8, e3b66c0, 953a2ad locais; orquestrador informou integração de 953a2ad e deploy inicial READY em https://pcdnades.vercel.app (estado reportado por ele, ainda não verificado neste chat).
-- 28/10/2026: 12 fluxos de navegador passaram; preparo documentação, limite 20s, SPA e este checkpoint para próxima integração.
+- 28/10: demo até 953a2ad integrada/publicada pelo orquestrador em https://pcdnades.vercel.app (reportado por ele; não é integração remota do frontend com backend).
+- 28/10: f124ac6 checkpoint enviado; 3c220c3 validado e commitado, aguardava push.
+- 29/10: retomada autorizada, Git limpo confirmado e novo incremento API autorizado. Atualizando checkpoint antes de push/início.
