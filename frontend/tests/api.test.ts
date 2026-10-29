@@ -57,7 +57,7 @@ describe("cliente API v1", () => {
   it.each([
     ["UNSUPPORTED_CODEC", "H.264"],
     ["INVALID_MEDIA", "MP4"],
-    ["DURATION_EXCEEDED", "20 segundos"],
+    ["DURATION_EXCEEDED", "90 segundos"],
     ["FILE_TOO_LARGE", "tamanho"],
     ["PROCESSING_TIMEOUT", "validação"],
   ])("orienta erro %s sem exibir stack do servidor", async (code, expected) => {

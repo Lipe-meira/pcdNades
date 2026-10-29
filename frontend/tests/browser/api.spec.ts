@@ -55,6 +55,8 @@ async function setup(
     inlineOriginal?: boolean;
     loseFirstComplete?: boolean;
     failFirstValidation?: boolean;
+    trimming?: boolean;
+    durationLimit?: number;
   } = {},
 ) {
   const state = {
@@ -69,6 +71,7 @@ async function setup(
     uploadAttempts: 0,
     allowLongLease: false,
     completes: 0,
+    clip: null as { startSeconds: number; endSeconds: number } | null,
   };
   const b64 = (value: unknown) =>
     Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -160,7 +163,7 @@ async function setup(
             upload: {
               enabled: options.upload !== false,
               maxBytes: 50_000_000,
-              maxDurationSeconds: 20,
+              maxDurationSeconds: options.durationLimit ?? 20,
               ...(options.inlineOriginal
                 ? { processingMode: "inline-original" }
                 : {}),
@@ -168,7 +171,27 @@ async function setup(
             importers: {
               youtube: { enabled: false },
               tiktok: { enabled: false },
+              instagram: {
+                enabled: false,
+                reasonCode: "PLATFORM_UNSUPPORTED",
+                message: "Integração ainda não habilitada.",
+              },
             },
+            ...(options.trimming !== undefined
+              ? {
+                  trimming: {
+                    enabled: options.trimming,
+                    reasonCode: options.trimming
+                      ? undefined
+                      : "CLIP_UNSUPPORTED",
+                    maxSourceDurationSeconds: 180,
+                    maxSourceBytes: 50_000_000,
+                    maxDurationSeconds: options.durationLimit ?? 90,
+                    minDurationSeconds: 0.1,
+                    timePrecisionSeconds: 0.001,
+                  },
+                }
+              : {}),
           },
         },
       });
@@ -204,6 +227,9 @@ async function setup(
       });
     if (path === "/media/uploads") {
       state.uploadSessions++;
+      state.clip = route.request().postData()
+        ? (route.request().postDataJSON().clip ?? null)
+        : null;
       return reply(route, {
         status: 201,
         json: {
@@ -215,7 +241,10 @@ async function setup(
               path: `${mediaId}/source.mp4`,
               token: "controlled",
             },
-            limits: { maxBytes: 50_000_000, maxDurationSeconds: 20 },
+            limits: {
+              maxBytes: 50_000_000,
+              maxDurationSeconds: options.durationLimit ?? 20,
+            },
           },
         },
       });
@@ -240,7 +269,19 @@ async function setup(
         });
       state.queued = true;
       if (options.inlineOriginal)
-        return reply(route, { json: { data: media } });
+        return reply(route, {
+          json: {
+            data: {
+              ...media,
+              clip: state.clip,
+              metadata: {
+                durationSeconds: state.clip
+                  ? state.clip.endSeconds - state.clip.startSeconds
+                  : 2,
+              },
+            },
+          },
+        });
       return reply(route, {
         status: 202,
         json: { data: { ...media, status: "queued" } },
@@ -256,6 +297,7 @@ async function setup(
         json: {
           data: {
             ...media,
+            clip: state.clip,
             status: state.polls === 1 ? "processing" : "ready",
           },
         },
@@ -267,7 +309,9 @@ async function setup(
         expect(state.polls).toBeGreaterThanOrEqual(2);
       const body = route.request().postDataJSON();
       expect(body.videoId).toBe(mediaId);
-      state.published = [{ ...grenade, ...body }];
+      state.published = [
+        { ...grenade, ...body, video: { ...media, clip: state.clip } },
+      ];
       return reply(route, { status: 201, json: { data: state.published[0] } });
     }
     return reply(route, {
@@ -347,7 +391,7 @@ test("login, capabilities e logout com respostas controladas", async ({
     .getByRole("button", { name: "Importar por link", exact: true })
     .click();
   await expect(
-    page.getByText("Importação indisponível no servidor.", { exact: false }),
+    page.getByText("Importação indisponível no servidor", { exact: false }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Cancelar", exact: true }).click();
   await page.getByRole("button", { name: "Sair", exact: true }).click();
@@ -585,10 +629,112 @@ test("inline: codec inválido orienta exportação e nova escolha inicia outra s
     .getByLabel("Arquivo MP4", { exact: true })
     .setInputFiles(samplePath);
   await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByLabel("Arquivo MP4", { exact: true }).setInputFiles({
+    name: "reexportado.mp4",
+    mimeType: "video/mp4",
+    buffer: await readFile(samplePath),
+  });
+  await expect
+    .poll(() =>
+      page
+        .getByLabel("Prévia do MP4 selecionado")
+        .evaluate((video: HTMLVideoElement) => video.readyState),
+    )
+    .toBeGreaterThanOrEqual(1);
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(state.uploadSessions).toBe(2);
+  expect(state.uploadAttempts).toBe(2);
+});
+
+test("recorte: prévia delimitada, erro de intervalo e sessão imutável com saída90", async ({
+  page,
+}, testInfo) => {
+  const state = await setup(page, {
+    inlineOriginal: true,
+    trimming: true,
+    durationLimit: 90,
+  });
+  await page.goto("/");
+  await signIn(page);
+  await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  await page.getByLabel("Título", { exact: true }).fill("Trecho controlado");
+  await page
+    .getByLabel("Instruções", { exact: true })
+    .fill("Instruções fictícias para QA.");
+  await page.getByLabel("Coordenada X (%)").fill("40");
+  await page.getByLabel("Coordenada Y (%)").fill("60");
+  await page
+    .getByLabel("Arquivo MP4", { exact: true })
+    .setInputFiles(
+      fileURLToPath(new URL("../fixtures/source-91s.mp4", import.meta.url)),
+    );
+  const preview = page.getByLabel("Prévia do MP4 selecionado");
+  await expect
+    .poll(() => preview.evaluate((video: HTMLVideoElement) => video.duration))
+    .toBeGreaterThan(90);
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  expect(state.uploadSessions).toBe(0);
+  await page
+    .getByRole("checkbox", { name: "Selecionar trecho", exact: true })
+    .check();
+  await page.getByLabel("Início (segundos)", { exact: true }).fill("5");
+  await page.getByLabel("Fim (segundos)", { exact: true }).fill("4");
+  await expect(
+    page.getByRole("button", { name: "Reproduzir trecho", exact: true }),
+  ).toBeDisabled();
+  await page.getByLabel("Início (segundos)", { exact: true }).fill("90.1");
+  await page.getByLabel("Fim (segundos)", { exact: true }).fill("91");
+  await page
+    .getByRole("button", { name: "Reproduzir trecho", exact: true })
+    .click();
+  await expect
+    .poll(() =>
+      preview.evaluate((video: HTMLVideoElement) => video.currentTime),
+    )
+    .toBeGreaterThanOrEqual(90.1);
+  await expect
+    .poll(() => preview.evaluate((video: HTMLVideoElement) => video.paused))
+    .toBe(true);
+  expect(
+    await preview.evaluate((video: HTMLVideoElement) => video.currentTime),
+  ).toBeLessThanOrEqual(91.01);
+  await page.getByLabel("Início (segundos)", { exact: true }).fill("1");
+  await page.getByLabel("Fim (segundos)", { exact: true }).fill("91");
+  await expect(
+    page.getByRole("button", { name: "Reproduzir trecho", exact: true }),
+  ).toBeEnabled();
+  await page.screenshot({ path: testInfo.outputPath("clip-selector.png") });
+  await page
+    .getByRole("button", { name: "Salvar granada", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(state.clip).toEqual({ startSeconds: 1, endSeconds: 91 });
+  expect(state.uploadSessions).toBe(1);
+});
+
+test("recorte: capacidades disabled e reseleção preservam vídeo inteiro sem clip", async ({
+  page,
+}) => {
+  const state = await setup(page, {
+    inlineOriginal: true,
+    trimming: false,
+    durationLimit: 90,
+  });
+  await page.goto("/");
+  await signIn(page);
+  await fillInlineForm(page);
+  await expect(
+    page.getByRole("checkbox", { name: "Selecionar trecho", exact: true }),
+  ).toBeDisabled();
   await page
     .getByLabel("Arquivo MP4", { exact: true })
     .setInputFiles({
-      name: "reexportado.mp4",
+      name: "outro.mp4",
       mimeType: "video/mp4",
       buffer: await readFile(samplePath),
     });
@@ -603,6 +749,5 @@ test("inline: codec inválido orienta exportação e nova escolha inicia outra s
     .getByRole("button", { name: "Salvar granada", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  expect(state.uploadSessions).toBe(2);
-  expect(state.uploadAttempts).toBe(2);
+  expect(state.clip).toBeNull();
 });

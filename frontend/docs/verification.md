@@ -43,3 +43,11 @@ API real, autenticação/permissões, capabilities, transferência e processamen
 - Resultado: npm test30/30; npm run build/typecheck; npm run test:browser26/26 (demo e API controlada em PC/celular); npm auditzero; git diff --check sem erros.
 - As regressões de prazo, erros e retomada falharam antes da implementação; cenários browser inline de perda da confirmação e erro/novo arquivo passaram após correções. Testes são controlados e não validam ffprobe/Vercel/Storage reais.
 - Sem publicação, segredos, workflow ou alteração de backend. Flag upload continua dependente da liberação e QA remoto coordenados pelo orquestrador.
+
+## 29/10 — Seleção de trecho com prévia e limite90
+
+Lógica/contrato: Clip finito,0<=início<fim,0,1..90s,até3decimais; sem recorte fonte<=90s,com recorte fonte<=180s/50MB. Preview reproduz/pára nos limites do original local, não gera vídeo. Capabilitiesdisabled impede seleção/envio; demo sem corte preservada. clip vai só na sessão de upload/import habilitado; complete sóID; retomada exige seleção imutável equivalente.
+
+Testes de domínio/serviço incluem90/91,intervalos inválidos,precisão,Instagram/hosts exatos,disabled,corpo de sessão vscomplete e rejeição de retomada de outro trecho.39unitários passaram; build/typecheck passaram.4cenários novos de browserPC/mobile passaram (preview delimitado,invalidrange,90s de origem91s,semclip/disabled/reseleção). A suite completa está sendo refeita após atualização de uma asserção de texto antigo; o resultado final ficará no checkpoint.
+
+Nenhum corte/importação/mutação remota ou alteração dos7PNG do usuário. Screenshots de teste são do renderer real com transporte controlado, não comprovam corteVercel ou plataforma operacional.

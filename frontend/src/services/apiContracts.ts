@@ -2,6 +2,7 @@ import type { GameMap, Lineup, VideoStatus } from "../domain/types";
 import { isTarget } from "../domain/lineups";
 import { ApiError } from "./apiClient";
 import { safeHttpUrl } from "./runtimeConfig";
+import type { Clip } from "../domain/clip";
 
 export type RemoteMediaStatus =
   "awaiting_upload" | "queued" | "processing" | "ready" | "failed";
@@ -13,6 +14,7 @@ export type MediaRecord = {
   stage: string | null;
   error: { code: string; message: string } | null;
   metadata: Record<string, unknown> | null;
+  clip?: Clip | null;
 };
 export type ApiMap = {
   id: string;
@@ -32,8 +34,40 @@ export type MediaCapabilities = {
     maxDurationSeconds: number;
     processingMode?: "inline-original" | "worker-transcode";
   };
-  importers: { youtube: { enabled: boolean }; tiktok: { enabled: boolean } };
+  importers: {
+    youtube: ImporterCapability;
+    tiktok: ImporterCapability;
+    instagram?: ImporterCapability;
+  };
+  trimming?: TrimmingCapability;
 };
+export type ImporterCapability = {
+  enabled: boolean;
+  reasonCode?: string;
+  message?: string;
+};
+export type TrimmingCapability = {
+  enabled: boolean;
+  reasonCode?: string;
+  maxSourceDurationSeconds: number;
+  maxSourceBytes: number;
+  maxDurationSeconds: number;
+  minDurationSeconds: number;
+  timePrecisionSeconds: number;
+};
+export function clipLimits(capabilities: MediaCapabilities) {
+  return {
+    maxDurationSeconds: Math.min(
+      capabilities.upload.maxDurationSeconds,
+      capabilities.trimming?.maxDurationSeconds ?? 90,
+    ),
+    maxSourceDurationSeconds:
+      capabilities.trimming?.maxSourceDurationSeconds ??
+      capabilities.upload.maxDurationSeconds,
+    minDurationSeconds: capabilities.trimming?.minDurationSeconds ?? 0.1,
+    timePrecisionSeconds: capabilities.trimming?.timePrecisionSeconds ?? 0.001,
+  };
+}
 export type UploadSession = {
   mediaId: string;
   upload: {
@@ -165,12 +199,51 @@ export function checkCapabilities(value: MediaCapabilities): MediaCapabilities {
     typeof value.importers?.tiktok?.enabled !== "boolean"
   )
     contractError();
-  // User's 20-second hard ceiling is never relaxed by a misconfigured server.
+  if (
+    value.importers.instagram !== undefined &&
+    typeof value.importers.instagram.enabled !== "boolean"
+  )
+    contractError();
+  const trim = value.trimming;
+  if (
+    trim &&
+    (typeof trim.enabled !== "boolean" ||
+      [
+        trim.maxSourceDurationSeconds,
+        trim.maxSourceBytes,
+        trim.maxDurationSeconds,
+        trim.minDurationSeconds,
+        trim.timePrecisionSeconds,
+      ].some((number) => !Number.isFinite(number) || number <= 0) ||
+      trim.minDurationSeconds > trim.maxDurationSeconds)
+  )
+    contractError();
+  // The final video is capped at90s; a selected source can be up to180s.
   return {
     ...value,
     upload: {
       ...value.upload,
-      maxDurationSeconds: Math.min(20, value.upload.maxDurationSeconds),
+      maxDurationSeconds: Math.min(90, value.upload.maxDurationSeconds),
+      maxBytes: Math.min(50_000_000, value.upload.maxBytes),
     },
+    ...(trim
+      ? {
+          trimming: {
+            ...trim,
+            maxSourceDurationSeconds: Math.min(
+              180,
+              trim.maxSourceDurationSeconds,
+            ),
+            maxSourceBytes: Math.min(50_000_000, trim.maxSourceBytes),
+            maxDurationSeconds: Math.min(
+              90,
+              trim.maxDurationSeconds,
+              value.upload.maxDurationSeconds,
+            ),
+            minDurationSeconds: Math.max(0.1, trim.minDurationSeconds),
+            timePrecisionSeconds: Math.max(0.001, trim.timePrecisionSeconds),
+          },
+        }
+      : {}),
   };
 }

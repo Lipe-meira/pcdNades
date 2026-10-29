@@ -33,11 +33,11 @@ Copie .env.example para .env.local, não versionado, e reinicie o Vite. Os nomes
 
 Seleção de mapa, filtros tipo/lado, radar proporcional, lista acessível e escolha de destinos sobrepostos. Detalhes com player nativo e instruções. Administração com login real no modo API, CRUD, confirmação de exclusão, validação e coordenadas por clique/toque ou teclado. No demo, acesso administrativo é identificado e não coleta senha.
 
-MP4: teto confirmado de 20 segundos. No demo, 50.000.000 bytes; no modo API, GET capabilities determina tamanho e duração (nunca acima de 20s). Cliente verifica extensão/MIME/contêiner e prévia/duração; servidor/worker são autoridade sobre o conteúdo.
+MP4: teto confirmado de 90 segundos. No demo, 50.000.000 bytes; no modo API, GET capabilities determina tamanho e duração (nunca acima de 90s). Cliente verifica extensão/MIME/contêiner e prévia/duração; servidor/worker são autoridade sobre o conteúdo.
 
 Fluxo API: criar sessão de upload assinada → uploadToSignedUrl no bucket videos-staging → complete → publicar com videoId somente ready. O contrato permite complete200 com ready/failed ou202 com operação em curso; queued/processing são consultados a cada3s. Só POST /media/:id/complete usa timeout150s (prazo do servidor120s); todos os demais endpoints mantêm30s.
 
-`capabilities.upload.processingMode` é opcional: `inline-original` ou `worker-transcode`. Quando ausente, a interface não presume modo. Em inline-original, o servidor valida o MP4 original: vídeo H.264/yuv420p, áudio AAC ou sem áudio, respeitando20s e tamanho de capabilities. Não há conversão automática. A orientação aparece apenas quando o modo é informado. Erros UNSUPPORTED_CODEC,INVALID_MEDIA,DURATION_EXCEEDED,FILE_TOO_LARGE e PROCESSING_TIMEOUT recebem mensagens locais claras, sem exibir stack/caminhos do servidor.
+`capabilities.upload.processingMode` é opcional: `inline-original` ou `worker-transcode`. Quando ausente, a interface não presume modo. Em inline-original, o servidor valida o MP4 original: vídeo H.264/yuv420p, áudio AAC ou sem áudio, respeitando90s e tamanho de capabilities. Não há conversão automática. A orientação aparece apenas quando o modo é informado. Erros UNSUPPORTED_CODEC,INVALID_MEDIA,DURATION_EXCEEDED,FILE_TOO_LARGE e PROCESSING_TIMEOUT recebem mensagens locais claras, sem exibir stack/caminhos do servidor.
 
 Depois de enviar os bytes, o progresso LOCAL confirming exibe “Confirmando envio”, sem afirmar status de processamento do servidor. Timeout/perda de conexão preserva mediaId; novo Salvar consulta a mesma mídia: ready publica, queued/processing acompanha, awaiting_upload repete apenas complete idempotente, failed orienta nova escolha. Um409 em complete é reconciliado por GET antes de decidir. Nenhum desses casos reenvia bytes automaticamente. UPLOAD_FAILED/UPLOAD_INCOMPLETE reais e troca de arquivo iniciam nova sessão. Falha de validação preserva o cadastro anterior.
 
@@ -73,3 +73,15 @@ Sem corte/giro; target x/y [0,1] relativo a toda a imagem, origem superior esque
 A primeira demo teve 10 testes unitários, 12 Playwright desktop/mobile, build/typecheck e audit zero. O incremento API adiciona testes de contrato/pipeline/configuração; a verificação é registrada no checkpoint e em docs/verification.md. Nenhum resultado controlado deve ser chamado de E2E real.
 
 Dependências de validação real: API saudável e CORS, projeto/usuário administrador Supabase, permissões/RLS, bucket privado, worker FFmpeg, upload completo e reprodução/renovação em navegadores reais, persistência entre dispositivos. Não presumir que o deploy publicado usa esta versão ou modo API até confirmação do orquestrador.
+
+## Seleção de trecho e prévia local (contrato90)
+
+Envio sem recorte mantém o MP4 inteiro e exige fonte até90s. Quando capabilities.trimming.enabled=true, o arquivo de origem pode ter até180s/50MB e o trecho final deve ter0,1..90s, início>=0,fim>início,fim<=duração da origem, precisão0,001s (até3decimais). Os campos efetivos vêm de capabilities; limites menores são respeitados.
+
+O seletor mostra início/fim em segundos, ajustes por sliders e reprodução delimitada do MP4 original local. Isso não cria arquivo recortado nem anuncia sucesso remoto: o servidor executa/valida o recorte. Desabilitado/ausente em capabilities bloqueia a seleção e explica o motivo. A demonstração não simula arquivo cortado.
+
+POST /media/uploads envia {clip:{startSeconds,endSeconds}} somente se selecionado; sem seleção preserva corpo ausente. Complete usa apenas ID, nunca novo intervalo. A seleção é imutável: arquivo/trecho diferentes descartam retomada local; ao retomar, MediaRecord.clip deve corresponder ao solicitado para não publicar outro trecho.
+
+Capacidades: trimming{enabled,reasonCode?,maxSourceDurationSeconds,maxSourceBytes,maxDurationSeconds,minDurationSeconds,timePrecisionSeconds}; upload mantém maxDurationSeconds/maxBytes. Importers YouTube/TikTok/Instagram são independentes e continuam indisponíveis até habilitação real. Links usam reconhecimento de host/path exatos e enviam clip apenas se plataforma e recorte estiverem habilitados. Não há iframe, download ou prévia inventada de link.
+
+Os7radaresPNG adicionados pelo usuário na main são preservados. Este incremento não altera assets/catálogo demo; no modoAPI a lista/radares continuam vindos do servidor. A tabela setpos acima registra o catálogo demonstrativo original e não sobrescreve o catálogo real.
