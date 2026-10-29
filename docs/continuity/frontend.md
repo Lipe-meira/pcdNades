@@ -1,7 +1,7 @@
 # Checkpoint — frontend
 
 Atualizado em: 29/10/2026 08:10, America/Sao_Paulo
-Estado: incremento API implementado e validado controladamente; aguardando revisão/ativação pelo orquestrador e ambiente de mídia real
+Estado: aguardando confirmação READY/HTTP do deploy API para checagem visual somente leitura
 
 ## Objetivo e pedido atual
 
@@ -24,6 +24,12 @@ Integração opcional React/TypeScript com API real autorizada: HTTP por env, Su
 - Screenshots API/controlados revisados com view_image (desktop formulário/mobile login). Cópias persistidas fora do Git em C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/api-login-controlado.png e api-form-controlado.png.
 - Leitura REAL HTTP somente leitura em https://pcdnades-api.vercel.app: /health200 configured:true; /api/v1/maps200 com três mapas absolutos/versionados; /api/v1/grenades?limit=100&offset=0 200 vazio; capabilities200 uploadtrue,50000000bytes,20s,importersfalse. CORS conferido para Origin https://pcdnades.vercel.app. Não houve login ou mutação remota por este chat.
 - Relatório enviado ao orquestrador com 28085f8 e pendências; ele possui autorização para revisão/merge/deploy. Frontend não publicou nem alterou main.
+
+## Atualização do orquestrador — aguardando deploy
+
+- Orquestrador confirmou integração de28085f8+018af5a na main1b2416c e repetiu build,20unitários e22browser com sucesso. DATA_MODE=api configurado; deploy frontend iniciado, ainda sem confirmação READY/HTTP neste chat.
+- Redeploy API e6731f5 anunciado, com MEDIA_UPLOAD_ENABLED defaultfalse enquanto não há worker ativo. Não anunciar upload disponível nem fazer mutação real.
+- Próxima ação autorizada: aguardar confirmação READY/HTTP e pedido do orquestrador, então checar visualmente consulta pública real. Admin/hostworker permanecem pendentes.
 
 ## Em andamento
 
