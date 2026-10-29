@@ -1,3 +1,8 @@
+## Bloqueio de publicação Vercel — 29/10
+
+- Código funcional pushmain3120565. Migration003aplicada;envMEDIA_MAX_DURATION_SECONDS90 eMEDIA_TRIMMING_ENABLEDtrue Production/Preview preparadas. API/frontdeployexplícitosretornaram402api-deployments-free-per-day:mais100deploys,dizaguardar24h. Nenhumupgrade/fallbackparaburlarquota. VersãonovaaindaNÃOpublicada;atualdevecontinuarservindoversãoanterior,confirmarantesdeclaração.
+- Frontavisado;visualcontinuaautorizado/testes/screenshots/commitpush. Próximaação: finalizarvisualintegrar/push;apósresetquota,publicarmainAPI/front evalidarcaps/uploadrecortereal. Semcriarautomaçãoagoraporqueusuárionãosolicitouagendamento.
+
 ## Push funcional autorizado — 29/10
 
 - 39testesbackend+39frontend/buildpassaram. Browser28passaram;2falhaseram expectativaSVGantiga. CorrigidaexpectativaparaPNGusuário emb554c2c;2rerunsdesktop/mobilePASSARAM.
