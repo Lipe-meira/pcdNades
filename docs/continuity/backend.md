@@ -288,3 +288,25 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Usuário pediu implementar pendências/commit/push após discutir recorte e trecho final1min30. Encaminhado explicitamente ao orquestrador para coordenação frontend/backend.
 - Novo limite solicitado90s finais substitui40;50MB não foi ampliado. Recorte efetivo/previewseleção permanecem escopo a executar coordenado; importadoresnãoautorizadosdisabled. Nenhuma autorização nova de produção/deploy/SQLremoto.
 - Próxima ação aguardar divisão/contrato pelo orquestrador antes mudar código compartilhado de integração; verificar Git/checkpoint na retomada. Marco local anterior320cf12/e54657d/60ae3cf permanece enviado;003aindanãoaplicada e preparada40s precisa alinhamento90.
+
+## Implementação recorte90s iniciada29/10
+- Root autorizou recorteefetivo/final90/50MB,códigolocal+testesLinuxCI,semprodução.003NÃOaplicada pode ser ajustada;001/002intactas.
+- Próximo empacotarFFmpeg, implementarseleçãoimutávelsessão+saídaseparada,claimfencing/timeout/decode/tests econtrato. Limitefontetécnicoproposto180s/50MB,novaflagtrimmingfalse atérevisão/runtime;rootavisado.
+
+## Recorte implementado em andamento29/10
+- Sessão clip imutável,limits90/180/50MB,min0.1,precisão0.001;capstrimmingflagfalse. FFmpegstatic5.3.0 releaseb6.1.1 fixado, hashesSHA256Linux/Windows medidos; buildbaixa/verificaexplicitamente binário semhabilitarscriptsnpm.
+- trimVideo reencode1thread/probefinal/decodecompleto/limitetamanho/timeouts;saidaemchaveportentativa sóreferenciadapósStorageefencing. Uploadsemclippermanece original; importersdisabled.
+- 37 testes passaram (sucesso,errotrim/store,fencing,seleçãoimutável,limites90.001/180.001). SmokeFFmpegempacotadoWindows:clip90sAAC/892284bytes,fracionário,tamanhosaída,corrompido,abort,fimfonte180,8.04s total apósgeração(pequenoframe). Não provaVercel.
+- Falha sintaxestubteste corrigida antes passar. Próximo smoke1080p90/LinuxCI,medirtracingbundle,cleaninstall+docs/commitspormarco. NenhumSQLremoto/deploy/flagativa.
+
+## Evidência do incremento90s —29/10
+- SmokeWindows empacotado pequeno90s/AAC passou; stressreal sintético95s1080pAAC->trecho5..95:fonte30964384bytes,saída36620560bytes,90s,36.257sprocessamento,temporários67584944bytes. Sem rede/Storage/Vercel; RSSnão medido Windows.
+- NFTsize localWindowsdist/server.js:169694337bytes,incluibinários;Linuxvai diferir. Pacotes/hashes/versões emFFPROBE-NOTICE. Dockerdaemonindisponível,CIroot faráLinux.
+- Fonteprimeirastressultrafast ultrapassou50MB e fixturefoirejeitada; geradoragoratemVBV2500kbpsparaobedecer50MB,semrelaxarlimitesdoproduto. Sintaxe/compilação/testes serão repetidos cleaninstallantescommit.
+- Próxima ação enviarSHA+códigofeito/rootCI,sem esperarCIparasalvar;contratoclip/caps/metadataconfirmado. Flagtrimmingfalse,nãodeploy/SQLremoto;003nãoaplicada90+clipimutável.
+
+## Recorte90s pronto para revisão/CI —29/10
+- Instalação limpa npmciignore-scripts seguida build/typecheck/39testes/diffcheck PASSOU. Sem scriptsglobais de fornecedor. Bináriooriginal/hash/chmod preparadosporbuild.
+- Código efetivo: uploadclipimutável,processorinline reencode/decode/probe/storeseparado,fencing e1recorteporinstância,semcliporiginal.003aindanãoaplicada90+clipcheck/imutabilidade;001/002intactas. Importers3disabled.
+- Testesnovos provam errostore/trim/oversize antesupload,preservaçãofonte,staleattemptnãopublica,concorrência entre mídiasretentável. Não é E2EStorage/DBreal. SmokeempacotadoWindows90 e1080 medido acima;LinuxCI/root eVercelruntime continuam pendentes.
+- Próxima ação root executar CI (semsegredos/deploy): npmciignore-scripts;build;typecheck;test;tsx scripts/trim-smoke.ts;/usr/bin/time-v tsx scripts/trim-stress.ts;NFTfileList+X_OKffmpeg/probe. Flagsremotasnãoalteradas;MEDIA_TRIMMING_ENABLEDdefaultfalse. Aguardar revisão/resultadoCI apóscommit/push.

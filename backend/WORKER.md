@@ -55,3 +55,6 @@ Documentação Vercel consultada29/10: Fluid Hobby tem300s máximo (não assumir
 
 ## Inline original e worker futuro
 Modo padrão inline-original valida original na API e não depende deste scheduler. MEDIA_PROCESSOR_MODE=worker-transcode só quando infraestrutura batch real estiver pronta; ambos não devem consumir a mesma mídia simultaneamente. Worker Docker é futuro/opcional para reconversão; não iniciar contra fila inline. Build agora copia scripts/prepare-probe.mjs para preparar binário por plataforma; nova reconstrução pendente (daemon Docker indisponível em29/10 nesta etapa). Teste Docker antigo não valida novo bundle inline.
+
+## Incremento recorte inline90s
+FFmpeg agora é empacotado também paraAPIinline, sem exigir este worker. MEDIA_TRIMMING_ENABLED controla seleção explícita. Não executarworkertranscode sobre sessões comclip: esse código legado não implementa seleção e não deve consumir fila inline; operação correta usa MEDIA_PROCESSOR_MODE=inline-original. PacotebuildFFmpeg trazdownloadHTTPSfixo+SHA;Dockerfutureworker precisa revisão/rebuild antesuso, não validado por ensaios anteriores.
