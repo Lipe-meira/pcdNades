@@ -2,7 +2,13 @@ export type GrenadeType = "smoke" | "flashbang" | "molotov";
 export type Side = "T" | "CT";
 export type Target = { x: number; y: number };
 export type VideoStatus =
-  "missing" | "uploading" | "queued" | "processing" | "ready" | "failed";
+  | "missing"
+  | "awaiting_upload"
+  | "uploading"
+  | "queued"
+  | "processing"
+  | "ready"
+  | "failed";
 export type Video = {
   id: string;
   status: VideoStatus;
@@ -40,7 +46,7 @@ export type Filters = {
 };
 export type MediaDraft =
   | { kind: "keep" }
-  | { kind: "file"; file: File | null }
+  | { kind: "file"; file: File | null; durationSeconds?: number }
   | { kind: "link"; sourceUrl: string };
 export type LineupDraft = Omit<
   Lineup,
@@ -53,6 +59,7 @@ export const typeLabels: Record<GrenadeType, string> = {
 };
 export const videoLabels: Record<VideoStatus, string> = {
   missing: "Sem vídeo",
+  awaiting_upload: "Aguardando envio",
   uploading: "Enviando arquivo",
   queued: "Na fila",
   processing: "Processando vídeo",

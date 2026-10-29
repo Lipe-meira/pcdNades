@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   GameMap,
   GrenadeType,
@@ -12,17 +12,22 @@ import type { LineupService } from "../../services/lineupService";
 import { Dialog } from "../../components/Dialog";
 import { Radar } from "../../components/Radar";
 import { MediaInput } from "./MediaInput";
+import type { MediaCapabilities, Progress } from "../../services/apiContracts";
+import { ApiError } from "../../services/apiClient";
+import { videoLabels } from "../../domain/types";
 
 export function LineupForm({
   maps,
   existing,
   service,
+  capabilities,
   onClose,
   onSaved,
 }: {
   maps: GameMap[];
   existing?: Lineup;
   service: LineupService;
+  capabilities: MediaCapabilities;
   onClose: () => void;
   onSaved: (item: Lineup) => void;
 }) {
@@ -51,10 +56,24 @@ export function LineupForm({
   const [failure, setFailure] = useState<string>();
   const [fileReady, setFileReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<Progress>();
+  const [resumeMediaId, setResumeMediaId] = useState<string>();
+  const request = useRef<AbortController | null>(null);
+  const demo = service.mode === "demo";
+  useEffect(
+    () => () => {
+      request.current?.abort();
+    },
+    [],
+  );
   const submitLock = useRef(false);
   const errorRef = useRef<HTMLDivElement>(null);
   const map = maps.find((item) => item.id === draft.mapId) ?? maps[0];
   function update<K extends keyof LineupDraft>(key: K, value: LineupDraft[K]) {
+    if (key === "media") {
+      setResumeMediaId(undefined);
+      setProgress(undefined);
+    }
     setDraft((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: "" }));
   }
@@ -65,7 +84,11 @@ export function LineupForm({
   return (
     <Dialog
       title={existing ? "Editar granada" : "Nova granada"}
-      description="Cadastro temporário para testar a interface. Nada será enviado ao servidor."
+      description={
+        demo
+          ? "Cadastro temporário para testar a interface. Nada será enviado ao servidor."
+          : "O vídeo precisa estar pronto antes da publicação. O cadastro anterior é preservado até salvar."
+      }
       onClose={onClose}
       busy={busy}
       wide
@@ -90,17 +113,36 @@ export function LineupForm({
           submitLock.current = true;
           setBusy(true);
           setFailure(undefined);
+          const controller = new AbortController();
+          request.current = controller;
+          const options = {
+            signal: controller.signal,
+            mediaId: resumeMediaId,
+            onProgress: (value: Progress) => {
+              setProgress(value);
+              if (
+                value.mediaId &&
+                ["queued", "processing", "ready"].includes(value.status)
+              )
+                setResumeMediaId(value.mediaId);
+              if (value.status === "failed") setResumeMediaId(undefined);
+            },
+          };
           try {
             const item = existing
-              ? await service.updateLineup(existing.id, draft)
-              : await service.createLineup(draft);
-            onSaved(item);
+              ? await service.updateLineup(existing.id, draft, options)
+              : await service.createLineup(draft, options);
+            if (!controller.signal.aborted) onSaved(item);
           } catch (error) {
             setFailure(
-              error instanceof Error
-                ? error.message
-                : "Não foi possível salvar. Tente novamente.",
+              controller.signal.aborted
+                ? "Acompanhamento pausado. O processamento pode continuar no servidor; use Salvar para retomar. Nenhuma publicação adicional será solicitada por esta janela."
+                : error instanceof Error
+                  ? error.message
+                  : "Não foi possível salvar. Tente novamente.",
             );
+            if (error instanceof ApiError && error.fields)
+              setErrors(error.fields);
             requestAnimationFrame(() => errorRef.current?.focus());
           } finally {
             submitLock.current = false;
@@ -206,6 +248,8 @@ export function LineupForm({
             <div>
               <h3 className="field-title">Vídeo</h3>
               <MediaInput
+                service={service}
+                capabilities={capabilities}
                 value={draft.media}
                 existing={existing?.video}
                 onChange={(media) => update("media", media)}
@@ -221,6 +265,7 @@ export function LineupForm({
               trocar o mapa, marque novamente.
             </p>
             <Radar
+              demo={demo}
               map={map}
               target={draft.target}
               onTargetChange={(target) => update("target", target)}
@@ -282,8 +327,42 @@ export function LineupForm({
             {errors.target && <p className="field-error">{errors.target}</p>}
           </div>
         </fieldset>
+        {busy && !demo && (
+          <div className="media-progress" role="status">
+            <strong>
+              {progress
+                ? progress.status === "publishing"
+                  ? "Publicando granada…"
+                  : videoLabels[progress.status]
+                : "Preparando envio…"}
+            </strong>
+            <p>
+              {progress?.status === "queued"
+                ? "O vídeo está na fila. Aguarde o processamento."
+                : progress?.status === "processing"
+                  ? "O servidor está validando e preparando o vídeo."
+                  : progress?.status === "uploading"
+                    ? "Enviando o arquivo. Mantenha esta janela aberta."
+                    : "A granada só será publicada depois que o vídeo estiver pronto."}
+            </p>
+            {(progress?.status === "queued" ||
+              progress?.status === "processing") && (
+              <button
+                type="button"
+                className="text-button"
+                onClick={() => request.current?.abort()}
+              >
+                Parar acompanhamento
+              </button>
+            )}
+          </div>
+        )}
         <div className="form-actions">
-          <span>Somente nesta sessão do navegador</span>
+          <span>
+            {demo
+              ? "Somente nesta sessão do navegador"
+              : "Biblioteca compartilhada do time"}
+          </span>
           <button
             type="button"
             className="button secondary"
@@ -297,7 +376,9 @@ export function LineupForm({
               ? "Salvando…"
               : draft.media.kind === "link"
                 ? "Verificar importação"
-                : "Salvar demonstração"}
+                : demo
+                  ? "Salvar demonstração"
+                  : "Salvar granada"}
           </button>
         </div>
       </form>

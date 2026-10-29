@@ -33,12 +33,15 @@ export function validateSourceUrl(value: string): string | null {
   return "Cole um link HTTPS de um YouTube Shorts ou vídeo do TikTok.";
 }
 
-export async function validateMp4(file: File): Promise<string | null> {
+export async function validateMp4(
+  file: File,
+  maxBytes = DEMO_MAX_BYTES,
+): Promise<string | null> {
   if (!/\.mp4$/i.test(file.name) || (file.type && file.type !== "video/mp4"))
     return "Escolha um arquivo MP4.";
   if (file.size === 0) return "O arquivo está vazio.";
-  if (file.size > DEMO_MAX_BYTES)
-    return "O limite desta demonstração é 50 MB por arquivo.";
+  if (file.size > maxBytes)
+    return `O limite é ${(maxBytes / 1_000_000).toLocaleString("pt-BR")} MB por arquivo.`;
   const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
   if (bytes.length < 12 || String.fromCharCode(...bytes.slice(4, 8)) !== "ftyp")
     return "O arquivo não tem uma assinatura de contêiner MP4 válida.";

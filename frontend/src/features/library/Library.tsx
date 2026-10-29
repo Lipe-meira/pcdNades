@@ -5,14 +5,18 @@ import { filterLineups } from "../../domain/lineups";
 import { Radar } from "../../components/Radar";
 import { Icon } from "../../components/Icon";
 import { VideoPlayer } from "./VideoPlayer";
+import type { LineupService } from "../../services/lineupService";
 
 export function Library({
   maps,
   lineups,
+  service,
 }: {
   maps: GameMap[];
   lineups: Lineup[];
+  service: LineupService;
 }) {
+  const demo = service.mode === "demo";
   const [filters, setFilters] = useState<Filters>({
     mapId: maps[0].id,
     type: "all",
@@ -104,6 +108,7 @@ export function Library({
             </div>
           </div>
           <Radar
+            demo={demo}
             map={map}
             lineups={visible}
             selectedId={selected?.id}
@@ -178,7 +183,9 @@ export function Library({
               <h3>Nenhuma granada por aqui</h3>
               <p>
                 {filters.type === "all" && filters.side === "all"
-                  ? "Este mapa ainda não tem exemplos. Escolha outro mapa para explorar a demonstração."
+                  ? demo
+                    ? "Este mapa ainda não tem exemplos. Escolha outro mapa para explorar a demonstração."
+                    : "Este mapa ainda não tem granadas cadastradas pelo time."
                   : "Experimente outro tipo ou lado para encontrar uma granada."}
               </p>
               {(filters.type !== "all" || filters.side !== "all") && (
@@ -212,10 +219,16 @@ export function Library({
                 </span>
                 <span>Lado {selected.side}</span>
               </div>
-              <VideoPlayer video={selected.video} />
+              <VideoPlayer
+                key={selected.video.id}
+                video={selected.video}
+                service={service}
+              />
               <h3>Instruções</h3>
               <p className="instructions">{selected.instructions}</p>
-              <p className="detail-note">Exemplo temporário da interface.</p>
+              {demo && (
+                <p className="detail-note">Exemplo temporário da interface.</p>
+              )}
             </section>
           ) : (
             listed.length > 0 && (

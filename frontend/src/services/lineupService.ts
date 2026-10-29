@@ -1,13 +1,21 @@
 import type { GameMap, Lineup, LineupDraft, Video } from "../domain/types";
 import { demoMaps, demoLineups } from "./demoData";
 import { validateDraft, validateMp4 } from "../domain/validation";
+import type { MediaCapabilities, Playback, SaveOptions } from "./apiContracts";
 
 /** Integration boundary. No URLs, authentication scheme or API envelopes assumed. */
 export interface LineupService {
+  readonly mode: "demo" | "api";
+  capabilities(signal?: AbortSignal): Promise<MediaCapabilities>;
+  playback(video: Video, signal?: AbortSignal): Promise<Playback>;
   listMaps(signal?: AbortSignal): Promise<GameMap[]>;
   listLineups(signal?: AbortSignal): Promise<Lineup[]>;
-  createLineup(draft: LineupDraft): Promise<Lineup>;
-  updateLineup(id: string, draft: LineupDraft): Promise<Lineup>;
+  createLineup(draft: LineupDraft, options?: SaveOptions): Promise<Lineup>;
+  updateLineup(
+    id: string,
+    draft: LineupDraft,
+    options?: SaveOptions,
+  ): Promise<Lineup>;
   deleteLineup(id: string): Promise<void>;
   dispose(): void;
 }
@@ -60,6 +68,20 @@ export function createDemoService(): LineupService {
     return structuredClone(item);
   }
   return {
+    mode: "demo",
+    async capabilities(signal) {
+      signal?.throwIfAborted();
+      return {
+        upload: { enabled: true, maxBytes: 50_000_000, maxDurationSeconds: 20 },
+        importers: { youtube: { enabled: false }, tiktok: { enabled: false } },
+      };
+    },
+    async playback(video, signal) {
+      signal?.throwIfAborted();
+      if (!video.playbackUrl)
+        throw new Error("Vídeo não disponível nesta sessão.");
+      return { url: video.playbackUrl, mimeType: "video/mp4" };
+    },
     async listMaps(signal) {
       signal?.throwIfAborted();
       return structuredClone(demoMaps);

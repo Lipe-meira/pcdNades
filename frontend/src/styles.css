@@ -1247,3 +1247,49 @@ textarea[aria-invalid="true"] {
     padding-inline: 8px;
   }
 }
+
+.api-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+.auth-gate form {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  max-width: 360px;
+  text-align: left;
+}
+.auth-gate .field-error {
+  margin: 0;
+}
+.media-progress {
+  border: 1px solid #536d44;
+  border-radius: 5px;
+  background: #22301f;
+  color: #d1e1c2;
+  padding: 16px;
+  margin-top: 24px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.media-progress p {
+  font-size: 12px;
+  margin-top: 8px;
+}
+@media (max-width: 760px) {
+  .api-banner {
+    align-items: flex-start;
+    font-size: 11px;
+  }
+  .admin-toolbar p {
+    overflow-wrap: anywhere;
+    max-width: 100%;
+  }
+}
