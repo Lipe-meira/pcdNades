@@ -1,63 +1,68 @@
 # Checkpoint — frontend
 
-Atualizado em: 29/10/2026 07:59, America/Sao_Paulo
-Estado: em andamento — adaptador/API e telas implementados; QA controlado de API no navegador é próximo passo
+Atualizado em: 29/10/2026 08:10, America/Sao_Paulo
+Estado: incremento API implementado e validado controladamente; aguardando revisão/ativação pelo orquestrador e ambiente de mídia real
 
 ## Objetivo e pedido atual
 
-Integração opcional frontend/API autorizada: serviço HTTP por env, Supabase auth, capabilities, upload assinado/complete/polling, publicação somente ready e playback renovável. Não provisionar nem ativar produção. Respostas controladas não são E2E real.
+Integração opcional React/TypeScript com API real autorizada: HTTP por env, Supabase auth de admin, capabilities, upload assinado/complete/polling, publicação somente ready e playback renovável. Entrega de código e QA concluída nesta etapa; não provisionar serviços nem alterar main/deploy. Conta admin/worker/validação remota completa permanecem pendentes.
 
 ## Localização do trabalho
 
-- Branch feat/frontend, worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2.
-- Base e889e3b. Último código enviado: 3c220c3. Checkpoint de retomada 8890331 enviado. Main do orquestrador já integrou a prévia; não alterei main.
-- Agora: commit/push do primeiro incremento API e deste checkpoint. Obter SHA exato via git log após commit, sem autorreferência neste arquivo.
-- Alterações atuais: frontend/package{,-lock}.json, frontend/README.md, frontend/.env.example, src/app/App.tsx, src/main.tsx, src/components/Radar.tsx, src/domain/{types,validation,playback}.ts, src/features/admin/{Admin,AuthGate,LineupForm,MediaInput}.tsx, src/features/library/{Library,VideoPlayer}.tsx, src/services/{lineupService,apiClient,apiContracts,apiService,auth,runtime,runtimeConfig,supabaseRuntime}.ts, src/styles.css, tests/{api,pipeline,playback}.test.ts e este checkpoint. Todas serão incluídas no marco. Nenhum .env real.
+- Worktree gerenciado: C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2.
+- Branch feat/frontend. Base histórica e889e3b. Código API fa80ccf; correção e QA final 28085f8.
+- Push do código confirmado em origin/feat/frontend até 28085f8. Git limpo antes de atualizar este checkpoint; somente este arquivo fica pendente para o commit/push de fechamento. O SHA do commit que contém este checkpoint deve ser obtido no Git, sem autorreferência.
+- AGENTS/guia/template/checkpoint do orquestrador foram lidos da main remota (d8c643b e evolução); sem merge/troca de branch neste worktree. Somente frontend/ e este arquivo foram alterados.
 
 ## Feito
 
-- Prévia anterior enviada: 3c220c3 e checkpoint 8890331. Build/typecheck,10 testes unitários,12 Playwright e audit zero na primeira entrega.
-- Cliente API com token só em operações autenticadas, cancelamento/timeouts, erros PT-BR e envelopes v1; sem fallback para fixtures. Runtime demo/API explicitamente separados.
-- Configuração API exige VITE_DATA_MODE=api, VITE_API_URL (inclui /api/v1), VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY (sb_publishable_). Demo é padrão sem modo explícito; api incompleta falha em vez de carregar demo. Nenhum segredo/serviço criado.
-- Auth Supabase (SDK versão exata 2.118.0) com login/sair/sessão renovável; privilégios sempre no backend. SDK em chunk dinâmico apenas no modo API.
-- Adapter de mapas/granadas paginadas/capabilities, MP4 assinado/complete/polling3s, publicação só ready, erro preserva registro anterior, reuso de tarefa na mesma janela após interrupção/falha de publicação.
-- Formulário mostra status real sem porcentagem inventada; pode parar/retomar acompanhamento de queued/processing (não cancela job no servidor). Prévia local só antes de publicar; playback remoto somente vinculado a granada publicada.
-- Player renova URL antes da expiração, tenta preservar posição/estado e exibe retry em erro. Nunca embed.
-- 20 testes unitários/serviço controlados passaram; build/typecheck passaram. 12 testes demo Playwright passaram após ligar o novo runtime. Esses resultados não validam Storage/Auth/worker reais.
+- Primeira prévia concluída/enviada: 056eea8 biblioteca, e3b66c0 plantas reais licenciadas,953a2ad CRUDdemo,3c220c3 QA/20s/SPA/docs; checkpoints f124ac6 e8890331. Orquestrador integrou/publicou a prévia; não presumir modo atual do deploy sem conferir.
+- fa80ccf: runtime explícito demo/API, cliente HTTP com token/timeouts/abort/erros PT-BR, adapter paginado e capabilities, Supabase auth/sessão/logout, mídia assinada/complete/poll3s/publicação ready e player com renovação.
+- 28085f8: corrigida invocação do fetch nativo no browser (this indevido); teste de consulta API vazio/503/retry passou após fix. Limpeza explícita de ID de retomada em UPLOAD_FAILED,UPLOAD_INCOMPLETE,awaiting_upload; troca de mídia também limpa.
+- QA comprovou upload falha→segunda sessão no próximo Salvar; queued/processing pausado→retomado sem terceiro upload; publicação apenas após ready;403 preserva registro e não anuncia sucesso. Player faz renovação agendada e preserva posição.
+- 20 testes unitários/contrato/serviço e22 browser passaram (12 demo+10API controlada, desktop/mobile). Build/typecheck e npm audit zero; diff check sem erros.
+- Screenshots API/controlados revisados com view_image (desktop formulário/mobile login). Cópias persistidas fora do Git em C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/api-login-controlado.png e api-form-controlado.png.
+- Leitura REAL HTTP somente leitura em https://pcdnades-api.vercel.app: /health200 configured:true; /api/v1/maps200 com três mapas absolutos/versionados; /api/v1/grenades?limit=100&offset=0 200 vazio; capabilities200 uploadtrue,50000000bytes,20s,importersfalse. CORS conferido para Origin https://pcdnades.vercel.app. Não houve login ou mutação remota por este chat.
+- Relatório enviado ao orquestrador com 28085f8 e pendências; ele possui autorização para revisão/merge/deploy. Frontend não publicou nem alterou main.
 
 ## Em andamento
 
-- Preparar QA de navegador no modo API com rotas HTTP/Supabase/storage controladas: login, capacidades, upload/poll/publicação, playback/renovação, erro sem fallback e autorização negada.
-- Atualizar documentação/verificação e revisar screenshots de modo API desktop/mobile. Não ativar produção.
+- Commit/push deste checkpoint e conferência final de Git/remoto.
+- Depois: aguardar coordenação do orquestrador sobre ativação do modo API e validação com conta/worker reais. Nenhuma implementação parcial restante neste worktree.
 
 ## Retomar daqui
 
-1. Conferir AGENTS/guia/checkpoints, git status/branch/log e remoto. Trabalhar apenas neste worktree em frontend/ e docs/continuity/frontend.md.
-2. Conferir SHA/push do marco API. Rodar npm --prefix frontend test/build se necessário.
-3. Adicionar testes browser de API em porta5175 separada da demo5174; env de teste deve ser fictícia e rotas interceptadas, nunca usar credenciais reais nem mutar produção.
-4. Corrigir problemas, executar unitários/build/typecheck/browser/audit, atualizar checkpoint e commit/push por marco.
-5. Pedir revisão ao orquestrador via mensagem autorizada antes de integrar/ativar API. Publicação é dele.
+1. Ler AGENTS/guia/checkpoints, conferir git status/branch/log/remotos; não sobrescrever alterações ou trocar branch. Npm nesta pasta frontend/ ou --prefix frontend.
+2. Conferir se este checkpoint foi enviado além de 28085f8; comunicar SHA real do checkpoint na entrega.
+3. Consultar status atual com orquestrador: se integrou28085f8, ativou VITE_DATA_MODE=api e publicou. Não presumir que publicação/configuração aconteceu durante a pausa.
+4. Com autorização/ambiente pronto, validar frontend publicado e consulta real no browser, depois login administrador/403. Não solicitar senha em chat nem criar credenciais.
+5. Quando worker/Storage estiverem prontos, validar upload MP4 real de até20s,complete/processamento/publicação/playback/seek/renovação e consulta em outro dispositivo. Registrar resultado separado dos testes controlados. Importadores continuam desabilitados.
 
 ## Decisões e contrato
 
-- 20s é teto do usuário; capabilities controla tamanho/duração, sem relaxar20s. Importadores inicialmente false/PLATFORM_UNSUPPORTED. Sem download no navegador nem embed.
-- /api/v1; respostas data/pagination. Supabase Bearer em escrita. UploadSession mediaId/upload(protocol,url,path,token)/limits; bucket videos-staging. GET media admin; playback público só após publicação; URL com expiresAt.
-- Catálogo enviado ao orquestrador/backend: mirage/inferno/ancient, /maps/{id}.svg na origem do FRONTEND,1024×1024, coordinateVersion setpos-{id}-ba5f793. CC BY4.0 artwork snapshot ba5f793883e1ce13076dd6919aa1601099c247cf; integral/sem giro. Fonte/versão/crédito em public/maps.
-- API alvo anunciada pelo orquestrador: https://pcdnades-api.vercel.app/api/v1. Projeto Supabase criado por ele; URL oficial informada https://kdyzxxgzvgiffluyjjxu.supabase.co. Não há env real neste worktree.
-- Orquestrador avisou que API ainda retorna503 para mapas enquanto configuração está pendente. Manter deploy em demo até autorização dele de API healthy.
+- VITE_DATA_MODE=demo|api. Demo é padrão sem modo explícito; API incompleta mostra erro, sem fallback. API vazia/503 nunca usa fixtures.
+- Env confirmadas ao orquestrador: VITE_API_URL=https://pcdnades-api.vercel.app/api/v1, VITE_SUPABASE_URL=https://kdyzxxgzvgiffluyjjxu.supabase.co e VITE_SUPABASE_PUBLISHABLE_KEY sb_publishable_. Nenhuma chave real ou .env existe neste worktree. Nunca inserir service role/secret/senha/URL assinada no Git ou checkpoint.
+- SDK Supabase2.118.0 exato em chunk dinâmico; localStorage apenas para sessão gerida pelo SDK, jamais fonte de granadas. Backend valida admin em toda escrita. Não confiar em user_metadata para autorização.
+- API /api/v1,data/pagination; POST/PATCH videoId ready. UploadSession mediaId/upload(protocol,url,path,token)/limits; bucket videos-staging. Assinatura de upload validada contra origin Supabase configurada. GET media admin; playback público só vinculado a granada publicada; expiresAt renovado.
+- Capabilities é autoridade dos limites, teto do usuário20s nunca relaxado. Importadores inicialmente false/PLATFORM_UNSUPPORTED. Sem download no navegador ou embed substituto.
+- Retomada de job existe na mesma janela do formulário; parar acompanhamento não cancela job. Fechar janela perde vínculo local; limpeza de mídia órfã é do backend. Não publicar se processamento falhar nem substituir vídeo anterior antes do sucesso.
+- Mapas: mirage/inferno/ancient; /maps/{id}.svg na origem FRONTEND,1024×1024, coordinateVersion setpos-{id}-ba5f793. Artwork CC BY4.0 snapshot ba5f793883e1ce13076dd6919aa1601099c247cf de23/10, integral/sem giro. Crédito/limitações em public/maps/ATTRIBUTION.md. Fixtures fictícias somente demo.
 
 ## Validação
 
-- Executado neste marco: npm test20/20; npm run build/typecheck; npm run test:browser12/12 (somente demo); git diff --check sem erros. Cliente/pipeline testados com fetch/SDK transportes controlados.
-- Pendente: QA browser do modo API controlado, APIhealthy/CORS, auth/RLS real, Storage/worker, upload/playback/renovação reais e persistência entre dispositivos. Sem alegação E2E real.
-- Prettier formatou src/tests; tentativa de formatar .env.example foi recusada por ausência de parser, arquivo preservado corretamente. Npm deve rodar em frontend/ ou --prefix frontend (não há package.json na raiz).
+- Executado final: npm test20/20; npm run build (typecheck incluso); npm run test:browser22/22; npm audit zero; git diff --check sem erros. QA de API controla Auth/HTTP/Storage e usa vídeo sintético via HTTP local com Range. Não chamar de E2E real.
+- O primeiro mock de vídeo não suportava Range e impedia seek: fixture passou ao HTTP local do Vite. Teste de renovação usa contador de base para não confundir dupla montagem StrictMode com renovação real; aguarda timer/novaURL e confere posição.
+- Verificação real executada: GET públicos/cors descritos acima. Pendente: auth/admin/RLS real pelo frontend, upload/storage/worker, playback assinado e persistência entre dispositivos/Safari/iOS. Capabilities anunciar upload não comprova worker hospedado.
+- Relatório detalhado: frontend/docs/verification.md; configuração/arquitetura: frontend/README.md; testes API: frontend/tests/browser/api.spec.ts.
 
 ## Bloqueios e dependências
 
-- Nenhum bloqueio para testes controlados. API remota/credenciais/worker são responsabilidade coordenada pelo orquestrador; não inventar nem provisionar.
-- Não alterar backend, raiz, main ou worktree de outro chat.
+- Nenhum bloqueio de código para revisão/integração. Não publicar por este chat.
+- Conta admin será criada pelo usuário e autorizada pelo orquestrador. Worker ainda sem host, conforme última mensagem. Sem validação ponta a ponta de mídia.
+- Orquestrador gerencia Supabase/schema/env/deploy, backend gerencia serviço/worker. Não editar worktree ou checkpoint alheio.
 
 ## Histórico curto
 
-- 28/10: 056eea8 biblioteca/radar; e3b66c0 plantas licenciadas;953a2ad CRUDdemo;f124ac6 checkpoint;3c220c3 testes/20s/SPA/docs.
-- 29/10: 8890331 retomada e push da prévia; orquestrador confirmou integração e testes próprios. Primeiro incremento API agora em verificação/push, ainda sem ativação remota.
+- 28/10: primeira prévia e plantas licenciadas, até3c220c3.
+- 29/10:8890331 checkpoint/push da prévia;fa80ccf adapter+auth+pipeline e checkpoint.
+- 29/10:28085f8 correçãofetch+retomada e22testesbrowser enviados; leituraHTTPreal200 confirmada; fechamento deste checkpoint para revisão do orquestrador.
