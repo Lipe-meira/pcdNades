@@ -1,3 +1,9 @@
+## Retomada após limite — 29/10
+
+- Usuário pediu continuar. Gitmainlimpo,baseb68d003,4commitscheckpointlocaissem push porautodeploy. Fetchconfirmou backend39745c5 efront7e0490b.
+- Chatsreativados comcontrato90 fechado: clipstart/endimutávelPOSTuploads,completeid;trimmingmaxSourceDurationSeconds180,maxSourceBytes50MB,maxDurationSeconds90,min0.1,timePrecision0.001;semclipmax90.3importersdisabled.
+- Próximaação: aguardar implementação/SHAs e verificar contratos/build/testes/evidênciaLinux; semdeploy/migrationremota. Checkpointlocalatualizado aoiniciar.
+
 ## Atualização autorizada: recorte e noventa segundos
 
 - Backend repassou autorização explícita do usuário em seu chat para implementar pendências e commit/push: seleção início/fim com prévia e recorte efetivo, final até90s,50MBmantidos. Substitui40s anterior. Front/back acionados em seus próprios chats/worktrees; contratos devem convergir. Importadores sem autorização continuamdisabled.
