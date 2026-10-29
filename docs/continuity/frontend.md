@@ -1,8 +1,15 @@
 # Checkpoint — frontend
 
 Atualizado em: 29/10/2026 13:15, America/Sao_Paulo
-Estado: incremento de validação inline concluído e testado controladamente; envio para revisão do orquestrador
+Estado: implementação pausada por pedido explícito do usuário; aguardando publicação e testes dele
 
+## Pausa solicitada pelo usuário — 29/10/2026
+
+- Instrução transmitida pelo orquestrador: ao existir versão utilizável, parar alterações para o usuário testar. Implementação pausada por pedido dele.
+- Código inline a3033c8 já enviado em origin/feat/frontend;30unitários/serviço e26browser passaram, build/typecheck/audit concluídos. Não repetir testes amplos ou iniciar melhorias/features.
+- Orquestrador está finalizando publicação inline e liberação controlada de upload. URL pronta/liberação ainda não confirmadas neste chat; não presumir sucesso remoto a partir dos testes controlados.
+- Próxima ação: aguardar confirmação do orquestrador e testes do usuário. Somente corrigir bloqueio concreto se solicitado. Não publicar, habilitar serviços ou realizar mutações reais.
+- Limitações mantidas: validação real de MP4/ffprobe/Vercel/Storage, formatos/dispositivos e comportamento sob timeout precisam de confirmação no ambiente; importadores continuam indisponíveis. Não anunciar conversão automática.
 ## Objetivo e pedido atual
 
 Adaptar frontend ao MVP sem novo host de worker: backend valida MP4 original inline com ffprobe, sem transcodificar. Frontend deve exibir formatos via capabilities, dar150s somente ao complete, manter30s nos outros endpoints, preservar retomada sem reupload e orientar erros. Não publicar, habilitar upload, criar serviços/segredos/workflows nem alterar backend/main.
@@ -26,14 +33,15 @@ Adaptar frontend ao MVP sem novo host de worker: backend valida MP4 original inl
 
 ## Em andamento
 
-- Commit/push deste incremento e comunicação ao orquestrador. Implementação e QA controlado encerrados; sem novos recursos em andamento.
+- Apenas registrar/enviar este checkpoint de pausa. Nenhuma alteração de produto em andamento.
+- Aguardar testes do usuário; não iniciar melhorias nem testes amplos adicionais.
 
 ## Retomar daqui
 
 1. Ler AGENTS/guia/checkpoints; conferir Git/branch/log/remotos e este arquivo. Usar npm na pasta frontend/ ou --prefix frontend.
 2. Conferir SHA/push deste incremento em feat/frontend e status limpo; informar ao orquestrador. Não assumir que ele integrou/publicou.
-3. Aguardar revisão e backend com contrato inline implementado. Não habilitar flag de upload ou publicar por este chat.
-4. Com ambiente e autorização coordenados, validar MP4 real compatível/incompatível,20s/50MB,timeout/retomada,publicação/playback/consulta em outro dispositivo. Separar esses resultados dos controlados. Importadores permanecem desabilitados.
+3. Respeitar a pausa explícita do usuário: aguardar publicação e testes dele. Somente retomar se houver solicitação de correção de bloqueio concreto. Não habilitar upload nem publicar por este chat.
+4. Os testes da versão utilizável serão assumidos pelo usuário após confirmação da URL pelo orquestrador. Não iniciar validações extras por conta própria. Importadores permanecem desabilitados.
 
 ## Decisões e contrato
 
