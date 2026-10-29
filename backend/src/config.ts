@@ -6,9 +6,11 @@ export function readMediaLimits(env: Record<string,string|undefined> = process.e
   if(!/^[1-9][0-9]*$/.test(value)||!Number.isSafeInteger(Number(value)))throw new Error(`${name} deve ser um inteiro positivo seguro.`);
   return Number(value);
  }
- const duration=positiveInteger('MEDIA_MAX_DURATION_SECONDS',20);
- if(duration>20)throw new Error('MEDIA_MAX_DURATION_SECONDS deve ser no máximo 20 segundos.');
- return Object.freeze({maxBytes:positiveInteger('MEDIA_MAX_BYTES',50000000),maxDurationSeconds:duration});
+ const bytes=positiveInteger('MEDIA_MAX_BYTES',50000000);
+ if(bytes>50000000)throw new Error('MEDIA_MAX_BYTES deve ser no máximo 50000000.');
+ const duration=positiveInteger('MEDIA_MAX_DURATION_SECONDS',90);
+ if(duration>90)throw new Error('MEDIA_MAX_DURATION_SECONDS deve ser no máximo 90 segundos.');
+ return Object.freeze({maxBytes:bytes,maxDurationSeconds:duration});
 }
 
 export function readUploadEnabled(env: Record<string,string|undefined> = process.env): boolean {
@@ -22,3 +24,5 @@ export function readProcessorMode(env:Record<string,string|undefined>=process.en
  if(value!=='inline-original'&&value!=='worker-transcode')throw new Error('MEDIA_PROCESSOR_MODE inválido.');
  return value;
 }
+
+export function readTrimmingEnabled(env:Record<string,string|undefined>=process.env):boolean{const value=env.MEDIA_TRIMMING_ENABLED;if(value===undefined||value==='false')return false;if(value==='true')return true;throw new Error('MEDIA_TRIMMING_ENABLED deve ser true ou false.');}

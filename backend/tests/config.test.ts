@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readMediaLimits} from '../src/config.js';
 import {buildApp} from '../src/application.js';
 test('limits have documented defaults and accept explicit overrides',()=>{
- assert.deepEqual(readMediaLimits({}),{maxBytes:50000000,maxDurationSeconds:20});
+ assert.deepEqual(readMediaLimits({}),{maxBytes:50000000,maxDurationSeconds:90});
  assert.deepEqual(readMediaLimits({MEDIA_MAX_BYTES:'1234',MEDIA_MAX_DURATION_SECONDS:'10'}),{maxBytes:1234,maxDurationSeconds:10});
 });
 test('invalid limits fail closed without exposing env values',()=>{
@@ -23,9 +23,9 @@ test('capabilities publishes configured limits and startup rejects invalid env',
  }
 });
 
-test('duration may be reduced but never exceed 20 seconds',()=>{
- assert.equal(readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'20'}).maxDurationSeconds,20);
- assert.throws(()=>readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'21'}),/MEDIA_MAX_DURATION_SECONDS/);
+test('duration may be reduced but never exceed 90 seconds',()=>{
+ assert.equal(readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'90'}).maxDurationSeconds,90);
+ assert.throws(()=>readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'91'}),/MEDIA_MAX_DURATION_SECONDS/);
 });
 
 import {readUploadEnabled} from '../src/config.js';
@@ -33,3 +33,5 @@ test('upload flag defaults off and rejects ambiguous env',()=>{
  assert.equal(readUploadEnabled({}),false);assert.equal(readUploadEnabled({MEDIA_UPLOAD_ENABLED:'false'}),false);assert.equal(readUploadEnabled({MEDIA_UPLOAD_ENABLED:'true'}),true);
  for(const value of ['','1','0','TRUE',' false'])assert.throws(()=>readUploadEnabled({MEDIA_UPLOAD_ENABLED:value}),/MEDIA_UPLOAD_ENABLED/);
 });
+
+test('50 MB hard ceiling is preserved',()=>{assert.throws(()=>readMediaLimits({MEDIA_MAX_BYTES:'50000001'}),/MEDIA_MAX_BYTES/);assert.equal(readMediaLimits({MEDIA_MAX_DURATION_SECONDS:'40'}).maxDurationSeconds,40);});

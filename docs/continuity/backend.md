@@ -1,7 +1,7 @@
 # Checkpoint — backend
 
 Atualizado em: 29/10/2026, America/Sao_Paulo.
-Estado: API pública validada por HTTP; aguardando admin e host/configuração worker para QA de mídia.
+Estado: marco links/40s preparado localmente; importadores e recorte efetivo permanecem indisponíveis. Sem deploy/migration remota autorizados.
 
 ## Objetivo e pedido atual
 
@@ -229,3 +229,84 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Root reportou run40910741421: tracing inclui assetLinux, mas X_OK falhou EACCES no original node_modules; prepare chmod somente cópia vendor.
 - Próxima ação chmod explícito binary.path no build alémcópia, mantendo npmciignore-scripts. Sem scriptsglobais/env/SQL. ValidaçãoLinux será pelo CIroot, não Windows.
 - Correção aplicada: await chmod(binary.path,0o755) antes da cópia, somente binário selecionado explicitamente. Build/typecheck22testes/diffcheck locais passaram; Windows não prova permissãoPOSIX, repetir LinuxCIroot. Próximo enviarSHA e aguardar X_OK/probe noLinux, flagfalse.
+
+## Pausa solicitada pelo usuário —29/10
+- Usuário pediu parar alterações quando houver versão utilizável para testar. Orquestrador finaliza publicação inline e liberação controlada; este chat NÃO inicia melhorias/features/testes amplos. Corrigir somente bloqueio concreto se solicitado.
+- Último código enviado e322fe2: chmod originalffprobe; estado anterior local22testes/build/typecheck passavam. LinuxCI/URLfinal/liberaçãoupload ainda precisam confirmação do orquestrador, não presumir sucesso.
+- Limitações: somenteMP4H264/yuv420p/AACousemáudio20s/50MB; sem reconversão/importadores. ffprobe não decodeintegral; Storage/E2E e runtimefinal dependem QAcoordenado. Dockerworker permanece futuro, não necessário noinline. Nenhum segredo/conta/env alterado neste marco.
+- Estado: aguardando confirmação URLpronta pelo orquestrador, depois implementação pausada por pedido explícito para usuário testar. Próxima ação: ler checkpoint+conferirGit e aguardar relato/testes; não continuar backlog automaticamente.
+- Alteração desta tarefa somente checkpoint, commit/push docs na feat/backend; não repetidos testes pois código intacto.
+
+## Publicação confirmada; implementação pausada —29/10
+- Orquestrador confirmou API deploy dpl_8f87KGm2zcH1wocmnp2T1FuBY5wz READY,código1a1dec2; health200/configuredtrue,capabilities200/uploadtrue/inline-original/20s/50MB. Resultado reportado pelo root, não retestado aqui conforme pausa.
+- Front publicado https://pcdnades.vercel.app ; usuário assume teste real. NÃO afirmar E2Eremoto/uploadcompletovalidado.
+- Trabalho PAUSADO por pedido explícito do usuário: não iniciar alterações,deploys,testes ou backlog. Próxima ação é aguardar feedback; ao retomar ler checkpoints/conferirGit e agir somente no escopo solicitado.
+- Apenas preservação deste checkpoint neste marco, sem código/env/remoto de aplicação. Commitdocs próprio enviado na feat/backend.
+
+## Bloqueio pontual DATABASE_ERROR — investigação autorizada29/10
+- Pausa geral mantida; somente diagnóstico/correção bloqueio solicitado pelo orquestrador. Screenshot Nova granada DATABASE_ERROR; root logPOST/media/uploads503 antesbytes,media/grenadesvazios. SQLservice_roleinsert+rollback passou conforme root, sem confirmação causaREST/key.
+- Código checked atualmente mascara erro retornado por insert; não altera RLS/grants sem evidência. Nenhuma mudança de aplicação feita nesta etapa.
+- Próxima ação aguardar logsSupabase/root, propor logger estruturado só códigoDB allowlist (sem payloadheaderskeysSQL/mensagembruta) e testecliente substituído se autorizado. Não continuar melhorias/testesamplos. Formulário deve ser preservado pelo frontend.
+
+## Evidência real recebida —29/10
+- Root obteve postgres_logs16:31:39.333Z: permission denied for table media_assets, correlacionadoPOSTuploads503. Grantsservice_role incluemINSERTSELECTUPDATEDELETE e insertSQLASservice_role+rollback passou. authenticatedSELECTintencional.
+- Root verifica credencial/configAPI sem lerkey; não concluir qual papelREST sem evidência. Não alterarRLS/grants nem adicionarloggernovo: causa de negação já identificada no banco. Nenhuma mudança de aplicação nesta tarefa.
+- Próximo aguardar diagnóstico/config pelo orquestrador e feedback usuário; pausa geral preservada. Checkpointdocs apenas.
+
+## Causa confirmada pelo orquestrador —29/10
+- edge_logs da mesma requisiçãoRESTmedia_assets401 confirmaram tipo de apikey publicável, não secret, sem leitura do valor. Variável de serviçoAPI continha chave publicável; não era defeito de grants/RLS.
+- Usuário orientado pelo root a corrigir chave servidor no projetoAPIprod/preview; aguarda confirmação/redeploy coordenado. Nenhuma correçãoSQL/código necessária. Não repetir valores de segredo nem testar mutações neste chat.
+- Estado permanece pausado; próxima ação aguardar confirmação configuração/redeploy e usuário testar. Checkpointdocs atualizado, sem aplicação alterada.
+
+## Configuração corrigida e redeploy —29/10
+- Root reportou confirmação do usuário e deployAPIdpl_3DmM6JhuKosvGjTR8HvYDDKwXmP7 READY/mainfc3d07e; health200configuredtrue/caps200enabledtrue.
+- Escrita real com chave nova NÃO comprovada, aguarda reteste do usuário. Nenhuma mudança código/schema ou teste adicional por este chat. Pausa mantida; próxima ação aguardar feedback.
+
+## Reteste real chegou à validação —29/10
+- Root reportou arquivo testeTapete.mp4 válido:HEVC2560x1440,yuv420p,19.8s,29MB,semáudio; produção mídia b65f9731-ba42-4175-bf6f-5b8daa681b97 failedINVALID_MEDIA.
+- Rejeição atual ocorre por resolução>1920 antes de avaliar codec; não prova corrupção. UX inválido/danificado é imprecisa neste caso, mas nenhuma mudança produto autorizada agora. Root prepara cópia local1080pH264 para usuário testar.
+- Marco real: chave corrigida permitiu upload/Storage chegar à validação. Ainda NÃO comprovado ready/playback/cadastro. Pausa preservada; próxima ação aguardar reteste/feedback, sem testes ou código adicional.
+
+## Importação por links — retomada autorizada29/10
+- Pausa revogada somente neste escopo. Git limpo em196bd8a nafeat/backend. Ler fontesmain/frontend e APIs oficiais; sem editar frontend/raiz/remoto ou migrationshistóricas.
+- Rootcheckpoint mais recente confirma cadastro MP4compatível persistido e Range206 de playback, não E2Evisualmobile. Preservar fluxo uploadfuncional e dados existentes.
+- Próxima ação diagnóstico porplataforma+contrato antes mudanças, depois reconhecerURLs com segurança/adaptadoresdesabilitados e migrationInstagram nãoaplicada. Nenhum OAuth/provedoraprovado disponível ainda.
+
+## Marco links/40s local — em andamento
+- Reconhecimento seguro três plataformas, semfetch/redirect. Capabilities motivo disabled e trimmingfalse; clip explícito validado/rejeitadoCLIP_UNSUPPORTED, não entregue como recorte. Admin antesvalidação; falhas não tocam DBStorage/grenadas.
+- Configdefault/teto40 e50MB; nova003 alarga source_typeInstagram/triggerready<=40, nãoaplicada.28testes/build passaram. Smoke40s primeirofalhou por substituição textual yuv420p->yuv440p no script, corrigida; repetir antesentrega.
+- Recorte sintético1080p45s->intervalo5..45 emexecuçãosessão81912; não representa runtimeVercel. Próximo conferir evidência e documentar custos/bundle/pendências, testaruploadsemclip.
+
+## Marco implementado/testado29/10 — links40s e diagnóstico de recorte
+- 30 testes passam: URLs inválidas/SSRFsintático,admin,3disabled,concurrencysemfetchmutação,clipinválido/rejeiçãoexplícita,uploadoriginalsessão201preservado,50MBteto/40s. Build/typecheck passam; probe-smoke real40s passou após corrigir scriptpixfmt.
+- Recorte somente diagnóstico local: fonte45s1080p,intervalo5..45,reencode1thread,saída40s/23750857bytes,15.123sWindowsFFmpeg. NÃO implementado naAPI/NÃO validado Vercel. Requirementrecorte seguependente. Nenhum pacoteFFmpeg adicional instalado.
+- IMPORTS.md contém diagnóstico fontesoficiais,contrato,SSRFfuturo,propostasfonte120s(nãoativa),próximospassos e custos/infra. Fonte120s é hipótese técnica, não preferência do usuário.
+- Nova003SQL nãoaplicada alargaInstagram/trigger40s;001/002 intactas,50MBbucketinalterado. Nenhum OAuth/download/mutação/deployremoto.
+- Próximo: enviarSHAs/contrato para rootfront; revisar/applicar003/env40 apenascomautorização; seguir spikeFFmpegLinux/preview antes recorteefetivo. Primeiroadaptador dependeráappAPIoficial/aprovação/permissões, todosdisabledatéentão.
+
+## Novo pedido encaminhado —29/10
+- Usuário pediu implementar pendências/commit/push após discutir recorte e trecho final1min30. Encaminhado explicitamente ao orquestrador para coordenação frontend/backend.
+- Novo limite solicitado90s finais substitui40;50MB não foi ampliado. Recorte efetivo/previewseleção permanecem escopo a executar coordenado; importadoresnãoautorizadosdisabled. Nenhuma autorização nova de produção/deploy/SQLremoto.
+- Próxima ação aguardar divisão/contrato pelo orquestrador antes mudar código compartilhado de integração; verificar Git/checkpoint na retomada. Marco local anterior320cf12/e54657d/60ae3cf permanece enviado;003aindanãoaplicada e preparada40s precisa alinhamento90.
+
+## Implementação recorte90s iniciada29/10
+- Root autorizou recorteefetivo/final90/50MB,códigolocal+testesLinuxCI,semprodução.003NÃOaplicada pode ser ajustada;001/002intactas.
+- Próximo empacotarFFmpeg, implementarseleçãoimutávelsessão+saídaseparada,claimfencing/timeout/decode/tests econtrato. Limitefontetécnicoproposto180s/50MB,novaflagtrimmingfalse atérevisão/runtime;rootavisado.
+
+## Recorte implementado em andamento29/10
+- Sessão clip imutável,limits90/180/50MB,min0.1,precisão0.001;capstrimmingflagfalse. FFmpegstatic5.3.0 releaseb6.1.1 fixado, hashesSHA256Linux/Windows medidos; buildbaixa/verificaexplicitamente binário semhabilitarscriptsnpm.
+- trimVideo reencode1thread/probefinal/decodecompleto/limitetamanho/timeouts;saidaemchaveportentativa sóreferenciadapósStorageefencing. Uploadsemclippermanece original; importersdisabled.
+- 37 testes passaram (sucesso,errotrim/store,fencing,seleçãoimutável,limites90.001/180.001). SmokeFFmpegempacotadoWindows:clip90sAAC/892284bytes,fracionário,tamanhosaída,corrompido,abort,fimfonte180,8.04s total apósgeração(pequenoframe). Não provaVercel.
+- Falha sintaxestubteste corrigida antes passar. Próximo smoke1080p90/LinuxCI,medirtracingbundle,cleaninstall+docs/commitspormarco. NenhumSQLremoto/deploy/flagativa.
+
+## Evidência do incremento90s —29/10
+- SmokeWindows empacotado pequeno90s/AAC passou; stressreal sintético95s1080pAAC->trecho5..95:fonte30964384bytes,saída36620560bytes,90s,36.257sprocessamento,temporários67584944bytes. Sem rede/Storage/Vercel; RSSnão medido Windows.
+- NFTsize localWindowsdist/server.js:169694337bytes,incluibinários;Linuxvai diferir. Pacotes/hashes/versões emFFPROBE-NOTICE. Dockerdaemonindisponível,CIroot faráLinux.
+- Fonteprimeirastressultrafast ultrapassou50MB e fixturefoirejeitada; geradoragoratemVBV2500kbpsparaobedecer50MB,semrelaxarlimitesdoproduto. Sintaxe/compilação/testes serão repetidos cleaninstallantescommit.
+- Próxima ação enviarSHA+códigofeito/rootCI,sem esperarCIparasalvar;contratoclip/caps/metadataconfirmado. Flagtrimmingfalse,nãodeploy/SQLremoto;003nãoaplicada90+clipimutável.
+
+## Recorte90s pronto para revisão/CI —29/10
+- Instalação limpa npmciignore-scripts seguida build/typecheck/39testes/diffcheck PASSOU. Sem scriptsglobais de fornecedor. Bináriooriginal/hash/chmod preparadosporbuild.
+- Código efetivo: uploadclipimutável,processorinline reencode/decode/probe/storeseparado,fencing e1recorteporinstância,semcliporiginal.003aindanãoaplicada90+clipcheck/imutabilidade;001/002intactas. Importers3disabled.
+- Testesnovos provam errostore/trim/oversize antesupload,preservaçãofonte,staleattemptnãopublica,concorrência entre mídiasretentável. Não é E2EStorage/DBreal. SmokeempacotadoWindows90 e1080 medido acima;LinuxCI/root eVercelruntime continuam pendentes.
+- Próxima ação root executar CI (semsegredos/deploy): npmciignore-scripts;build;typecheck;test;tsx scripts/trim-smoke.ts;/usr/bin/time-v tsx scripts/trim-stress.ts;NFTfileList+X_OKffmpeg/probe. Flagsremotasnãoalteradas;MEDIA_TRIMMING_ENABLEDdefaultfalse. Aguardar revisão/resultadoCI apóscommit/push.

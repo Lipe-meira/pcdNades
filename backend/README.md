@@ -60,3 +60,9 @@ Binário fixado/origem/licença em FFPROBE-NOTICE.md; build prepara somente plat
 
 ## Correção de empacotamento native Fastify
 O bloco functions com globsrc/server.ts foi removido após erro real unused_function: deploy nativo não aceita esse alvo como api/. Timeout120 deve ser definido na configuração do projeto pelo orquestrador. Não adicionar wrapper api para contornar. Runtime probe agora usa require.resolve literal para @ffprobe-installer/linux-x64/ffprobe ou win32-x64/ffprobe.exe, com pacote runtime fixado; NFT pode rastrear asset em node_modules. vendor gerado continua útil na inspeção de build, mas NÃO é caminho runtime nem depende de includeFiles. Deploy/bundle final precisa conferência antes flagtrue.
+
+## Atualização vigente: links e limite40s
+O pedido novo substitui20s por40s no vídeo final; backend config/testes e migration003 preparados, sem aplicação remota. Guia atual/diagnóstico e contrato em IMPORTS.md prevalecem sobre histórico20s acima. Importers YouTube/TikTok/Instagram continuamdisabled com motivo. Recorte efetivo está pendente: trimmingfalse/CLIP_UNSUPPORTED, não é entregue ao validar formato do intervalo. Upload original sem trecho preservado. Não atualizar produção sem schema/env/frontend coordenados.
+
+## Limite90s e recorte efetivo — incremento local
+Documentação vigente em IMPORTS.md (bloco final). Final90s/50MB; comclipfonte180s/50MB,seleçãopersistida eimutável,flagMEDIA_TRIMMING_ENABLEDfalseporpadrão. FFmpeg empacotado gera saídaseparada eprobe+decodeverificamantesready;semclipmantémoriginal.003nãoaplicadaajustada90/clip;001/002intactas. Trêsimportadores continuamdisabled. Sem produção/deploy/SQLremoto nesta entrega.
