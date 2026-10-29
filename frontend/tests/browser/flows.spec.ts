@@ -55,7 +55,7 @@ test("filtros combinados, troca de mapa e estado vazio", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByAltText("Radar do mapa Ancient")).toHaveAttribute(
     "src",
-    "/maps/ancient.svg",
+    "/maps/valve/ancient.png",
   );
   await expect(
     page.getByRole("heading", { name: "Nenhuma granada por aqui" }),
