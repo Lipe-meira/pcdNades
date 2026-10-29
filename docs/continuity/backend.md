@@ -131,3 +131,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Proposta para host pequeno: job Docker em host existente/servidor pequeno, scheduler1min sem sobreposição, segredos pelo host; não provisionado. Custo/host e DATABASE_URL aguardam decisão/configuração.
 - Verificações código já passaram neste marco (13 testes/typecheck/build); Docker build e smoke adicionais reais locais, sem SQL/Storage/E2E. Próxima ação: revisar integração API pelo orquestrador e definir host/credenciais worker; depois teste real completo autorizado. Reconciliação/quotas continuam pendentes.
 - Checkpoint e arquivos worker serão enviados juntos na feat/backend; nenhum arquivo local restante esperado após commit. SHA desta entrega deve ser obtido no Git, sem autorreferência.
+
+## Investigação bootstrap Vercel — em andamento 29/10
+- Orquestrador reportou build READY mas /health e capabilities500/timeout (~60s), sem logs úteis. API NÃO saudável.
+- Hipótese a investigar: top-level await no listen em server.ts e interceptação nativa Vercel. Próximo: comparar fonte/exemplo oficial e testar entrada local, sem assumir causalidade ou alterações aleatórias. Não mexer env/migrations.
+
+## Bootstrap investigado e corrigido — 29/10
+- Evidência fonte Vercel serverless-handler.mts: intercepta Server.listen retornando this sem listening durante await import. Repro local com stub real http.Server.listen: antes moduleEvaluated=false/listenCaptured=true após1.5s.
+- Mudança mínima server.ts remove top-level await (void listen com catch). Repro após: módulo avaliado e listen capturado; 13 testes/typecheck/build passam. Script backend/scripts/bootstrap-smoke.mjs sem rede reproduz contrato loader.
+- Próximo: enviar SHA para redeploy/HTTP real pelo orquestrador. API ainda não declarada saudável; nenhum ajuste env/SQL. Registro em README e checkpoint; sem arquivos de mídia/segredos.
