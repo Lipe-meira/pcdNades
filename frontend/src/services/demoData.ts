@@ -1,19 +1,37 @@
 import type { GameMap, Lineup } from "../domain/types";
 
-// Licensed artwork of actual map layouts. See public/maps/ATTRIBUTION.md.
+// OLD STYLE SETPOS
+// export const demoMaps: GameMap[] = [
+//   { id: "mirage", name: "Mirage" },
+//   { id: "inferno", name: "Inferno" },
+//   { id: "ancient", name: "Ancient" },
+// ].map((map) => ({
+//   ...map,
+//   radarUrl: `/maps/${map.id}.svg`,
+//   radarVersion: `setpos-${map.id}-ba5f793`,
+//   width: 1024,
+//   height: 1024,
+//   illustrative: false,
+//   credit: { label: "Minimaps by setpos.gg", url: "https://setpos.gg" },
+//   note: "Planta vetorial simplificada · versão 23/10/2026. Pode não refletir atualizações recentes do jogo.",
+// }));
+
+// new style
 export const demoMaps: GameMap[] = [
   { id: "mirage", name: "Mirage" },
   { id: "inferno", name: "Inferno" },
   { id: "ancient", name: "Ancient" },
 ].map((map) => ({
   ...map,
-  radarUrl: `/maps/${map.id}.svg`,
-  radarVersion: `setpos-${map.id}-ba5f793`,
+  radarUrl: `/maps/valve/${map.id}.png`,
+  radarVersion: `valve-${map.id}-v1`,
   width: 1024,
   height: 1024,
   illustrative: false,
-  credit: { label: "Minimaps by setpos.gg", url: "https://setpos.gg" },
-  note: "Planta vetorial simplificada · versão 23/10/2026. Pode não refletir atualizações recentes do jogo.",
+  credit: {
+    label: "Radar de Counter-Strike 2 — Valve",
+    url: "https://www.counter-strike.net/cs2",
+  },
 }));
 
 const timestamp = "2026-10-28T12:00:00.000Z";
