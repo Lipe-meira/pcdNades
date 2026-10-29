@@ -215,3 +215,12 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - checked<T> agora recebe PromiseLike<{data:T;error:unknown}>, inferência preservada sem cast. Falha anterior confirmada, não era env.
 - Após npmciignore-scripts: build/typecheck/22testes/probe-smoke fixturesWindows/bootstrap-smoke/diffcheck passaram. LinuxCI/Vercel/Storage continuam pendentes, flagfalse.
 - Próxima ação orquestrador integrar commitcorretivo e executar LinuxCI/runtime. Apenas inline.ts e checkpoint alterados neste incremento; enviar push feat/backend.
+
+## Correção config native/tracing — início29/10
+- LinuxCI real passou reportado root run40909575037/e928061. Deployfalhou unused_function emglobsrc/server.ts antesbuild; removerfunctionsconfig, timeout120 definido no projeto pelo root.
+- Próxima ação mover probe para runtime dependency e require.resolveliteral porplataforma, confirmar tracingNFT e smoke antespush. Flagfalse intacta; sem wrapper/SQL/envremoto.
+
+## Tracing estático corrigido —29/10
+- Removido functions glob inválido do vercel.json; timeout120 será configurado no projeto pelo root. Runtime usa createRequire+require.resolveliteral Linuxx64/win32x64; wrapper fixado movido para dependencies.
+- Após npmci: build/typecheck22testes/probe-smokeWindows/diffcheck passam. NFT0.30.4 printdist/server.js incluiu node_modules/@ffprobe-installer/win32-x64/ffprobe.exe; warnings Linuxausente Windows e tentativa de parse doexe comoJS registradas, não ocultadas. CI/root devem conferir traceLinux/bundlefinal; não declarar Vercelvalidado.
+- Próxima ação enviar SHA para integraçãoCI+deployflagfalse. Root define timeout projeto. Nenhumwrapper/SQL/envremoto. vendor inspeção continua mas caminho runtime não depende dele/includeFiles.
