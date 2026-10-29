@@ -125,7 +125,11 @@ export function LineupForm({
                 ["queued", "processing", "ready"].includes(value.status)
               )
                 setResumeMediaId(value.mediaId);
-              if (value.status === "failed") setResumeMediaId(undefined);
+              if (
+                value.status === "failed" ||
+                value.status === "awaiting_upload"
+              )
+                setResumeMediaId(undefined);
             },
           };
           try {
@@ -134,6 +138,11 @@ export function LineupForm({
               : await service.createLineup(draft, options);
             if (!controller.signal.aborted) onSaved(item);
           } catch (error) {
+            if (
+              error instanceof ApiError &&
+              ["UPLOAD_FAILED", "UPLOAD_INCOMPLETE"].includes(error.code)
+            )
+              setResumeMediaId(undefined);
             setFailure(
               controller.signal.aborted
                 ? "Acompanhamento pausado. O processamento pode continuar no servidor; use Salvar para retomar. Nenhuma publicação adicional será solicitada por esta janela."
