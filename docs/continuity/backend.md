@@ -283,3 +283,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - IMPORTS.md contém diagnóstico fontesoficiais,contrato,SSRFfuturo,propostasfonte120s(nãoativa),próximospassos e custos/infra. Fonte120s é hipótese técnica, não preferência do usuário.
 - Nova003SQL nãoaplicada alargaInstagram/trigger40s;001/002 intactas,50MBbucketinalterado. Nenhum OAuth/download/mutação/deployremoto.
 - Próximo: enviarSHAs/contrato para rootfront; revisar/applicar003/env40 apenascomautorização; seguir spikeFFmpegLinux/preview antes recorteefetivo. Primeiroadaptador dependeráappAPIoficial/aprovação/permissões, todosdisabledatéentão.
+
+## Novo pedido encaminhado —29/10
+- Usuário pediu implementar pendências/commit/push após discutir recorte e trecho final1min30. Encaminhado explicitamente ao orquestrador para coordenação frontend/backend.
+- Novo limite solicitado90s finais substitui40;50MB não foi ampliado. Recorte efetivo/previewseleção permanecem escopo a executar coordenado; importadoresnãoautorizadosdisabled. Nenhuma autorização nova de produção/deploy/SQLremoto.
+- Próxima ação aguardar divisão/contrato pelo orquestrador antes mudar código compartilhado de integração; verificar Git/checkpoint na retomada. Marco local anterior320cf12/e54657d/60ae3cf permanece enviado;003aindanãoaplicada e preparada40s precisa alinhamento90.
