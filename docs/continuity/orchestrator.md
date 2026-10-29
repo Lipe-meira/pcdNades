@@ -1,3 +1,9 @@
+## Previews desativados a pedido do usuário — 29/10
+
+- Usuáriopediusomentemain. Vercelupdate_project aplicado com previewDeploymentsDisabled:true em pcdnades epcdnades-api,ambosretornossemerror. Getprojectpósalteraçãoéprojeçãoreduzidaquenãoexpõeessaflag;nãohouvetestepushparagerarpreviewnemdeploy. Produçãomainconfigpreservada.
+- Front/backavisados. Nenhumcommitstatusserápushmainisolado;estecheckpointlocalvaijuntoentregaseguinte. Cotadiáriaconsumidanãorestauraautomaticamentecomajuste.
+- Próximaação: apósreset,correrdeploymain90/visual evalidarruntime;conferirausênciapreviewsnospróximospushesnaturaisdebranches.
+
 ## Política de entrega confirmada pelo usuário — 29/10
 
 - Main só deve receber integração/push quando pendência inteira finalizada e testada;agruparcódigo/docs/checkpoints.Nãoenviarepushmainparastatusduranteexecução. Front/backavisados,AGENTS.md atualizado.
