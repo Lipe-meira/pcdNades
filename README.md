@@ -22,6 +22,7 @@ Exemplo de uso: cadastrar “Smoke janela — Mirage”, marcar o destino na jan
 - Frontend em **React com TypeScript**, por familiaridade do usuário.
 - Biblioteca para o time treinar granadas de CS2.
 - Cadastro de smokes, flashbangs e molotovs com vídeo curto demonstrativo.
+- Upload de vídeo `.mp4` e fluxo desejado de importação por link do YouTube Shorts ou TikTok: baixar e armazenar uma cópia no projeto, em vez de apenas incorporar o player externo. O suporte de importação por plataforma depende de validação técnica.
 - Marcação do destino da granada no mapa.
 - Conteúdo salvo disponível para outras pessoas que abrirem o site, inclusive em outro dispositivo.
 - Chats separados para frontend e backend, coordenados pelo orquestrador.
@@ -30,7 +31,7 @@ Exemplo de uso: cadastrar “Smoke janela — Mirage”, marcar o destino na jan
 
 ## Proposta de primeira versão
 
-Os itens desta seção detalham a proposta para o MVP; pontos de acesso e vídeo ainda precisam da confirmação indicada adiante.
+Os itens desta seção detalham a proposta para o MVP; a política de acesso e a viabilidade dos importadores ainda precisam do alinhamento indicado adiante.
 
 ### Consulta
 
@@ -54,6 +55,22 @@ A interface deve ser em português e funcionar em PC e celular. O vídeo precisa
 O banco compartilhado é a fonte dos cadastros. Salvar apenas no navegador de quem cadastrou não atende ao requisito. Estado local pode ser usado para filtros, formulários e cache, mas não como armazenamento principal da biblioteca.
 
 Não precisamos de WebSockets para atender ao caso inicial: abrir ou atualizar a consulta deve buscar o conteúdo persistido no backend.
+
+### Vídeos: upload e importação por link
+
+O usuário escolheu **baixar e guardar**. O objetivo é assistir pelo player do pcdNades a um arquivo persistido no armazenamento do projeto. Um embed do YouTube ou TikTok não substitui esse requisito.
+
+- Permitir upload direto de `.mp4`.
+- No fluxo de importação, receber um link de Shorts ou TikTok e criar uma tarefa de processamento no servidor.
+- Mostrar estados de espera, processamento, sucesso e falha; só disponibilizar o vídeo como pronto após armazenar e validar o arquivo.
+- Guardar referência ao arquivo e metadados no banco; guardar o vídeo em armazenamento de objetos, fora do Git.
+- Preservar a URL de origem para referência. Não depender dela para reproduzir uma importação concluída.
+- Antes de assumir suporte a uma plataforma, validar a forma de obtenção, as permissões aplicáveis e as limitações operacionais. Não prometer importação universal nem contornar login, conteúdo privado, DRM ou bloqueios.
+- Se uma importação não puder ser concluída, informar o motivo e oferecer upload direto; não trocar silenciosamente por embed.
+
+Proposta técnica: processamento fora da requisição HTTP, com limites de tamanho/duração/tempo, limpeza de arquivos temporários e proteção contra URLs que apontem para serviços internos. Ferramentas, hospedagem, limites e contrato das tarefas ainda serão definidos.
+
+Referências oficiais para a investigação: [políticas da API do YouTube](https://developers.google.com/youtube/terms/developer-policies), [embed do TikTok](https://developers.tiktok.com/doc/embed-videos/). O YouTube restringe download/armazenamento de conteúdo pela API sem aprovação prévia. A documentação de embed não constitui uma API de download. Essas limitações devem ser consideradas na proposta de importação.
 
 ## Referências
 
@@ -82,7 +99,7 @@ Favoritos, coleções de treino, marcação de origem e comandos de prática pod
 ## Decisões pendentes
 
 1. **Acesso:** a proposta é consulta pública pelo link e escrita restrita a administrador. O usuário ainda não confirmou se a leitura deve ser restrita ao time.
-2. **Vídeo:** a proposta inicial é colar um link do YouTube Shorts e incorporá-lo. O usuário também usou o termo “upar”; confirmar se deseja upload direto de arquivos antes de implementar armazenamento de mídia.
+2. **Importadores de vídeo:** upload de MP4 e a intenção de baixar/guardar por link estão confirmados. Validar quais plataformas podem ser suportadas e definir processamento, armazenamento, limites e tratamento de falhas. Embed não é a solução escolhida.
 3. **Backend e infraestrutura:** TypeScript é preferência proposta para o backend. Fastify com PostgreSQL e autenticação no Supabase foi sugerido pelo chat de backend, mas ainda não foi aprovado.
 4. **Mapas e assets:** definir os mapas iniciais, a origem permitida das imagens e um radar canônico para cada mapa.
 5. **Publicação:** definir hospedagem, ambientes, credenciais e conta administrativa. Não inserir segredos no Git.
@@ -112,7 +129,8 @@ Modelo de discussão, sujeito ao contrato final:
 | `type` | `smoke`, `flashbang` ou `molotov`. |
 | `side` | `T` ou `CT`, conforme proposta inicial. |
 | `instructions` | Orientações para executar a granada. |
-| `youtubeUrl` | Link de vídeo, caso a proposta de YouTube seja adotada. |
+| `video` | Referência ao arquivo armazenado, estado de processamento e metadados; formato a definir no contrato. |
+| `sourceUrl` | URL de origem, quando o vídeo for importado por link. |
 | `target` | Destino no radar, com coordenadas `x` e `y`. |
 | `createdAt`, `updatedAt` | Datas geradas pelo servidor. |
 
