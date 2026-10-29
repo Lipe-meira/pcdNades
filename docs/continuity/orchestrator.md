@@ -1,3 +1,8 @@
+## Identidade integrada e pronta para push — 29/10
+
+- Fronta2db01aintegrado porf8edab7. Logoemoteoriginalhashidêntico;Barlow+BarlowCondensedlocais/OFL,grafiteazulareia. Catálogo/radaresPNGusuáriopreservados. Build39unitáriosrootPASSARAM;30/30browserrootPASSARAMapósintegração. Screenshotsreaisbranchfrontend desktop/mobile inspecionados;usamdemocatálogoantigodobranch,nãoprodução.
+- CotaVercel402mantémpubpendente. Próximaação: confirmar30browserroot,pushmaincomcheckpoint eaguardarresetquotaparapublicarAPI/frontend;verificarcapstrim efluxoreal. NãoafirmarrecorteVercelvalidado.
+
 ## Bloqueio de publicação Vercel — 29/10
 
 - Código funcional pushmain3120565. Migration003aplicada;envMEDIA_MAX_DURATION_SECONDS90 eMEDIA_TRIMMING_ENABLEDtrue Production/Preview preparadas. API/frontdeployexplícitosretornaram402api-deployments-free-per-day:mais100deploys,dizaguardar24h. Nenhumupgrade/fallbackparaburlarquota. VersãonovaaindaNÃOpublicada;atualdevecontinuarservindoversãoanterior,confirmarantesdeclaração.
