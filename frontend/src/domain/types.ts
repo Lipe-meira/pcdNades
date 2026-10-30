@@ -26,6 +26,7 @@ export type Lineup = {
   instructions: string;
   video: Video;
   target: Target;
+  origin?: Target | null;
   createdAt: string;
   updatedAt: string;
 };

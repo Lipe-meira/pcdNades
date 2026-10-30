@@ -167,9 +167,11 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
     !isTarget(item.target)
   )
     contractError();
+  if (item.origin != null && !isTarget(item.origin)) contractError();
   const media = item.video && checkMedia(item.video);
   return {
     ...item,
+    origin: item.origin ?? null,
     video: media
       ? {
           id: media.id,

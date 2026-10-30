@@ -52,6 +52,8 @@ export function validateDraft(
   if (!draft.target || !isTarget(draft.target))
     errors.target =
       "Marque um destino no radar ou informe as coordenadas entre 0 e 100%.";
+  if (draft.origin != null && !isTarget(draft.origin))
+    errors.origin = "Informe uma origem com coordenadas entre 0 e 100%.";
   if (draft.media.kind === "keep" && !editing)
     errors.media = "Selecione um arquivo MP4 ou informe um link.";
   if (draft.media.kind === "file" && !draft.media.file)

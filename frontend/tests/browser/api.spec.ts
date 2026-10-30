@@ -40,6 +40,7 @@ const grenade = {
   side: "T",
   instructions: "Instruções de QA com respostas controladas.",
   target: { x: 0.4, y: 0.6 },
+  origin: null as { x: number; y: number } | null,
   video: media,
   createdAt: "2026-10-29T12:00:00Z",
   updatedAt: "2026-10-29T12:00:00Z",
@@ -61,7 +62,7 @@ async function setup(
 ) {
   const state = {
     unavailable: false,
-    published: options.initial ? [grenade] : ([] as (typeof grenade)[]),
+    published: options.initial ? [structuredClone(grenade)] : ([] as (typeof grenade)[]),
     calls: [] as string[],
     playback: 0,
     polls: 0,
@@ -431,6 +432,8 @@ test("upload falho pode ser reenviado; acompanhamento retoma antes de publicar e
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Teste de cadastro com transporte controlado.");
+  await page.getByLabel("Origem X (%)").fill("20");
+  await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
   await page
@@ -569,6 +572,8 @@ async function fillInlineForm(page: Page) {
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções de QA, sem execução real.");
+  await page.getByLabel("Origem X (%)").fill("20");
+  await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
   await expect(
@@ -682,6 +687,8 @@ test("recorte: prévia delimitada, erro de intervalo e sessão imutável com sa�
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções fictícias para QA.");
+  await page.getByLabel("Origem X (%)").fill("20");
+  await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
   await page
@@ -849,4 +856,195 @@ test("logos locais dos sete mapas e fallback sem usar radar como miniatura", asy
   await expect(mirage).toHaveAttribute("aria-current", "true");
   await expect(page.getByAltText("Radar do mapa Mirage")).toBeVisible();
   await expect(rail.locator("img[src*='.svg']")).toHaveCount(0);
+});
+
+test("vídeo compacto e amplo preservam o mesmo player, reprodução, foco e scroll", async ({ page }, testInfo) => {
+  const state = await setup(page, { initial: true });
+  state.allowLongLease = true;
+  state.published.push({ ...grenade, id: "44444444-4444-4444-8444-444444444444", title: "Segunda granada", video: { ...media, id: "55555555-5555-4555-8555-555555555555" } });
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Granada de teste controlado Smoke/ }).click();
+  const video = page.getByLabel("Vídeo da granada", { exact: true });
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((node: HTMLVideoElement) => { node.pause(); node.currentTime = .7; node.volume = .37; node.muted = true; node.loop = true; });
+  const original = await video.elementHandle();
+  const expand = page.getByRole("button", { name: "Ampliar vídeo", exact: true });
+  await expand.scrollIntoViewIfNeeded();
+  const scroll = await page.evaluate(() => scrollY);
+  const smallWidth = await video.evaluate(node => node.getBoundingClientRect().width);
+  const leaseCount = state.playback;
+  await expand.click();
+  const back = page.getByRole("button", { name: "Voltar ao modo compacto", exact: true });
+  await expect(back).toBeFocused();
+  await expect(page.locator("video")).toHaveCount(1);
+  expect(await video.evaluate((node, previous) => node === previous, original)).toBe(true);
+  expect(await video.evaluate((node: HTMLVideoElement) => ({ paused: node.paused, volume: node.volume, muted: node.muted }))).toEqual({ paused: true, volume: .37, muted: true });
+  expect(await video.evaluate((node: HTMLVideoElement) => node.currentTime)).toBeCloseTo(.7, 1);
+  expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
+  expect(state.playback).toBe(leaseCount);
+  if (testInfo.project.name === "api-desktop") expect(await video.evaluate(node => node.getBoundingClientRect().width)).toBeGreaterThan(smallWidth + 200);
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => !node.seeking && node.readyState >= 2)).toBe(true);
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("video-wide.png"), fullPage: true });
+  await back.click();
+  await expect(expand).toBeFocused();
+  expect(await page.evaluate(() => scrollY)).toBeCloseTo(scroll, 0);
+  expect(await video.evaluate((node, previous) => node === previous, original)).toBe(true);
+  await video.evaluate(async (node: HTMLVideoElement) => { node.playbackRate = .25; await node.play(); });
+  await expand.click();
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.paused)).toBe(false);
+  await page.keyboard.press("Escape");
+  await expect(expand).toBeFocused();
+  expect(await video.evaluate((node: HTMLVideoElement) => node.paused)).toBe(false);
+  expect(await video.evaluate((node, previous) => node === previous, original)).toBe(true);
+  await video.evaluate((node: HTMLVideoElement) => node.pause());
+  await page.getByRole("button", { name: /^Segunda granada Smoke/ }).click();
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.readyState)).toBeGreaterThanOrEqual(1);
+  expect(await video.evaluate((node, previous) => node === previous, original)).toBe(false);
+  await expect(back).toHaveCount(0);
+  await expand.click();
+  await page.setViewportSize({ width: 320, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await video.evaluate(node => getComputedStyle(node).objectFit)).toBe("contain");
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => !node.seeking && node.readyState >= 2)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("video-wide-320.png"), fullPage: true });
+  await page.setViewportSize({ width: 844, height: 390 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("video-wide-landscape.png"), fullPage: true });
+  await page.keyboard.press("Escape");
+  await expect(expand).toBeFocused();
+});
+
+test("vídeo amplo mantém renovação, erro claro e cleanup do player", async ({ page }) => {
+  const state = await setup(page, { initial: true });
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Granada de teste controlado Smoke/ }).click();
+  const video = page.getByLabel("Vídeo da granada", { exact: true });
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((node: HTMLVideoElement) => { node.pause(); node.currentTime = .7; node.volume = .31; node.muted = true; });
+  const original = await video.elementHandle();
+  const initialLeaseCount = state.playback;
+  await page.getByRole("button", { name: "Ampliar vídeo", exact: true }).click();
+  state.allowLongLease = true;
+  await expect.poll(() => state.playback, { timeout: 8000 }).toBeGreaterThan(initialLeaseCount);
+  await expect(video).toHaveAttribute("src", new RegExp("v=" + (initialLeaseCount + 1) + "$"));
+  await expect.poll(() => video.evaluate((node: HTMLVideoElement) => node.currentTime)).toBeGreaterThan(.6);
+  expect(await video.evaluate((node, previous) => node === previous, original)).toBe(true);
+  expect(await video.evaluate((node: HTMLVideoElement) => ({ paused: node.paused, volume: node.volume, muted: node.muted }))).toEqual({ paused: true, volume: .31, muted: true });
+  await video.evaluate(node => node.dispatchEvent(new Event("error")));
+  await expect(page.getByRole("alert")).toContainText("Vídeo indisponível");
+  await expect(page.locator("video")).toHaveCount(0);
+  await page.getByRole("button", { name: "Voltar ao modo compacto", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Vídeo indisponível");
+  await page.getByRole("button", { name: "Ampliar vídeo", exact: true }).click();
+  await page.route(`${api}/media/*/playback`, route => reply(route, { status: 503, json: { error: { code: "SERVICE_UNAVAILABLE", message: "Serviço de vídeo indisponível." } } }));
+  await page.getByRole("button", { name: "Tentar reproduzir novamente", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Vídeo indisponível");
+  await page.unroute(`${api}/media/*/playback`);
+  state.allowLongLease = false;
+  await page.getByRole("button", { name: "Tentar reproduzir novamente", exact: true }).click();
+  await expect(video).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Fechar detalhes", exact: true }).click();
+  const callsBeforeWait = state.playback;
+  await expect(page.locator("video")).toHaveCount(0);
+  // The controlled lease renews after 4s; an unmounted player must cancel its timer.
+  await page.waitForTimeout(4500);
+  expect(state.playback).toBe(callsBeforeWait);
+});
+
+test("origens distintas no mesmo destino abrem a execução correta e legados não inventam pontos", async ({ page }, testInfo) => {
+  const state = await setup(page, { initial: true });
+  state.allowLongLease = true;
+  state.published[0].origin = { x: 0, y: 1 };
+  state.published.push({ ...grenade, id: "origin-second", title: "Outra origem", origin: { x: .8, y: .2 }, video: { ...media, id: "other-media" } });
+  state.published.push({ ...grenade, id: "origin-legacy", title: "Cadastro legado", origin: null, target: { x: .9, y: .8 } });
+  await page.goto("/");
+  const destination = page.getByRole("button", { name: "2 granadas neste destino", exact: true });
+  await destination.click();
+  const first = page.getByRole("button", { name: "Origem de Granada de teste controlado", exact: true });
+  const second = page.getByRole("button", { name: "Origem de Outra origem", exact: true });
+  await expect(first).toBeVisible();
+  await expect(second).toBeVisible();
+  await expect(page.locator(".origin-connections line")).toHaveCount(2);
+  const image = page.getByAltText("Radar do mapa Mirage");
+  const bounds = (await image.boundingBox())!;
+  const originBox = (await first.boundingBox())!;
+  expect((originBox.x + originBox.width / 2 - bounds.x) / bounds.width).toBeCloseTo(0, 3);
+  expect((originBox.y + originBox.height / 2 - bounds.y) / bounds.height).toBeCloseTo(1, 3);
+  await page.screenshot({ path: testInfo.outputPath("origin-group.png"), fullPage: true });
+  await second.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("region", { name: "Detalhes da granada" }).getByRole("heading", { name: "Outra origem", exact: true })).toBeVisible();
+  await expect(page.locator(".origin-connections line")).toHaveCount(1);
+  await expect(page.getByLabel("Vídeo da granada", { exact: true })).toBeVisible();
+  expect(state.calls).toContain("GET /media/other-media/playback");
+  await page.getByRole("button", { name: "Ampliar vídeo", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await destination.click();
+  await first.click();
+  await expect(page.getByText("Origem no radar: 0%, 100%.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /^Cadastro legado Smoke/ }).click();
+  await expect(page.getByText("Origem não cadastrada.", { exact: true })).toBeVisible();
+  await expect(page.locator(".origin-marker")).toHaveCount(0);
+  await expect(page.locator(".origin-connections line")).toHaveCount(0);
+});
+
+test("edição de origem: PATCH omitido preserva, coordenadas zero adicionam e null remove", async ({ page }) => {
+  const state = await setup(page, { initial: true });
+  await page.route(`${api}/maps`, route => reply(route, { json: { data: ["mirage", "inferno"].map(id => ({
+    id, name: id === "mirage" ? "Mirage" : "Inferno", radar: { imageUrl: `/maps/${id}.svg`, width: 1024, height: 1024, coordinateVersion: `setpos-${id}-ba5f793` },
+  })) } }));
+  const bodies: Record<string, unknown>[] = [];
+  await page.route(`${api}/grenades/${grenade.id}`, async route => {
+    const body = route.request().postDataJSON();
+    bodies.push(body);
+    state.published[0] = { ...state.published[0], ...body };
+    await reply(route, { json: { data: state.published[0] } });
+  });
+  await page.goto("/");
+  await signIn(page);
+  const edit = page.getByRole("button", { name: "Editar Granada de teste controlado", exact: true });
+  await edit.click();
+  await expect(page.getByText(/Origem não cadastrada\. Este cadastro antigo/)).toBeVisible();
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(Object.hasOwn(bodies[0], "origin")).toBe(false);
+  await edit.click();
+  await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
+  await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[1].origin).toEqual({ x: 0, y: 1 });
+  await edit.click();
+  await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Coordenada X (%)", { exact: true })).toHaveValue("");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("Marque onde o jogador lança");
+  expect(bodies).toHaveLength(2);
+  await page.getByLabel("Mapa", { exact: true }).selectOption("mirage");
+  await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
+  await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
+  await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[2].origin).toEqual({ x: 0, y: 1 });
+  await edit.click();
+  await page.getByRole("button", { name: "Remover origem", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[3].origin).toBeNull();
+  await edit.click();
+  await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("30");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("40");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[4].origin).toBeNull();
+  expect(bodies[4].mapId).toBe("inferno");
 });

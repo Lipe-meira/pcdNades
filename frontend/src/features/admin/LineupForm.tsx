@@ -15,6 +15,8 @@ import { MediaInput } from "./MediaInput";
 import type { MediaCapabilities, Progress } from "../../services/apiContracts";
 import { ApiError } from "../../services/apiClient";
 import { videoLabels } from "../../domain/types";
+import { isTarget } from "../../domain/lineups";
+import { PointCoordinates } from "./PointCoordinates";
 
 export function LineupForm({
   maps,
@@ -40,6 +42,7 @@ export function LineupForm({
           side: existing.side,
           instructions: existing.instructions,
           target: existing.target,
+          origin: existing.origin ?? null,
           media: { kind: "keep" },
         }
       : {
@@ -49,10 +52,14 @@ export function LineupForm({
           side: "T",
           instructions: "",
           target: null,
+          origin: null,
           media: { kind: "file", file: null },
         },
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [marking, setMarking] = useState<"origin" | "target">("origin");
+  const [originTouched, setOriginTouched] = useState(false);
+  const [mapChanged, setMapChanged] = useState(false);
   const [failure, setFailure] = useState<string>();
   const [fileReady, setFileReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -70,6 +77,7 @@ export function LineupForm({
   const errorRef = useRef<HTMLDivElement>(null);
   const map = maps.find((item) => item.id === draft.mapId) ?? maps[0];
   function update<K extends keyof LineupDraft>(key: K, value: LineupDraft[K]) {
+    if (key === "origin") setOriginTouched(true);
     if (key === "media") {
       setResumeMediaId(undefined);
       setProgress(undefined);
@@ -103,6 +111,9 @@ export function LineupForm({
             maps.map((item) => item.id),
             !!existing,
           );
+          if ((!existing || (mapChanged && existing.origin != null)) &&
+              (!draft.origin || !isTarget(draft.origin)))
+            nextErrors.origin = "Marque onde o jogador lança a granada ou preencha as coordenadas da origem.";
           if (draft.media.kind === "file" && draft.media.file && !fileReady)
             nextErrors.media =
               "Aguarde a prévia carregar e escolha um MP4 reproduzível.";
@@ -135,9 +146,12 @@ export function LineupForm({
             },
           };
           try {
+            // PATCH omission preserves the existing origin; null is an explicit removal.
+            const { origin: _origin, ...unchangedOrigin } = draft;
+            const savingDraft = existing && !originTouched ? unchangedOrigin : draft;
             const item = existing
-              ? await service.updateLineup(existing.id, draft, options)
-              : await service.createLineup(draft, options);
+              ? await service.updateLineup(existing.id, savingDraft, options)
+              : await service.createLineup(savingDraft, options);
             if (!controller.signal.aborted) onSaved(item);
           } catch (error) {
             if (
@@ -216,8 +230,12 @@ export function LineupForm({
                       ...current,
                       mapId: event.target.value,
                       target: null,
+                      origin: null,
                     }));
-                    setErrors((current) => ({ ...current, target: "" }));
+                    setOriginTouched(true);
+                    setMapChanged(true);
+                    setMarking("origin");
+                    setErrors((current) => ({ ...current, target: "", origin: "" }));
                   }}
                 >
                   {maps.map((item) => (
@@ -282,70 +300,48 @@ export function LineupForm({
             </div>
           </div>
           <div className="form-radar">
-            <h3 className="field-title">Destino no radar</h3>
+            <h3 className="field-title">Origem e destino no radar</h3>
             <p className="field-hint">
-              Clique ou toque na imagem para marcar onde a granada cai. Ao
-              trocar o mapa, marque novamente.
+              Marque onde o jogador lança e onde a granada cai. Ao trocar o mapa,
+              os dois pontos são apagados e precisam ser marcados novamente.
+            </p>
+            <div className="point-modes" role="group" aria-label="Ponto a marcar">
+              <button type="button" className="filter" aria-pressed={marking === "origin"}
+                onClick={() => setMarking("origin")}>Marcar origem</button>
+              <button type="button" className="filter" aria-pressed={marking === "target"}
+                onClick={() => setMarking("target")}>Marcar destino</button>
+            </div>
+            <p className="field-hint" role="status">
+              {marking === "origin" ? "Marcando origem: posição do jogador." : "Marcando destino: onde a granada cai."}
             </p>
             <Radar
               demo={demo}
               map={map}
               target={draft.target}
+              origin={draft.origin}
+              marking={marking}
+              onOriginChange={(origin) => update("origin", origin)}
               onTargetChange={(target) => update("target", target)}
             />
-            <div className="field-row coordinates">
-              <label>
-                Coordenada X (%)
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={
-                    draft.target && Number.isFinite(draft.target.x)
-                      ? Number((draft.target.x * 100).toFixed(2))
-                      : ""
-                  }
-                  aria-invalid={!!errors.target}
-                  onChange={(event) =>
-                    update("target", {
-                      x:
-                        event.target.value === ""
-                          ? NaN
-                          : Number(event.target.value) / 100,
-                      y: draft.target?.y ?? 0.5,
-                    })
-                  }
-                />
-              </label>
-              <label>
-                Coordenada Y (%)
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  value={
-                    draft.target && Number.isFinite(draft.target.y)
-                      ? Number((draft.target.y * 100).toFixed(2))
-                      : ""
-                  }
-                  aria-invalid={!!errors.target}
-                  onChange={(event) =>
-                    update("target", {
-                      x: draft.target?.x ?? 0.5,
-                      y:
-                        event.target.value === ""
-                          ? NaN
-                          : Number(event.target.value) / 100,
-                    })
-                  }
-                />
-              </label>
-            </div>
+            <p className="field-hint">Quadrado azul: origem. Mira em areia: destino.</p>
+            {existing && !draft.origin && <p className="legacy-origin">
+              {existing.origin == null
+                ? "Origem não cadastrada. Este cadastro antigo pode continuar sem origem; você também pode marcar a posição do jogador."
+                : mapChanged ? "Marque uma origem para este mapa antes de salvar."
+                : "Origem removida deste cadastro. Salve para confirmar a remoção."}
+            </p>}
+            {existing && draft.origin && <button type="button" className="text-button"
+              onClick={() => update("origin", null)}>Remover origem</button>}
+            <h4 className="point-heading">Origem do lançamento</h4>
+            <PointCoordinates origin value={draft.origin ?? null} error={errors.origin}
+              onChange={(origin) => update("origin", origin)} />
+            {errors.origin && <p className="field-error">{errors.origin}</p>}
+            <h4 className="point-heading">Destino da granada</h4>
+            <PointCoordinates value={draft.target} error={errors.target}
+              onChange={(target) => update("target", target)} />
             <p className="field-hint">
-              Você também pode preencher as coordenadas pelo teclado. Origem no
-              canto superior esquerdo.
+              Você também pode preencher as coordenadas pelo teclado. O ponto
+              (0%, 0%) fica no canto superior esquerdo da imagem.
             </p>
             {errors.target && <p className="field-error">{errors.target}</p>}
           </div>

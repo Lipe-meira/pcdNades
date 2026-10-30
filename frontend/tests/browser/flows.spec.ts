@@ -12,6 +12,8 @@ async function fillDraft(page: Page, title: string) {
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções fictícias de teste da interface.");
+  await page.getByLabel("Origem X (%)", { exact: true }).fill("20");
+  await page.getByLabel("Origem Y (%)", { exact: true }).fill("30");
   await page.getByLabel("Coordenada X (%)", { exact: true }).fill("25");
   await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("75");
 }
@@ -105,6 +107,7 @@ test("validação, seleção no radar e fechamento com restauração de foco", a
   await expect(page.getByRole("alert").first()).toContainText(
     "Revise os campos",
   );
+  await page.getByRole("button", { name: "Marcar destino", exact: true }).click();
   const image = page.getByAltText("Radar do mapa Mirage");
   const bounds = (await image.boundingBox())!;
   await image.click({
@@ -351,4 +354,46 @@ test("PNGs dos filtros carregam e falhas preservam texto e teclado", async ({ pa
   await expect(ct).toHaveAttribute("aria-pressed", "true");
   await expect(smoke).toHaveAccessibleDescription("1 granadas");
   await expect(page.getByRole("button", { name: /^Outro exemplo de smoke Smoke/ })).toBeVisible();
+});
+
+test("origem e destino no formulário: modos, zeros, coordenadas da imagem e troca de mapa", async ({ page }, testInfo) => {
+  await enterAdmin(page);
+  await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  await fillDraft(page, "Origem e destino QA");
+  await page.getByLabel("Arquivo MP4", { exact: true }).setInputFiles(fileURLToPath(new URL("../fixtures/test-pattern.mp4", import.meta.url)));
+  await expect.poll(() => page.getByLabel("Prévia do MP4 selecionado").evaluate((node: HTMLVideoElement) => node.readyState)).toBeGreaterThanOrEqual(1);
+  const image = page.getByRole("dialog").getByAltText("Radar do mapa Mirage");
+  await page.getByRole("button", { name: "Marcar origem", exact: true }).click();
+  const bounds = (await image.boundingBox())!;
+  await image.click({ position: { x: bounds.width * .2, y: bounds.height * .3 } });
+  expect(Number(await page.getByLabel("Origem X (%)", { exact: true }).inputValue())).toBeCloseTo(20, 0);
+  expect(Number(await page.getByLabel("Origem Y (%)", { exact: true }).inputValue())).toBeCloseTo(30, 0);
+  await page.getByRole("button", { name: "Marcar destino", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await image.click({ position: { x: bounds.width * .7, y: bounds.height * .6 } });
+  expect(Number(await page.getByLabel("Coordenada X (%)", { exact: true }).inputValue())).toBeCloseTo(70, 0);
+  const marker = page.getByRole("dialog").locator(".origin-marker");
+  const box = (await marker.boundingBox())!;
+  const actual = (await image.boundingBox())!;
+  expect((box.x + box.width / 2 - actual.x) / actual.width).toBeCloseTo(.2, 2);
+  expect((box.y + box.height / 2 - actual.y) / actual.height).toBeCloseTo(.3, 2);
+  await expect(page.getByRole("dialog").locator(".origin-connections line")).toHaveCount(1);
+  await page.screenshot({ path: testInfo.outputPath("origin-form.png"), fullPage: true });
+  await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  for (const label of ["Origem X (%)", "Origem Y (%)", "Coordenada X (%)", "Coordenada Y (%)"])
+    await expect(page.getByLabel(label, { exact: true })).toHaveValue("");
+  await page.getByLabel("Mapa", { exact: true }).selectOption("mirage");
+  await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("70");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Salvar demonstração", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("Marque onde o jogador lança");
+  await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
+  await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByRole("button", { name: "Salvar demonstração", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
+  await page.getByRole("button", { name: /^Origem e destino QA Smoke/ }).click();
+  await expect(page.getByText("Origem no radar: 0%, 100%.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Origem de Origem e destino QA", exact: true })).toBeVisible();
 });
