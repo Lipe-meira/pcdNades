@@ -1,3 +1,9 @@
+## Esclarecimento importação: tutoriais públicos de outros criadores — 30/10
+
+- Usuáriorespondeuexplicitamente'Pode ser de qualquer criador'. Antesdisseamigoscomacessopodemusar;issoexpressaacessofunção,nãoautorizaçãodetentordovídeo. OAuthcontapróprianãoatendecasogeral. Rootcomunicouinvestigarpúblicossemgarantiruniversal/restrições,bloqueadosdevemfalharclaro;autor/linkmetadados.
+- Backendrecebeuesclarecimento:avaliarpúblicoTikTokdownloadhabilitado/métodopermitido/yt-dlpopcionalseviávelsemcontornologinDRMproteções,semfontesnãooficiaisobrigatórias. Seuserrequirementsincompatíveis,declararlimiteconcreto/fontesemveznovosstubsOAuthnãoatendecaso. Semcódigoprod/configacessoanônimoalterado.
+- Próximaação:aguardarviabilidadebackendquejáestárodando;preservarMP4/recorte/CRUD,semnovopushmainatéentregarealtestada.
+
 ## Pedido vigente: importação efetiva de links — 30/10
 
 - Após422TikTokdesabilitado,usuáriopediu'funcionetudo/ajustar'. Rootreabriubackendparaviabilidade/implementaçãoefetiva,nãomaisreconhecimentoscaffoldcomosolução. Perguntaassíncronapendente:vídeospróprios/timeautorizadosououtroscriadores;issoafetamétododeconta/API.
