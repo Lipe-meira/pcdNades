@@ -1,3 +1,9 @@
+## Prova local fonte longa e recorte tardio — 30/10
+
+- BackendreportoufixtureREAL7200sH264/AAC15.269.956B,clip1800..1810=10.000s35.598B,decodePASS/framevermelhoconfirmaoffset30min(fonteinícioazul). Relayleu1.015.808B2req~6.7%;servidor1.232.896Bincluibufferinflight. Tempo3.25s;200semRangenegadoIMPORT_RANGE_UNSUPPORTED. Nãoplataforma/Vercel/Storage.
+- RootautorizouUMsmokeprotectedTikTokURLusuário0..10semcookies/login/contornobloqueio;rootnãoduplicará. PróximosSQLPGliteisoladotemporário/NFT/pesobinários eSHAevidência. Documentarbytesaplicação+bufferOS,nãogarantirtráfegoexatomatemático.
+- FrontalinhacapsDIRETOSbackendd58696e e rerodaráfullapósfix,evitartestecontratoinventado. Semmainparcial/produção/migrationremota.
+
 ## Marco rotas e sessões TikTok — 30/10
 
 - Backendd58696epush,66testes/typecheck/buildreportadosPASS;rotasinspect/create/completeTikTokprocessor e migration20261030124528_tiktok_import_sessions.sqlLOCAL,semSQLremoto. Rootfetch/read-onlypreviewrotas;capstiktoklimitesDIRETOSspreadimportLimits,inspect.limitsaninhado,frontavisadoparacontratoexato.
