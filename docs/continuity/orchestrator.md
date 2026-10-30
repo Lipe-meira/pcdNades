@@ -1,3 +1,9 @@
+## Protected TikTok: consulta passa, Range ainda falha — 30/10
+
+- BackendcorrigiuIE_NAMEselectorlinkcurto(vm.tiktok emvezTikTokVM). Offlineold0CONNECT/fixcomCONNECT comprovoucausaconfig. UMretesteaprovadoprotegidoINSPECTPASSid7701366996495125766/autordgm.cs2/duração90s/metadata154473B. DOWNLOADparouIMPORT_RANGE_UNSUPPORTED,semStorage/saídavalidada,nãofeaturefuncional.
+- RootautorizouUMAconsultaRangebytes0-1023headers10s<=64KBbody/budget100KBparadiagnósticostatus/206/ContentRangeEncodingsemURLassinadalog,semfallbackdownloadoarquivo. Se403/bloqueioparar;se200semRangeexplicarlimitação.
+- SQLLOCALPGlite0.5.13backendreportou29assertionsPASS/migrations5/idempotência/RLS/rate/global-slot;NÃOSupabase/concorrrênciareal. Próximaação:recebercausaRange eSHAs/provasfullfrontend,definirfalhaconcretaantesnovapub.
+
 ## Prova local fonte longa e recorte tardio — 30/10
 
 - BackendreportoufixtureREAL7200sH264/AAC15.269.956B,clip1800..1810=10.000s35.598B,decodePASS/framevermelhoconfirmaoffset30min(fonteinícioazul). Relayleu1.015.808B2req~6.7%;servidor1.232.896Bincluibufferinflight. Tempo3.25s;200semRangenegadoIMPORT_RANGE_UNSUPPORTED. Nãoplataforma/Vercel/Storage.
