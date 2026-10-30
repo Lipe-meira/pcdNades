@@ -1,3 +1,8 @@
+## Novo teste autorizado: URL direto TikTok — 30/10
+
+- Usuárioforneceuhttps://www.tiktok.com/@dgm.cs2/video/7701366996495125766?is_from_webapp=1&sender_device=pc . Mesmoid7701366996495125766dolinkcurto. RootencaminhoubackUMtestefluxoprotegidometadata/clip0..10/decode/budgetparaavaliarredirecionamento,semtesteparaleloROOT. Sejáhouvercorreçãotestadanaexecuçãoativa,evitarrepetiçãosemnecessidade.
+- Semcookieslogin/relaxarproteções ounovaprodução;logsapenasformatID/status/bytes/nomesheadersnãovaloresassinados. Próximaação:receberresultadoconcretocomparadocurto/URLdiretoecontinuardiagnósticosemclaimready.
+
 ## Nova investigação autorizada do403 — 30/10
 
 - UsuáriopediutentarajustareperguntouseActionscausou. Rootesclareceu:teste yt-dlpsimplesPASS eprotected403foramambosLOCALWindowsPC;ActionsapenasCI,nãotesteprod. Backendreativadoa8e6a1dparaCOMPARARrequisiçõesantesatribuirbloqueiodefinitivo.
