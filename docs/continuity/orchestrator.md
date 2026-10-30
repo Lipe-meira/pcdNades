@@ -1,3 +1,9 @@
+## Tarefa vigente: seletor horizontal de mapas — 30/10
+
+- UsuáriopediuvermultiAPP eencaminharfrontcarrosselcomoimagemparaselecionarmapas. RepoautenticadoconsultadoSHA20df99f;FeaturedCities emfrontend/src/components/featured-cities.tsx eCSScity-exploration/hero-city-motion:miniatura+nome,overflowhorizontal,destaqueselecionado.
+- Frontacionadochat01a1853b-6e1e-79b3-8505-70e2d76056fe:adaptarfaixacom7mapasreaisdaAPI,minifotos/assetscomorigem,teclado/swipe/mobile,paletaatual,semrotaçãoautomática,preservarCRUD/uploadrecorte. Testes+screenshot,commitpushprópriabranch;semdeploy/mainatétarefaconcluída.
+- Mainlocalbase629b5b0,3commitsdocslocaisantesetapa,origin45d0693;Gitlimponaentrada. Somentecheckpointalterado aqui. Próximaação:aguardarentregafront/revisartestes/screenshot,integrarentregacompletaumaúnicavez.
+
 ## Publicação concluída — 30/10
 
 - LimiteVercelliberou;duastentativasautorizadasdeproduçãoaceitas eREADY em45d0693 (origin/main). API dpl_5Nw511hhh3AKqJzG3Sbpugfk4csN;front dpl_2HNspK7fkj1zN653JmBmLaF4XM21,aliasesprincipaiscorretos.
