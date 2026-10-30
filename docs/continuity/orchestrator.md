@@ -1,3 +1,9 @@
+## Frontend TikTok final entregue, feature real ainda bloqueada — 30/10
+
+- Featfrontend494ae91remotolimpo,commits2bde0fc/e726461/494ae91;build/typecheck55unit/full64browserworkers1PASSreportados. Fullanterior61/64(1ERR_NO_BUFFER_SPACEWindows+2assertsgetByLabeltextarea),4rerunsafetadosPASS;assertfixtextbox/value,nãotimeouts/retries. FixturescontroladasNÃOE2Eexterno.
+- Contratoalignedcapstiktokdirect/inspectlimitsnested,previewNULLexplícito,source2hclip90/50M,sessionbind/recovery/busy/expiry,erroIMPORT_ACCESS_DENIED eMP4/cadastroanteriorespreservados. Screenshotstiktok-range/selectiondesktop/mobilelocaiscontrolados. Backendatéa8e6a1d,71tests/sql29local/provas2h;protectedCDN403continua.
+- Estado:entregascódigotestadasembranches,NÃOfuncionalparaprodução. SEMmerge/pushmain/migrationnova/env/cap/deploy. Redeparadaapósdiagnóstico403,semcontorno.Novaaçãodependedeinvestigaçãodecompatibilidade/autorizaçãoexplícitaparanovoteste;guardartudosemprometermarcarready.
+
 ## Backend TikTok entregue para review, bloqueado para produção — 30/10
 
 - Remotofeat/backenda8e6a1d(coesosc2bb1d4,d58696e,a8e6a1d),Gitlimporeportado;71tests/typecheck/build/bootstrapPASSreportados. PGlitelocal29assertions,fixture2h/corte30min/selectorofflinePASS,NFTWindows187601154B. Linux/Vercelasset/runtime eSupabase/StorageE2ENÃOcomprovados.
