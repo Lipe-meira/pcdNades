@@ -1,3 +1,9 @@
+## Review inicial fundamentos TikTok — 30/10
+
+- Backc2bb1d4pushapenasfundamentos,rotas/sessões/processorNÃOfuncionais,nãointegrarcomofeature. Rootreviewread-onlyimport-network/import-runtime:proxyDNSIPpinning/bytes eFFmpegMOVloopbackarquitetura;feedbackrobustezdimensõesformato(undefinedNaN),Content-Rangecoerente,limitaçãoIPv6público eNFT/pesoX_OKbinários.
+- Backcontinuarárotas/RPCleaseglobal/migrationnovalocal+testes. Comandosuitefalhouporcwdraizumavez,rerunbackendpendente;deverregistrarresultadorealnãoocultar. Semrotasprod/env/mainpush.
+- Próximaação:receberSHAsrotas+suite/relayfonte longa/protectedruntimeenãoconsiderarprovaTikTokraizsemproxycomoE2Earquiteturanova.
+
 ## Contrato final de retomada/importação — 30/10
 
 - IMPORTinitialqueued viaRPCatômico;createSEMPREseguidoPOSTcomplete;GETsóobserva,queued/leaseexpiradaouBUSYretomaPOSTcompletemesmoidsemnovasessão. MediaviewsourceIdtop-level+metadataproveniência/sourceDuration,sourceUrlcanonicaligualinspect;201mediaId=id.
