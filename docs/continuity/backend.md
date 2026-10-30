@@ -1,11 +1,31 @@
 # Checkpoint — backend
 
 Atualizado em: 30/10/2026, America/Sao_Paulo.
-Estado vigente: origem opcional implementada e verificada localmente; aguardando revisão e integração conjunta. Nenhum SQL remoto ou deploy autorizado/realizado por este chat.
+Estado vigente: usuário autorizou implementar importação TikTok opt-in com yt-dlp, commit/push. Orquestrador aprovou contrato em backend/TIKTOK-IMPLEMENTATION.md. Em execução, nada remoto alterado; capability ainda desativada. Upload/recorte90 publicados conforme relato do root.
+
+## Retomada autorizada: comparar 403 com fluxo simples — 30/10
+
+Usuário autorizou tentar ajustar; root encaminhou autorização para diagnóstico de bug, primeiro offline e depois UM teste controlado. Base a8e6a1d, feat/backend limpa/sincronizada antes começar. Dois bugs reproduzidos RED->GREEN: sortpixels ignora preferência em empate e escolha explícita yt-dlp; headers parciais/case diferente descartam herança. Corrigidos pedindo -f best[ext=mp4]/best igual root, honrando seleção/ordem nativa e merge case-insensitive com allowlist só UA/Referer/Accept/Accept-Language/Sec-Fetch-Mode do extrator. Cookies/auth/Host/Range/headers arbitrários continuam negados, SSRF/TLS/DNS/budgets inalterados.
+
+ÚNICO reteste autorizado após fix: inspectPASS formato h264_540p_576265-1/576x1024/H264/AAC/138662B metadata, mascomplete re-resolveDIRETOcanonicalpage e downloadPAROU IMPORT_ACCESS_DENIED. Bugs reais NÃO provaram causa403. Novo link direto pedido usuário com is_from_webapp/sender_device equivale à mesma canonical; testeLOCALreconhecedorPASSsemrede, rootorientou não repetir teste externo. Ambos clientes testados WindowsLOCAL, Actions sóCI e não é causa dessa resposta.
+
+Offlineimport-transport-smoke.ts PASS: Node/FFmpegempacotado6.1.1 envia caminho/querypercentencodedeRange/headersherdadosiguais; diferenças de nomes restantes Accept-Encoding e Icy-Metadata. Sem upstream, sem evidência de que causem403; TLS/CDN/rootFFmpegN125875 não comparados. Root orientou encerrar marco com correções/testes/docs/commitpush, sem novo teste externo/prod/env/SQL/main/pagos. Próximaaçãoexecutável: suíte/build/bootstrap/proxy/transportofflines,diffcheck,commitpush. Pendência403 causaindeterminada e E2E/runtimeLinux/Storage continuam; capoff. Arquivos alterados neste marco: import-runtime.ts/import-network.ts, testesruntime, scriptsprotected/transport, IMPORTS.md e estecheckpoint.
+
+Entrega deste marco: verificação nova concluída com73testesPASS/typecheck/build/bootstrapPASS/proxyofflinePASS/transportofflinePASS/diffcheckPASS. Commit fix(backend) que contém este registro será enviado à feat/backend; reportar SHA do gitlog ao orquestrador. Próximaação após push: aguardar decisão/coordenação do diagnóstico403, sem requests externos adicionais. SQL/migration não mudou, PGlite29 anterior não repetido nem apresentado como nova validação; diretório de trabalho próprio preservado.
+
+## Entrega para revisão — 30/10
+
+Fundamentos c2bb1d4 e sessões/processamento d58696e já push feat/backend. Commit deste registro entrega regressões/selectorfix/IMPORT_ACCESS_DENIED/hashX_OK/scripts e documentação. Verificação final executada:71testesPASS, typecheck/buildPASS, bootstrap moduleEvaluated/listenCapturedtruePASS, SQLLOCAL PGlite29assertionsPASS, proxyoffline old0/fix1CONNECTzeroUpstreamPASS. gitdiffcheck inicialmente achou linha em branco EOF deWORKER.md, corrigida; segunda execuçãoPASS. FFmpegfonte2hstart30min10s/decodePASS conforme números abaixo. NFTWindows187601154B,avisosLinuxausente/parsingexe conhecidos.
+
+Estado do produto: inspeçãoTikTok protegidaREALPASS, downloadCDN403CONCLUSIVO; nenhumaimportaçãocompletada/armazenada. Capdefaultfalse, semnovoenv/SQLremoto/deploy/main. PararrequestsTikTok,semfallback/bypass/cookies. Próximaação depende do orquestrador/usuário: review commits/decidir bloqueio403; não ativar código como feature pronta. Ainda faltam Linux/Vercelbundle/runtime/performance/memória/tmp, Supabase/PostgREST/RPCmulticonexão/Storage/playbackE2E; nova migration NÃOaplicada. Prévia visualnull explícita, YouTube/IGoff, upload180/90preservado. Checkpoint/linkcontrato entreguesaoorquestrador; repetir gitstatus ao retomar.
 
 ## Objetivo e pedido atual
 
-Registrar origem de lançamento além do destino: um cadastro/execução tem um vídeo, uma origem opcional e um destino. Vários cadastros podem compartilhar destino. Escopo apenas backend/ e este checkpoint, sem táticas ou tipos novos.
+Pedido atual: implementar inspeção/metadados + seleção <=90s em fonte até2h + armazenamento efetivo TikTok. Sem relaxar upload180/90, sem cookies/login/bypass/host pago/prod. Root fez prova local yt-dlp2026.08.19 URLcorrigido vt/ZSgqvRtpM (90s ->10s h264/AAC decodePASS); não repetir esse download. Minha tarefa: código/fixtures offline/network seguro e contrato com front. Preview:null explícito aprovado. Fonte longa/Vercel ainda não comprovados.
+
+Marcos push c2bb1d4 fundamentos e d58696e rotas/processor/migration. Suite66/typecheck/build/diffPASS marco2. Em execução marco3 validações/correções: testeREAL fonteLOCAL2h160x90AAC15,269,956B cortou1800..1810 ->10s35,598B/decodePASS/framevermelho confirmaoffset; recebeu1,015,808B/2requests,servidor1,232,896B inclkernelinflight; semRange200rejeitado. Primeiro fixturefalhoumoov porseamtestdataemitidoantespipe; pause corrigiu teste. SQLLOCAL PGlite0.5.13 isolado vendor/sql-test PASS29assertions com5migrations/grants/RLS/serviceRPC/expiry/clip/idempotency/rate/global-slot (NÃO Supabase/multiconexão). Dockerdaemonindisponível. NFTWindows187,601,154B inclyt-dlp.exe,semprovaLinuxVercel.
+
+ProtectedTikTok: primeirotestparouIMPORT_FAILED3s,causaCONFIGofflinecomprovada: TikTokVM classkey não é IE_NAME vm.tiktok. Selectorfixado '^tiktok$,^vm\\.tiktok$'; testeofflineproxy403zeroUpstream old0CONNECT/fix1CONNECT PASS. Um reteste real foi explicitamente autorizado root: INSPECTPASS id7701366996495125766/autor dgm.cs2/duração90s/metadata154473B,complete re-resolvePASS mas downloadPAROU IMPORT_RANGE_UNSUPPORTED. ConsultaHEADERúnica adicional autorizada root confirmouHTTP403,1request/1313B/ContentLength504/semrange/bodyaplicação0; metadata155170B pararesolverfontepoisTEMPprivadoanteriorjáapagado. RedePARADA definitivamente,semfallback/cookies/login/bypass. CódigoagoraclassificaIMPORT_ACCESS_DENIED comteste403single-requestsemretry econtémhashX_OKnacapability. NenhumStorage/migration/env/deploy remoto. Não anunciar importaçãofuncional; rootinformado eorientoufinalizarentregareviewcomcapfalse. DocsIMPORTS/README/WORKER/NOTICE atualizadas. Próximaaçãoexecutável:suite/typecheck/build/bootstrap,SQL29/proxyoffline,gitdiff,commit/pushmarco3 comscriptsfixture ecorreções;reportarSHA/pendências. Tudoaindalocalmarco3atécommitar,gitstatuslistaexata.
 
 ## Localização e estado Git
 
@@ -371,3 +391,21 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Nova004 adiciona origin_x/y nullable/checkpar/finitebounds. 001/002/003 intactas. Nenhum SQLremoto/deploy/env realizado; não há dependências novas.
 - ORIGIN.md fecha contrato e troca de mapa: omitidoPATCHpreserva também com mapId; frontend remarca destino e origem ou envia null explicitamente, sem inferência/migração oculta. Root recebeu decisão.
 - Script tests/sql/origin-smoke.sql preparado para revisão/execução autorizada posterior com rollback; NÃO executado. Próximo rodar suíte completa/typecheck/build/diff, registrar resultados e entregar SHA na feat/backend para integração conjunta só quando pendência inteira estiver finalizada/testada.
+
+## Importação efetiva — investigação decisiva30/10
+- Nova autorização root: tentar integração real após422 TikTok, sem entregardisabledcomoimplementadocompleto; perguntatitularidadeao usuárioaguarda resposta. Semcookies/segredos/bypass/serviços pagos/remoto/deploy.
+- Git limpo eme1ff49a; backendigualorigin/main. Rootcheckpoint confirma004aplicada eSQLsmokeoriginrealpassoucomrollback; recorte90jápublicado (não afirmarE2Erecorte).
+- NOVAevidênciaTikTokoficial: produtoDataPortability cobreUSERSsomenteEEA/UK,emboraapplicantsglobais. Brazil NÃOretornadados. DisplayAPI sómetadata/embed; OAuthsimples não resolveMP4Brasil. Rootavisado imediatamente, nãocodificarconexãoplacebo.
+- Próximo concluirfontesMeta/YouTube eplanoInstagramOAuthconcreto, corrigirIMPORTS.mdcomestado90real, executarcomponentessemdownloaddeconteúdo alheio e relatarpréreqbloqueantes. URLvt screenshot sóreconhecer; não resolver/download antes autorização.
+
+## Importação efetiva — conclusão da investigação30/10
+- Usuário esclareceu QUALQUERCRIADOR/tutorialpúblico; nãoequivaleautorização de download/republicação. OAuthpróprioconta NÃOatende ao caso geral. Root determinou encerrar diagnóstico/docs semnovocódigo ou OAuthplacebo.
+- Fontesoficiais confirmadas: TikTokPortability somenteUSERS EEA/UK (applicantsglobais), DisplayAPIsemMP4; recursoSalvarnoappnãoéAPIservidor e termosROWrestringemscripts. InstagramIGMedia restrito amídiadeprofissionaisautorizados; YouTubepedewrittenapproval. Não identificado importador universal permitido sobrestriçõesacordadas.
+- IMPORTS.md reescrito coerente: recorte90/fonte180/50MB jápublicado conforme root,003/004aplicadasporroot; importers continuamindisponíveis/funcionalidadeNÃOentregue,préreqreais e limitações deconexão explícitos. Sempretender transformarMP4direto emsoluçãoTikTok.
+- Verificação:8testesexistentesimporters passaram; componentecompilado reconheceu vt/ZSqvRtpM comoTikTokcurto e retornou422 semrede/mídia. Não visitado vídeo, não baixadomaterial de terceiros, nenhumtesteOAuth/credencial. Build não repetido porquesódocs.
+- Próxima ação aguardar decisão deproduto viaorquestrador, semalterarcódigo/política/produção/env/schema. Commit/push apenas IMPORTS.md echeckpoint nafeat/backend; main continuaentregainteiracoordenada,semcheckpointisoladomain.
+
+## PoC fonte longa e download-sections — início30/10
+- Usuário autorizou testar yt-dlp no exemplo corrigido vt/ZSgqvRtpM; teste real de rede/download é EXCLUSIVO do orquestrador, não duplicar.
+- Tarefa independente backend: avaliar metadata/preview, intervalo<=90s antes de baixar, fonte longa sem teto180 antigo, transferência/CPU/retries/deadline/SSRF CDNs.50MBFINALpermanece, limites fonte/rede separados precisam proposta explícita.
+- Próxima ação consultar docs yt-dlp/FFmpeg, preparar plano/PoCoffline sem execução de extrator contraURL. Sem cookies/login/DRMbypass/serviçoterceiro/pacotepago/deploy/SQL/env. Bloqueio de download real =>registrar/parar, não contornar.

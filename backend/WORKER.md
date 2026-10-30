@@ -1,5 +1,7 @@
 # Operação do worker
 
+Nota vigente em30/10/2026: este documento registra alternativas históricas. Final atual90s/50MB; upload com recorte até180s. Importação TikTok experimental e bloqueio403 em [IMPORTS.md](IMPORTS.md). Worker batch antigo processa somente source_type=upload; não consome jobs TikTok. Exemplos20s abaixo não são o contrato atual. Nenhum worker/host novo foi provisionado.
+
 Contexto Docker: backend/. Build: `docker build -t pcdnades-worker:local backend` a partir da raiz. Imagem usa Node22, FFmpeg/ffprobe Debian e usuário não root; não inclui .env ou arquivos MP4. Build baixa imagens/pacotes, não toca Supabase. Para repetibilidade estrita, fixar digest da imagem após validação pelo operador.
 
 Execução: `docker run --rm --init --read-only --tmpfs /tmp:rw,noexec,nosuid,size=256m --memory=1g --cpus=1 --env-file /caminho/seguro/worker.env pcdnades-worker:local`. Arquivo env fora do Git, permissões só para operador. Não passar valores secretos na linha de comando/log/chat. CPU/RAM/tmp são limites iniciais a validar com arquivos reais de até20s/50MB. Não expor portas; container executa batch e termina quando fila esvazia.
