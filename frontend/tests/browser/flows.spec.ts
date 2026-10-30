@@ -312,3 +312,43 @@ test("painel: contagens por mapa e lado preservam alternativas e zeros", async (
   await expect(sides.getByRole("button", { name: "Ambos", exact: true })).toHaveAttribute("aria-pressed", "true");
   await counts(0, 0, 0, 0);
 });
+
+test("PNGs dos filtros carregam e falhas preservam texto e teclado", async ({ page }, testInfo) => {
+  const panel = page.getByRole("complementary", { name: "Filtros da biblioteca" });
+  const types = page.getByRole("group", { name: "Tipo de granada" });
+  const sides = page.getByRole("group", { name: "Lado do time" });
+  await expect(types.getByRole("button")).toHaveCount(4);
+  await expect(sides.getByRole("button")).toHaveCount(3);
+  await expect(panel.locator("img")).toHaveCount(7);
+  for (const [name, file, width] of [
+    ["Todas", "all", 200], ["Smoke", "smoke", 200], ["Molotov", "molotov", 200],
+    ["Flashbang", "flashbang", 200], ["Ambos", "both", 128], ["CT", "ct", 128], ["T", "t", 128],
+  ] as const) {
+    const image = panel.getByRole("button", { name, exact: true }).locator("img");
+    await expect(image).toHaveAttribute("src", `/filter-icons/${file}.png`);
+    await expect(image).toHaveAttribute("alt", "");
+    await expect.poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBe(width);
+  }
+  await expect(panel.locator("img[src$='/he.png']")).toHaveCount(0);
+  await page.setViewportSize({ width: 320, height: 900 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("filter-png-320.png"), fullPage: true });
+  await page.route("**/filter-icons/smoke.png", (route) => route.abort());
+  await page.route("**/filter-icons/ct.png", (route) => route.abort());
+  await page.reload();
+  const smoke = types.getByRole("button", { name: "Smoke", exact: true });
+  const ct = sides.getByRole("button", { name: "CT", exact: true });
+  await expect(smoke.locator("img")).toHaveCount(0);
+  await expect(ct.locator("img")).toHaveCount(0);
+  await expect(smoke).toBeVisible();
+  await expect(ct).toBeVisible();
+  await ct.focus();
+  await page.keyboard.press("Space");
+  await smoke.focus();
+  await page.keyboard.press("Enter");
+  await expect(smoke).toHaveAttribute("aria-pressed", "true");
+  await expect(ct).toHaveAttribute("aria-pressed", "true");
+  await expect(smoke).toHaveAccessibleDescription("1 granadas");
+  await expect(page.getByRole("button", { name: /^Outro exemplo de smoke Smoke/ })).toBeVisible();
+});
