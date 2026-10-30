@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { GameMap, Lineup, Target } from "../domain/types";
 import { typeLabels } from "../domain/types";
-import { pointFromImage } from "../domain/lineups";
+import { isTarget, pointFromImage } from "../domain/lineups";
 import { Icon } from "./Icon";
 
 type Props = {
@@ -10,6 +10,10 @@ type Props = {
   selectedId?: string;
   onSelect?: (ids: string[]) => void;
   target?: Target | null;
+  origin?: Target | null;
+  marking?: "origin" | "target";
+  onOriginChange?: (point: Target) => void;
+  highlightedIds?: string[];
   onTargetChange?: (point: Target) => void;
   demo?: boolean;
 };
@@ -20,10 +24,21 @@ export function Radar({
   selectedId,
   onSelect,
   target,
+  origin,
+  marking = "target",
+  onOriginChange,
+  highlightedIds = [],
   onTargetChange,
   demo = true,
 }: Props) {
   const [broken, setBroken] = useState<string | null>(null);
+  const editing = Boolean(onOriginChange || onTargetChange);
+  const changePoint = marking === "origin" ? onOriginChange : onTargetChange;
+  const origins = lineups.filter((item) => item.origin && isTarget(item.origin) &&
+    (selectedId ? item.id === selectedId : highlightedIds.includes(item.id)));
+  const connections = editing
+    ? origin && target && isTarget(origin) && isTarget(target) ? [{ id: "draft", origin, target }] : []
+    : origins.map((item) => ({ id: item.id, origin: item.origin!, target: item.target }));
   const groups = new Map<string, Lineup[]>();
   lineups.forEach((item) => {
     const key = `${item.target.x}:${item.target.y}`;
@@ -31,7 +46,7 @@ export function Radar({
   });
   return (
     <>
-      <div className={`radar-frame ${onTargetChange ? "radar-edit" : ""}`}>
+      <div className={`radar-frame ${editing ? "radar-edit" : ""}`}>
         {broken === map.radarUrl ? (
           <div className="empty-state" role="alert">
             <Icon name="info" />
@@ -51,18 +66,35 @@ export function Radar({
               draggable={false}
               onError={() => setBroken(map.radarUrl)}
               onClick={
-                onTargetChange
+                changePoint
                   ? (event) => {
                       const point = pointFromImage(
                         event.clientX,
                         event.clientY,
                         event.currentTarget.getBoundingClientRect(),
                       );
-                      if (point) onTargetChange(point);
+                      if (point) changePoint(point);
                     }
                   : undefined
               }
             />
+            {connections.length > 0 && <svg className="origin-connections" viewBox="0 0 100 100"
+              preserveAspectRatio="none" aria-hidden="true">
+              {connections.map((item) => <line key={item.id}
+                x1={item.origin.x * 100} y1={item.origin.y * 100}
+                x2={item.target.x * 100} y2={item.target.y * 100} />)}
+            </svg>}
+            {origins.map((item) => <button key={`origin-${item.id}`} type="button"
+              className="origin-marker" aria-label={`Origem de ${item.title}`}
+              aria-pressed={item.id === selectedId}
+              style={{ left: `${item.origin!.x * 100}%`, top: `${item.origin!.y * 100}%` }}
+              onClick={() => onSelect?.([item.id])}>
+              <Icon name="plus" size={17} />
+            </button>)}
+            {editing && origin && isTarget(origin) && <div className="origin-marker origin-draft"
+              aria-hidden="true" style={{ left: `${origin.x * 100}%`, top: `${origin.y * 100}%` }}>
+              <Icon name="plus" size={17} />
+            </div>}
             {[...groups.entries()].map(([key, items]) => (
               <button
                 key={key}

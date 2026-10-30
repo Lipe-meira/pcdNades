@@ -95,6 +95,7 @@ export function Library({
             map={map}
             lineups={visible}
             selectedId={selected?.id}
+            highlightedIds={destinationIds ?? []}
             onSelect={(ids) => {
               setExpanded(false);
               if (ids.length > 1) {
@@ -122,6 +123,8 @@ export function Library({
             <span className="legend-hint">
               Selecione um ponto ou use a lista ao lado.
             </span>
+            <span><i className="origin-legend" />Origem (quadrado)</span>
+            <span>Destino (círculo)</span>
           </div>
         </section>
         <aside className="lineup-rail" aria-label="Biblioteca de granadas">
@@ -219,6 +222,9 @@ export function Library({
                   />
                 </div>
                 <div className="detail-information">
+                  <p className="detail-origin">{selected.origin
+                    ? `Origem no radar: ${(selected.origin.x * 100).toLocaleString("pt-BR")}%, ${(selected.origin.y * 100).toLocaleString("pt-BR")}%.`
+                    : "Origem não cadastrada."}</p>
               <div className="detail-meta">
                 <span className={`type-text ${selected.type}`}>
                   <Icon name={selected.type} size={16} />

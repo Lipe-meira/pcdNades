@@ -59,6 +59,7 @@ export function createDemoService(): LineupService {
       side: draft.side,
       instructions: draft.instructions.trim(),
       target: { ...draft.target! },
+      origin: draft.origin === undefined ? existing?.origin ?? null : draft.origin,
       video,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,

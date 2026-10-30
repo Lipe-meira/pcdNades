@@ -40,6 +40,7 @@ const grenade = {
   side: "T",
   instructions: "Instruções de QA com respostas controladas.",
   target: { x: 0.4, y: 0.6 },
+  origin: null as { x: number; y: number } | null,
   video: media,
   createdAt: "2026-10-29T12:00:00Z",
   updatedAt: "2026-10-29T12:00:00Z",
@@ -61,7 +62,7 @@ async function setup(
 ) {
   const state = {
     unavailable: false,
-    published: options.initial ? [grenade] : ([] as (typeof grenade)[]),
+    published: options.initial ? [structuredClone(grenade)] : ([] as (typeof grenade)[]),
     calls: [] as string[],
     playback: 0,
     polls: 0,
@@ -431,6 +432,8 @@ test("upload falho pode ser reenviado; acompanhamento retoma antes de publicar e
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Teste de cadastro com transporte controlado.");
+  await page.getByLabel("Origem X (%)").fill("20");
+  await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
   await page
@@ -569,6 +572,8 @@ async function fillInlineForm(page: Page) {
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções de QA, sem execução real.");
+  await page.getByLabel("Origem X (%)").fill("20");
+  await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
   await expect(
@@ -682,6 +687,8 @@ test("recorte: prévia delimitada, erro de intervalo e sessão imutável com sa�
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções fictícias para QA.");
+  await page.getByLabel("Origem X (%)").fill("20");
+  await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
   await page
@@ -944,4 +951,100 @@ test("vídeo amplo mantém renovação, erro claro e cleanup do player", async (
   // The controlled lease renews after 4s; an unmounted player must cancel its timer.
   await page.waitForTimeout(4500);
   expect(state.playback).toBe(callsBeforeWait);
+});
+
+test("origens distintas no mesmo destino abrem a execução correta e legados não inventam pontos", async ({ page }, testInfo) => {
+  const state = await setup(page, { initial: true });
+  state.allowLongLease = true;
+  state.published[0].origin = { x: 0, y: 1 };
+  state.published.push({ ...grenade, id: "origin-second", title: "Outra origem", origin: { x: .8, y: .2 }, video: { ...media, id: "other-media" } });
+  state.published.push({ ...grenade, id: "origin-legacy", title: "Cadastro legado", origin: null, target: { x: .9, y: .8 } });
+  await page.goto("/");
+  const destination = page.getByRole("button", { name: "2 granadas neste destino", exact: true });
+  await destination.click();
+  const first = page.getByRole("button", { name: "Origem de Granada de teste controlado", exact: true });
+  const second = page.getByRole("button", { name: "Origem de Outra origem", exact: true });
+  await expect(first).toBeVisible();
+  await expect(second).toBeVisible();
+  await expect(page.locator(".origin-connections line")).toHaveCount(2);
+  const image = page.getByAltText("Radar do mapa Mirage");
+  const bounds = (await image.boundingBox())!;
+  const originBox = (await first.boundingBox())!;
+  expect((originBox.x + originBox.width / 2 - bounds.x) / bounds.width).toBeCloseTo(0, 3);
+  expect((originBox.y + originBox.height / 2 - bounds.y) / bounds.height).toBeCloseTo(1, 3);
+  await page.screenshot({ path: testInfo.outputPath("origin-group.png"), fullPage: true });
+  await second.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("region", { name: "Detalhes da granada" }).getByRole("heading", { name: "Outra origem", exact: true })).toBeVisible();
+  await expect(page.locator(".origin-connections line")).toHaveCount(1);
+  await expect(page.getByLabel("Vídeo da granada", { exact: true })).toBeVisible();
+  expect(state.calls).toContain("GET /media/other-media/playback");
+  await page.getByRole("button", { name: "Ampliar vídeo", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await destination.click();
+  await first.click();
+  await expect(page.getByText("Origem no radar: 0%, 100%.", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /^Cadastro legado Smoke/ }).click();
+  await expect(page.getByText("Origem não cadastrada.", { exact: true })).toBeVisible();
+  await expect(page.locator(".origin-marker")).toHaveCount(0);
+  await expect(page.locator(".origin-connections line")).toHaveCount(0);
+});
+
+test("edição de origem: PATCH omitido preserva, coordenadas zero adicionam e null remove", async ({ page }) => {
+  const state = await setup(page, { initial: true });
+  await page.route(`${api}/maps`, route => reply(route, { json: { data: ["mirage", "inferno"].map(id => ({
+    id, name: id === "mirage" ? "Mirage" : "Inferno", radar: { imageUrl: `/maps/${id}.svg`, width: 1024, height: 1024, coordinateVersion: `setpos-${id}-ba5f793` },
+  })) } }));
+  const bodies: Record<string, unknown>[] = [];
+  await page.route(`${api}/grenades/${grenade.id}`, async route => {
+    const body = route.request().postDataJSON();
+    bodies.push(body);
+    state.published[0] = { ...state.published[0], ...body };
+    await reply(route, { json: { data: state.published[0] } });
+  });
+  await page.goto("/");
+  await signIn(page);
+  const edit = page.getByRole("button", { name: "Editar Granada de teste controlado", exact: true });
+  await edit.click();
+  await expect(page.getByText(/Origem não cadastrada\. Este cadastro antigo/)).toBeVisible();
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(Object.hasOwn(bodies[0], "origin")).toBe(false);
+  await edit.click();
+  await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
+  await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[1].origin).toEqual({ x: 0, y: 1 });
+  await edit.click();
+  await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Coordenada X (%)", { exact: true })).toHaveValue("");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("Marque onde o jogador lança");
+  expect(bodies).toHaveLength(2);
+  await page.getByLabel("Mapa", { exact: true }).selectOption("mirage");
+  await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
+  await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
+  await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[2].origin).toEqual({ x: 0, y: 1 });
+  await edit.click();
+  await page.getByRole("button", { name: "Remover origem", exact: true }).click();
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[3].origin).toBeNull();
+  await edit.click();
+  await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await page.getByLabel("Coordenada X (%)", { exact: true }).fill("30");
+  await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("40");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(bodies[4].origin).toBeNull();
+  expect(bodies[4].mapId).toBe("inferno");
 });
