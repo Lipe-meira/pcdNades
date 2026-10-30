@@ -1,3 +1,9 @@
+## Escopo adicional: origem de lançamento — 30/10
+
+- Usuárioquerorigemno cadastro evisualização;exemplo2pixeisdiferentesmesmodestino. Comunicadomodelo:umcadastro/execuçãocomvídeoprópriotemumaorigem+target,2cadastrospodemcompartilhardestino. Legadosorigemnullpreservados.
+- Backacionadocontratooriginnullable/coordenadasnormalizadas+API/migration004nova/testes,semSQLremoto. Frontacionadoformmarcarorigem/destino,visualorigens/linhastracejadas/detalhes/grupospreservados;playeramplocontinua,commitsseparados. Aguardarcontratofechadoantescamposfinais.
+- Gitmain9bd0150local,origin365084f,semcódigonovopublicado.Somentedocscheckpointlocal. Próximaação:alinharmodelocontrato/revisarentregas/testarconjunto antesúnicopush;dependência004remotaexigeautorizaçãoconcretadepoisreview.
+
 ## Tarefa vigente: visualização ampliada da granada — 30/10
 
 - Usuárioquercompactoatual+playermaiorinternosemfullscreen,referênciaCSNADESscreenshot7ad50212-d734-4879-8f34-80fe0b89f58f.png. Frontacionado:Ampliarvídeo/Voltarcompacto,preservartempo/reprodução/volume/mute/renovaçãoURLs,semplayersduplicados,infosexistentes,desktop/mobile/teclado/foco/Escape.
