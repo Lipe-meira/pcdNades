@@ -28,7 +28,7 @@ export class TransferBudget {
  consume(bytes:number){this.bytes+=bytes;if(this.bytes>this.maxBytes)this.fail('IMPORT_NETWORK_LIMIT');}
 }
 function sourceUrl(raw:string){let u:URL;try{u=new URL(raw);}catch{throw importFailure('IMPORT_DESTINATION_DENIED');}if(u.protocol!=='https:'||u.username||u.password||u.port||u.hash||!allowedImportHost(u.hostname))throw importFailure('IMPORT_DESTINATION_DENIED');return u;}
-export type ImportHeaders={ 'User-Agent'?:string;Referer?:string };
+export type ImportHeaders=Partial<Record<'User-Agent'|'Referer'|'Accept'|'Accept-Language'|'Sec-Fetch-Mode',string>>;
 export function validateContentRange(request:string,response:string,length:string|undefined,previousTotal:number|undefined){
  const wanted=request.match(/^bytes=(\d+)-(\d*)$/),actual=response.match(/^bytes (\d+)-(\d+)\/(\d+)$/);
  if(!wanted||!actual)throw importFailure('IMPORT_RANGE_UNSUPPORTED');
@@ -36,9 +36,11 @@ export function validateContentRange(request:string,response:string,length:strin
  if(![start,end,total,requestedStart,...(requestedEnd===undefined?[]:[requestedEnd])].every(Number.isSafeInteger)||start!==requestedStart||end<start||end>=total||total>8000000000||(requestedEnd!==undefined&&end>requestedEnd)||(previousTotal!==undefined&&previousTotal!==total)||length===undefined||!/^\d+$/.test(length)||Number(length)!==end-start+1)throw importFailure('IMPORT_RANGE_UNSUPPORTED');
  return total;
 }
-export function safeHeaders(raw:unknown):ImportHeaders{
- const out:ImportHeaders={};if(!raw||typeof raw!=='object')return out;
- for(const name of ['User-Agent','Referer'] as const){const v=(raw as Record<string,unknown>)[name];if(typeof v==='string'&&v.length<=2048&&!/[\r\n\x00-\x1f]/.test(v)){if(name==='Referer')sourceUrl(v);out[name]=v;}}
+export function safeHeaders(...sources:unknown[]):ImportHeaders{
+ const merged=new Map<string,unknown>(),out:ImportHeaders={};
+ for(const raw of sources)if(raw&&typeof raw==='object'&&!Array.isArray(raw))for(const [key,value]of Object.entries(raw))merged.set(key.toLowerCase(),value);
+ // Only non-authentication headers emitted by the trusted extractor. Never invent tokens/cookies.
+ for(const name of ['User-Agent','Referer','Accept','Accept-Language','Sec-Fetch-Mode'] as const){const v=merged.get(name.toLowerCase());if(typeof v==='string'&&v.length<=2048&&!/[\r\n\x00-\x1f]/.test(v)){if(name==='Referer')sourceUrl(v);if(name==='Sec-Fetch-Mode'&&!['navigate','cors','no-cors','same-origin'].includes(v))continue;out[name]=v;}}
  return out;
 }
 // DNS is pinned to the validated IP; TLS still verifies the original hostname.

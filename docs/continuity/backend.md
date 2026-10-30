@@ -3,6 +3,16 @@
 Atualizado em: 30/10/2026, America/Sao_Paulo.
 Estado vigente: usuário autorizou implementar importação TikTok opt-in com yt-dlp, commit/push. Orquestrador aprovou contrato em backend/TIKTOK-IMPLEMENTATION.md. Em execução, nada remoto alterado; capability ainda desativada. Upload/recorte90 publicados conforme relato do root.
 
+## Retomada autorizada: comparar 403 com fluxo simples — 30/10
+
+Usuário autorizou tentar ajustar; root encaminhou autorização para diagnóstico de bug, primeiro offline e depois UM teste controlado. Base a8e6a1d, feat/backend limpa/sincronizada antes começar. Dois bugs reproduzidos RED->GREEN: sortpixels ignora preferência em empate e escolha explícita yt-dlp; headers parciais/case diferente descartam herança. Corrigidos pedindo -f best[ext=mp4]/best igual root, honrando seleção/ordem nativa e merge case-insensitive com allowlist só UA/Referer/Accept/Accept-Language/Sec-Fetch-Mode do extrator. Cookies/auth/Host/Range/headers arbitrários continuam negados, SSRF/TLS/DNS/budgets inalterados.
+
+ÚNICO reteste autorizado após fix: inspectPASS formato h264_540p_576265-1/576x1024/H264/AAC/138662B metadata, mascomplete re-resolveDIRETOcanonicalpage e downloadPAROU IMPORT_ACCESS_DENIED. Bugs reais NÃO provaram causa403. Novo link direto pedido usuário com is_from_webapp/sender_device equivale à mesma canonical; testeLOCALreconhecedorPASSsemrede, rootorientou não repetir teste externo. Ambos clientes testados WindowsLOCAL, Actions sóCI e não é causa dessa resposta.
+
+Offlineimport-transport-smoke.ts PASS: Node/FFmpegempacotado6.1.1 envia caminho/querypercentencodedeRange/headersherdadosiguais; diferenças de nomes restantes Accept-Encoding e Icy-Metadata. Sem upstream, sem evidência de que causem403; TLS/CDN/rootFFmpegN125875 não comparados. Root orientou encerrar marco com correções/testes/docs/commitpush, sem novo teste externo/prod/env/SQL/main/pagos. Próximaaçãoexecutável: suíte/build/bootstrap/proxy/transportofflines,diffcheck,commitpush. Pendência403 causaindeterminada e E2E/runtimeLinux/Storage continuam; capoff. Arquivos alterados neste marco: import-runtime.ts/import-network.ts, testesruntime, scriptsprotected/transport, IMPORTS.md e estecheckpoint.
+
+Entrega deste marco: verificação nova concluída com73testesPASS/typecheck/build/bootstrapPASS/proxyofflinePASS/transportofflinePASS/diffcheckPASS. Commit fix(backend) que contém este registro será enviado à feat/backend; reportar SHA do gitlog ao orquestrador. Próximaação após push: aguardar decisão/coordenação do diagnóstico403, sem requests externos adicionais. SQL/migration não mudou, PGlite29 anterior não repetido nem apresentado como nova validação; diretório de trabalho próprio preservado.
+
 ## Entrega para revisão — 30/10
 
 Fundamentos c2bb1d4 e sessões/processamento d58696e já push feat/backend. Commit deste registro entrega regressões/selectorfix/IMPORT_ACCESS_DENIED/hashX_OK/scripts e documentação. Verificação final executada:71testesPASS, typecheck/buildPASS, bootstrap moduleEvaluated/listenCapturedtruePASS, SQLLOCAL PGlite29assertionsPASS, proxyoffline old0/fix1CONNECTzeroUpstreamPASS. gitdiffcheck inicialmente achou linha em branco EOF deWORKER.md, corrigida; segunda execuçãoPASS. FFmpegfonte2hstart30min10s/decodePASS conforme números abaixo. NFTWindows187601154B,avisosLinuxausente/parsingexe conhecidos.

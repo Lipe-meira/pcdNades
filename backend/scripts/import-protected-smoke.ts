@@ -6,7 +6,7 @@ const sourceUrl=process.argv[2];if(!sourceUrl)throw new Error('Informe uma URL T
 const dir=await mkdtemp(join(tmpdir(),'pcdnades-protected-')),controller=new AbortController();const timer=setTimeout(()=>controller.abort(),110000);timer.unref();
 try{
  const resolved=await extractTikTok(sourceUrl,controller,dir);
- console.log(JSON.stringify({phase:'inspection',...resolved.metadata,metadataBytes:resolved.metadataBytes}));
+ console.log(JSON.stringify({phase:'inspection',...resolved.metadata,metadataBytes:resolved.metadataBytes,format:{id:resolved.format.formatId,width:resolved.format.width,height:resolved.format.height,videoCodec:resolved.format.videoCodec,audioCodec:resolved.format.audioCodec,headerNames:Object.keys(resolved.format.headers)}}));
  const result=await importSection(resolved.metadata,{startSeconds:0,endSeconds:Math.min(10,resolved.metadata.durationSeconds)},join(dir,'clip.mp4'),dir,{maxBytes:50000000,maxDurationSeconds:90},controller,async stage=>{console.log(JSON.stringify({stage}));});
  console.log(JSON.stringify({phase:'final-validation',result,localOnly:true,supabaseStorageValidated:false,vercelValidated:false}));
 }catch(error){console.log(JSON.stringify({phase:'stopped',code:error instanceof Error&&'code'in error?error.code:'IMPORT_FAILED',localOnly:true}));process.exitCode=1;}

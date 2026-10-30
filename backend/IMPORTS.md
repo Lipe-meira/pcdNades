@@ -2,6 +2,12 @@
 
 Atualizado em30/10/2026. **Importação TikTok não está pronta para produção.** O usuário autorizou o experimento com yt-dlp. Há código de inspeção, sessões e processamento, mas o download do exemplo foi recusado pelo CDN com403 no caminho protegido. Capabilities continuam off por padrão. YouTube/Instagram permanecem desativados; sem embed como substituto.
 
+Retomada autorizada em30/10: dois bugs locais foram corrigidos, sem resolver o403. A seleção agora pede `best[ext=mp4]/best` como no teste simples, honra a escolha explícita do yt-dlp e preserva sua ordem de preferência em vez de ordenar por pixels. Headers são herdados/case-insensitive, com allowlist de User-Agent, Referer, Accept, Accept-Language e Sec-Fetch-Mode emitidos pelo extrator; autenticação/cookies/Host/Range continuam descartados. Não foram inventados headers de sessão ou usados cookies de conta.
+
+O único teste controlado após essas correções inspecionou formato `h264_540p_576265-1`,576x1024/H264/AAC,138.662B de metadados, mas o download protegido continuou `IMPORT_ACCESS_DENIED`. Complete já havia resolvido a página direta canônica do mesmo vídeo; parâmetros de compartilhamento do novo link são removidos pelo reconhecedor. Nenhuma repetição externa adicional. Os testes ocorreram no PC Windows: **GitHub Actions não participou dessa falha**, e continua apenas CI.
+
+`import-transport-smoke.ts` compara offline requisições Node/FFmpeg6.1.1 a um servidor loopback: caminho/query codificados, Range e valores dos headers herdados iguais. Diferenças restantes nos nomes de headers: Accept-Encoding e Icy-Metadata. Isso não prova causa do403, nem compara TLS, roteamento CDN ou o FFmpeg diferente usado no teste simples. A causa da divergência entre os clientes continua sem determinação; não significa impossibilidade universal de importar TikTok.
+
 ## Upload existente
 
 Final90s/50.000.000B. Com recorte explícito, fonte até180s/50MB; sem recorte, original até90s. Migrations003/004 aplicadas pelo orquestrador conforme seus checkpoints. Este chat não executou SQL remoto nesta entrega. Essa política não foi relaxada pelo limite separado do importador.

@@ -5,7 +5,22 @@ test('extractor uses only metadata, fixed extractors and an explicit authenticat
  assert.ok(args.includes('--ignore-config'));assert.ok(args.includes('--no-plugin-dirs'));assert.ok(args.includes('--skip-download'));assert.ok(args.includes('--dump-single-json'));
  assert.equal(args[args.indexOf('--proxy')+1],'http://token:@127.0.0.1:1234');assert.equal(args.at(-2),'--');
  assert.equal(args[args.indexOf('--use-extractors')+1],'^tiktok$,^vm\\.tiktok$');
+ assert.equal(args[args.indexOf('--format')+1],'best[ext=mp4]/best');
  assert.throws(()=>extractorArgs('https://evil.test/','http://token:@127.0.0.1:1234'));
+});
+test('preserves yt-dlp preference order for equal-resolution formats and honors explicit selected format',()=>{
+ const base={protocol:'https',ext:'mp4',vcodec:'h264',acodec:'aac',width:576,height:1024};
+ const low={...base,format_id:'low',url:'https://v16.tiktokcdn.com/low.mp4'};
+ const best={...base,format_id:'preferred',url:'https://v16.tiktokcdn.com/preferred.mp4'};
+ assert.equal(selectProgressiveFormat({formats:[low,best]}).url,best.url);
+ assert.equal(selectProgressiveFormat({...best,formats:[best,low]}).url,best.url);
+});
+test('inherits normal HTTP headers case-insensitively and strips authentication and transport headers',()=>{
+ const f={format_id:'best',url:'https://v16.tiktokcdn.com/video.mp4',protocol:'https',ext:'mp4',vcodec:'h264',acodec:'aac',width:576,height:1024,http_headers:{referer:'https://www.tiktok.com/',Cookie:'secret','Proxy-Authorization':'secret',Host:'127.0.0.1',Range:'bytes=0-',Authorization:'Bearer secret','x-secret':'secret'}};
+ const result=selectProgressiveFormat({formats:[f],http_headers:{'user-agent':'Extractor agent',Accept:'*/*','ACCEPT-LANGUAGE':'en-US','Sec-Fetch-Mode':'navigate'}});
+ assert.deepEqual(result.headers,{'User-Agent':'Extractor agent',Referer:'https://www.tiktok.com/',Accept:'*/*','Accept-Language':'en-US','Sec-Fetch-Mode':'navigate'});
+ const override=selectProgressiveFormat({formats:[{...f,http_headers:{'USER-AGENT':'Format agent'}}],http_headers:{'User-Agent':'Parent agent',Referer:'https://www.tiktok.com/'}});
+ assert.equal(override.headers['User-Agent'],'Format agent');assert.equal(override.headers.Referer,'https://www.tiktok.com/');
 });
 test('selects a bounded progressive MP4; rejects manifests, DRM, credentials and external hosts',()=>{
  const f={url:'https://v16.tiktokcdn.com/video.mp4?secret=1',protocol:'https',ext:'mp4',vcodec:'h264',acodec:'aac',width:576,height:1024};

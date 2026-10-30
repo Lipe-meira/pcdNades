@@ -25,16 +25,20 @@ export function tikTokRuntimeAvailable(){try{
 async function verifyBinary(){const platform=process.platform as keyof typeof digests;const path=ytDlpPath();if(createHash('sha256').update(await readFile(path)).digest('hex')!==digests[platform])throw importFailure('IMPORT_UNAVAILABLE',503);return path;}
 export function extractorArgs(url:string,proxy:string){
  const source=recognizeSource(url);if(source.provider!=='tiktok')throw importFailure('SOURCE_UNSUPPORTED');
- return ['--ignore-config','--no-config-locations','--no-plugin-dirs','--no-js-runtimes','--no-remote-components','--no-update','--no-cache-dir','--no-playlist','--skip-download','--dump-single-json','--no-warnings','--no-progress','--use-extractors','^tiktok$,^vm\\.tiktok$','--retries','0','--fragment-retries','0','--extractor-retries','0','--socket-timeout','8','--proxy',proxy,'--',source.canonicalUrl];
+ return ['--ignore-config','--no-config-locations','--no-plugin-dirs','--no-js-runtimes','--no-remote-components','--no-update','--no-cache-dir','--no-playlist','--skip-download','--format','best[ext=mp4]/best','--dump-single-json','--no-warnings','--no-progress','--use-extractors','^tiktok$,^vm\\.tiktok$','--retries','0','--fragment-retries','0','--extractor-retries','0','--socket-timeout','8','--proxy',proxy,'--',source.canonicalUrl];
 }
 export function selectProgressiveFormat(raw:any){
  const formats=Array.isArray(raw.formats)?raw.formats:[raw];
- const allowed=formats.filter((f:any)=>{
+ const acceptable=(f:any)=>{
   if(f.has_drm||f.protocol!=='https'||f.ext!=='mp4'||typeof f.vcodec!=='string'||!/^(h264|h265|hevc|avc1(?:\.[a-z0-9]+)?|hev1(?:\.[a-z0-9.]+)?)$/i.test(f.vcodec)||typeof f.acodec!=='string'||!/^(aac|mp4a(?:\.[a-z0-9.]+)?)$/i.test(f.acodec)||![f.width,f.height].every(n=>Number.isSafeInteger(n)&&n>0&&n<=1920))return false;
   try{const u=new URL(f.url);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!u.hash&&allowedImportHost(u.hostname);}catch{return false;}
- });
- allowed.sort((a:any,b:any)=>(b.height*b.width)-(a.height*a.width));
- if(!allowed.length)throw importFailure('SOURCE_UNSUPPORTED');const f=allowed[0];return {url:f.url as string,headers:safeHeaders(f.http_headers??raw.http_headers)};
+ };
+ // yt-dlp already ranks formats worst -> best. Pixel count loses preference/tie ordering.
+ // If a format was explicitly selected by yt-dlp, do not silently substitute a different URL.
+ const selected=typeof raw.url==='string'?{...formats.find((f:any)=>f.url===raw.url),...raw}:undefined;
+ const f=selected??formats.filter(acceptable).at(-1);
+ if(!f||!acceptable(f))throw importFailure('SOURCE_UNSUPPORTED');
+ return {url:f.url as string,headers:safeHeaders(raw.http_headers,f.http_headers),formatId:typeof f.format_id==='string'?f.format_id.replace(/[^a-zA-Z0-9_.-]/g,'').slice(0,96):null,width:f.width as number,height:f.height as number,videoCodec:f.vcodec as string,audioCodec:f.acodec as string};
 }
 export async function extractTikTok(url:string,controller:AbortController,dir:string){
  const budget=new TransferBudget(8000000,16,controller),proxy=await startMetadataProxy(budget);
