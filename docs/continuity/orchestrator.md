@@ -1,3 +1,9 @@
+## Tarefa vigente: visualização ampliada da granada — 30/10
+
+- Usuárioquercompactoatual+playermaiorinternosemfullscreen,referênciaCSNADESscreenshot7ad50212-d734-4879-8f34-80fe0b89f58f.png. Frontacionado:Ampliarvídeo/Voltarcompacto,preservartempo/reprodução/volume/mute/renovaçãoURLs,semplayersduplicados,infosexistentes,desktop/mobile/teclado/foco/Escape.
+- Fronttrabalhaprópriabranch/checkpoint/commitpush,testes+screenshots. Rootmainbase0fad604,origin365084f,Gitlimpocomcheckpointpósdeploylocal;semnovopushatétarefaconcluídatestada. NenhumaAPI/migration/envautorizada/necessárianesteescopo.
+- Próximaação:aguardarplanoimplementação/entregaSHA,review/testesintegração eumaúnicapublicaçãofinal.
+
 ## Concluído/publicado: carrossel e filtros PNG — 30/10
 
 - UMpushmain365084f apósconcluirTODOSsteerings evalidar39unit+42browser/build/typecheckroot. Autodeploygitfrontend dpl_9m44ha1FpWpQJKseKBReg1WS5mZi READY,aliashttps://pcdnades.vercel.app,SHAcerto.Nenhumdeploymanualduplicado.
