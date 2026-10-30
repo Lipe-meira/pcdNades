@@ -1,3 +1,9 @@
+## Retomada TikTok encerrada com causa externa ainda indeterminada — 30/10
+
+- Backendpush5c75558,árvorelimpareportada;73tests/typecheck/build/bootstrap/diffcheck/proxyofflinePASS. Fixformato+headersherdadosconcretos,nãoresolveram403real. TransporteOFFLINENodevsFFmpeg6.1.1path/queryencoded/Range/headerVALUESiguais;diferençasnomesAccept-Encoding/Icy-Metadata,nãocausalidadecomprovada.
+- Completejáusoupáginadiretacanônica,novoURLtrackingequivalentelocal;nenhumsegundotesteexternoapósfalha. TLS/edgeCDN/rootFFmpegN125875vs6.1.1aindanãocomparados. CapOFF,semVercel/StorageE2E/novaSQL/env/mainpub/pagos.
+- Próximaação:aguardardecisãodeinvestigaçãocontroladatransporteouarquitetura;semnovostestesrede/pubsautomáticos. Código+docs/checkpointsprontosnasbranchespara retomarsemperdertrabalho,nãofeatureready.
+
 ## Resultado URL direto e correções locais — 30/10
 
 - BackendreproduziucorrigiuOFFLINE2bugs:seleçãoformatobestprogressivoempates ehttp_headersherança/case.Normalheaderssemcookie/auth.Host/Range/secretproibidos.6direcionados/typecheckPASSreportados.
