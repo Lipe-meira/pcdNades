@@ -1,3 +1,14 @@
+## Steering: logos dos mapas no carrossel — 30/10
+
+- Usuáriogostoucarrosselmaspediulogosemvezradares;indicouMurkyYT/cs2-map-icons eautorizoupesquisaalternativas. README/catálogofonteconsultados,snapshot9a77417b108eab6ee8c10d1140d62c0b77f54174. Juknumcomparado,tambémassetsValve. FonteMurkyescolhidaPNG7emblemasimages/de_MAP.png;arteValve,nãopresumirlicençaMIT/CC.
+- Frontacionadoparabaixar7PNGfixados/sanitizarvalidarhashimagem/atribuição,registryUIseparadaAPI,cropcontain/fallbacktexto,semalterarradares. Mainaindasem push;agruparlogos+painel+carrosselquandoentregacompletatestada.
+- Próximaação:aguardarSHA/screenshot/testeslogos,revisar/integrar/regressãofinal eúnicopushmain. Checkpointapenaslocalduranteexecução.
+
+## Revisão conjunta carrossel e painel — 30/10
+
+- Front044a4e2entregue/testado,integration281dd08. Carrossel7ee23e3+painelintegradospreservandocatálogo7PNG/patchancient.png. Build39unitáriosrootPASSARAM;38browserrootemexecuçãofinal. CódigoLibraryFiltersrevisado(contagensmapa/ladoignorandotype) e screenshots1440/390inspecionados.
+- Próximaação:confirmar38browser,umúnicopushmainentregacompletacódigo+docs+checkpoints,aguardarautodeploysemmanualduplicado. SemalteraçãoAPI/banco/envnessaentrega.
+
 ## Direção adicional: painel de granadas — 30/10
 
 - Usuáriopediuseletorsmoke/bang/etccomoCSNADEShttps://csnades.gg/nuke;screenshot0809692b-b1f1-4dd3-93ff-18c768a0cf1e.png. PáginaconsultadaconfirmaseçõesNades/Teams econtagens. Frontacionadopainelverticalícone/nome/contagem,seleçãodestaque eAmbos/CT/T,paletapcd,apenas3tipossuportados+Todas. SemHE/combinações/favoritosfake;contagensmapaatual+ladocomtestes,zero/loading/errorcorretos.
