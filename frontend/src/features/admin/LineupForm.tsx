@@ -17,6 +17,14 @@ import { ApiError } from "../../services/apiClient";
 import { videoLabels } from "../../domain/types";
 import { isTarget } from "../../domain/lineups";
 import { PointCoordinates } from "./PointCoordinates";
+import { importSelectionError } from "../../domain/imports";
+import { recognizeVideoSource } from "../../domain/videoSource";
+
+const importStages: Record<string, string> = {
+  resolving: "Conferindo a fonte do vídeo…", downloading: "Importando o trecho selecionado…",
+  transcoding: "Preparando o trecho para reprodução…", validating: "Validando o arquivo final…",
+  storing: "Armazenando o vídeo do time…",
+};
 
 export function LineupForm({
   maps,
@@ -117,6 +125,14 @@ export function LineupForm({
           if (draft.media.kind === "file" && draft.media.file && !fileReady)
             nextErrors.media =
               "Aguarde a prévia carregar e escolha um MP4 reproduzível.";
+          if (draft.media.kind === "link" && recognizeVideoSource(draft.media.sourceUrl)?.platform === "tiktok" &&
+            capabilities.importers.tiktok.enabled && capabilities.importers.tiktok.inspection) {
+            const issue = importSelectionError(draft.media.inspection, draft.media.clip);
+            if (issue) nextErrors.media = issue;
+            else if (draft.media.inspectedUrl !== draft.media.sourceUrl.trim()) nextErrors.media = "O link mudou. Consulte o vídeo novamente.";
+            else if (!resumeMediaId && Date.parse(draft.media.inspection!.expiresAt) <= Date.now())
+              nextErrors.media = "A consulta expirou. Consulte o vídeo novamente.";
+          }
           if (Object.keys(nextErrors).length) {
             showErrors(nextErrors);
             return;
@@ -126,10 +142,12 @@ export function LineupForm({
           setFailure(undefined);
           const controller = new AbortController();
           request.current = controller;
+          let importFailed = false;
           const options = {
             signal: controller.signal,
             mediaId: resumeMediaId,
             onProgress: (value: Progress) => {
+              if (draft.media.kind === "link" && value.status === "failed") importFailed = true;
               setProgress(value);
               if (
                 value.mediaId &&
@@ -168,9 +186,14 @@ export function LineupForm({
                 "CLIP_INVALID",
                 "CLIP_OUT_OF_RANGE",
                 "CLIP_UNSUPPORTED",
+                "IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "SOURCE_CHANGED",
+                "SOURCE_EXPIRED", "SOURCE_NOT_FOUND", "IMPORT_SELECTION_CONFLICT",
               ].includes(error.code)
             )
               setResumeMediaId(undefined);
+            if (importFailed || error instanceof ApiError && ["IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "INVALID_MEDIA", "FILE_TOO_LARGE",
+              "SOURCE_CHANGED", "SOURCE_EXPIRED", "SOURCE_NOT_FOUND", "IMPORT_SELECTION_CONFLICT", "MEDIA_SELECTION_CHANGED"].includes(error.code))
+              setDraft(current => current.media.kind === "link" ? { ...current, media: { kind: "link", sourceUrl: current.media.sourceUrl } } : current);
             setFailure(
               controller.signal.aborted
                 ? "Acompanhamento pausado. O processamento pode continuar no servidor; use Salvar para retomar. Nenhuma publicação adicional será solicitada por esta janela."
@@ -358,7 +381,9 @@ export function LineupForm({
                 : "Preparando envio…"}
             </strong>
             <p>
-              {progress?.status === "queued"
+              {draft.media.kind === "link" && progress?.status !== "publishing"
+                ? importStages[progress?.stage ?? ""] ?? "Preparando a importação do trecho. Seu cadastro anterior será preservado até salvar."
+                : progress?.status === "queued"
                 ? "O vídeo está na fila. Aguarde o processamento."
                 : progress?.status === "processing"
                   ? capabilities.upload.processingMode === "inline-original"
@@ -371,7 +396,7 @@ export function LineupForm({
                       : "A granada só será publicada depois que o vídeo estiver pronto."}
             </p>
             {(progress?.status === "queued" ||
-              progress?.status === "processing") && (
+              progress?.status === "processing" || (draft.media.kind === "link" && progress?.status === "confirming")) && (
               <button
                 type="button"
                 className="text-button"
@@ -384,8 +409,9 @@ export function LineupForm({
         )}
         {!busy && resumeMediaId && (
           <p className="field-hint">
-            O arquivo já foi enviado. Salvar novamente retoma a confirmação ou o
-            acompanhamento, sem reenviar o vídeo.
+            {draft.media.kind === "link"
+              ? "A importação já foi criada. Salvar novamente retoma o mesmo trecho, sem criar outra sessão."
+              : "O arquivo já foi enviado. Salvar novamente retoma a confirmação ou o acompanhamento, sem reenviar o vídeo."}
           </p>
         )}
         <div className="form-actions">
@@ -406,7 +432,7 @@ export function LineupForm({
             {busy
               ? "Salvando…"
               : draft.media.kind === "link"
-                ? "Verificar importação"
+                ? resumeMediaId ? "Retomar importação" : draft.media.inspection ? "Importar trecho e salvar granada" : "Verificar importação"
                 : demo
                   ? "Salvar demonstração"
                   : "Salvar granada"}

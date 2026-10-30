@@ -20,6 +20,14 @@ function reply(route: Route, options: Parameters<Route["fulfill"]>[0]) {
 const api = "http://127.0.0.1:5999/api/v1";
 const authOrigin = "http://127.0.0.1:5998";
 const mediaId = "11111111-1111-4111-8111-111111111111";
+const importId = "66666666-6666-4666-8666-666666666666";
+const importLimits = { maxSourceDurationSeconds: 7200, maxDurationSeconds: 90, maxBytes: 50_000_000, minDurationSeconds: .1, timePrecisionSeconds: .001 };
+function importInspection(number = 1) { return {
+  sourceId: `bbbbbbbb-bbbb-4bbb-8bbb-${String(number).padStart(12, "0")}`,
+  provider: "tiktok", sourceUrl: "https://www.tiktok.com/@qa/video/1234567890", videoId: "1234567890",
+  title: `Fonte controlada ${number}`, author: "Time QA", durationSeconds: 7200,
+  expiresAt: new Date(Date.now() + 900_000).toISOString(), preview: null, previewReasonCode: "PREVIEW_UNAVAILABLE", limits: importLimits,
+}; }
 const samplePath = fileURLToPath(
   new URL("../fixtures/test-pattern.mp4", import.meta.url),
 );
@@ -58,6 +66,11 @@ async function setup(
     failFirstValidation?: boolean;
     trimming?: boolean;
     durationLimit?: number;
+    imports?: boolean;
+    importDelay?: number;
+    importFailure?: string;
+    loseImportComplete?: boolean;
+    busyImportSecond?: boolean;
   } = {},
 ) {
   const state = {
@@ -73,7 +86,12 @@ async function setup(
     allowLongLease: false,
     completes: 0,
     clip: null as { startSeconds: number; endSeconds: number } | null,
+    inspections: 0, importCreates: 0, importCompletes: 0, importReady: false,
+    inspection: importInspection(),
   };
+  const imported = () => ({ ...media, id: importId, mediaId: importId, sourceId: state.inspection.sourceId,
+    sourceType: "tiktok", sourceUrl: state.inspection.sourceUrl, clip: state.clip,
+    status: state.importReady ? "ready" : "processing", stage: state.importReady ? null : "downloading" });
   const b64 = (value: unknown) =>
     Buffer.from(JSON.stringify(value)).toString("base64url");
   const accessToken = `${b64({ alg: "HS256", typ: "JWT" })}.${b64({ sub: "controlled-user", aud: "authenticated", exp: Math.floor(Date.now() / 1000) + 3600 })}.dGVzdC1zaWduYXR1cmU`;
@@ -171,7 +189,7 @@ async function setup(
             },
             importers: {
               youtube: { enabled: false },
-              tiktok: { enabled: false },
+              tiktok: options.imports ? { enabled: true, inspection: true, ...importLimits } : { enabled: false },
               instagram: {
                 enabled: false,
                 reasonCode: "PLATFORM_UNSUPPORTED",
@@ -196,6 +214,36 @@ async function setup(
           },
         },
       });
+    if (path === "/media/imports/inspect") {
+      state.inspections++;
+      state.inspection = importInspection(state.inspections);
+      return reply(route, { status: 201, json: { data: state.inspection } });
+    }
+    if (path === "/media/imports") {
+      state.importCreates++;
+      const body = route.request().postDataJSON();
+      expect(Object.keys(body).sort()).toEqual(["clip", "sourceId"]);
+      expect(body.sourceId).toBe(state.inspection.sourceId);
+      state.clip = body.clip;
+      return reply(route, { status: 201, json: { data: { ...imported(), status: "queued" } } });
+    }
+    if (path === `/media/${importId}`) return reply(route, { json: { data: imported() } });
+    if (path === `/media/${importId}/complete`) {
+      state.importCompletes++;
+      expect(route.request().postDataJSON()).toEqual({});
+      if (options.loseImportComplete && state.importCompletes === 1) return route.abort("failed");
+      if (options.busyImportSecond && state.importCompletes === 2)
+        return reply(route, { status: 503, json: { error: { code: "PROCESSOR_BUSY" } } });
+      if (options.importDelay) await new Promise(resolve => setTimeout(resolve, options.importDelay));
+      if (options.importFailure) return reply(route, { json: { data: { ...imported(), status: "failed", error: { code: options.importFailure, message: "Falha controlada" } } } });
+      state.importReady = true;
+      return reply(route, { json: { data: imported() } });
+    }
+    if (path === "/grenades" && method === "POST" && route.request().postDataJSON().videoId === importId) {
+      expect(state.importReady).toBe(true);
+      state.published = [{ ...grenade, ...route.request().postDataJSON(), video: imported() }];
+      return reply(route, { status: 201, json: { data: state.published[0] } });
+    }
     if (path === "/grenades" && method === "GET")
       return reply(route, {
         json: {
@@ -1047,4 +1095,153 @@ test("edição de origem: PATCH omitido preserva, coordenadas zero adicionam e n
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(bodies[4].origin).toBeNull();
   expect(bodies[4].mapId).toBe("inferno");
+});
+
+async function openImportForm(page: Page, editing = false) {
+  await page.goto("/"); await signIn(page);
+  if (editing) await page.getByRole("button", { name: "Editar Granada de teste controlado", exact: true }).click();
+  else {
+    await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+    await page.getByLabel("Título", { exact: true }).fill("Trecho TikTok QA");
+    await page.getByLabel("Instruções", { exact: true }).fill("Instruções preservadas da importação controlada.");
+    await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
+    await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+    await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
+    await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  }
+  await page.getByRole("button", { name: "Importar por link", exact: true }).click();
+  await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", { exact: true }).fill("https://vt.tiktok.com/ZSgqvRtpM/");
+}
+async function consultImport(page: Page) {
+  await page.getByRole("button", { name: /Consultar vídeo|Consultar novamente/, exact: true }).click();
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toBeVisible();
+}
+
+test("TikTok: metadados de fonte2h e trecho90 sem prévia falsa, antes de publicar", async ({ page }, testInfo) => {
+  const state = await setup(page, { imports: true, importDelay: 5000 });
+  const external: string[] = [];
+  page.on("request", request => { if (new URL(request.url()).hostname.endsWith("tiktok.com")) external.push(request.url()); });
+  await openImportForm(page);
+  await page.getByRole("button", { name: "Verificar importação", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("Consulte os dados");
+  expect(state.importCreates).toBe(0);
+  await consultImport(page);
+  await expect(page.getByText("Duração da fonte: 02:00:00", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Prévia visual indisponível/)).toBeVisible();
+  await expect(page.locator("iframe, .import-link-editor video")).toHaveCount(0);
+  await expect(page.getByText("YouTube Shorts", { exact: true }).locator("..")).toContainText("Indisponível");
+  await expect(page.getByText("Instagram Reels", { exact: true }).locator("..")).toContainText("Indisponível");
+  await page.getByLabel("Início do trecho", { exact: true }).fill("01:58:29.999");
+  await page.getByLabel("Fim do trecho", { exact: true }).fill("02:00:00");
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("90");
+  expect(state.importCreates).toBe(0);
+  await page.getByLabel("Início do trecho", { exact: true }).fill("01:58:30");
+  await page.getByLabel("Fim do trecho", { exact: true }).scrollIntoViewIfNeeded();
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("tiktok-selection.png") });
+  await page.locator(".import-clip").evaluate(node => node.scrollIntoView({ block: "start" }));
+  await page.screenshot({ path: testInfo.outputPath("tiktok-range.png") });
+  const viewport = page.viewportSize()!;
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.locator(".import-clip").evaluate(node => node.scrollIntoView({ block: "start" }));
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await page.getByRole("dialog").evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("tiktok-range-320.png") });
+  await page.setViewportSize(viewport);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByText("Importando o trecho selecionado…", { exact: true })).toBeVisible({ timeout: 7000 });
+  expect(state.published).toHaveLength(0);
+  await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 10_000 });
+  expect(state.clip).toEqual({ startSeconds: 7110, endSeconds: 7200 });
+  expect(state.importCreates).toBe(1);
+  expect(state.published[0].video.id).toBe(importId);
+  await page.reload();
+  await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
+  await expect(page.getByRole("button", { name: /^Trecho TikTok QA Smoke/ })).toBeVisible();
+  expect(external).toEqual([]);
+});
+
+test("TikTok: complete perdido e ocupado retomam o mesmo trecho sem nova sessão", async ({ page }) => {
+  const state = await setup(page, { imports: true, loseImportComplete: true, busyImportSecond: true });
+  await openImportForm(page); await consultImport(page);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("conectar à API");
+  await expect(page.getByText(/A importação já foi criada/)).toBeVisible();
+  await page.getByRole("button", { name: "Retomar importação", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("Outra importação está em processamento");
+  expect(state.importCreates).toBe(1);
+  await page.getByRole("button", { name: "Retomar importação", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  expect(state.importCreates).toBe(1); expect(state.inspections).toBe(1); expect(state.importCompletes).toBe(3);
+});
+
+test("TikTok: troca do link aborta consulta antiga, limpa seleção e respeita expiração", async ({ page }) => {
+  const state = await setup(page, { imports: true });
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route(`${api}/media/imports/inspect`, async route => {
+    await gate; await reply(route, { status: 201, json: { data: { ...importInspection(99), title: "Resposta antiga não deve aparecer" } } }).catch(() => {});
+  }, { times: 1 });
+  await openImportForm(page);
+  await page.getByRole("button", { name: "Consultar vídeo", exact: true }).click();
+  await expect(page.getByText("Consultando os dados do vídeo…", { exact: true })).toBeVisible();
+  const link = page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", { exact: true });
+  await link.fill("https://www.tiktok.com/@qa/video/9876543210"); release();
+  await consultImport(page);
+  await expect(page.getByText("Resposta antiga não deve aparecer", { exact: true })).toHaveCount(0);
+  await link.fill("https://vt.tiktok.com/ZSgqvRtpM/");
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
+  await page.route(`${api}/media/imports/inspect`, async route => {
+    state.inspection = { ...importInspection(2), expiresAt: new Date(0).toISOString() };
+    await reply(route, { status: 201, json: { data: state.inspection } });
+  }, { times: 1 });
+  await consultImport(page);
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("expirou");
+  expect(state.importCreates).toBe(0);
+  await consultImport(page);
+  await page.getByLabel("Início do trecho", { exact: true }).fill("1:60:00");
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("início e fim válidos");
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Trecho TikTok QA");
+  await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("0");
+  await link.fill("https://www.youtube.com/shorts/abcdefghijk");
+  await expect(page.getByRole("button", { name: "Consultar vídeo", exact: true })).toBeDisabled();
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
+});
+
+test("TikTok: falha final de tamanho preserva cadastro anterior e exige nova seleção", async ({ page }) => {
+  const state = await setup(page, { initial: true, imports: true, importFailure: "FILE_TOO_LARGE" });
+  await openImportForm(page, true); await consultImport(page);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("tamanho permitido");
+  expect(state.published).toHaveLength(1); expect(state.published[0].video.id).toBe(mediaId);
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Retomar importação", exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Granada de teste controlado");
+  await page.getByRole("button", { name: "Manter vídeo", exact: true }).click();
+  await expect(page.getByLabel("Vídeo da granada", { exact: true })).toBeVisible();
+});
+
+test("TikTok: consulta recusa fonte longa, falha de rede e duração desconhecida sem fingir prévia", async ({ page }) => {
+  const state = await setup(page, { imports: true }); await openImportForm(page);
+  await page.route(`${api}/media/imports/inspect`, route => reply(route, { status: 503, json: { error: { code: "PROCESSOR_BUSY" } } }), { times: 1 });
+  await page.getByRole("button", { name: "Consultar vídeo", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("consulte o vídeo novamente");
+  await expect(page.getByRole("button", { name: "Retomar importação", exact: true })).toHaveCount(0);
+  await page.route(`${api}/media/imports/inspect`, route => reply(route, { status: 422, json: { error: { code: "SOURCE_TOO_LONG" } } }), { times: 1 });
+  await page.getByRole("button", { name: "Consultar novamente", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("duas horas");
+  await page.route(`${api}/media/imports/inspect`, route => route.abort("failed"), { times: 1 });
+  await page.getByRole("button", { name: "Consultar novamente", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("conectar à API");
+  await page.route(`${api}/media/imports/inspect`, route => reply(route, { status: 201, json: { data: { ...importInspection(), durationSeconds: null } } }), { times: 1 });
+  await page.getByRole("button", { name: "Consultar novamente", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("contrato esperado");
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
+  expect(state.importCreates).toBe(0);
+  await consultImport(page);
+  await expect(page.getByText(/Prévia visual indisponível/)).toBeVisible();
 });

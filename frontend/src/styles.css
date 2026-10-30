@@ -1538,3 +1538,10 @@ label{font-size:14px;font-weight:400}
 .point-heading { margin: 18px 0 8px; font-size: 14px; font-weight: 600; }
 .legacy-origin { margin: 12px 0; color: #c9c4b7; font-size: 13px; line-height: 1.5; }
 .detail-origin { font-size: 13px; line-height: 1.5; color: #aebfd0; margin: 12px 0; overflow-wrap: anywhere; }
+
+.import-link-editor h4, .import-clip h4 { font-size: 16px; font-weight: 600; margin: 18px 0 12px; }
+.import-link-editor > .button { width: 100%; margin: 4px 0 10px; }
+.import-metadata { margin: 16px 0; padding: 14px; border-left: 2px solid var(--blue); background: #222c37; overflow-wrap: anywhere; }
+.import-metadata strong { font-size: 16px; }.import-metadata p { font-size: 14px; margin: 8px 0 0; }
+.import-clip { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 2px; }
+.import-clip .clip-times input[type=range] { width: 100%; }

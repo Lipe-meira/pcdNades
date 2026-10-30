@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { MediaDraft, Video } from "../../domain/types";
 import { validateMp4 } from "../../domain/validation";
-import { selectionDurationError, validateClip } from "../../domain/clip";
-import { recognizeVideoSource } from "../../domain/videoSource";
+import { selectionDurationError } from "../../domain/clip";
 import type { LineupService } from "../../services/lineupService";
 import { clipLimits } from "../../services/apiContracts";
 import type { MediaCapabilities } from "../../services/apiContracts";
 import { Icon } from "../../components/Icon";
 import { VideoPlayer } from "../library/VideoPlayer";
 import { ClipSelector } from "./ClipSelector";
+import { ImportLinkEditor } from "./ImportLinkEditor";
 import { LocalVideoPreview } from "./LocalVideoPreview";
 
 export function MediaInput({
@@ -38,9 +38,6 @@ export function MediaInput({
   const trim = capabilities.trimming;
   const duration = value.kind === "file" ? value.durationSeconds : undefined;
   const clip = value.kind !== "keep" ? value.clip : undefined;
-  const source =
-    value.kind === "link" ? recognizeVideoSource(value.sourceUrl) : null;
-  const importer = source ? capabilities.importers[source.platform] : undefined;
   const selectionError =
     file && duration !== undefined
       ? clip && !trim?.enabled
@@ -235,77 +232,7 @@ export function MediaInput({
         </>
       )}
       {value.kind === "link" && (
-        <>
-          <label>
-            Link do YouTube Shorts, TikTok ou Instagram Reels
-            <input
-              type="url"
-              value={value.sourceUrl}
-              onChange={(event) =>
-                onChange({ ...value, sourceUrl: event.target.value })
-              }
-              placeholder="Cole o link do vídeo"
-            />
-          </label>
-          <div className="importer-status">
-            {(["youtube", "tiktok", "instagram"] as const).map((platform) => {
-              const available = capabilities.importers[platform];
-              return (
-                <p key={platform}>
-                  <strong>
-                    {platform === "youtube"
-                      ? "YouTube Shorts"
-                      : platform === "tiktok"
-                        ? "TikTok"
-                        : "Instagram Reels"}
-                  </strong>{" "}
-                  — {available?.enabled ? "Disponível" : "Indisponível"}
-                  {!available?.enabled && (
-                    <span>
-                      {" "}
-                      ·{" "}
-                      {available?.message ||
-                        "Integração ainda não habilitada. Use MP4 quando disponível."}
-                    </span>
-                  )}
-                </p>
-              );
-            })}
-          </div>
-          {(!source || !importer?.enabled) && (
-            <p className="inline-notice">
-              {demo
-                ? "Importação indisponível nesta prévia."
-                : "Importação indisponível no servidor para a fonte selecionada."}{" "}
-              Nenhum vídeo é baixado ou publicado nesta tela. Escolha Enviar MP4
-              quando disponível.
-            </p>
-          )}
-          <ClipSelector
-            clip={clip}
-            limits={trim}
-            disabledReason={
-              !importer?.enabled
-                ? "Definição de trecho indisponível: a plataforma precisa estar habilitada no servidor."
-                : undefined
-            }
-            onChange={(selection) => onChange({ ...value, clip: selection })}
-          />
-          <p className="field-hint">
-            Não há prévia de vídeo para links. Quando habilitado, o servidor
-            verifica a duração da origem e o trecho solicitado.
-          </p>
-          {clip &&
-            importer?.enabled &&
-            validateClip(clip, {
-              ...clipLimits(capabilities),
-              sourceDurationSeconds: trim?.maxSourceDurationSeconds,
-            }) && (
-              <p className="field-error" role="alert">
-                Revise o intervalo solicitado.
-              </p>
-            )}
-        </>
+        <ImportLinkEditor value={value} service={service} capabilities={capabilities} onChange={onChange} />
       )}
       {(fileIssue || selectionError || bytesError || error) && (
         <p className="field-error" role="alert">

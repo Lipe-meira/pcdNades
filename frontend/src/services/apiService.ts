@@ -13,6 +13,8 @@ import {
   mapApiGrenade,
   mapApiMap,
   clipLimits,
+  checkImportInspection,
+  checkImportLimits,
 } from "./apiContracts";
 import type {
   ApiGrenade,
@@ -28,6 +30,8 @@ import { safeHttpUrl } from "./runtimeConfig";
 import { recognizeVideoSource } from "../domain/videoSource";
 import { sameClip, selectionDurationError, validateClip } from "../domain/clip";
 import type { Clip } from "../domain/clip";
+import { importSelectionError } from "../domain/imports";
+import type { ImportInspection, ImportLimits } from "../domain/imports";
 
 export type SignedUploader = (
   session: UploadSession,
@@ -72,9 +76,13 @@ export function createApiService(
     options: SaveOptions,
     expectedClip?: Clip,
   ): Promise<string> {
+    const expectedSourceId = media.sourceId;
+    const expectedSourceUrl = media.sourceUrl;
     for (let index = 0; index < (settings.maxPolls ?? 300); index++) {
       options.signal?.throwIfAborted();
       checkMedia(media);
+      if (media.sourceType === "tiktok" && (media.sourceId !== expectedSourceId || media.sourceUrl !== expectedSourceUrl))
+        throw new ApiError("MEDIA_SELECTION_CHANGED");
       if (!sameClip(media.clip, expectedClip))
         throw new ApiError("MEDIA_SELECTION_CHANGED");
       options.onProgress?.({
@@ -105,6 +113,8 @@ export function createApiService(
           { authenticated: true, signal: options.signal },
         )
       ).data;
+      if (media.sourceType === "tiktok" && ["queued", "processing"].includes(media.status))
+        media = await completeRecord(media.id, options, true);
     }
     throw new ApiError(
       "PROCESSING_PENDING",
@@ -125,6 +135,14 @@ export function createApiService(
       );
       if (!sameClip(media.data.clip, clip))
         throw new ApiError("MEDIA_SELECTION_CHANGED");
+      if (draft.media.kind === "link") {
+        const inspection = draft.media.inspection;
+        if (!inspection || draft.media.inspectedUrl !== draft.media.sourceUrl.trim() ||
+          media.data.sourceId !== inspection.sourceId || media.data.sourceUrl !== inspection.sourceUrl)
+          throw new ApiError("MEDIA_SELECTION_CHANGED");
+        if (["queued", "processing", "awaiting_upload"].includes(checkMedia(media.data).status))
+          return confirmMedia(options.mediaId, options, clip, true);
+      }
       if (checkMedia(media.data).status === "awaiting_upload")
         return confirmMedia(options.mediaId, options, clip);
       return poll(media.data, options, clip);
@@ -134,29 +152,34 @@ export function createApiService(
       const error = validateSourceUrl(draft.media.sourceUrl);
       if (error) throw new Error(error);
       const source = recognizeVideoSource(draft.media.sourceUrl);
-      if (!source || !caps.importers[source.platform]?.enabled)
+      if (!source || source.platform !== "tiktok" || !caps.importers.tiktok.enabled || !caps.importers.tiktok.inspection)
         throw new ApiError("PLATFORM_UNSUPPORTED", 422);
-      if (clip) {
-        if (!caps.trimming?.enabled) throw new ApiError("CLIP_UNSUPPORTED");
-        const message = validateClip(clip, {
-          ...clipLimits(caps),
-          sourceDurationSeconds: caps.trimming.maxSourceDurationSeconds,
-        });
-        if (message) throw new Error(message);
-      }
-      const result = await client.request<Envelope<MediaRecord>>(
+      const inspection = draft.media.inspection && checkImportInspection(draft.media.inspection);
+      const issue = importSelectionError(inspection, clip);
+      if (issue) throw new Error(issue);
+      if (draft.media.inspectedUrl !== draft.media.sourceUrl.trim()) throw new ApiError("SOURCE_CHANGED");
+      if (Date.parse(inspection!.expiresAt) <= Date.now()) throw new ApiError("SOURCE_EXPIRED");
+      const limits = checkImportLimits(caps.importers.tiktok as ImportLimits);
+      if (inspection!.durationSeconds > limits.maxSourceDurationSeconds) throw new ApiError("SOURCE_TOO_LONG");
+      const changedLimits = validateClip(clip!, { ...inspection!.limits,
+        maxDurationSeconds: Math.min(limits.maxDurationSeconds, inspection!.limits.maxDurationSeconds),
+        sourceDurationSeconds: inspection!.durationSeconds });
+      if (changedLimits) throw new Error(changedLimits);
+      const result = await client.request<Envelope<MediaRecord & { mediaId: string }>>(
         "/media/imports",
         {
           method: "POST",
           authenticated: true,
           body: {
-            sourceUrl: draft.media.sourceUrl.trim(),
-            ...(clip ? { clip } : {}),
+            sourceId: inspection!.sourceId,
+            clip,
           },
           signal: options.signal,
         },
       );
-      return poll(result.data, options, clip);
+      if (checkMedia(result.data).id !== result.data.mediaId || result.data.sourceId !== inspection!.sourceId ||
+        result.data.sourceUrl !== inspection!.sourceUrl || !sameClip(result.data.clip, clip)) contractError();
+      return confirmMedia(result.data.id, options, clip, true);
     }
     if (draft.media.kind !== "file" || !draft.media.file)
       throw new Error("Selecione um MP4 para publicar a granada.");
@@ -227,11 +250,30 @@ export function createApiService(
     mediaId: string,
     options: SaveOptions,
     expectedClip?: Clip,
+    importing = false,
   ): Promise<string> {
+    return poll(await completeRecord(mediaId, options, importing), options, expectedClip);
+  }
+  async function completeRecord(mediaId: string, options: SaveOptions, importing = false): Promise<MediaRecord> {
     options.signal?.throwIfAborted();
     options.onProgress?.({ status: "confirming", mediaId });
     let media: MediaRecord;
+    const monitor = new AbortController();
+    let checking = false;
+    const timer = importing ? setInterval(async () => {
+      if (checking || monitor.signal.aborted || options.signal?.aborted) return;
+      checking = true;
+      try {
+        const result = await client.request<Envelope<MediaRecord>>(`/media/${encodeURIComponent(mediaId)}`, {
+          authenticated: true, signal: options.signal ? AbortSignal.any([monitor.signal, options.signal]) : monitor.signal,
+        });
+        if (!monitor.signal.aborted && !options.signal?.aborted && checkMedia(result.data).id === mediaId)
+          options.onProgress?.({ status: result.data.status, mediaId, stage: result.data.stage });
+      } catch { /* The complete request remains authoritative; monitoring is optional. */ }
+      finally { checking = false; }
+    }, 3500) : undefined;
     try {
+      try {
       media = (
         await client.request<Envelope<MediaRecord>>(
           `/media/${encodeURIComponent(mediaId)}/complete`,
@@ -240,6 +282,7 @@ export function createApiService(
             authenticated: true,
             signal: options.signal,
             timeoutMs: 150_000,
+            ...(importing ? { body: {} } : {}),
           },
         )
       ).data;
@@ -252,8 +295,13 @@ export function createApiService(
         )
       ).data;
       if (checkMedia(media).status === "awaiting_upload") throw error;
+      }
+      if (checkMedia(media).id !== mediaId) contractError();
+      return media;
+    } finally {
+      if (timer) clearInterval(timer);
+      monitor.abort();
     }
-    return poll(media, options, expectedClip);
   }
   async function save(
     draft: LineupDraft,
@@ -289,6 +337,15 @@ export function createApiService(
   return {
     mode: "api",
     capabilities,
+    async inspectImport(sourceUrl, signal) {
+      if (recognizeVideoSource(sourceUrl)?.platform !== "tiktok") throw new ApiError("PLATFORM_UNSUPPORTED");
+      const caps = await capabilities(signal);
+      if (!caps.importers.tiktok.enabled || !caps.importers.tiktok.inspection) throw new ApiError("IMPORT_UNAVAILABLE");
+      const result = await client.request<Envelope<ImportInspection>>("/media/imports/inspect", {
+        method: "POST", authenticated: true, body: { sourceUrl: sourceUrl.trim() }, signal,
+      });
+      return checkImportInspection(result.data);
+    },
     async listMaps(signal) {
       const result = await client.request<Envelope<ApiMap[]>>("/maps", {
         signal,

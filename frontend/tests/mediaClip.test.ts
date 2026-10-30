@@ -47,15 +47,13 @@ const ready = {
 };
 
 describe("contrato de seleção imutável", () => {
-  it('só envia clip de link quando plataforma e recorte estão explicitamente habilitados', async () => {
+  it('não habilita Instagram automaticamente com a importação de TikTok', async () => {
     const sourceUrl = 'https://www.instagram.com/reel/ABC_123/';
-    const client = new ApiClient('/api/v1', async()=> 'qa-token', async(url, init)=>{
+    const client = new ApiClient('/api/v1', async()=> 'qa-token', async(url)=>{
       if(String(url).endsWith('/capabilities')) return Response.json({data:{...caps,importers:{...caps.importers,instagram:{enabled:true}}}});
-      if(String(url).endsWith('/imports')) { expect(JSON.parse(init!.body as string)).toEqual({sourceUrl,clip}); return Response.json({data:{...ready,sourceType:'instagram',sourceUrl}}) }
-      if(String(url).endsWith('/grenades'))return Response.json({data:{...draft,id:'id',video:{...ready,sourceType:'instagram',sourceUrl},createdAt:'2026-10-29',updatedAt:'2026-10-29'}});
       throw new Error('Unexpected');
     });
-    await createApiService(client,async()=>{throw new Error('Não fazer upload de link no navegador')}).createLineup({...draft,media:{kind:'link',sourceUrl,clip}});
+    await expect(createApiService(client,async()=>{throw new Error('Não fazer upload de link no navegador')}).createLineup({...draft,media:{kind:'link',sourceUrl,clip}})).rejects.toMatchObject({code:'PLATFORM_UNSUPPORTED'});
   });
   it("envia clip só na sessão, não no complete, e aceita origem maior que a saída", async () => {
     let uploads = 0;
