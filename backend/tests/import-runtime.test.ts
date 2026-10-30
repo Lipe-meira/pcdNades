@@ -4,6 +4,7 @@ test('extractor uses only metadata, fixed extractors and an explicit authenticat
  const args=extractorArgs('https://vt.tiktok.com/Abcdef/','http://token:@127.0.0.1:1234');
  assert.ok(args.includes('--ignore-config'));assert.ok(args.includes('--no-plugin-dirs'));assert.ok(args.includes('--skip-download'));assert.ok(args.includes('--dump-single-json'));
  assert.equal(args[args.indexOf('--proxy')+1],'http://token:@127.0.0.1:1234');assert.equal(args.at(-2),'--');
+ assert.equal(args[args.indexOf('--use-extractors')+1],'^tiktok$,^vm\\.tiktok$');
  assert.throws(()=>extractorArgs('https://evil.test/','http://token:@127.0.0.1:1234'));
 });
 test('selects a bounded progressive MP4; rejects manifests, DRM, credentials and external hosts',()=>{

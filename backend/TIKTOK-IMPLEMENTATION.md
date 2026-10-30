@@ -10,8 +10,8 @@ Plano de execução (skill writing-plans; caminho adaptado à responsabilidade e
 - [x] Testar argumentos fixos, seleção de formato e configuração opt-in; implementar extrator e preparação binária com SHA256.
 - [x] Preparar migration local: sessões privadas, expiração, rate limit, criação atômica e lease global. Execução SQL ainda pendente.
 - [x] Testar API/admin e processamento com dependências simuladas; ligar inspeção/importação ao fluxo existente de mídia. Idempotência SQL exige validação real separada.
-- [ ] Testar relay/Range e recorte real não inicial em fonte sintética longa, cancelamento e limites. Distinguir fixtures locais de E2E TikTok/Vercel.
-- [ ] Executar suite/typecheck/build, documentar limites e pendências; commits coesos e push feat/backend. Nenhuma alteração remota/deploy nesta entrega.
+- [x] Testar relay/Range e recorte real não inicial em fonte sintética longa, cancelamento e limites. SQL local29assertions PASS; não é Supabase/multiconexão. ProtectedTikTok inspectPASS, download403: operação real bloqueada, sem E2E Storage/Vercel.
+- [x] Suite71/typecheck/build/bootstrap PASS, SQL29 e proxyoffline PASS; limites/403 documentados e commits coesos enviados à feat/backend. Nenhuma alteração remota/deploy nesta entrega; feature de importação continua bloqueada para produção.
 
 ## Contrato fixo enviado ao frontend
 

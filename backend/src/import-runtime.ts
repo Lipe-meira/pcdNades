@@ -3,7 +3,7 @@ import {promisify} from 'node:util';
 import {createRequire} from 'node:module';
 import {createHash} from 'node:crypto';
 import {readFile,stat} from 'node:fs/promises';
-import {existsSync} from 'node:fs';
+import {accessSync,constants,readFileSync,statSync} from 'node:fs';
 import {recognizeSource,type Clip} from './importers.js';
 import {importFailure,allowedImportHost,safeHeaders,startMetadataProxy,startMediaRelay,TransferBudget} from './import-network.js';
 import {sourceMetadata,checkImportSelection} from './tiktok.js';
@@ -15,11 +15,17 @@ export const ytDlpVersion='2026.08.19';
 const digests={linux:'58162f9bfdc27458ea47bfcb311cf47028f17d8154a8bf7d689861d46399230a',win32:'66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a'};
 export function ytDlpPath(){if(process.arch!=='x64')throw importFailure('IMPORT_UNAVAILABLE',503);if(process.platform==='linux')return require.resolve('../vendor/yt-dlp_linux');if(process.platform==='win32')return require.resolve('../vendor/yt-dlp.exe');throw importFailure('IMPORT_UNAVAILABLE',503);}
 export function readTikTokEnabled(env:Record<string,string|undefined>=process.env){const v=env.MEDIA_TIKTOK_IMPORT_ENABLED;if(v===undefined||v==='false')return false;if(v==='true')return true;throw new Error('MEDIA_TIKTOK_IMPORT_ENABLED deve ser true ou false.');}
-export function tikTokRuntimeAvailable(){try{return readTikTokEnabled()&&existsSync(ytDlpPath());}catch{return false;}}
+let verifiedRuntime:{path:string;mtime:number;size:number;valid:boolean}|undefined;
+export function tikTokRuntimeAvailable(){try{
+ if(!readTikTokEnabled())return false;
+ const path=ytDlpPath(),file=statSync(path);accessSync(path,constants.X_OK);
+ if(verifiedRuntime?.path===path&&verifiedRuntime.mtime===file.mtimeMs&&verifiedRuntime.size===file.size)return verifiedRuntime.valid;
+ const valid=createHash('sha256').update(readFileSync(path)).digest('hex')===digests[process.platform as keyof typeof digests];verifiedRuntime={path,mtime:file.mtimeMs,size:file.size,valid};return valid;
+}catch{return false;}}
 async function verifyBinary(){const platform=process.platform as keyof typeof digests;const path=ytDlpPath();if(createHash('sha256').update(await readFile(path)).digest('hex')!==digests[platform])throw importFailure('IMPORT_UNAVAILABLE',503);return path;}
 export function extractorArgs(url:string,proxy:string){
  const source=recognizeSource(url);if(source.provider!=='tiktok')throw importFailure('SOURCE_UNSUPPORTED');
- return ['--ignore-config','--no-config-locations','--no-plugin-dirs','--no-js-runtimes','--no-remote-components','--no-update','--no-cache-dir','--no-playlist','--skip-download','--dump-single-json','--no-warnings','--no-progress','--use-extractors','TikTok,TikTokVM','--retries','0','--fragment-retries','0','--extractor-retries','0','--socket-timeout','8','--proxy',proxy,'--',source.canonicalUrl];
+ return ['--ignore-config','--no-config-locations','--no-plugin-dirs','--no-js-runtimes','--no-remote-components','--no-update','--no-cache-dir','--no-playlist','--skip-download','--dump-single-json','--no-warnings','--no-progress','--use-extractors','^tiktok$,^vm\\.tiktok$','--retries','0','--fragment-retries','0','--extractor-retries','0','--socket-timeout','8','--proxy',proxy,'--',source.canonicalUrl];
 }
 export function selectProgressiveFormat(raw:any){
  const formats=Array.isArray(raw.formats)?raw.formats:[raw];

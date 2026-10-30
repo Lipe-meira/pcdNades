@@ -27,3 +27,9 @@ test('active lease is observed without claiming; expired second attempt cannot e
 test('stale attempt cannot publish a stored result over a later attempt',async()=>{
  const f=fake();const result=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},{...f.deps,process:async(_s,_c,path)=>{await writeFile(path,'clip');f.row().attempts++;return {durationSeconds:10,width:320,height:240,mimeType:'video/mp4',bytes:4};}});assert.equal(result.status,202);assert.equal(result.asset.status,'processing');assert.equal(f.stores(),0);
 });
+test('access denial and network quota failures remain explicit sanitized terminal errors',async()=>{
+ for(const code of ['IMPORT_ACCESS_DENIED','IMPORT_NETWORK_LIMIT']){
+  const f=fake();const r=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},{...f.deps,process:async(_s,_c,_p,_d,_l,controller)=>{const e=Object.assign(new Error('secret CDN headers'),{code});if(code==='IMPORT_NETWORK_LIMIT')controller.abort(e);throw e;}});
+  assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,code);assert.ok(!JSON.stringify(r.asset.error).includes('secret'));assert.equal(f.stores(),0);
+ }
+});

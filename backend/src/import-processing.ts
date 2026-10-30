@@ -38,10 +38,10 @@ export async function completeImport(db:SupabaseClient,id:string,limits:MediaLim
    return {status:ready?200:202,asset:ready??await current()};
   }catch(error){
    const candidate=error instanceof Error&&'code'in error?String(error.code):'';
-   const codes=['IMPORT_NETWORK_LIMIT','IMPORT_DESTINATION_DENIED','IMPORT_RANGE_UNSUPPORTED','IMPORT_RANGE_REQUIRED','IMPORT_REDIRECT_LIMIT','IMPORT_TIMEOUT','SOURCE_CHANGED','SOURCE_UNSUPPORTED','FILE_TOO_LARGE','INVALID_MEDIA','DURATION_EXCEEDED','UNSUPPORTED_CODEC','PROCESSING_TIMEOUT'];
+   const codes=['IMPORT_NETWORK_LIMIT','IMPORT_DESTINATION_DENIED','IMPORT_ACCESS_DENIED','IMPORT_RANGE_UNSUPPORTED','IMPORT_RANGE_REQUIRED','IMPORT_REDIRECT_LIMIT','IMPORT_TIMEOUT','SOURCE_CHANGED','SOURCE_UNSUPPORTED','FILE_TOO_LARGE','INVALID_MEDIA','DURATION_EXCEEDED','UNSUPPORTED_CODEC','PROCESSING_TIMEOUT'];
    const abortCode=signal.reason&&typeof signal.reason==='object'&&'code'in signal.reason?String(signal.reason.code):'IMPORT_TIMEOUT';
    const code=signal.aborted?(codes.includes(abortCode)?abortCode:'IMPORT_TIMEOUT'):codes.includes(candidate)?candidate:'IMPORT_FAILED';
-   const failed=await finish({status:'failed',stage:null,locked_until:null,error:{code,message:'Não foi possível importar este trecho dentro dos limites. Inspecione o link novamente ou envie um MP4.'}});
+   const failed=await finish({status:'failed',stage:null,locked_until:null,error:{code,message:code==='IMPORT_ACCESS_DENIED'?'A plataforma recusou o download. Envie um arquivo MP4 autorizado.':'Não foi possível importar este trecho dentro dos limites. Inspecione o link novamente ou envie um MP4.'}});
    return {status:failed?200:202,asset:failed??await current()};
   }
  }finally{

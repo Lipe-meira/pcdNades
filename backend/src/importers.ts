@@ -21,7 +21,7 @@ export function recognizeSource(input:string):SourceLink{
 }
 export const importerCapabilities=Object.freeze({
  youtube:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Download do YouTube não habilitado: exige método e aprovação aplicáveis. Envie um MP4 autorizado.'},
- tiktok:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Importação do TikTok não habilitada. Portabilidade oficial exige aprovação e autorização do titular. Envie um MP4 autorizado.'},
+ tiktok:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Importação do TikTok desativada neste ambiente. A integração experimental ainda depende da validação do download. Envie um MP4 autorizado.'},
  instagram:{enabled:false,reasonCode:'PLATFORM_UNSUPPORTED',message:'Importação do Instagram não habilitada. É necessária integração oficial com conta autorizada. Envie um MP4 autorizado.'}
 });
 export interface ImportedFile {path:string;sourceUrl:string;provider:ImportProvider;}

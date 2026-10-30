@@ -46,7 +46,7 @@ export async function openRemote(raw:string,budget:TransferBudget,headers:Record
  budget.request();const u=sourceUrl(raw),ip=await pinnedAddress(u.hostname);
  if(budget.controller.signal.aborted)throw budget.error??importFailure('IMPORT_TIMEOUT');
  const response=await new Promise<IncomingMessage>((resolve,reject)=>{
-  const req=httpsRequest(u,{method:'GET',agent:false,headers,servername:u.hostname,lookup:(_h,_opts,cb)=>cb(null,ip,4),signal:budget.controller.signal,timeout:10000},resolve);
+  const req=httpsRequest(u,{method:'GET',agent:false,family:4,headers,servername:u.hostname,lookup:(_h,_opts,cb)=>cb(null,ip,4),signal:budget.controller.signal,timeout:10000},resolve);
   req.on('socket',socket=>{socket.on('data',(chunk:Buffer)=>{try{budget.consume(chunk.length);}catch{req.destroy(budget.error);}});});
   req.on('timeout',()=>req.destroy(importFailure('IMPORT_TIMEOUT')));req.on('error',reject);req.end();
  });
@@ -87,7 +87,7 @@ export async function startMediaRelay(remote:string,headers:ImportHeaders,budget
   if(req.url!==`/${token}.mp4`||req.method!=='GET')throw importFailure('IMPORT_DESTINATION_DENIED');
   const range=req.headers.range;if(!range||!/^bytes=\d+-\d*$/.test(range))throw importFailure('IMPORT_RANGE_REQUIRED');
   const response=await open(remote,budget,{...headers,Range:range,'Accept-Encoding':'identity'});
-  try{if(response.statusCode!==206||response.headers['content-encoding'])throw importFailure('IMPORT_RANGE_UNSUPPORTED');total=validateContentRange(range,response.headers['content-range']??'',response.headers['content-length'],total);}catch(error){response.destroy();throw error;}
+  try{if([401,403].includes(response.statusCode??0))throw importFailure('IMPORT_ACCESS_DENIED');if(response.statusCode!==206||response.headers['content-encoding']&&response.headers['content-encoding']!=='identity')throw importFailure('IMPORT_RANGE_UNSUPPORTED');total=validateContentRange(range,response.headers['content-range']??'',response.headers['content-length'],total);}catch(error){response.destroy();throw error;}
   res.writeHead(206,{'Content-Type':'video/mp4','Content-Range':response.headers['content-range']!,'Accept-Ranges':'bytes',...(response.headers['content-length']?{'Content-Length':response.headers['content-length']}:{})});
   res.on('close',()=>response.destroy());response.on('error',()=>res.destroy());response.pipe(res);
  })().catch(error=>{budget.error??=error instanceof Error?error:importFailure('IMPORT_FAILED');if(!res.headersSent)res.writeHead(502);res.end();});});
