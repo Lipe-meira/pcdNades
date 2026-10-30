@@ -66,3 +66,6 @@ O pedido novo substitui20s por40s no vídeo final; backend config/testes e migra
 
 ## Limite90s e recorte efetivo — incremento local
 Documentação vigente em IMPORTS.md (bloco final). Final90s/50MB; comclipfonte180s/50MB,seleçãopersistida eimutável,flagMEDIA_TRIMMING_ENABLEDfalseporpadrão. FFmpeg empacotado gera saídaseparada eprobe+decodeverificamantesready;semclipmantémoriginal.003nãoaplicadaajustada90/clip;001/002intactas. Trêsimportadores continuamdisabled. Sem produção/deploy/SQLremoto nesta entrega.
+
+## Origem de lançamento opcional
+Contrato vigente de `origin?: {x,y} | null`, sem alterar `target`/vídeo, em ORIGIN.md. POST aceita origem opcional; PATCH omitido preserva, null limpa, objeto substitui par. Respostas sempre incluem origin/null. Migration004 é nova e pendente de revisão/aplicação coordenada;001/002/003 intactas. Testes HTTP locais não equivalem a persistência/RLS reais.

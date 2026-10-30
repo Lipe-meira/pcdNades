@@ -1,5 +1,49 @@
 # Checkpoint — backend
 
+Atualizado em: 30/10/2026, America/Sao_Paulo.
+Estado vigente: origem opcional implementada e verificada localmente; aguardando revisão e integração conjunta. Nenhum SQL remoto ou deploy autorizado/realizado por este chat.
+
+## Objetivo e pedido atual
+
+Registrar origem de lançamento além do destino: um cadastro/execução tem um vídeo, uma origem opcional e um destino. Vários cadastros podem compartilhar destino. Escopo apenas backend/ e este checkpoint, sem táticas ou tipos novos.
+
+## Localização e estado Git
+
+- Worktree: C:\Users\felip\.codex\worktrees\pcdnades-backend\nadesCs2; branch feat/backend.
+- Base desta tarefa: 563e8f0 (código anterior de recorte ca66fe8). origin/main e HEAD tinham backend idêntico na inspeção inicial; não foi incorporada main.
+- Entrega atual: commit feat de origem será enviado na própria branch; consultar git log para SHA, sem autorreferência. Mudanças desta tarefa listadas abaixo serão commitadas juntas, sem código parcial na main.
+- Política: main só recebe pendência inteira concluída/testada pelo orquestrador; sem push main, merge/force push ou preview manual neste chat. Previews automáticos desabilitados pelo root. Não presumir que pausa ou checkpoint autoriza produção.
+
+## Feito e contrato
+
+- src/model.ts: origin?:{x,y}|null, finito [0,1] inclusivo. POST omitido/null => sem origem. PATCH omitido preserva; null limpa o par; objeto substitui ambos atomicamente. GET/create/patch sempre origin|null, sem perder zero ou expor colunas internas.
+- Nova migrations/004_grenade_origin.sql: nullable origin_x/y double precision, CHECK ambosNULL ou ambos preenchidos/finito/intervalo. 001/002/003 intactas; nenhum grant/RLS/trigger/mídia alterado. Legados não são preenchidos com origem inferida.
+- ORIGIN.md e README documentam contrato/ordem de aplicação. Troca de mapId não transforma nem apaga pontos: frontend deve remarcar target/origin ou enviar origin:null explicitamente. Contrato enviado antes da implementação e alinhado com root.
+- tests/origin.test.ts: nove testes novos, incluindo HTTP com cliente substituído, duas origens/mídias no mesmo destino, zeros/limites, parcial/NaN/Infinity, legado, set/preserve/clear, mapa e negação admin.
+- tests/sql/origin-smoke.sql: preparado para revisão e execução posterior autorizada, com rollback em cadastro de teste com mídia ready. NÃO executado.
+
+## Verificação executada
+
+- Testes de origem primeiro falharam porque schema/mapeamento/resposta não tinham origem; depois passaram.
+- npm --prefix backend run typecheck: PASSOU.
+- npm --prefix backend test: 48 testes PASSARAM (39 anteriores + 9 novos).
+- npm --prefix backend run build: PASSOU, preparadores de binário existentes verificados.
+- git diff --check: PASSOU. Nenhuma dependência nova.
+- Não executado: SQL real/004/RLS remoto, persistência real da origem, QA frontend/browser integrado. Testes substituídos não equivalem a Supabase real.
+
+## Próxima ação e pendências
+
+1. Ao retomar: ler AGENTS/README/guia e checkpoints (origin/main se ausentes na branch), conferir git status --short --branch e git log.
+2. Orquestrador revisa 004 e script SQL; aplicação remota depende de sua coordenação/autorização. Antes de 004, enviar origem na escrita falha por colunas ausentes; leitura legada segue null.
+3. Frontend integra origem opcional/radar, tolera resposta legada sem campo e remarca pontos ao trocar mapa. Revisar/testar pendência inteira antes do único push main.
+4. Aguardar feedback/revisão; não publicar, aplicar SQL ou alterar env por conta própria.
+
+## Arquivos desta entrega
+
+backend/src/model.ts; backend/migrations/004_grenade_origin.sql; backend/tests/origin.test.ts; backend/tests/sql/origin-smoke.sql; backend/ORIGIN.md; backend/README.md; docs/continuity/backend.md. Nenhum arquivo de frontend, raiz ou checkpoint alheio alterado. Após commit/push, não devem restar mudanças locais.
+
+## Histórico anterior (pode conter estado já superado)
+
 Atualizado em: 29/10/2026, America/Sao_Paulo.
 Estado: marco links/40s preparado localmente; importadores e recorte efetivo permanecem indisponíveis. Sem deploy/migration remota autorizados.
 
@@ -310,3 +354,20 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Código efetivo: uploadclipimutável,processorinline reencode/decode/probe/storeseparado,fencing e1recorteporinstância,semcliporiginal.003aindanãoaplicada90+clipcheck/imutabilidade;001/002intactas. Importers3disabled.
 - Testesnovos provam errostore/trim/oversize antesupload,preservaçãofonte,staleattemptnãopublica,concorrência entre mídiasretentável. Não é E2EStorage/DBreal. SmokeempacotadoWindows90 e1080 medido acima;LinuxCI/root eVercelruntime continuam pendentes.
 - Próxima ação root executar CI (semsegredos/deploy): npmciignore-scripts;build;typecheck;test;tsx scripts/trim-smoke.ts;/usr/bin/time-v tsx scripts/trim-stress.ts;NFTfileList+X_OKffmpeg/probe. Flagsremotasnãoalteradas;MEDIA_TRIMMING_ENABLEDdefaultfalse. Aguardar revisão/resultadoCI apóscommit/push.
+
+## Ordem de publicação revisada —29/10
+- Root informou autorização usuário para pushmain/dispensaLinux; este chat não publica nem aplicaSQL. Revisão payload: semclipomitecoluna, nãoenvia null;003ausente não quebraINSERToriginal<=20comtrimfalse. Comclipativoantes003 podePGRST204; anunciar90antestrigger90 gera falha ready>20 (catchpodefailedINVALID_MEDIA),semalterargranadaanterior.
+- Recomendação enviada: aplicar003revisada antesdeploy,alinharenv90,mantertrimfalse atétestecontrolado; env20existentecontinua20atéajuste. ConfirmarSQL/contratos e sóentãoflag. Não alegarLinuxouVercelrecortevalidado. Próximaaçãoaguardarrevisãoroot/resultado,semproduçãoaqui.
+
+## Nova tarefa origem de lançamento —30/10/2026
+- Retomada autorizada somente backend/ e checkpoint; Git limpo na feat/backend em563e8f0. Fetch/AGENTS/README/guia/checkpoints consultados; backend HEAD coincide com origin/main nesta checagem.003 já aplicada conforme root, não reescrever001/002/003.
+- Objetivo: uma origem opcional normalizada por cadastro/execução, preservando target/mídias/legados; origens diferentes podem compartilhar mesmo destino por cadastros distintos.
+- Contrato enviado ao root antes de código: origin?:{x,y}|null emPOST/PATCH; ausentePATCHpreserva,nulllimpa,GETsempreorigin|null. Colunasnullableorigin_x/y comcheckpar/finito[0,1],nova004. SemnovapolicyRLS/coleção/tática/tipogranada.
+- Em andamento: escrever testes falhando de schema/mapping/rotas/admin antes implementação. Próxima ação rodar testesvermelhos, implementar modelo/migration004, depois verificarbuild/testes.
+- Política vigente: main só recebe pendência inteira concluída/testada, checkpoints não justificam pushmain; previewsVerceldesabilitados pelo root, sempreviewmanual. Branchprópria podecommit/push. SemremoteSQL/env/deploy autorizado.
+
+## Marco origem implementada localmente —30/10/2026
+- Oito testes específicos passaram após falhar pelos motivos esperados antes do código: origem desconhecida no schema/ausente na visão/mapeamento ausente. Modelo agora valida origin nullable/optional e mapeia par atomicamente; respostas preservam zeros/legadosnull. RotasCRUD/RLS/mídias não alteradas.
+- Nova004 adiciona origin_x/y nullable/checkpar/finitebounds. 001/002/003 intactas. Nenhum SQLremoto/deploy/env realizado; não há dependências novas.
+- ORIGIN.md fecha contrato e troca de mapa: omitidoPATCHpreserva também com mapId; frontend remarca destino e origem ou envia null explicitamente, sem inferência/migração oculta. Root recebeu decisão.
+- Script tests/sql/origin-smoke.sql preparado para revisão/execução autorizada posterior com rollback; NÃO executado. Próximo rodar suíte completa/typecheck/build/diff, registrar resultados e entregar SHA na feat/backend para integração conjunta só quando pendência inteira estiver finalizada/testada.
