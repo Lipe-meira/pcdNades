@@ -1492,3 +1492,34 @@ label{font-size:14px;font-weight:400}
 .filter-asset { display: block; width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
 .nade-side-segments button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 60px; }
 .nade-side-segments .filter-asset { width: 24px; height: 24px; }
+
+/* Modo amplo dentro da página: o mesmo video permanece montado. */
+.detail-return[hidden], .detail-expand[hidden], .lineup-detail .icon-button[hidden] { display: none; }
+.detail-expand { width: 100%; margin: 10px 0; min-height: 44px; }
+.detail-return { margin: 0 0 20px; min-height: 44px; }
+.detail-layout, .detail-media, .detail-information { min-width: 0; }
+.detail-information .detail-meta { margin-top: 14px; }
+.library-view.is-wide > .page-heading,
+.library-view.is-wide > .map-carousel,
+.library-view.is-wide .library-filters,
+.library-view.is-wide .radar-column,
+.library-view.is-wide .lineup-rail > .section-heading,
+.library-view.is-wide .lineup-list { display: none; }
+.library-view.is-wide .library-layout { display: block; }
+.library-view.is-wide .lineup-rail { width: 100%; padding: 0; border: 0; }
+.library-view.is-wide .lineup-detail { margin: 0; padding: 0; border: 0; }
+.library-view.is-wide .lineup-detail > .section-heading { margin-bottom: 20px; }
+.library-view.is-wide .lineup-detail h2 { font-size: 36px; }
+.library-view.is-wide .detail-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); gap: 28px; align-items: start; }
+.library-view.is-wide .video-player { width: 100%; height: auto; max-height: min(80dvh, 900px); aspect-ratio: auto; object-fit: contain; background: #080a0d; }
+.library-view.is-wide .detail-information { padding: 18px; border: 1px solid var(--border); border-radius: 3px; background: #1c2025; }
+.library-view.is-wide .detail-information .detail-meta { margin-top: 0; }
+.library-view.is-wide .instructions { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 900px) {
+  .library-view.is-wide .detail-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .library-view.is-wide .lineup-detail h2 { font-size: 30px; }
+  .library-view.is-wide .video-player { max-height: 76dvh; }
+}
+@media (max-width: 760px) and (orientation: landscape) {
+  .library-view.is-wide .video-player { max-height: 85dvh; }
+}

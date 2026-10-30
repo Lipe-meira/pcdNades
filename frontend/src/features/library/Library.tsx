@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Filters, GameMap, Lineup } from "../../domain/types";
 import { typeLabels } from "../../domain/types";
 import { filterLineups } from "../../domain/lineups";
@@ -26,18 +26,47 @@ export function Library({
   });
   const [selectedId, setSelectedId] = useState<string>();
   const [destinationIds, setDestinationIds] = useState<string[] | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const expandButton = useRef<HTMLButtonElement>(null);
+  const returnButton = useRef<HTMLButtonElement>(null);
+  const compactScroll = useRef(0);
+  const wasWide = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const map = maps.find((item) => item.id === filters.mapId) ?? maps[0];
   const visible = filterLineups(lineups, filters);
   const selected = visible.find((item) => item.id === selectedId);
+  const wide = expanded && Boolean(selected);
   const listed = destinationIds
     ? visible.filter((item) => destinationIds.includes(item.id))
     : visible;
   function updateFilters(change: Partial<Filters>) {
+    setExpanded(false);
     setFilters((current) => ({ ...current, ...change }));
     setDestinationIds(null);
     setSelectedId(undefined);
   }
+  useLayoutEffect(() => {
+    if (wide) {
+      wasWide.current = true;
+      window.scrollTo({ top: 0, behavior: "instant" });
+      returnButton.current?.focus({ preventScroll: true });
+    } else if (wasWide.current) {
+      wasWide.current = false;
+      expandButton.current?.focus({ preventScroll: true });
+      window.scrollTo({ top: compactScroll.current, behavior: "instant" });
+    }
+  }, [wide]);
+  useEffect(() => {
+    if (!wide) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !event.defaultPrevented && !document.fullscreenElement) {
+        event.preventDefault();
+        setExpanded(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [wide]);
   useEffect(() => {
     if (
       selectedId &&
@@ -49,7 +78,7 @@ export function Library({
     }
   }, [selectedId]);
   return (
-    <>
+    <div className={`library-view ${wide ? "is-wide" : ""}`}>
       <div className="page-heading">
         <div>
           <h1>{map.name}</h1>
@@ -67,6 +96,7 @@ export function Library({
             lineups={visible}
             selectedId={selected?.id}
             onSelect={(ids) => {
+              setExpanded(false);
               if (ids.length > 1) {
                 setDestinationIds(ids);
                 setSelectedId(undefined);
@@ -115,7 +145,7 @@ export function Library({
                 key={item.id}
                 className={`lineup-row ${selected?.id === item.id ? "selected" : ""}`}
                 aria-pressed={selected?.id === item.id}
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => { setExpanded(false); setSelectedId(item.id); }}
               >
                 <span className={`type-icon ${item.type}`}>
                   <Icon name={item.type} />
@@ -153,19 +183,42 @@ export function Library({
             </div>
           )}
           {selected ? (
-            <section className="lineup-detail" aria-label="Detalhes da granada">
+            <section id="lineup-details" className="lineup-detail" aria-label="Detalhes da granada">
+              <button ref={returnButton} className="button secondary detail-return" hidden={!wide}
+                onClick={() => setExpanded(false)}>
+                Voltar ao modo compacto
+              </button>
               <div className="section-heading">
                 <h2 ref={heading} tabIndex={-1}>
                   {selected.title}
                 </h2>
                 <button
                   className="icon-button"
+                  hidden={wide}
                   onClick={() => setSelectedId(undefined)}
                   aria-label="Fechar detalhes"
                 >
                   <Icon name="close" />
                 </button>
               </div>
+              <div className="detail-layout">
+                <div className="detail-media">
+                  <button ref={expandButton} className="button secondary detail-expand"
+                    hidden={wide || selected.video.status !== "ready"}
+                    aria-expanded={wide} aria-controls="lineup-details"
+                    onClick={() => {
+                      compactScroll.current = window.scrollY;
+                      setExpanded(true);
+                    }}>
+                    Ampliar vídeo
+                  </button>
+                  <VideoPlayer
+                    key={selected.video.id}
+                    video={selected.video}
+                    service={service}
+                  />
+                </div>
+                <div className="detail-information">
               <div className="detail-meta">
                 <span className={`type-text ${selected.type}`}>
                   <Icon name={selected.type} size={16} />
@@ -173,16 +226,13 @@ export function Library({
                 </span>
                 <span>Lado {selected.side}</span>
               </div>
-              <VideoPlayer
-                key={selected.video.id}
-                video={selected.video}
-                service={service}
-              />
               <h3>Instruções</h3>
               <p className="instructions">{selected.instructions}</p>
               {demo && (
                 <p className="detail-note">Exemplo temporário da interface.</p>
               )}
+                </div>
+              </div>
             </section>
           ) : (
             listed.length > 0 && (
@@ -203,6 +253,6 @@ export function Library({
           )}
         </aside>
       </div>
-    </>
+    </div>
   );
 }
