@@ -1,3 +1,10 @@
+## Resultado URL direto e correções locais — 30/10
+
+- BackendreproduziucorrigiuOFFLINE2bugs:seleçãoformatobestprogressivoempates ehttp_headersherança/case.Normalheaderssemcookie/auth.Host/Range/secretproibidos.6direcionados/typecheckPASSreportados.
+- UMtestecorreçãorodounestasessão:inspectPASSexplicitformat h264_540p_576265-1,576x1024h264AAC,138662Bmetadata;completereresolveuDIRECTcanonicalhttps://www.tiktok.com/@dgm.cs2/video/7701366996495125766 eIMPORT_ACCESS_DENIEDpersistiu.Linknovousuárioéigualcanônicoapósremovertrackingquery,nãorepetirredemesmocasoinutilmente.
+- RootinformouresultadohonestoeautorizousomentecomparaçãotransporteFFmpegvsNodeOFFLINE/rawpath/headerlegítimos/redirectantesqualquernovopedidoexterno. Semrelaxarsegurança/bypass/prod.Nãoafirmarbugsfixresolveram403.CapsOFF.
+- Próximaação:receberSHAsfixes/suite/checkpointanáliseoffline;featuresegueembranchessempublicaçãoparcial.
+
 ## Novo teste autorizado: URL direto TikTok — 30/10
 
 - Usuárioforneceuhttps://www.tiktok.com/@dgm.cs2/video/7701366996495125766?is_from_webapp=1&sender_device=pc . Mesmoid7701366996495125766dolinkcurto. RootencaminhoubackUMtestefluxoprotegidometadata/clip0..10/decode/budgetparaavaliarredirecionamento,semtesteparaleloROOT. Sejáhouvercorreçãotestadanaexecuçãoativa,evitarrepetiçãosemnecessidade.
