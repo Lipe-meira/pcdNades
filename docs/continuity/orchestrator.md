@@ -1,3 +1,8 @@
+## Retomada autorizada pelo usuário — 30/10
+
+- Usuáriopediucontinuar. Main356efb7limpo/ahead8docs,originf4aa722,fetchfront14dabbf/backendc2bb1d4;nenhumaentregafinalnovaemremoto. Chatsreativadosparafinalizarbackend65tests/proxy/Range/longsource/NFT efrontinspect/seleção/importresume.
+- Restriçõesmantidas:semprodução/env/migrationremota/pagos;mainapenasentregaconcluídaetestadainteira. Próximaação:receberSHAsmarcos/revisarrotas/migration/testesreaisprotectedruntimeantesativação. Nãofalardesabilitadocomoentregapronto.
+
 ## Review inicial fundamentos TikTok — 30/10
 
 - Backc2bb1d4pushapenasfundamentos,rotas/sessões/processorNÃOfuncionais,nãointegrarcomofeature. Rootreviewread-onlyimport-network/import-runtime:proxyDNSIPpinning/bytes eFFmpegMOVloopbackarquitetura;feedbackrobustezdimensõesformato(undefinedNaN),Content-Rangecoerente,limitaçãoIPv6público eNFT/pesoX_OKbinários.
