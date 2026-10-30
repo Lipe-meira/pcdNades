@@ -1,3 +1,9 @@
+## Concluído/publicado: carrossel e filtros PNG — 30/10
+
+- UMpushmain365084f apósconcluirTODOSsteerings evalidar39unit+42browser/build/typecheckroot. Autodeploygitfrontend dpl_9m44ha1FpWpQJKseKBReg1WS5mZi READY,aliashttps://pcdnades.vercel.app,SHAcerto.Nenhumdeploymanualduplicado.
+- HTTPsite200 eassets/maps/icons/mirage.png,/filter-icons/smoke.png,/filter-icons/ct.png200image/png;HTMLCSSnovoCly9cJUf. Visuaislocaisbranchfrontinspecionados;testesAPIcontrolada,nãoE2Eprodução. Catálogo/radares/cadastros/recortepreservados,nenhumaAPI/migrationalteradanestabloco.
+- Estado:entregaconcluída,pausarimplementaçõesparatesteusuário. CheckpointpósdeploycommitlocalSEMpushisolado;irájuntoentregaseguinte. Próximaação:aguardarfeedback;conferirGitaoretomar.Nãoiniciarnovosajustes.
+
 ## Entrega completa integrada para publicação única — 30/10
 
 - Frontdc48e3eengloba:carrosseleef2b02,painel044a4e2,logos1b11a0a,PNGsfiltrosdc48e3e. Mainintegrou8bbf821,catálogo7radaresPNGpreservado. Originaisfiltros/hash/atribuiçãoempublic/filter-icons;logosValve/Murkyfix9a77417empublic/maps/icons. Screenshots1440revisados,semnovosserviços/backend/env.
