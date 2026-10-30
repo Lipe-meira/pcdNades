@@ -1,3 +1,8 @@
+## Marco origem backend entregue — 30/10
+
+- Backendorigin e1ff49a pushfeatbackend;48testes/build/typecheckreportadospassaram. Rootfetch/revisou004_grenade_origin.sql:nullableorigin_x/y+checkpar[0,1],semgrants/RLS/dadosalterados;ORIGIN.mdcontratocoerente. SQLsmokeapenaspreparadonãoexecutado,004NÃOaplicada.
+- Frontavisadocontrato/entrega;playeramplofechandocommitseparadoeorigemUIemexecução. Nenhumaintegracaomain/push/deploynovoaqui. Próximaação:receberfront/player/origem,reviewtestesconjunto;pedirautorização004concretaantesexecutarprodução,entãosmokerealepublicaçãoúnica.
+
 ## Escopo adicional: origem de lançamento — 30/10
 
 - Usuárioquerorigemno cadastro evisualização;exemplo2pixeisdiferentesmesmodestino. Comunicadomodelo:umcadastro/execuçãocomvídeoprópriotemumaorigem+target,2cadastrospodemcompartilhardestino. Legadosorigemnullpreservados.
