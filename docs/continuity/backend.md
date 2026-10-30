@@ -1,11 +1,11 @@
 # Checkpoint — backend
 
 Atualizado em: 30/10/2026, America/Sao_Paulo.
-Estado vigente: origem opcional implementada e verificada localmente; aguardando revisão e integração conjunta. Nenhum SQL remoto ou deploy autorizado/realizado por este chat.
+Estado vigente: investigação de importação efetiva concluída documentalmente; bloqueio real para links de qualquer criador sob as restrições acordadas. Nenhum importador funcional habilitado; aguardar decisão de produto do orquestrador. Upload/recorte90 publicados conforme seu relato.
 
 ## Objetivo e pedido atual
 
-Registrar origem de lançamento além do destino: um cadastro/execução tem um vídeo, uma origem opcional e um destino. Vários cadastros podem compartilhar destino. Escopo apenas backend/ e este checkpoint, sem táticas ou tipos novos.
+Pedido atual: investigar importação efetiva de tutoriais públicos de qualquer criador. Diagnóstico decisivo entregue ao orquestrador; ele orientou terminar correção documental e aguardar, sem código/produção. Estado e pré-requisitos completos em backend/IMPORTS.md. Registros de origem abaixo são histórico de tarefa já integrada; 004 aplicada pelo root, sem SQL executado por este chat.
 
 ## Localização e estado Git
 
@@ -371,3 +371,16 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Nova004 adiciona origin_x/y nullable/checkpar/finitebounds. 001/002/003 intactas. Nenhum SQLremoto/deploy/env realizado; não há dependências novas.
 - ORIGIN.md fecha contrato e troca de mapa: omitidoPATCHpreserva também com mapId; frontend remarca destino e origem ou envia null explicitamente, sem inferência/migração oculta. Root recebeu decisão.
 - Script tests/sql/origin-smoke.sql preparado para revisão/execução autorizada posterior com rollback; NÃO executado. Próximo rodar suíte completa/typecheck/build/diff, registrar resultados e entregar SHA na feat/backend para integração conjunta só quando pendência inteira estiver finalizada/testada.
+
+## Importação efetiva — investigação decisiva30/10
+- Nova autorização root: tentar integração real após422 TikTok, sem entregardisabledcomoimplementadocompleto; perguntatitularidadeao usuárioaguarda resposta. Semcookies/segredos/bypass/serviços pagos/remoto/deploy.
+- Git limpo eme1ff49a; backendigualorigin/main. Rootcheckpoint confirma004aplicada eSQLsmokeoriginrealpassoucomrollback; recorte90jápublicado (não afirmarE2Erecorte).
+- NOVAevidênciaTikTokoficial: produtoDataPortability cobreUSERSsomenteEEA/UK,emboraapplicantsglobais. Brazil NÃOretornadados. DisplayAPI sómetadata/embed; OAuthsimples não resolveMP4Brasil. Rootavisado imediatamente, nãocodificarconexãoplacebo.
+- Próximo concluirfontesMeta/YouTube eplanoInstagramOAuthconcreto, corrigirIMPORTS.mdcomestado90real, executarcomponentessemdownloaddeconteúdo alheio e relatarpréreqbloqueantes. URLvt screenshot sóreconhecer; não resolver/download antes autorização.
+
+## Importação efetiva — conclusão da investigação30/10
+- Usuário esclareceu QUALQUERCRIADOR/tutorialpúblico; nãoequivaleautorização de download/republicação. OAuthpróprioconta NÃOatende ao caso geral. Root determinou encerrar diagnóstico/docs semnovocódigo ou OAuthplacebo.
+- Fontesoficiais confirmadas: TikTokPortability somenteUSERS EEA/UK (applicantsglobais), DisplayAPIsemMP4; recursoSalvarnoappnãoéAPIservidor e termosROWrestringemscripts. InstagramIGMedia restrito amídiadeprofissionaisautorizados; YouTubepedewrittenapproval. Não identificado importador universal permitido sobrestriçõesacordadas.
+- IMPORTS.md reescrito coerente: recorte90/fonte180/50MB jápublicado conforme root,003/004aplicadasporroot; importers continuamindisponíveis/funcionalidadeNÃOentregue,préreqreais e limitações deconexão explícitos. Sempretender transformarMP4direto emsoluçãoTikTok.
+- Verificação:8testesexistentesimporters passaram; componentecompilado reconheceu vt/ZSqvRtpM comoTikTokcurto e retornou422 semrede/mídia. Não visitado vídeo, não baixadomaterial de terceiros, nenhumtesteOAuth/credencial. Build não repetido porquesódocs.
+- Próxima ação aguardar decisão deproduto viaorquestrador, semalterarcódigo/política/produção/env/schema. Commit/push apenas IMPORTS.md echeckpoint nafeat/backend; main continuaentregainteiracoordenada,semcheckpointisoladomain.
