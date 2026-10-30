@@ -1,3 +1,9 @@
+## Contrato final de retomada/importação — 30/10
+
+- IMPORTinitialqueued viaRPCatômico;createSEMPREseguidoPOSTcomplete;GETsóobserva,queued/leaseexpiradaouBUSYretomaPOSTcompletemesmoidsemnovasessão. MediaviewsourceIdtop-level+metadataproveniência/sourceDuration,sourceUrlcanonicaligualinspect;201mediaId=id.
+- Expiry15minsomenteNOVOSimports;completeusaimutávelsnapshotassetapósexpiry. Mesmoid/source/clipidempotente,divergência409,tentativas2. Inspect25s/cliente30,complete110+5/cliente150. Back+frontavisados.
+- Implementaçãoemexecuçãobranches;semtesteVercel/source-longrealremotoainda,semnovapub. Próximaação:receberSHAs/testesdehardlimites/SSRF+UIevalidarconjuntocomruntimealvoanteshabilitar.
+
 ## Contrato inicial importação efetiva alinhado — 30/10
 
 - Backendpropôs/rootalinhouPOST/media/imports/inspectadmin{sourceUrl}->201data{sourceId,provider,sourceUrl,videoId,title,author,durationSeconds,expiresAt,limits90s/50MB/fonte7200s};sessionowner15min. Fonte2hlimiteoperacionalindependenteupload180.
