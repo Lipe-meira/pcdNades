@@ -1,3 +1,9 @@
+## Backend TikTok entregue para review, bloqueado para produção — 30/10
+
+- Remotofeat/backenda8e6a1d(coesosc2bb1d4,d58696e,a8e6a1d),Gitlimporeportado;71tests/typecheck/build/bootstrapPASSreportados. PGlitelocal29assertions,fixture2h/corte30min/selectorofflinePASS,NFTWindows187601154B. Linux/Vercelasset/runtime eSupabase/StorageE2ENÃOcomprovados.
+- Bloqueioreal403permanece;INSPECTfuncionamasCDNnega,nenhumvídeoarmazenado. IMPORT_ACCESS_DENIEDclaro/capdefaultfalse. Nova20261030124528_tiktok_import_sessions.sqlNÃOaplicada. Nenhumaintegração/pushmain/publicaçãodestaentregaporquenãopronto,nãomigration/envremoto/pagos.
+- Frontseguefollowuperro403/suite64workers1depois61/64falhasambiente/asserções;afeteados4PASS. Próximaação:registrarSHAdofrontfinal/reviewsemhabilitar;explicarusuáriolimiteconcretoeanalisarpróximadecisiónsemretentativas/bypass.
+
 ## Bloqueio real confirmado: CDN retorna403 — 30/10
 
 - ÚnicodiagnósticoautorizadoheadersRangeconcluiuHTTP403,1req1313B,ContentLength504,semContentRange/encoding;aplicação nãoconsumiu body. Backprecisoureextrairmetadata1vez(tempanteriorlimpo),155170B. RedePARADA,nãocookies/login/proxyexterno/fallbackdownloadoarquivo.
