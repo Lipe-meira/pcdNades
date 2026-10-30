@@ -1,3 +1,14 @@
+## Direção adicional: painel de granadas — 30/10
+
+- Usuáriopediuseletorsmoke/bang/etccomoCSNADEShttps://csnades.gg/nuke;screenshot0809692b-b1f1-4dd3-93ff-18c768a0cf1e.png. PáginaconsultadaconfirmaseçõesNades/Teams econtagens. Frontacionadopainelverticalícone/nome/contagem,seleçãodestaque eAmbos/CT/T,paletapcd,apenas3tipossuportados+Todas. SemHE/combinações/favoritosfake;contagensmapaatual+ladocomtestes,zero/loading/errorcorretos.
+- CarrosselJÁintegrado7ee23e3,build39unit+34browserrootPASSARAM. Aindasem pushmain;agruparnovopainelentregafinal paraevitardeploysparciais. Mainlocaltemdocsanteriorescheckpointsaindasemenvio;somenteestecheckpointalterado nesteinstante.
+- Próximaação:aguardarSHA/testes/screenshotsdopainel,revisar/integrar,rodarregressãonecessária eumaúnicopushmain.
+
+## Integração final do carrossel — 30/10
+
+- Frontentregoueef2b02/4d9a87b;integradossemconflito namain,catálogo7PNG eexpectativaancient.pngpreservados. Build39unitáriosrootPASSARAM;34browserrootemexecução. MapCarouselrevisado:propsAPI,thumbnailfallback,aria-current,teclado,scrollapenastrilho/ResizeObserver.
+- Próximaação: confirmar34browser,agruparcheckpoint/commit eumaúnicopushmain,aguardarautodeploysemduplicarmanual. Screenshotsfront7PNGinspecionados,APIcontroladanãoE2Eprod.
+
 ## Tarefa vigente: seletor horizontal de mapas — 30/10
 
 - UsuáriopediuvermultiAPP eencaminharfrontcarrosselcomoimagemparaselecionarmapas. RepoautenticadoconsultadoSHA20df99f;FeaturedCities emfrontend/src/components/featured-cities.tsx eCSScity-exploration/hero-city-motion:miniatura+nome,overflowhorizontal,destaqueselecionado.
