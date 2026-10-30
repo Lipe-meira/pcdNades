@@ -1,3 +1,16 @@
+## Resultado real yt-dlp do link de exemplo — 30/10
+
+- TesteLOCALWindowsautorizadoFUNCIONOU. yt-dlp2026.08.19semconfig/plugins/cache/cookies/login reconheceuTikTokid7701366996495125766,duration90. URL https://vt.tiktok.com/ZSgqvRtpM/ . --download-sections '*0-10'+force-keyframes-at-cuts salvouexit0em~7s.
+- ArquivosomenteTEMP C:\Users\felip\AppData\Local\Temp\pcdnades-tiktok-test-4e1b098b4fcf49bab1ae906544fbc03b\sample.mp4. ffprobeREAL10.000s/1246618bytes/h264yuv420p576x1024/AAC;FFmpegdecodecompletoexit0. SemSupabaseStorage/cadastro/produçãomutados,semcookie/headersprivados/URLsassinadasregistrados.
+- Limitesdoteste:retries0/socket15/rwtimeout15/outputfs50MB,masNÃOprova teto debytesrede/fontscomduraçãolonga;fonteexemplo90s,amostra10s. NãoprovaVercelruntime/seleçãoUIlongduration,nãohabilitouimporter. Backendrecebeuevidênciaparaplanejarrealmetadata/clip/job/segurança/limites.
+- Próximaação:entregarresultadoao usuário;validararquiteturabackend/fonteslongasantesimplementaçãoprodução. Seleção<=90sfinal50MB,pontomaiorque180necessita contratoseparadoparaimport,longsourceevitardownloadinteiroindiscriminado. Tarefadesteexemploconcluída;docslocaissem pushmainisolado.
+
+## Teste yt-dlp autorizado com link específico — 30/10
+
+- Usuárioautorizoutestaryt-dlpURL https://vt.tiktok.com/ZSgqvRtpM/ efontelongacomseleçãoinício/fim<=90sfinal. Fonte180anteriorrevisadaporestaexigência,50MBfinalpermanece;limitesdownload/CPUseparadosnecessários.
+- Rootlocalyt-dlp2026.08.19 eFFmpeginstalados. Tentativametadadossemcookies/login/config/plugins/cache,timeout15/retries0,sembaixarconteúdoprimeiro. Nenhumaalteraçãoapp/configprodução/Storage. Backendacionadosomenteanálisearquiteturasegurança/download-sectionssemtestardownloadduplicado.
+- Mainbase125448b,originf4aa722,docsrootlocaissem push. Próximaação:recebermetadados/seacessível testarpequenotrechoTMP/ffprobe,limitarrecursossemcontornarbloqueios;sefalhaparar/explicartesteconcreto.
+
 ## Esclarecimento importação: tutoriais públicos de outros criadores — 30/10
 
 - Usuáriorespondeuexplicitamente'Pode ser de qualquer criador'. Antesdisseamigoscomacessopodemusar;issoexpressaacessofunção,nãoautorizaçãodetentordovídeo. OAuthcontapróprianãoatendecasogeral. Rootcomunicouinvestigarpúblicossemgarantiruniversal/restrições,bloqueadosdevemfalharclaro;autor/linkmetadados.
