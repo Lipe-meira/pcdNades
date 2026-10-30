@@ -25,3 +25,7 @@ PROCESSOR_BUSY no complete mantém a mídia para Retomar importação; na consul
 Testes de adaptador e navegador usam API/Auth/Storage controlados e vídeo sintético. Cobrem fonte2h/trecho90,horários,invalidcaps,previewnull,expiração,sourcebind,abort/troca de link,respostas antigas,timeout,complete perdido/ocupado,estágiosreais,failed/tamanho,preservação de cadastro e regressõesMP4/origem/player/CRUD/mobile320.
 
 Esses testes NÃO provam obtenção externa do TikTok ou execução no Vercel. Não foi alterada configuração de produção,nem houve deploy ou habilitação de importador pelo frontend. Integração,serviços remotos e publicação pertencem ao orquestrador após entrega completa e testada.
+
+## Bloqueio real observado pelo backend
+
+Em30/10o orquestrador informou que a consulta protegida passou,mas o servidorCDN recusou a obtenção com HTTP403. A rede foi interrompida,sem cookies,login,bypass ou fallback deRange. O frontend trata IMPORT_ACCESS_DENIED com orientação explícita para enviarMP4,preservando o cadastro e o vídeo anteriores. A importação em produção permanece desabilitada; testes controlados verdes não removem essa limitação real.

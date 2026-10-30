@@ -16,6 +16,7 @@ const messages: Record<string, string> = {
   IMPORT_RANGE_REQUIRED: "Não foi possível obter apenas o trecho selecionado. Escolha outro vídeo ou envie um MP4.",
   IMPORT_REDIRECT_LIMIT: "A obtenção do trecho encontrou redirecionamentos demais. Consulte novamente ou envie um MP4.",
   IMPORT_DESTINATION_DENIED: "Não foi possível obter este trecho da fonte permitida. Escolha outro vídeo ou envie um MP4.",
+  IMPORT_ACCESS_DENIED: "O servidor do vídeo recusou o acesso. Envie um MP4. O cadastro e o vídeo anteriores foram preservados.",
   UNAUTHORIZED:
     "Sua sessão expirou ou não foi iniciada. Entre novamente para continuar.",
   FORBIDDEN: "Sua conta não tem permissão de administrador para esta ação.",

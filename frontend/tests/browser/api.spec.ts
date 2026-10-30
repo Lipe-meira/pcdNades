@@ -1245,3 +1245,18 @@ test("TikTok: consulta recusa fonte longa, falha de rede e duração desconhecid
   await consultImport(page);
   await expect(page.getByText(/Prévia visual indisponível/)).toBeVisible();
 });
+
+test("TikTok: acesso recusado orienta MP4 e preserva o vídeo e o cadastro anteriores", async ({ page }) => {
+  const state = await setup(page, { initial: true, imports: true, importFailure: "IMPORT_ACCESS_DENIED" });
+  await openImportForm(page, true); await consultImport(page);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("O servidor do vídeo recusou o acesso. Envie um MP4.");
+  expect(state.published).toHaveLength(1);
+  expect(state.published[0].video.id).toBe(mediaId);
+  await expect(page.getByRole("button", { name: "Retomar importação", exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Enviar MP4", exact: true }).click();
+  await expect(page.getByLabel("Arquivo MP4", { exact: true })).toBeEnabled();
+  await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Granada de teste controlado");
+  await expect(page.getByRole("textbox", { name: "Instruções", exact: true })).toHaveValue(grenade.instructions);
+});
