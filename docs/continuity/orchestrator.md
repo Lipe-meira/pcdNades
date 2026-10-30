@@ -1,3 +1,9 @@
+## PNGs de granadas e lados fornecidos pelo usuário — 30/10
+
+- Usuáriopediuusar9PNGanexadosnomenu. Frontrecebeucaminhosoriginais/mapeamento:molotov4e8b0e69,smoke4cceabc2,flash7872a5d8,Todas6e41a1eb,Ambosf0408c47,CTb275540d,T5c7bbb19;Ambose208900eaparentaduplicado,deduplicarhash. HE85e61fc6reservadosemnovotipo/controlefuncional.
+- Implementarcópiabináriacomhash,PNGcontainnositens+segmentoslado,nomes/foco/contagenspreservados.Semnovosmodelosbackend/licençainventada,documentarorigemusuário. Testes/screenshotscommitsbranchfront.
+- ConjuntomainaindaSEMpush:carrossel+painelintegradoslocalmentepassaram39unit+38browserroot;aguardalogosmapas+PNGsfiltradospararevisãofinaleúnicopushmain. Próximaação:receberentregacompleta,testarepublicarumaúnicavez.
+
 ## Steering: logos dos mapas no carrossel — 30/10
 
 - Usuáriogostoucarrosselmaspediulogosemvezradares;indicouMurkyYT/cs2-map-icons eautorizoupesquisaalternativas. README/catálogofonteconsultados,snapshot9a77417b108eab6ee8c10d1140d62c0b77f54174. Juknumcomparado,tambémassetsValve. FonteMurkyescolhidaPNG7emblemasimages/de_MAP.png;arteValve,nãopresumirlicençaMIT/CC.
