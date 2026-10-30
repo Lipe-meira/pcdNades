@@ -1,3 +1,9 @@
+## Pedido vigente: importação efetiva de links — 30/10
+
+- Após422TikTokdesabilitado,usuáriopediu'funcionetudo/ajustar'. Rootreabriubackendparaviabilidade/implementaçãoefetiva,nãomaisreconhecimentoscaffoldcomosolução. Perguntaassíncronapendente:vídeospróprios/timeautorizadosououtroscriadores;issoafetamétododeconta/API.
+- Oficialconsultado:DisplayAPIexibemetadados/embed;TikTokPortabilityrequerapp/aprovação/OAuth,YouTubevedadownloadAPIsemaprovaçãoprévia. Restriçõesanterioresdownloadarmazenadoautorizado/semembed/bypasspagosmantidas;90s/50MB/clipfonte180. Backenddeveapontarmínimoprérequisitoreal/teste semnovosstubscomoentrega;docsIMPORTS.mdestãodesatualizadasnoprimeirobloco40s,backendavisado.
+- Mainlocal08ee2a4,originf4aa722,limponainicialização. Somentecheckpointrootaqui,semdeploy/migration/envremota/pushmain. Próximaação:receberrespostausuário/avaliaçãobackend,definirintegraçãorealviáveleconfignecessária,mantertestes/cadastros/MP4origempreservados.
+
 ## Concluído/publicado: player amplo e origem — 30/10
 
 - Únicopushmainf4aa722comfront14dabbf/f4cd0ad+backe1ff49a+checkpoint/migration004. AutodeploysREADY:frontdpl_9CSEAytoaD3NPYKjgNEGKRaBcYy7,APIdpl_7B7NbSKbHAP6SaDRrYbcqnokDHTj;aliasesprincipaiscorretos,semmanualduplicado.
