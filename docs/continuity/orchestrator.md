@@ -1,3 +1,13 @@
+## Migration004 aplicada e verificada — 30/10
+
+- Autorizaçãoexplícitausuáriorecebida. Migrationgrenade_originaplicadaSupabasecomsucesso. SQLbackend/tests/sql/origin-smoke.sqlrealPASSOUcomrollback:0/1,clear,paresincompletos,NaN/Infinity/limites,demaiscampospreservados. origin_x/yNULLdoubleprecisionconfirmados;semfixturespersistidos.
+- 48backend+43frontend/build/typecheckPASS;browserintegrado51/52+casoflaky6/6repetiçõesPASS. Nãodeclarar52/52root. Screenshotsorigem/playerinspecionados. Próximaação:umpushmaincomentregacompleta echeckpoint,aguardarautodeploy2projetos evalidarhealth/listalegadocomoriginnull/UIassets. TesteautenticadoE2Eorigemficausuário.
+
+## Publicação de origem autorizada — 30/10
+
+- Usuário confirmou aplicar004+SQLrollback+publicarconjunto. Gitmain6354b72limpoantesatualizarcheckpoint,commitsintegraçãolocaissem push. Iniciandochecagenschema,aplicação004,testesSQLreaissemalteraçõespersistentesnosregistros,entãoumpushcompleto.
+- Próximaaçãoexecutável:aplicar004apósconfirmarausênciadascolunas,executarsmokerollbackeverificarlegado,commitarcheckpoint epublicarumaúnicavez.
+
 ## Aguardando autorização004/publicação — 30/10
 
 - Implementaçãoconcretafront14dabbf/f4cd0ad+backe1ff49a integradaLOCAL;48backend+43frontend/build/typecheckPASS. Browserroot51/52passaram:APIvaziadesktopfalhouprimeiraheadingtimeout5s/capturabrancainicialização. SeisrepetiçõesdirecionadasPC/mobilePASSARAMsemalterarteste/timeouts;causanãoidentificadareproduzível,registrarflaky. Frontfull52/52reportado;mutaçãofixtureantigacorrigida(structuredClone)confirmada,nãoexplicavazioprimeiro.
