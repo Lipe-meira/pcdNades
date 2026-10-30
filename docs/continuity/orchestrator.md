@@ -1,3 +1,9 @@
+## Implementação importador TikTok autorizada via chat backend — 30/10
+
+- Backendencaminhouautorizaçãoexplícitausuário:'implementarpendências ecommitpush'. Rootdespachoubackendrealyt-dlpopt-in+inspectmetadata+clip/download/validation/storage;frontfluxolink/duração/prévia/intervalo90/50MB. Fontelongalimitesindependentes,nãorelaxarMP4upload180/90. TikTokprimeiro;YouTube/IGsemhabilitaçãoinferida.
+- Backdevefixarcontratocedoparafront:inspectsessionadmin/idcurto+clip/importjob;proteçãoSSRFtodosestágios/DNSredirectCDN/rebinding/processosemshell/hardlimitesredeCPUtemp. Vercelviabilidaderealpendente,semnovohostpago/credenciais/produção/migrationsempermissão. Testelocalantigo10ssóprovaacessoexemplo,nãoruntime.
+- Ambosprópriasbranches/checkpoints/commits/push,rootcoordenaentregacompletaantesmain. Mainlocal491e68b,originf4aa722,docslocaissem push. Próximaação:recebercontrato/arquiteturadecisiva,testarfontelongaeinfraantespublicação.
+
 ## Resultado real yt-dlp do link de exemplo — 30/10
 
 - TesteLOCALWindowsautorizadoFUNCIONOU. yt-dlp2026.08.19semconfig/plugins/cache/cookies/login reconheceuTikTokid7701366996495125766,duration90. URL https://vt.tiktok.com/ZSgqvRtpM/ . --download-sections '*0-10'+force-keyframes-at-cuts salvouexit0em~7s.
