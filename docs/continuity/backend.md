@@ -1,11 +1,13 @@
 # Checkpoint — backend
 
 Atualizado em: 30/10/2026, America/Sao_Paulo.
-Estado vigente: investigação de importação efetiva concluída documentalmente; bloqueio real para links de qualquer criador sob as restrições acordadas. Nenhum importador funcional habilitado; aguardar decisão de produto do orquestrador. Upload/recorte90 publicados conforme seu relato.
+Estado vigente: usuário autorizou implementar importação TikTok opt-in com yt-dlp, commit/push. Orquestrador aprovou contrato em backend/TIKTOK-IMPLEMENTATION.md. Em execução, nada remoto alterado; capability ainda desativada. Upload/recorte90 publicados conforme relato do root.
 
 ## Objetivo e pedido atual
 
-Pedido atual: investigar importação efetiva de tutoriais públicos de qualquer criador. Diagnóstico decisivo entregue ao orquestrador; ele orientou terminar correção documental e aguardar, sem código/produção. Estado e pré-requisitos completos em backend/IMPORTS.md. Registros de origem abaixo são histórico de tarefa já integrada; 004 aplicada pelo root, sem SQL executado por este chat.
+Pedido atual: implementar inspeção/metadados + seleção <=90s em fonte até2h + armazenamento efetivo TikTok. Sem relaxar upload180/90, sem cookies/login/bypass/host pago/prod. Root fez prova local yt-dlp2026.08.19 URLcorrigido vt/ZSgqvRtpM (90s ->10s h264/AAC decodePASS); não repetir esse download. Minha tarefa: código/fixtures offline/network seguro e contrato com front. Preview:null explícito aprovado. Fonte longa/Vercel ainda não comprovados.
+
+Em andamento: import-network.ts (proxyCONNECT/relayRange/pinningIPv4/budgets), import-runtime.ts (yt-dlp fixado+FFmpegMOV), tiktok.ts (schemas/metadados), scriptprepare-ytdlp e9testes novos passando; 53tests suite e typecheck PASS antes do runtime (9direcionados+typecheck PASS depois). Migration criada CLIlocal2.102.0 e movida para backend/migrations/20261030124528_tiktok_import_sessions.sql ainda vazia. Próxima ação: preencher migration/sessões/locks, testes API/processor, fixture fonte longa. Sem commit deste marco ainda, HEAD37cd072 já remoto. Arquivos novos/alterados exclusivamente backend/ e este checkpoint; ver gitstatus ao retomar.
 
 ## Localização e estado Git
 
@@ -384,3 +386,8 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - IMPORTS.md reescrito coerente: recorte90/fonte180/50MB jápublicado conforme root,003/004aplicadasporroot; importers continuamindisponíveis/funcionalidadeNÃOentregue,préreqreais e limitações deconexão explícitos. Sempretender transformarMP4direto emsoluçãoTikTok.
 - Verificação:8testesexistentesimporters passaram; componentecompilado reconheceu vt/ZSqvRtpM comoTikTokcurto e retornou422 semrede/mídia. Não visitado vídeo, não baixadomaterial de terceiros, nenhumtesteOAuth/credencial. Build não repetido porquesódocs.
 - Próxima ação aguardar decisão deproduto viaorquestrador, semalterarcódigo/política/produção/env/schema. Commit/push apenas IMPORTS.md echeckpoint nafeat/backend; main continuaentregainteiracoordenada,semcheckpointisoladomain.
+
+## PoC fonte longa e download-sections — início30/10
+- Usuário autorizou testar yt-dlp no exemplo corrigido vt/ZSgqvRtpM; teste real de rede/download é EXCLUSIVO do orquestrador, não duplicar.
+- Tarefa independente backend: avaliar metadata/preview, intervalo<=90s antes de baixar, fonte longa sem teto180 antigo, transferência/CPU/retries/deadline/SSRF CDNs.50MBFINALpermanece, limites fonte/rede separados precisam proposta explícita.
+- Próxima ação consultar docs yt-dlp/FFmpeg, preparar plano/PoCoffline sem execução de extrator contraURL. Sem cookies/login/DRMbypass/serviçoterceiro/pacotepago/deploy/SQL/env. Bloqueio de download real =>registrar/parar, não contornar.

@@ -18,7 +18,7 @@
   "type": "module",
   "private": "true",
   "scripts": {
-    "build": "tsc && node scripts/prepare-probe.mjs && node scripts/prepare-ffmpeg.mjs",
+    "build": "tsc && node scripts/prepare-probe.mjs && node scripts/prepare-ffmpeg.mjs && node scripts/prepare-ytdlp.mjs",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "dev": "tsx watch src/server.ts",
