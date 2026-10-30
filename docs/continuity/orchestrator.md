@@ -1,3 +1,9 @@
+## Contrato inicial importação efetiva alinhado — 30/10
+
+- Backendpropôs/rootalinhouPOST/media/imports/inspectadmin{sourceUrl}->201data{sourceId,provider,sourceUrl,videoId,title,author,durationSeconds,expiresAt,limits90s/50MB/fonte7200s};sessionowner15min. Fonte2hlimiteoperacionalindependenteupload180.
+- POST/media/imports{sourceId,clipobrigatório}->201MediaRecordid(status)preferido,envelopebackendconfirmar;GET/completeexistentes. SemURLCDN/tokenpúblico;previewnull+razãoclaraseproxyRangeinexistente. Frontrecebeucontrato. BackfundamentosDNS/IPpinning/proxyCONNECTbytes+relaylocalFFmpegsemCDNdiretaemavaliação/teste,segurançafundamentalanteshabilitar.
+- Próximaação:recebererrors/capabilitiescontratofinal evalidarrede/longsource/bytesequivalênciainfra.Sempublicaçãoparcial/novohostpago.
+
 ## Implementação importador TikTok autorizada via chat backend — 30/10
 
 - Backendencaminhouautorizaçãoexplícitausuário:'implementarpendências ecommitpush'. Rootdespachoubackendrealyt-dlpopt-in+inspectmetadata+clip/download/validation/storage;frontfluxolink/duração/prévia/intervalo90/50MB. Fontelongalimitesindependentes,nãorelaxarMP4upload180/90. TikTokprimeiro;YouTube/IGsemhabilitaçãoinferida.
