@@ -1,4 +1,4 @@
-import {BlockList,isIPv4,connect, type Socket} from 'node:net';
+import {BlockList,isIPv4,isIPv6,connect, type Socket} from 'node:net';
 import type {Duplex} from 'node:stream';
 import {lookup} from 'node:dns/promises';
 import {createServer, type IncomingMessage} from 'node:http';
@@ -9,13 +9,16 @@ export const importFailure=(code:string,statusCode=422)=>Object.assign(new Error
 const denied=new BlockList();
 for(const [network,prefix] of [['0.0.0.0',8],['10.0.0.0',8],['100.64.0.0',10],['127.0.0.0',8],['169.254.0.0',16],['172.16.0.0',12],['192.0.0.0',24],['192.0.2.0',24],['192.88.99.0',24],['192.168.0.0',16],['198.18.0.0',15],['198.51.100.0',24],['203.0.113.0',24],['224.0.0.0',3]] as const)denied.addSubnet(network,prefix,'ipv4');
 export const publicIPv4=(ip:string)=>isIPv4(ip)&&!denied.check(ip,'ipv4');
+const globalIPv6=new BlockList(),specialIPv6=new BlockList();globalIPv6.addSubnet('2000::',3,'ipv6');
+for(const [ip,prefix]of [['2001::',23],['2001:db8::',32],['2002::',16],['3fff::',20]] as const)specialIPv6.addSubnet(ip,prefix,'ipv6');
+const publicDNSAddress=(ip:string)=>publicIPv4(ip)||(isIPv6(ip)&&globalIPv6.check(ip,'ipv6')&&!specialIPv6.check(ip,'ipv6'));
 const domains=['tiktok.com','tiktokv.com','tiktokcdn.com','tiktokcdn-us.com','tiktokv.us','byteoversea.com','ibytedtos.com','ibyteimg.com','muscdn.com','ttwstatic.com','akamaized.net'];
 export function allowedImportHost(host:string){return /^[a-z0-9.-]+$/.test(host)&&domains.some(d=>host===d||host.endsWith(`.${d}`));}
-// Inspect ALL A/AAAA answers. IPv6 is deliberately unsupported, not silently skipped.
+// Inspect ALL A/AAAA answers, then connect only to a validated IPv4 address.
 export async function pinnedAddress(host:string,resolve:(host:string)=>Promise<string[]>=async h=>(await lookup(h,{all:true,verbatim:true})).map(a=>a.address)){
  if(!allowedImportHost(host))throw importFailure('IMPORT_DESTINATION_DENIED');
- const addresses=await resolve(host);if(!addresses.length||addresses.some(ip=>!publicIPv4(ip)))throw importFailure('IMPORT_DESTINATION_DENIED');
- return addresses[0];
+ const addresses=await resolve(host);if(!addresses.length||addresses.some(ip=>!publicDNSAddress(ip)))throw importFailure('IMPORT_DESTINATION_DENIED');
+ const selected=addresses.find(publicIPv4);if(!selected)throw importFailure('IMPORT_DESTINATION_DENIED');return selected;
 }
 export class TransferBudget {
  bytes=0;requests=0;error:Error|undefined;
@@ -26,6 +29,13 @@ export class TransferBudget {
 }
 function sourceUrl(raw:string){let u:URL;try{u=new URL(raw);}catch{throw importFailure('IMPORT_DESTINATION_DENIED');}if(u.protocol!=='https:'||u.username||u.password||u.port||u.hash||!allowedImportHost(u.hostname))throw importFailure('IMPORT_DESTINATION_DENIED');return u;}
 export type ImportHeaders={ 'User-Agent'?:string;Referer?:string };
+export function validateContentRange(request:string,response:string,length:string|undefined,previousTotal:number|undefined){
+ const wanted=request.match(/^bytes=(\d+)-(\d*)$/),actual=response.match(/^bytes (\d+)-(\d+)\/(\d+)$/);
+ if(!wanted||!actual)throw importFailure('IMPORT_RANGE_UNSUPPORTED');
+ const [start,end,total]=actual.slice(1).map(Number),requestedStart=Number(wanted[1]),requestedEnd=wanted[2]?Number(wanted[2]):undefined;
+ if(![start,end,total,requestedStart,...(requestedEnd===undefined?[]:[requestedEnd])].every(Number.isSafeInteger)||start!==requestedStart||end<start||end>=total||total>8000000000||(requestedEnd!==undefined&&end>requestedEnd)||(previousTotal!==undefined&&previousTotal!==total)||length===undefined||!/^\d+$/.test(length)||Number(length)!==end-start+1)throw importFailure('IMPORT_RANGE_UNSUPPORTED');
+ return total;
+}
 export function safeHeaders(raw:unknown):ImportHeaders{
  const out:ImportHeaders={};if(!raw||typeof raw!=='object')return out;
  for(const name of ['User-Agent','Referer'] as const){const v=(raw as Record<string,unknown>)[name];if(typeof v==='string'&&v.length<=2048&&!/[\r\n\x00-\x1f]/.test(v)){if(name==='Referer')sourceUrl(v);out[name]=v;}}
@@ -72,12 +82,12 @@ export async function startMetadataProxy(budget:TransferBudget){
 
 // FFmpeg sees ONE opaque loopback MOV resource. It cannot choose a CDN URL or headers.
 export async function startMediaRelay(remote:string,headers:ImportHeaders,budget:TransferBudget,open:typeof openRemote=openRemote){
- sourceUrl(remote);const token=randomBytes(24).toString('hex'),connections=new Set<Socket>();
+ sourceUrl(remote);const token=randomBytes(24).toString('hex'),connections=new Set<Socket>();let total:number|undefined;
  const server=createServer((req,res)=>{void(async()=>{
   if(req.url!==`/${token}.mp4`||req.method!=='GET')throw importFailure('IMPORT_DESTINATION_DENIED');
   const range=req.headers.range;if(!range||!/^bytes=\d+-\d*$/.test(range))throw importFailure('IMPORT_RANGE_REQUIRED');
   const response=await open(remote,budget,{...headers,Range:range,'Accept-Encoding':'identity'});
-  if(response.statusCode!==206||!/^bytes \d+-\d+\/\d+$/.test(response.headers['content-range']??'')||response.headers['content-encoding']){response.destroy();throw importFailure('IMPORT_RANGE_UNSUPPORTED');}
+  try{if(response.statusCode!==206||response.headers['content-encoding'])throw importFailure('IMPORT_RANGE_UNSUPPORTED');total=validateContentRange(range,response.headers['content-range']??'',response.headers['content-length'],total);}catch(error){response.destroy();throw error;}
   res.writeHead(206,{'Content-Type':'video/mp4','Content-Range':response.headers['content-range']!,'Accept-Ranges':'bytes',...(response.headers['content-length']?{'Content-Length':response.headers['content-length']}:{})});
   res.on('close',()=>response.destroy());response.on('error',()=>res.destroy());response.pipe(res);
  })().catch(error=>{budget.error??=error instanceof Error?error:importFailure('IMPORT_FAILED');if(!res.headersSent)res.writeHead(502);res.end();});});

@@ -9,7 +9,7 @@ test('extractor uses only metadata, fixed extractors and an explicit authenticat
 test('selects a bounded progressive MP4; rejects manifests, DRM, credentials and external hosts',()=>{
  const f={url:'https://v16.tiktokcdn.com/video.mp4?secret=1',protocol:'https',ext:'mp4',vcodec:'h264',acodec:'aac',width:576,height:1024};
  assert.equal(selectProgressiveFormat({formats:[f]}).url,f.url);
- for(const patch of [{protocol:'m3u8_native'},{has_drm:true},{url:'https://127.0.0.1/x'},{url:'https://a:b@v16.tiktokcdn.com/x'},{url:'http://v16.tiktokcdn.com/x'},{width:4000},{acodec:'none'}])assert.throws(()=>selectProgressiveFormat({formats:[{...f,...patch}]}));
+ for(const patch of [{protocol:'m3u8_native'},{has_drm:true},{url:'https://127.0.0.1/x'},{url:'https://a:b@v16.tiktokcdn.com/x'},{url:'http://v16.tiktokcdn.com/x'},{width:4000},{acodec:'none'},{width:undefined},{height:NaN},{width:0.5},{vcodec:7},{vcodec:'unknown'}])assert.throws(()=>selectProgressiveFormat({formats:[{...f,...patch}]}));
 });
 test('encoder receives loopback only, fixed MOV demuxer, no external references and fixed output',()=>{
  const args=encodeSectionArgs('http://127.0.0.1:1234/random.mp4','C:/temp/out.mp4',{startSeconds:1800,endSeconds:1810},50000000);

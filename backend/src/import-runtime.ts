@@ -24,7 +24,7 @@ export function extractorArgs(url:string,proxy:string){
 export function selectProgressiveFormat(raw:any){
  const formats=Array.isArray(raw.formats)?raw.formats:[raw];
  const allowed=formats.filter((f:any)=>{
-  if(f.has_drm||f.protocol!=='https'||f.ext!=='mp4'||!f.vcodec||f.vcodec==='none'||!f.acodec||f.acodec==='none'||f.width<=0||f.height<=0||f.width>1920||f.height>1920)return false;
+  if(f.has_drm||f.protocol!=='https'||f.ext!=='mp4'||typeof f.vcodec!=='string'||!/^(h264|h265|hevc|avc1(?:\.[a-z0-9]+)?|hev1(?:\.[a-z0-9.]+)?)$/i.test(f.vcodec)||typeof f.acodec!=='string'||!/^(aac|mp4a(?:\.[a-z0-9.]+)?)$/i.test(f.acodec)||![f.width,f.height].every(n=>Number.isSafeInteger(n)&&n>0&&n<=1920))return false;
   try{const u=new URL(f.url);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!u.hash&&allowedImportHost(u.hostname);}catch{return false;}
  });
  allowed.sort((a:any,b:any)=>(b.height*b.width)-(a.height*a.width));

@@ -8,8 +8,8 @@ Plano de execução (skill writing-plans; caminho adaptado à responsabilidade e
 
 - [x] Escrever testes de política, intervalos e metadados; observar falha por módulos ausentes; implementar módulos internos sem habilitar rotas.
 - [x] Testar argumentos fixos, seleção de formato e configuração opt-in; implementar extrator e preparação binária com SHA256.
-- [ ] Preparar migration local: sessões privadas, expiração, rate limit, criação atômica e lease global.
-- [ ] Testar API/admin/idempotência e processamento; ligar inspeção/importação ao fluxo existente de mídia.
+- [x] Preparar migration local: sessões privadas, expiração, rate limit, criação atômica e lease global. Execução SQL ainda pendente.
+- [x] Testar API/admin e processamento com dependências simuladas; ligar inspeção/importação ao fluxo existente de mídia. Idempotência SQL exige validação real separada.
 - [ ] Testar relay/Range e recorte real não inicial em fonte sintética longa, cancelamento e limites. Distinguir fixtures locais de E2E TikTok/Vercel.
 - [ ] Executar suite/typecheck/build, documentar limites e pendências; commits coesos e push feat/backend. Nenhuma alteração remota/deploy nesta entrega.
 
