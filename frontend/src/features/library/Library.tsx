@@ -4,6 +4,7 @@ import { typeLabels } from "../../domain/types";
 import { filterLineups } from "../../domain/lineups";
 import { Radar } from "../../components/Radar";
 import { Icon } from "../../components/Icon";
+import { MapCarousel } from "../../components/MapCarousel";
 import { VideoPlayer } from "./VideoPlayer";
 import type { LineupService } from "../../services/lineupService";
 
@@ -53,21 +54,9 @@ export function Library({
           <h1>{map.name}</h1>
           <p>Escolha uma granada. Treine a execução.</p>
         </div>
-        <label className="map-select">
-          Mapa
-          <select
-            aria-label="Mapa"
-            value={map.id}
-            onChange={(event) => updateFilters({ mapId: event.target.value })}
-          >
-            {maps.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </label>
+
       </div>
+      <MapCarousel maps={maps} selectedId={map.id} onSelect={(mapId) => updateFilters({ mapId })} />
       <div className="library-layout">
         <section className="radar-column" aria-label="Mapa e filtros">
           <div className="filters">

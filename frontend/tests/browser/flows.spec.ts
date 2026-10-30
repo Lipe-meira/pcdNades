@@ -49,7 +49,7 @@ test("filtros combinados, troca de mapa e estado vazio", async ({ page }) => {
     page.getByRole("heading", { name: "Nenhuma granada por aqui" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Limpar filtros" }).click();
-  await page.getByLabel("Mapa", { exact: true }).selectOption("ancient");
+  await page.getByRole("navigation", { name: "Selecionar mapa" }).getByRole("button", { name: "Ancient", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Ancient", exact: true }),
   ).toBeVisible();
@@ -248,4 +248,30 @@ test("layouts de 320px até desktop não transbordam; assets não falham", async
       ),
   ).toBe(true);
   expect(errors).toEqual([]);
+});
+
+
+test("faixa de mapas: teclado, seleção e limpeza de detalhes preservam filtros", async ({ page }) => {
+  const rail = page.getByRole("navigation", { name: "Selecionar mapa" });
+  const mirage = rail.getByRole("button", { name: "Mirage", exact: true });
+  await expect(mirage).toHaveAttribute("aria-current", "true");
+  await page.getByRole("button", { name: /^Exemplo de smoke Smoke/ }).click();
+  await page.getByRole("group", { name: "Tipo de granada" }).getByRole("button", { name: "Smoke", exact: true }).click();
+  await mirage.focus();
+  await page.keyboard.press("End");
+  const last = rail.getByRole("button").last();
+  await expect(last).toBeFocused();
+  await expect(mirage).toHaveAttribute("aria-current", "true");
+  await page.keyboard.press("Enter");
+  await expect(last).toHaveAttribute("aria-current", "true");
+  await expect(page.getByRole("region", { name: "Detalhes da granada" })).toHaveCount(0);
+  await expect(page.getByRole("group", { name: "Tipo de granada" }).getByRole("button", { name: "Smoke", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("Home");
+  await expect(mirage).toBeFocused();
+  await page.keyboard.press("Space");
+  await expect(mirage).toHaveAttribute("aria-current", "true");
+  await page.keyboard.press("ArrowRight");
+  await expect(rail.getByRole("button").nth(1)).toBeFocused();
+  await page.keyboard.press("ArrowLeft");
+  await expect(mirage).toBeFocused();
 });

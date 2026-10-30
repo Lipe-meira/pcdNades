@@ -751,3 +751,50 @@ test("recorte: capacidades disabled e reseleção preservam vídeo inteiro sem c
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(state.clip).toBeNull();
 });
+
+
+test("faixa API: sete mapas dinâmicos, rolagem local e falha de miniatura", async ({ page }, testInfo) => {
+  await setup(page, { initial: true });
+  const maps = ["Mirage", "Inferno", "Ancient", "Anubis", "Dust II", "Nuke", "Train"].map((name, index) => ({
+    id: index === 0 ? "mirage" : `controlled-map-${index}`,
+    name,
+    radar: { imageUrl: `/maps/mirage.svg?fixture=${index}`, width:1024, height:1024, coordinateVersion:`controlled-version-${index}` },
+  }));
+  await page.route(`${api}/maps`, route => reply(route, { json: { data: maps } }));
+  await page.goto("/");
+  const rail = page.getByRole("navigation", { name: "Selecionar mapa" });
+  await expect(rail.getByRole("button")).toHaveCount(7);
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("map-carousel.png"), fullPage:true });
+  const first = rail.getByRole("button", { name:"Mirage", exact:true });
+  await first.focus();
+  const top = await page.evaluate(() => scrollY);
+  await page.keyboard.press("End");
+  const last = rail.getByRole("button", { name:"Train", exact:true });
+  await expect(last).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(last).toHaveAttribute("aria-current", "true");
+  await expect(page.getByRole("heading", { name:"Train", exact:true })).toBeVisible();
+  await expect(page.getByAltText("Radar do mapa Train")).toHaveAttribute("src", maps[6].radar.imageUrl);
+  expect(await page.evaluate(() => scrollY)).toBe(top);
+  expect(await last.evaluate(button => { const b=button.getBoundingClientRect(); const rail=button.closest('ul')!.getBoundingClientRect();return b.left>=rail.left && b.right<=rail.right; })).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({ path:testInfo.outputPath("map-carousel-selected.png"), fullPage:true });
+  await page.setViewportSize({ width: 320, height: 900 });
+  await expect.poll(() => last.evaluate(button => {
+    const item = button.getBoundingClientRect();
+    const frame = button.closest('ul')!.getBoundingClientRect();
+    return item.left >= frame.left && item.right <= frame.right;
+  })).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.keyboard.press("Home");
+  await page.keyboard.press("Enter");
+  await expect(first).toHaveAttribute("aria-current", "true");
+  await page.route("**/maps/mirage.svg?fixture=6", route => route.abort());
+  await page.reload();
+  await expect(rail.getByRole("button", { name:"Train", exact:true }).locator("img")).toHaveCount(0);
+  await rail.getByRole("button", { name:"Train", exact:true }).click();
+  await expect(page.getByRole("heading", { name:"Radar indisponível" })).toBeVisible();
+  await first.click();
+  await expect(page.getByAltText("Radar do mapa Mirage")).toBeVisible();
+});
