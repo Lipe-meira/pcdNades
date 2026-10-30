@@ -1,3 +1,22 @@
+## Entrega final — carrossel de mapas (30/10/2026)
+
+- Implementação concluída na feat/frontend, base a2db01a, worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2. Entrega funcional eef2b02 enviada para origin/feat/frontend; checks concluídos.
+- MapCarousel deriva lista de maps/API, sem IDs/quantidade fixos, thumb radarUrl48x32 inteiras e fallback iniciais, botão48px, aria-current, foco visível. Tab/Enter/Espaço nativos; setas/Home/End movem foco sem ativar. Rolagem nativa/manual com overscrollcontain, sem autoplay/animação. Reveal scrollBy somente horizontal da faixa; ResizeObserver mantém selecionado visível ao redimensionar. Admin select e lógica CRUD/recorte/filtros preservados.
+- Arquivos: frontend/src/components/MapCarousel.tsx,features/library/Library.tsx,styles.css,tests/browser/{api,flows}.spec.ts,docs/map-carousel.md; este checkpoint. Sem novas dependências/assets/fontes/env/backend/raiz. Radares/demoData intocados.
+- Verificações: build/typecheck e39unitários verdes;34/34 browser PC/mobile verdes no fullrun final, incluindo resize320. git diff --check limpo. Novos casos demo teclado/filtros/limpeza de detalhes e API7 dinâmicos/fallback/seleção/scrolllocal/resize320. Primeira tentativa API falhou por acento corrompido na asserção gerada; corrigido; não era defeito da UI.
+- Render real inspecionado desktop1440/mobile390/320 com7PNG originais de origin/main lidos por git show em memória e servidos via interceptação local. Nenhum arquivo de catálogo/assets foi copiado/editado no ramo. Todos7 carregaram1024 e nenhum overflowglobal. Screenshots: C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/carousel-real-1440.png,carousel-real-390.png,carousel-real-320.png,carousel-real-selected-320.png. API controlada vazia e assets reais; não E2E produção. Script inicial de captura omitiu capabilities e precisou correção; capturas finais carregaram corretamente.
+- Referência multiAPP commit20df99f6232ab66012f18b3f5c4d850f02d6a24b repassada pelo root e screenshot original inspecionado. Design compacto descrito em frontend/docs/map-carousel.md; sem assets externos.
+- Integração PENDENTE/root: branch3SVG mantida, main7PNG3b06bbc/a8aa9ee preservada. flows altera somente seleção via nav/button + teste novo; manter correção mainb554c2c /maps/valve/ancient.png ao integrar (nesta branch expectativaSVG legada inalterada).
+- Política vigente: main recebe apenas pendência finalizada/testada, sem pushes isolados de checkpoint; branches próprias podem commit/push. Previews Vercel desativados segundo root, nenhum preview/manual/deploy nesta tarefa. Produção45d0693 informada pelo root30/10; não validada aqui. Sem E2E remoto novo.
+- Próxima ação: enviar SHA/capturas/checkpoint ao orquestrador; root integra/testa7PNG. HEAD remoto confirmado e árvore limpa após push funcional; checkpoint final em commit de documentação separado. Sem melhorias extras. Registros abaixo históricos.
+## Tarefa atual — faixa de mapas (30/10/2026)
+
+- Base a2db01a, branch feat/frontend, worktree exclusivo; Git limpo ao iniciar. Implementar faixa horizontal compacta inspirada no multiAPP, substituindo somente seletor da biblioteca. Fonte: maps API/demo, miniaturas dos próprios radares, sem catálogo hardcoded ou novos assets.
+- Direção recebida já concreta/autorizada: 48px, miniatura+nome, selecionado areia/azul, foco e teclado, swipe manual, selecionado visível; sem autoplay. Admin/CRUD/recorte/filtros preservados.
+- Em andamento: MapCarousel + ligação Library; próximos passos testes API7mapas/demo/teclado/fallback, build/unit/browser e screenshots desktop/mobile; commit/push apenas feat/frontend quando finalizado/testado.
+- Política: main apenas integração completa/testada pelo orquestrador; checkpoints na branch própria. Previews automáticos desativados nos dois projetos segundo root; nenhum preview/manual/deploy nesta tarefa. Produção45d0693 informada pelo root30/10, não verificada aqui.
+- Main contém7PNG3b06bbc/a8aa9ee, branch ainda3SVG; não editar catálogo/radares nem fazer merge. Testes controlados cobrirão lista7 dinâmica; root preserva PNG ao integrar. Importers3disabled/90s permanecem.
+
 ## Marco mais recente — identidade visual pronta para integração (29/10/2026)
 
 - Core recorte90 entregue e enviado em ddda8de (origin/feat/frontend). Identidade visual em commit separado nesta entrega; consultar git log para SHA.
@@ -73,4 +92,3 @@ Dois objetivos vigentes: (1) seletor início/fim com prévia MP4 local, saída<=
 
 - Atéa3033c8:API/inline,timeouts/erros e30unit+26browser;7e0490b pausa.
 - Nova autorização:coreclip90+prévia concluído39unit/30browser; direção estética adicional recebida e assetinspecionado. Registro por marco antes da identidade visual.
-
