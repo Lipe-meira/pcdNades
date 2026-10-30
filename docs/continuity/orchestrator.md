@@ -1,3 +1,9 @@
+## Consolidação solicitada na branch do backend — 30/10
+
+- Usuário'pormandetudoprogit'eespecificou'NABRANCHDOBACK'. Consolidaçãoautorizadanafeat/backend:backend5c75558,frontend494ae91echeckpointsrootmain8a0a9d7+estecommitlocal. NÃOmainpush/deploy/publicação.
+- Gitconferidoinício:rootmainahead19docslimpo;backfeatbackend5c75558limpo/sync;front494ae91limpo/sync. ChatbackendfarámergesemPRÓPRIOworktree,preservarusuárioseaparecermudançalocal,nãoforcepush. Objetivoébackuptudocomestadohonesto403/capOFF/migrationimportnãoaplicada.
+- Próximaação:backendmergeoriginfeatfrontend+mainLOCALrootdocs,conferirconflitos/build/testesapropriados/checkpoint/pushfeatbackend,rootverificaráremotoeconteúdo. Semresolver403nemnovorede/pagosnessatarefa.
+
 ## Retomada TikTok encerrada com causa externa ainda indeterminada — 30/10
 
 - Backendpush5c75558,árvorelimpareportada;73tests/typecheck/build/bootstrap/diffcheck/proxyofflinePASS. Fixformato+headersherdadosconcretos,nãoresolveram403real. TransporteOFFLINENodevsFFmpeg6.1.1path/queryencoded/Range/headerVALUESiguais;diferençasnomesAccept-Encoding/Icy-Metadata,nãocausalidadecomprovada.
