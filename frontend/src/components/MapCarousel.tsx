@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { GameMap } from "../domain/types";
+import { mapLogoUrl } from "./mapLogos";
 
 function MapThumbnail({ map }: { map: GameMap }) {
   const [broken, setBroken] = useState(false);
+  const logo = mapLogoUrl(map.id);
   return (
     <span className="map-thumbnail" aria-hidden="true">
-      {broken ? <span>{map.name.slice(0, 2)}</span> : (
-        <img src={map.radarUrl} alt="" width="48" height="32" draggable={false}
+      {broken || !logo ? <span>{map.name.slice(0, 2)}</span> : (
+        <img src={logo} alt="" width="48" height="32" draggable={false}
           onError={() => setBroken(true)} />
       )}
     </span>
@@ -57,7 +59,7 @@ export function MapCarousel({ maps, selectedId, onSelect }: {
                 event.preventDefault();
                 buttons.current.get(maps[target].id)?.focus({ preventScroll: true });
               }}>
-              <MapThumbnail key={map.radarUrl} map={map} />
+              <MapThumbnail key={map.id} map={map} />
               <span>{map.name}</span>
             </button>
           </li>

@@ -1,3 +1,15 @@
+## Logos concluídos; próximo marco PNG dos filtros (30/10/2026)
+
+- Logos7 concluídos sobre044a4e2,feat/frontend. RegistryUI mapLogos.ts usaPNGlocal porIDconhecido; desconhecido/falha usa iniciais+nome semradar/hotlink. Contain48x32preservaemblema,metadados/radares/APIintactos.
+- FonteMurkyYT/cs2-map-icons snapshot9a77417b108eab6ee8c10d1140d62c0b77f54174,7PNG512x512,total990370B. MIME/assinatura/dimensões/hashes/aparência verificados; nenhum scriptrepoexecutado. PropriedadeValve conformeREADMEinspecionado,semMIT/CCinventada; atribuição/URLs/SHAemfrontend/public/maps/icons/ATTRIBUTION.md.
+- Build/typecheckPASS,39unitPASS,40/40browserPASS(38,4s):7logoslocais512px,desconhecido,falha conhecida semafetar radar/acessibilidade e regressõespainel/carrossel/CRUD/clip. Render realinspecionado1440/390/320,7logoscarregados,semoverflow. Screenshots no diretório devisualizações anterior:logos-real-1440.png,logos-real-390.png,logos-real-320.png,logos-real-selected-320.png. APIcontrolada/dadosdemo+radaresPNGmainlidosmemória,nãoE2Eprod.
+- Arquivoslogos:frontend/public/maps/icons/*;src/components/{mapLogos.ts,MapCarousel.tsx};tests/browser/api.spec.ts;docs/map-carousel.md;checkpoint. Próximo commitcoeso logos apósdiffcheck,sembackend/main/deploy.
+- NOVOsteering recebido antesmainpush: PNGoriginaisusuário para íconesdetipos/lados noLibraryFilters. Próximopasso copiar8PNG(7usados+HEreservado),deduplicarAmbos,verificarhashes evisual;substituirsomenteíconesdecorativos,containnãocortar,nemnovotipoHE. Testarassets/fallback/texto/320 e regressões;novo commitseparado. RootaguardaLOGOS+PNGFILTROScompletos,testados/revisadosjuntos antesmainpush. Semmaisnovoscopos.
+## Em andamento — logos nas miniaturas (30/10/2026)
+
+- Novo steering: substituir radares nas miniaturas por logos dos mapas; preservar carrossel/painel e radaresprincipais. Base044a4e2,branchfeat/frontend limpa ao iniciar,semmain/deploy. Root aguarda logos para entrega única.
+- Fonte definida root: MurkyYT/cs2-map-icons snapshot9a77417b108eab6ee8c10d1140d62c0b77f54174; baixar somente7PNG raw fixos. AssetsValve,semlicençaMIT/CCinventada. Download concluído frontend/public/maps/icons,7image/png512x512,total990370B,hashesemATTRIBUTION.md; todos7inspecionadosvisualmente,sem edição.
+- Em andamento: registryUI mapId→logo separado daAPI,MapThumbnailusaobjectfitcontain,fallbacktexto para desconhecido/onError semvoltaradar. Próximos passos teste7logoslocais/desconhecido/erro,regressõesbuild39unit/browser40,screenshotsPC/mobile7PNGprincipaisinalterados,checkpoint/commitseparado/pushbranch.
 ## Entrega final — painel de filtros e carrossel juntos (30/10/2026)
 
 - Painel concluído e testado sobre4d9a87b na feat/frontend; commit desta entrega feat(frontend): organiza filtros em painel com contagens. Worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2. Push apenas branch própria após checks; root coordena integração completa com carrossel antes mainpush.

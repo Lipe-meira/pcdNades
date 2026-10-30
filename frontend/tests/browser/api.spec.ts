@@ -816,3 +816,37 @@ test("faixa API: sete mapas dinâmicos, rolagem local e falha de miniatura", asy
   await first.click();
   await expect(page.getByAltText("Radar do mapa Mirage")).toBeVisible();
 });
+
+test("logos locais dos sete mapas e fallback sem usar radar como miniatura", async ({ page }, testInfo) => {
+  await setup(page);
+  const definitions = [
+    ["mirage", "Mirage"], ["inferno", "Inferno"], ["ancient", "Ancient"],
+    ["cache", "Cache"], ["nuke", "Nuke"], ["dust2", "Dust II"], ["anubis", "Anubis"],
+    ["unknown-map", "Mapa novo"],
+  ];
+  await page.route(`${api}/maps`, (route) => reply(route, { json: { data: definitions.map(([id, name]) => ({
+    id, name, radar: { imageUrl: `/maps/mirage.svg?logo-test=${id}`, width: 1024, height: 1024, coordinateVersion: `controlled-${id}` },
+  })) } }));
+  await page.goto("/");
+  const rail = page.getByRole("navigation", { name: "Selecionar mapa" });
+  for (const [id, name] of definitions.slice(0, 7)) {
+    const image = rail.getByRole("button", { name, exact: true }).locator("img");
+    await expect(image).toHaveAttribute("src", `/maps/icons/${id}.png`);
+    await expect.poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBe(512);
+  }
+  const unknown = rail.getByRole("button", { name: "Mapa novo", exact: true });
+  await expect(unknown.locator("img")).toHaveCount(0);
+  await unknown.click();
+  await expect(unknown).toHaveAttribute("aria-current", "true");
+  await expect(page.getByAltText("Radar do mapa Mapa novo")).toHaveAttribute("src", "/maps/mirage.svg?logo-test=unknown-map");
+  await rail.getByRole("button", { name: "Mirage", exact: true }).click();
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("map-logos.png"), fullPage: true });
+  await page.route("**/maps/icons/mirage.png", (route) => route.abort());
+  await page.reload();
+  const mirage = rail.getByRole("button", { name: "Mirage", exact: true });
+  await expect(mirage.locator("img")).toHaveCount(0);
+  await expect(mirage).toHaveAttribute("aria-current", "true");
+  await expect(page.getByAltText("Radar do mapa Mirage")).toBeVisible();
+  await expect(rail.locator("img[src*='.svg']")).toHaveCount(0);
+});
