@@ -1,3 +1,9 @@
+## Bloqueio real confirmado: CDN retorna403 — 30/10
+
+- ÚnicodiagnósticoautorizadoheadersRangeconcluiuHTTP403,1req1313B,ContentLength504,semContentRange/encoding;aplicação nãoconsumiu body. Backprecisoureextrairmetadata1vez(tempanteriorlimpo),155170B. RedePARADA,nãocookies/login/proxyexterno/fallbackdownloadoarquivo.
+- BackendclassificaráIMPORT_ACCESS_DENIED/tests/docs/provas+commitpush. Frontavisadomensagemclara/capOFF. ProtectedimportNÃOfuncionaexemploapesarrootyt-dlpsimples10sPASS;consultaSIM. Usuáriofoiinformadodadiferençarealedebloqueiosemclaimcompleto.
+- Próximaação:receberSHAsfinais/read-onlyreview/resumolimitaçõessempublicar/habilitarincompleto. Vercel/sourceimportStorageE2Eaindapendentes;capdefaultfalse/prodsemnovamutação.
+
 ## Protected TikTok: consulta passa, Range ainda falha — 30/10
 
 - BackendcorrigiuIE_NAMEselectorlinkcurto(vm.tiktok emvezTikTokVM). Offlineold0CONNECT/fixcomCONNECT comprovoucausaconfig. UMretesteaprovadoprotegidoINSPECTPASSid7701366996495125766/autordgm.cs2/duração90s/metadata154473B. DOWNLOADparouIMPORT_RANGE_UNSUPPORTED,semStorage/saídavalidada,nãofeaturefuncional.
