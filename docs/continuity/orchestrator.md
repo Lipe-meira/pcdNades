@@ -1,3 +1,14 @@
+## Publicação concluída — 30/10
+
+- LimiteVercelliberou;duastentativasautorizadasdeproduçãoaceitas eREADY em45d0693 (origin/main). API dpl_5Nw511hhh3AKqJzG3Sbpugfk4csN;front dpl_2HNspK7fkj1zN653JmBmLaF4XM21,aliasesprincipaiscorretos.
+- HTTP real:APIhealth200configuredtrue;capabilities200upload90s/50MB,trimmingenabledtrue/fonte180s50MB,3importersdisabled. GrenadapreexistentesmoketapeteCTpermanecepublicada/videoReady. Site200,logoPNG200image/png eHTMLfontenova. Nãoexecutadoupload/recorterealautenticadonestaretentativa;esseE2Eaindapendente.
+- Próximopasso:usuárioatualizapáginaeexperimentaprévia/recorte,checarruntimeapósfeedback. Semnovocódigo/serviço/segredolido. Mainlocaltemdocs11058eb/1f6073bmaisestecheckpoint;sem pushstatusparaevitardeployredundante,seguirpolíticadeentregaagrupada.
+
+## Retentativa de publicação autorizada — 30/10
+
+- Usuário pediu tentardeploy novamente para verificarreset. Gitlimpo maincom2commitsdocs locais;origin/main45d0693. Semmudançacódigo;publicarversão járemota,semnovo pushparaevitardeployduplicado.
+- Próximaação: criaruma tentativaAPI/front,inspecionarREADY/erros ehealth/capabilities;se402persistir,nãorepetirloop. Checkpointlocaljuntoentregaseguinte.
+
 ## Previews desativados a pedido do usuário — 29/10
 
 - Usuáriopediusomentemain. Vercelupdate_project aplicado com previewDeploymentsDisabled:true em pcdnades epcdnades-api,ambosretornossemerror. Getprojectpósalteraçãoéprojeçãoreduzidaquenãoexpõeessaflag;nãohouvetestepushparagerarpreviewnemdeploy. Produçãomainconfigpreservada.
