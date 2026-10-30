@@ -1,3 +1,9 @@
+## Concluído/publicado: player amplo e origem — 30/10
+
+- Únicopushmainf4aa722comfront14dabbf/f4cd0ad+backe1ff49a+checkpoint/migration004. AutodeploysREADY:frontdpl_9CSEAytoaD3NPYKjgNEGKRaBcYy7,APIdpl_7B7NbSKbHAP6SaDRrYbcqnokDHTj;aliasesprincipaiscorretos,semmanualduplicado.
+- 004aplicadaSQLsmokerollbackPASS. Snapshotcadastrossemnovoscamposantes/depois8a8e30ad91855c4434449ea6a7ed9b73idêntico,1cadastropreservadooriginnull. HTTPfront200/JSnovo;APIhealth200configuredtrue,GETgrenades200/legadoreadyoriginnull. NãoexecutadoCRUDorigemautenticadoE2Enoruntime;usuáriotestarácadastroedeterminaçãorealpixel.
+- Verificações48backend+43frontend/build/typecheck;rootbrowser51/52+6/6repetiçõescasoinicializaçãobranca,front52/52reportado. Nãoocultarflaky. Estadoentregaconcluída,pausarparafeedback. CheckpointpósdeploycommitlocalSEMpushisolado,próximaentregaagrupar.
+
 ## Migration004 aplicada e verificada — 30/10
 
 - Autorizaçãoexplícitausuáriorecebida. Migrationgrenade_originaplicadaSupabasecomsucesso. SQLbackend/tests/sql/origin-smoke.sqlrealPASSOUcomrollback:0/1,clear,paresincompletos,NaN/Infinity/limites,demaiscampospreservados. origin_x/yNULLdoubleprecisionconfirmados;semfixturespersistidos.
