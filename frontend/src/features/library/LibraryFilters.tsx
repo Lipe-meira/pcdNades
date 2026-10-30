@@ -1,8 +1,15 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import type { Filters, Lineup } from "../../domain/types";
 import { typeLabels } from "../../domain/types";
 import { filterLineups } from "../../domain/lineups";
-import { Icon } from "../../components/Icon";
+
+function FilterImage({ name }: { name: string }) {
+  const [broken, setBroken] = useState(false);
+  if (broken) return null;
+  return <img className="filter-asset" src={`/filter-icons/${name}.png`}
+    alt="" aria-hidden="true" width="28" height="28" draggable={false}
+    onError={() => setBroken(true)} />;
+}
 
 export function LibraryFilters({ filters, lineups, onChange }: {
   filters: Filters;
@@ -27,7 +34,7 @@ export function LibraryFilters({ filters, lineups, onChange }: {
                 aria-describedby={`${id}-${type}-count`}
                 onClick={() => onChange({ type })}>
                 <span className={`nade-type-icon ${type}`}>
-                  <Icon name={type === "all" ? "crosshair" : type} size={19} />
+                  <FilterImage name={type} />
                 </span>
                 <span>{label}</span>
                 <span id={`${id}-${type}-count`} className="nade-type-count">
@@ -45,6 +52,7 @@ export function LibraryFilters({ filters, lineups, onChange }: {
           {(["all", "CT", "T"] as const).map((side) => (
             <button key={side} type="button" aria-pressed={filters.side === side}
               onClick={() => onChange({ side })}>
+              <FilterImage name={side === "all" ? "both" : side.toLowerCase()} />
               {side === "all" ? "Ambos" : side}
             </button>
           ))}

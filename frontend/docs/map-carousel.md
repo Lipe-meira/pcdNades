@@ -15,3 +15,7 @@ Referência adicional: https://csnades.gg/nuke e screenshot do usuário, consult
 ## Atualização: logos no lugar das miniaturas de radar
 
 Pedido de30/10substitui a decisão inicial de usar radar na faixa. RegistryUI em src/components/mapLogos.ts resolve somente os sete IDs conhecidos para PNGs locais512×512. Mapas desconhecidos e falhas de imagem mostram iniciais e nome, sem fallback para radar ou rede externa. Nenhum metadadoAPI, ID, radarURL, versão de coordenadas ou radar principal é alterado. object-fit:contain e48×32 preservam o logo inteiro no botão existente. Origem fixa, propriedadeValve, bytes e SHA256 por arquivo estão em public/maps/icons/ATTRIBUTION.md.
+
+## PNGs originais nos filtros
+
+Imagens enviadas pelo usuário em30/10, copiadas sem edição, usadas como decoração28px dos tipos e24px nos lados. Nomes/contagens/aria-pressed permanecem em texto, inclusive se o PNG falhar; imagensaltvazio/ariahidden e object-fit:contain. HE apenas reservado como arquivo, sem opção ou tipo novo. Dois anexosAmbos deduplicados por SHA256. Fontes, tamanhos e hashes em public/filter-icons/ATTRIBUTION.md. Controles de lado usam ícone acima do nome para manter rótulos legíveis em320px.
