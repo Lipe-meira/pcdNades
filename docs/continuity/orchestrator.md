@@ -1,3 +1,8 @@
+## Entrega completa integrada para publicação única — 30/10
+
+- Frontdc48e3eengloba:carrosseleef2b02,painel044a4e2,logos1b11a0a,PNGsfiltrosdc48e3e. Mainintegrou8bbf821,catálogo7radaresPNGpreservado. Originaisfiltros/hash/atribuiçãoempublic/filter-icons;logosValve/Murkyfix9a77417empublic/maps/icons. Screenshots1440revisados,semnovosserviços/backend/env.
+- Build/typecheck39unitrootPASSARAM. Browser42/42rootPASSARAM(39s)apósintegraçãoconjunta. Próximaação:registrarresultadofinal,commitcheckpoint,umúnicopushmain;aguardarautodeploysemduplicarmanual/conferirasseteHTTP. Depoispausarparausuáriotestar.
+
 ## PNGs de granadas e lados fornecidos pelo usuário — 30/10
 
 - Usuáriopediuusar9PNGanexadosnomenu. Frontrecebeucaminhosoriginais/mapeamento:molotov4e8b0e69,smoke4cceabc2,flash7872a5d8,Todas6e41a1eb,Ambosf0408c47,CTb275540d,T5c7bbb19;Ambose208900eaparentaduplicado,deduplicarhash. HE85e61fc6reservadosemnovotipo/controlefuncional.
