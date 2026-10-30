@@ -1,3 +1,8 @@
+## Marco rotas e sessões TikTok — 30/10
+
+- Backendd58696epush,66testes/typecheck/buildreportadosPASS;rotasinspect/create/completeTikTokprocessor e migration20261030124528_tiktok_import_sessions.sqlLOCAL,semSQLremoto. Rootfetch/read-onlypreviewrotas;capstiktoklimitesDIRETOSspreadimportLimits,inspect.limitsaninhado,frontavisadoparacontratoexato.
+- Próximaprovaemexecuçãoback:fixture2hstart30min eorçamentorelay/proxy/NFT/SQLlocal. Conteúdototalfonte<=8GBporContentRangeNÃOédownloadpermitido8GB:rede100MBtentativasegue. SemtesteprotectedTikTokreal/Vercelatéagora;semnovapub.
+
 ## Retomada autorizada pelo usuário — 30/10
 
 - Usuáriopediucontinuar. Main356efb7limpo/ahead8docs,originf4aa722,fetchfront14dabbf/backendc2bb1d4;nenhumaentregafinalnovaemremoto. Chatsreativadosparafinalizarbackend65tests/proxy/Range/longsource/NFT efrontinspect/seleção/importresume.
