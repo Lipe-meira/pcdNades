@@ -2,11 +2,13 @@ import type { GameMap, Lineup, LineupDraft, Video } from "../domain/types";
 import { demoMaps, demoLineups } from "./demoData";
 import { validateDraft, validateMp4 } from "../domain/validation";
 import type { MediaCapabilities, Playback, SaveOptions } from "./apiContracts";
+import type { ImportInspection } from "../domain/imports";
 
 /** Integration boundary. No URLs, authentication scheme or API envelopes assumed. */
 export interface LineupService {
   readonly mode: "demo" | "api";
   capabilities(signal?: AbortSignal): Promise<MediaCapabilities>;
+  inspectImport?(sourceUrl: string, signal?: AbortSignal): Promise<ImportInspection>;
   playback(video: Video, signal?: AbortSignal): Promise<Playback>;
   listMaps(signal?: AbortSignal): Promise<GameMap[]>;
   listLineups(signal?: AbortSignal): Promise<Lineup[]>;

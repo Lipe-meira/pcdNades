@@ -3,6 +3,8 @@ import { isTarget } from "../domain/lineups";
 import { ApiError } from "./apiClient";
 import { safeHttpUrl } from "./runtimeConfig";
 import type { Clip } from "../domain/clip";
+import type { ImportInspection, ImportLimits } from "../domain/imports";
+import { recognizeVideoSource } from "../domain/videoSource";
 
 export type RemoteMediaStatus =
   "awaiting_upload" | "queued" | "processing" | "ready" | "failed";
@@ -15,6 +17,7 @@ export type MediaRecord = {
   error: { code: string; message: string } | null;
   metadata: Record<string, unknown> | null;
   clip?: Clip | null;
+  sourceId?: string | null;
 };
 export type ApiMap = {
   id: string;
@@ -41,11 +44,32 @@ export type MediaCapabilities = {
   };
   trimming?: TrimmingCapability;
 };
-export type ImporterCapability = {
+export type ImporterCapability = Partial<ImportLimits> & {
   enabled: boolean;
+  inspection?: boolean;
   reasonCode?: string;
   message?: string;
 };
+export function checkImportLimits(limits: ImportLimits): ImportLimits {
+  if (!limits || [limits.maxSourceDurationSeconds, limits.maxDurationSeconds, limits.maxBytes,
+    limits.minDurationSeconds, limits.timePrecisionSeconds].some(value => !Number.isFinite(value) || value <= 0) ||
+    limits.minDurationSeconds > limits.maxDurationSeconds) contractError();
+  const result = { ...limits, maxSourceDurationSeconds: Math.min(7200, limits.maxSourceDurationSeconds),
+    maxDurationSeconds: Math.min(90, limits.maxDurationSeconds), maxBytes: Math.min(50_000_000, limits.maxBytes),
+    minDurationSeconds: Math.max(.1, limits.minDurationSeconds), timePrecisionSeconds: Math.max(.001, limits.timePrecisionSeconds) };
+  if (result.minDurationSeconds > result.maxDurationSeconds || !Number.isSafeInteger(result.maxBytes)) contractError();
+  return result;
+}
+export function checkImportInspection(value: ImportInspection): ImportInspection {
+  if (!value || typeof value.sourceId !== "string" || !/^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i.test(value.sourceId) ||
+    value.provider !== "tiktok" || typeof value.sourceUrl !== "string" || recognizeVideoSource(value.sourceUrl)?.platform !== "tiktok" ||
+    typeof value.title !== "string" || (value.author !== null && typeof value.author !== "string") ||
+    typeof value.videoId !== "string" || !value.videoId || !Number.isFinite(value.durationSeconds) || value.durationSeconds <= 0 ||
+    typeof value.expiresAt !== "string" || !Number.isFinite(Date.parse(value.expiresAt)) || value.preview !== null || value.previewReasonCode !== "PREVIEW_UNAVAILABLE") contractError();
+  const limits = checkImportLimits(value.limits);
+  if (value.durationSeconds > limits.maxSourceDurationSeconds) contractError();
+  return { ...value, limits };
+}
 export type TrimmingCapability = {
   enabled: boolean;
   reasonCode?: string;
@@ -207,6 +231,8 @@ export function checkCapabilities(value: MediaCapabilities): MediaCapabilities {
   )
     contractError();
   const trim = value.trimming;
+  if (value.importers.tiktok.inspection !== undefined && typeof value.importers.tiktok.inspection !== "boolean") contractError();
+  if (value.importers.tiktok.inspection) checkImportLimits(value.importers.tiktok as ImportLimits);
   if (
     trim &&
     (typeof trim.enabled !== "boolean" ||
