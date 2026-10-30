@@ -275,3 +275,40 @@ test("faixa de mapas: teclado, seleção e limpeza de detalhes preservam filtros
   await page.keyboard.press("ArrowLeft");
   await expect(mirage).toBeFocused();
 });
+
+test("painel: contagens por mapa e lado preservam alternativas e zeros", async ({ page }, testInfo) => {
+  const types = page.getByRole("group", { name: "Tipo de granada" });
+  const sides = page.getByRole("group", { name: "Lado do time" });
+  async function counts(all: number, smoke: number, molotov: number, flash: number) {
+    for (const [name, count] of [["Todas", all], ["Smoke", smoke], ["Molotov", molotov], ["Flashbang", flash]] as const) {
+      await expect(types.getByRole("button", { name, exact: true })).toHaveAccessibleDescription(`${count} granadas`);
+    }
+  }
+  await counts(4, 2, 1, 1);
+  await expect(types.getByRole("button", { name: "Todas", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("filter-panel.png"), fullPage: true });
+  const ct = sides.getByRole("button", { name: "CT", exact: true });
+  await ct.focus();
+  await page.keyboard.press("Space");
+  await expect(ct).toHaveAttribute("aria-pressed", "true");
+  await counts(2, 1, 1, 0);
+  const flash = types.getByRole("button", { name: "Flashbang", exact: true });
+  await flash.focus();
+  await page.keyboard.press("Enter");
+  await expect(flash).toHaveAttribute("aria-pressed", "true");
+  await counts(2, 1, 1, 0);
+  await expect(page.getByRole("heading", { name: "Nenhuma granada por aqui" })).toBeVisible();
+  await page.getByRole("navigation", { name: "Selecionar mapa" }).getByRole("button", { name: "Inferno", exact: true }).click();
+  await counts(1, 0, 0, 1);
+  await sides.getByRole("button", { name: "T", exact: true }).click();
+  await counts(1, 1, 0, 0);
+  await sides.getByRole("button", { name: "Ambos", exact: true }).click();
+  await counts(2, 1, 0, 1);
+  await page.getByRole("navigation", { name: "Selecionar mapa" }).getByRole("button", { name: "Ancient", exact: true }).click();
+  await counts(0, 0, 0, 0);
+  await page.getByRole("button", { name: "Limpar filtros", exact: true }).click();
+  await expect(types.getByRole("button", { name: "Todas", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(sides.getByRole("button", { name: "Ambos", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await counts(0, 0, 0, 0);
+});

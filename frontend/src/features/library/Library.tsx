@@ -5,6 +5,7 @@ import { filterLineups } from "../../domain/lineups";
 import { Radar } from "../../components/Radar";
 import { Icon } from "../../components/Icon";
 import { MapCarousel } from "../../components/MapCarousel";
+import { LibraryFilters } from "./LibraryFilters";
 import { VideoPlayer } from "./VideoPlayer";
 import type { LineupService } from "../../services/lineupService";
 
@@ -57,45 +58,9 @@ export function Library({
 
       </div>
       <MapCarousel maps={maps} selectedId={map.id} onSelect={(mapId) => updateFilters({ mapId })} />
-      <div className="library-layout">
+      <div className="library-layout library-with-panel">
+        <LibraryFilters filters={filters} lineups={lineups} onChange={updateFilters} />
         <section className="radar-column" aria-label="Mapa e filtros">
-          <div className="filters">
-            <div
-              className="filter-group"
-              role="group"
-              aria-label="Tipo de granada"
-            >
-              {(["all", "smoke", "flashbang", "molotov"] as const).map(
-                (type) => (
-                  <button
-                    key={type}
-                    className={`filter ${filters.type === type ? "active" : ""}`}
-                    aria-pressed={filters.type === type}
-                    onClick={() => updateFilters({ type })}
-                  >
-                    {type !== "all" && <Icon name={type} size={18} />}
-                    {type === "all" ? "Todas" : typeLabels[type]}
-                  </button>
-                ),
-              )}
-            </div>
-            <div
-              className="filter-group side-filters"
-              role="group"
-              aria-label="Lado do time"
-            >
-              {(["all", "T", "CT"] as const).map((side) => (
-                <button
-                  key={side}
-                  className={`filter ${filters.side === side ? "active" : ""}`}
-                  aria-pressed={filters.side === side}
-                  onClick={() => updateFilters({ side })}
-                >
-                  {side === "all" ? "Ambos" : side}
-                </button>
-              ))}
-            </div>
-          </div>
           <Radar
             demo={demo}
             map={map}

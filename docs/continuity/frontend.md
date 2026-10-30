@@ -1,3 +1,20 @@
+## Entrega final — painel de filtros e carrossel juntos (30/10/2026)
+
+- Painel concluído e testado sobre4d9a87b na feat/frontend; commit desta entrega feat(frontend): organiza filtros em painel com contagens. Worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2. Push apenas branch própria após checks; root coordena integração completa com carrossel antes mainpush.
+- LibraryFilters apresenta Todas/Smoke/Molotov/Flashbang: ícone existente+nome+contagem à direita, aria-pressed e fundo selecionado; segmentoAmbos/CT/T. aria-label mantém nome simples e aria-describedby anuncia número de granadas. Nada deHE,combinações,favoritos,recomendados ou assets externos.
+- Contagem usa filterLineups com mapa+lado e typeall; selecionar tipo não apaga outras contagens. Zero é visível e clicável; seleção continua válida com0 e mostra vazio. Painel só renderiza após dadoscarregados; loading/error/semmapas não exibem contagensfalsas.
+- Desktop: painel190px/radar/lista;tablet901..1199 lista abaixo do radar;mobile tipos2colunas+ladohorizontal,altura~228..232px. Referência https://csnades.gg/nuke consultada e screenshot0809692b inspecionado,adaptados às fontes/paleta/ícones pcdNades. Sem cópia de assets.
+- Validação FINAL: npm --prefix frontend run build(typecheck)PASS; npm --prefix frontend test39/39PASS; npm --prefix frontend run test:browser38/38PASS(34,2s). Inclui regressões carrossel/API/demo/CRUD/admin/upload/clip e novoscontagensmapa+lado+tipo/zeros/Space/Enter,loading/error/semmapas. git diff --check final antes commit. Nenhum teste remoto ou deploy.
+- Render real inspecionado1440/1024/390/320,sem overflowglobal. SetePNG originais main lidos em memória via gitshow/interceptação local; dados demonstrativos existentes servidos comoAPIcontrolada para contagens4/2/1/1 eCT2/1/1/0. Não são conteúdo real nem E2E produção.
+- Capturas foraGit: C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/filters-real-1440.png,filters-real-1024.png,filters-real-390.png,filters-real-320.png,filters-real-ct-390.png. Carrossel e painel aparecem juntos com7radares atuais.
+- Arquivos: novo frontend/src/features/library/LibraryFilters.tsx; Library.tsx,styles.css,tests/browser/{flows,api}.spec.ts,docs/map-carousel.md; estecheckpoint. Sem mudar catálogo/radares/backend/env/deps/raiz. Admin select e form intactos. Root mantém correçãoSVG→PNG daexpectativaAncient na main.
+- Próximaação: commit/push sófeat/frontend,confirmarremoto/árvorelimpa,enviarSHA+capturas ao root. Root integra/testaENTREGACOMPLETA antesmainpush. Semmelhoriasextras/deploymanual/preview; políticas anteriores vigentes. Registros abaixo históricos.
+## Em andamento — painel de tipos e lado (30/10/2026)
+
+- Novo steering antes pushmain: painel inspirado CSNADES Nuke, screenshot0809692b inspecionado e página consultada. Direção explícita sem nova aprovação. Base4d9a87b,branchfeat/frontend limpa ao iniciar; carrossel integrado root7ee23e3 ainda semmainpush.
+- Implementar LibraryFilters: Todas/Smoke/Molotov/Flashbang com ícone+nome+contagem e selecionado; segmentoAmbos/CT/T. Contagem deriva mapa+lado, ignora tipo para preservar comparação entre alternativas;0visível. Nada deHE/favoritos/recomendados,sem backend/assetsnovos. Library renderiza após dadoscarregados; loading/error não mostram contagem0falsa.
+- Em andamento: componente e layout lateraldesktop/compactomobile; próximos testes contagensmapa/lado/tipo/zero,teclado,loading/error,regressão34browser+39unit/build,screenshots com7PNGmain via leitura/interceptação,checkpoint/commitseparado/pushbranch. PreservarcatálogoSVGbranch ePNGmain,admin/recorte/carrossel.
+- Política segue main apenas pendênciainteiraFINALIZADA/TESTADA pelo root,semdeploymanual/preview. Novo painel será agrupado comcarrossel antes publicação. Não alterar backend/raiz/env.
 ## Entrega final — carrossel de mapas (30/10/2026)
 
 - Implementação concluída na feat/frontend, base a2db01a, worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2. Entrega funcional eef2b02 enviada para origin/feat/frontend; checks concluídos.

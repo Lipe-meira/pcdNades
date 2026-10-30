@@ -345,6 +345,7 @@ test("API vazia e indisponível nunca viram demonstração", async ({ page }) =>
   await expect(
     page.getByRole("heading", { name: "Nenhuma granada por aqui" }),
   ).toBeVisible();
+  await expect(page.getByRole("group", { name: "Tipo de granada" }).getByRole("button", { name: "Todas", exact: true })).toHaveAccessibleDescription("0 granadas");
   await expect(
     page.getByText("Modo demonstração.", { exact: true }),
   ).toHaveCount(0);
@@ -356,6 +357,7 @@ test("API vazia e indisponível nunca viram demonstração", async ({ page }) =>
   await expect(page.getByRole("alert")).toContainText(
     "Nenhum dado de demonstração foi usado",
   );
+  await expect(page.getByRole("complementary", { name: "Filtros da biblioteca" })).toHaveCount(0);
   state.unavailable = false;
   await page
     .getByRole("button", { name: "Tentar novamente", exact: true })
@@ -363,6 +365,22 @@ test("API vazia e indisponível nunca viram demonstração", async ({ page }) =>
   await expect(
     page.getByRole("heading", { name: "Mirage", exact: true }),
   ).toBeVisible();
+});
+
+test("painel não mostra contagens durante loading nem sem mapas", async ({ page }) => {
+  await setup(page);
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  await page.route(`${api}/maps`, async (route) => {
+    await gate;
+    await reply(route, { json: { data: [] } });
+  });
+  await page.goto("/");
+  await expect(page.getByRole("status")).toContainText("Carregando biblioteca");
+  await expect(page.getByRole("complementary", { name: "Filtros da biblioteca" })).toHaveCount(0);
+  release();
+  await expect(page.getByRole("heading", { name: "Nenhum mapa cadastrado" })).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Filtros da biblioteca" })).toHaveCount(0);
 });
 
 test("login, capabilities e logout com respostas controladas", async ({
