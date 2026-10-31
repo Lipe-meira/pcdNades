@@ -1,3 +1,9 @@
+# Preflight implementado/validado —31/10/2026
+
+Pushautorizadoconcluído:dev/origin=eb20a54,worktreelimponaquelamarco,semprod(mainconfirmadosambosVercel/workflowsemautodeployprod). Agora móduloimport-preflight.ts/tests+serverregister concluídoslocalmente:105backendPASS/build/typecheck eLinuxnative realPASS(yt2026.08.19/hashes/FFmpegH264AAC/probe/tmpwritable,2,446s). Rotaausentedefault/production,secretoprópriodescartávelPreview,semURLs/comandos deusuário/credenciaisSupabase. Estadoemvendor/preview-live-20261031ignorado;tokenNÃOverversionar. SomenteNOVOprj_ubCQuSm6ubSL6OrYahHV2ZmwdYyHteveNode24 e6envsPreviewconfiguradas;HobbyActive/gratuitoconfirmado. Nenhumdeploy/Supabasecriadoainda. Próximaação:únicoPreviewdepreflightcom29fonteswhitelistsem.env/vendor,validartargetPreview eexecutartesteprotegidocomtokenviaheader;se/tmpbloquearpararsemcontornar. Semalteraçõesprojetosreais/main.
+
+---
+
 # Publicação dev autorizada durante preflight —31/10/2026
 
 Usuário autorizou gitpushorigindevnormal,semforce/rebase/merge/main,continuandoPreview. Branch/worktree/origin confirmados;basefd2997c,árvorecomapenascheckpointdesteinício. Fetchoriginexecutado:origin/dev=eef597b,3locais/0remotos:87814b3,7b621a9,fd2997c. UIreadonlyconfirmaProductionbranchmainempcdnadesepcdnades-api;workflowbackend-linux sóCI(pushmain/PR/manual),semdeploy. Nenhumprod/envexistentealterado. Emrevisão:arquivosde3commits+checkpoint,secrets/binaries/ignorados;depoiscommitdocs e pushnormalvalidado.
