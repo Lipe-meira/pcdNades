@@ -1,0 +1,13 @@
+# Deployment source allowlist. Binary artifacts are prepared during build.
+/*
+!/.vercelignore
+!/package.json
+!/package-lock.json
+!/tsconfig.json
+!/vercel.json
+!/src/
+!/scripts/
+/scripts/*
+!/scripts/prepare-probe.mjs
+!/scripts/prepare-ffmpeg.mjs
+!/scripts/prepare-ytdlp.mjs

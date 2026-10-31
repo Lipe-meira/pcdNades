@@ -5,4 +5,4 @@ if(!hashes[key])throw new Error('Unsupported FFmpeg platform');
 const path=require.resolve('ffmpeg-static/package.json').replace(/package\.json$/,process.platform==='win32'?'ffmpeg.exe':'ffmpeg');
 let bytes;try{bytes=await readFile(path);}catch(error){if(error.code!=='ENOENT')throw error;const response=await fetch(`https://github.com/eugeneware/ffmpeg-static/releases/download/b6.1.1/ffmpeg-${key}.gz`,{signal:AbortSignal.timeout(60000)});if(!response.ok)throw new Error('FFmpeg build download failed');bytes=gunzipSync(Buffer.from(await response.arrayBuffer()));}
 if(createHash('sha256').update(bytes).digest('hex')!==hashes[key])throw new Error('FFmpeg SHA256 mismatch');
-await writeFile(path,bytes);await chmod(path,0o755);console.log('Verified FFmpeg b6.1.1',key,bytes.length,'bytes');
+await writeFile(path,bytes);await chmod(path,0o755);console.log('Verified FFmpeg release asset b6.1.1',key,bytes.length,'bytes');

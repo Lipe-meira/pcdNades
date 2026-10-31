@@ -25,6 +25,6 @@
     "worker": "node --env-file=.env dist/worker.js"
   },
   "engines": {
-    "node": ">=22"
+    "node": "24.x"
   }
 }

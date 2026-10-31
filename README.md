@@ -1,3 +1,5 @@
+> Auditoria pré-preview local concluída: [relatório e plano](backend/IMPORT-PREVIEW-AUDIT.md). Payload Linux de204,13MB, Node24/120s; execução real na Vercel e autorização dos recursos de teste ainda pendentes.
+
 > Piloto local atual (31/10/2026): TikTok com fonte até50MB e trecho até30s, sem alterar upload/histórico90s. Implementação, testes e checklist de preview em [IMPORT-PILOT-30.md](backend/IMPORT-PILOT-30.md). Flags continuam desativadas por padrão; nenhuma publicação em produção foi autorizada.
 
 # pcdNades

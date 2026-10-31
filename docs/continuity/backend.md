@@ -1,3 +1,9 @@
+# Auditoria pré-preview — 31/10/2026
+
+Estado vigente em backend/IMPORT-PREVIEW-AUDIT.md/JSON e checkpoint orquestrador. Base7b621a9; alterações locais de runtime24,duração120,build/sourceallowlist e ferramenta de auditoria, sem modificarpipeline. ZIP641arquivos/204126812B validado,AL2023nonroot passou comtmp exec;noexec bloqueia yt-dlp. NenhumVercel/Supabase remoto/push/deploy. Próximaação:conferirGit e aguardar autorização específica do plano gratuito de preview, preservandoevidências emvendor/audit-preview-20261031.
+
+---
+
 # Atualização do piloto — 31/10/2026
 
 A situação vigente desta área está em backend/IMPORT-PILOT-30.md e docs/continuity/orchestrator.md. PilotoTikTok30s/50MB implementado/testado localmente na dev,base87814b3;sem push/deploy/remoto. Backend102Windows/Linux,front55unit+build,64Playwright+12TikTokfinal. E2EStorage/Reactplayer local real com fixtureoffline,sem novo downloadTikTok. Upload/histórico90 e flagsdefaultoff preservados;temporary opt-in. Próximaação:conferirGit e ler relatório antes de auditar bundle/preparar preview que exige autorização específica. Preservar Docker/volumes/vendorprivado. Histórico abaixo é anterior a esta entrega.

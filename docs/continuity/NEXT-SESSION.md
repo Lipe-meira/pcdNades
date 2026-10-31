@@ -1,3 +1,11 @@
+# Prioridade vigente: auditoria pré-preview concluída
+
+Leia backend/IMPORT-PREVIEW-AUDIT.md e IMPORT-PREVIEW-ARTIFACT.json, depois checkpoint do orquestrador. Base7b621a9,dev; entrega de auditoria em commit local próprio. ZIP oficialLinux204126812B/641arquivos,Node24/120s,binários755 executadosAL2023; /tmpnoexec impede yt-dlp, /tmp executável passou no ensaio. Confirmar condição real naVercel, sembypass.
+
+Nenhum deploy/push/remoto autorizado/executado nesta auditoria. Próxima ação:conferirGit,lerplano e aguardar autorização explícita de preview gratuito/recursos novos; não iniciar cloud automaticamente. Não copiarcredenciaisprodução nemvendorprivado. Evidências/containers/volumes preservados. Preparar instrumentação segura de preview localmente antes do deploy autorizado; não repetirbenchmarks/downloads já válidos.
+
+---
+
 # Situação vigente — piloto TikTok30s implementado localmente
 
 Leia primeiro backend/IMPORT-PILOT-30.md e o checkpoint do orquestrador. Usuário escolheu piloto síncrono30s/50MB, semworker. Windows/Linux102backendPASS;front55+64Playwright(+12TikTokfinal)PASS;recorteLinux eStorage/Reactplayer locais reais passaram com fixture autorizada já retida. Sem novo downloadTikTok/Vercelreal. Limites/upload/histórico/flags e evidências detalhados no relatório.

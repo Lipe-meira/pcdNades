@@ -1,3 +1,51 @@
+# Checkpoint — auditoria pré-preview concluída localmente
+
+Atualizado em: 31/10/2026, America/Sao_Paulo
+Estado: auditoria concluída; aguardando autorização específica para recursos/preview remotos.
+
+## Objetivo e localização
+
+- Auditoria do backend TikTok30s/50MB sem deploy. Branchdev, worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2, base7b621a9 inicialmente limpa; preservar todos os commits anteriores.
+- Entrega em commit local próprio; obterSHA porgitlog. Sempush/fetch/merge/deploy/Vercel/Supabase remoto; nenhuma escrita emSupabase local nesta tarefa. Só documentação pública/pacotes/imagens e testes locais.
+
+## Feito
+
+- Ler backend/IMPORT-PREVIEW-AUDIT.md e IMPORT-PREVIEW-ARTIFACT.json primeiro. ZIP real do builderoficial:641arquivos,204126812bytes descompactados,100995069bytes ZIP,Node24/maxDuration120. CRC/todososarquivos/modes/hashes conferidos; scriptversionável reproduziuZIP bitwise igual ao testadoAL2023.
+- @vercel/fastify24.0.1/@vercel/node29.0.1,Node24.22.2,Fastify5.12.7.9warnings classificados:6parseELF+3branchesWindowsausentes;nenhumLinuxfaltante. Binários755:FFmpeg7.0.2-static,ffprobeN-66595,yt-dlp2026.08.19. b6.1.1 éassettag,logcorrigido semmudarbinário.
+- Linux freshinstall+build e empacotamento; AL2023uid10001/rootreadonly/networknone passou versões/encodeH264AAC/probe/decode/health/falhafechada. /tmpnoexec falhou yt-dlp(exit127/libzmmap); mesma imagem comtmp executável passou. Não prova falhaVercel; requisito a verificar, sembypass/remount no provedor.
+- Correçõeslocais:engines24.x(package+lock),install/build explícitos,maxDuration120 emvercel.json+entrypoint(validado noLambda),.vercelignoreallowlist10allowed/9blocked emfixtureGitcompatible,script audit-vercel-artifact.mjs. Sem alteração pipeline, limitesupload/TikTok,contratos,flags oumigrations.
+- Typecheck/build/bootstrapWindowsPASS;sintaxes/diffcheckPASS.102backend/55front/64browser+12TikTok de7b reutilizados no escopo, não reexecutados. NenhumdownloadTikTok/benchmark30s/E2E repetido.
+
+## Recursos e limites
+
+- Evidênciasnovas embackend/vendor/audit-preview-20261031,ignoradas (~1,37GB+imagens/cache). Dezcontainers próprios encerrados/retidos;falhaALnoexecesperada,semOOM. Stack/volumes/dados anteriores intactos. Nenhum.env existente sobrescrito; nenhumZIP/binário/mídia/configprivada versionado.
+- Timers75/90/110 elease120 revistos,sem aumento. Coldstart anterior aonRequest,rede50MB,SDKsubjacente/tmp/memóriatotal/concorrênciaFluid ainda exigem host real. Fonte50MB não é garantia de sucesso no prazo. Artefato local não inclui prova do launcher/layers finaisVercel.
+- Uploaddefault90/TikTok30 testados no payload. Remoteenv20 não foi consultado; no preview planejar global90 e gatecapabilities90/30. Não configurarglobal30 e reduzirupload.
+
+## Retomar daqui
+
+1. ConferirGit e ler IMPORT-PREVIEW-AUDIT.md/JSON. Não repetir empacotamento/benchmarks semmudanças/necessidade. Privados emvendor não devem ir aGit/deploy.
+2. Usuário ainda precisa autorizar plano do relatório:2projetosVercelNOVOS,1SupabaseDETESTE,aliases,envsPreview,migrations/admin/bucket sótestes,umdeploy cada;verificargratuidade antes decriar,pararsecobrar. Semprodução/Gitautodeploy/main/push. Não presumir que aprovação anterior autorizou esta operação.
+3. Antes de primeiropreview, preparar/validar instrumentação temporária administrativa segura para/tmp/binários/métricas semsecrets. Depois seguirpreflight/ecoldstart/CDN/faults do checklist;parar sepolicy/tmp impedir,semcontornar.
+
+## Entrega e histórico
+
+31/10:auditoria local finalizada,artefato válido para avançar a um preview condicionado. Não éaprovaçãodeprodução nemtesteVercelreal. Relatório inclui recursos,custos condicionais,variáveis,sequência e bloqueios. Solicitar autorização específica ao usuário ao encerrar.
+
+---
+
+# Auditoria pré-preview — marco validado, 31/10/2026
+
+Build Linux limpo + builder oficial @vercel/fastify24.0.1/@vercel/node29.0.1: ZIP641arquivos,204126812B descompactados,100995069B ZIP,Node24/maxDuration120. Repetição via script versionável gerou ZIP bitwise igual ao testado emAL2023. CRC/todososarquivos iguais;sem.env/privados/mídia.9warnings classificados:6parseELF+3branchesWindowsausentes. Nodepin24.x,install/build explícitos,max120 emconfig+entrypoint e.vercelignoreallowlist implementadoslocalmente;10allowed/9blocked emfixtureGitcompatible. Tipo/build/bootstrapWindowsPASS. AL2023Node24uid10001rootreadonly:ffmpeg/ffprobe/yt-dlp+encode/decode+healthPASS comtmp exec;tmpdefaultnoexec falha yt-dlp(libzmmap,exit127), confirmadoA/B. Não contornarnoexec naVercel:pré-condição a verificar no preview. FFmpegLinuxreal7.0.2; b6.1.1 éassetrelease,logcorrigido. NenhumaAPIdecontaVercel/Supabase acessada,nenhumaescritaSupabaseinclusiveLocal. Evidências novas embackend/vendor/audit-preview-20261031 (~1,37GB),todoscontainersauditoriaencerrados/retidos,stackantigaintacta. Próximaação:relatório/plano/resources/custos/checkpoints,commitlocalapósrevisão,parar e pedirautorizaçãoespecíficapreviewsemcobrança. Base7b621a9,dev;verstatusparamudançasatuais. Sempush/deploy/remoto.
+
+---
+
+# Auditoria pré-preview — em andamento,31/10/2026
+
+Base7b621a9,dev,worktreecorreto,árvoreiniciallimpa. Pedido:build/artefatoLinux/binários/warnings/runtime/orçamentos eplano preview; somente operaçõeslocais,sem push/deploy/remoto/env/infra/flagprodução. Lidosrelatórios/checkpoints;Dockerativo e recursosanteriores preservados. backend/vercel.json sóframeworkfastify,engines>=22,120s/Node24apenasobservadosantesnodashboard. Próximaação:builderVercellocalisoladoLinux,sem link/pull/credenciais,medirartefato e prepararplano. Evidênciasnovasemvendor/audit-preview-20261031ignorado. Não repetirbenchmark/downloadTikTok.
+
+---
+
 # Checkpoint — orquestrador: piloto TikTok de 30 segundos
 
 Atualizado em: 31/10/2026, America/Sao_Paulo
