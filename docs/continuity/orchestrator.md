@@ -1,3 +1,62 @@
+# Checkpoint — orquestrador: capacidade TikTok
+
+Atualizado em: 31/10/2026, America/Sao_Paulo
+Estado: investigação concluída; preparação de preview ainda pendente.
+
+## Objetivo e pedido atual
+
+Retomar os benchmarks interrompidos, concluir diagnóstico de limites/hospedagem, preservar downloader e recursos locais. Sem push, merge, deploy, Vercel/env, Supabase remoto ou contratação. Nenhuma habilitação de produção.
+
+## Localização do trabalho
+
+- Branch dev; worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2.
+- Base eef597b, igual à referência local origin/dev ao retomar (0/0); sem fetch nesta investigação final. Preservados f7bdbba,32ac6b3,3da729a.
+- Push: não autorizado/não executado. Entrega local de relatório, CSV sanitizado e harness Linux; nenhum src alterado.
+- Arquivos: backend/IMPORT-CAPACITY.md, backend/IMPORT-CAPACITY-RESULTS.csv, backend/scripts/import-capacity-benchmark.mjs, este checkpoint e NEXT-SESSION.md. Ver git status/log para eventual commit local de encerramento.
+
+## Feito
+
+- Recuperados11casos principais+2stress corrigidos; nenhum benchmark pendente, sem repetir downloads/testes concluídos. Todos outputs válidos; todos perfis90s excederam40s encoder:1080veryfast78,214s;1080superfast54,310s;720veryfast55,753s;720superfast43,111s.
+- Config lida previamente no dashboard: Hobby/Fluid/1vCPU/2GB/120s/Node24/iad1, sem salvar. Documentação oficial consultada, links no relatório; configuração não prova deployment real.
+- Recuperação local real após SIGKILL antes/apósPUT: tentativa2ready;duas interrupçõesfailed;hash/referência do vídeo publicado preservados. Reaproveitou MP4 validado, sem download; expiração de leases simulada porSQL SOMENTEfixtures, não espera natural. Órfão não publicado e4diretórios mantidos, nenhumobjeto excluído.
+- Corrigida orientação de escala no harness de benchmark para paisagem e executados2stress-r2; tentativa anterior preservada/excluída da análise. Nenhuma alteração do encoder do produto.
+
+## Decisões e contrato
+
+- Recomendação90s: worker assíncrono independente, com fencing/recuperação/limites; ainda não implementado. Alternativa piloto30sAPI depende de decisão e testes de hospedagem. Perfil candidato1080p30superfastCRF23, sem alteração aplicada; mais bytes, qualidade fina ainda precisa aprovação.
+- Timer110s começa depoisAuth/DB;120sFunction não deixa margem garantida; não aumentar encode isoladamente. Worker legado não suporta TikTok pronto para uso. Ver relatório para orçamento completo.
+- Render1CPU2GB: referênciaUS$25/mês;cronUS$0,00058/min,mínimoUS$1/mês+nãoteto; nenhum serviço criado.
+
+## Validação
+
+- JSONL13casos reais offline, probe/decode completos e métricasCPU/RSS/tmp/SSIM recuperados; sintaxe do harness node --check e git diff --check executados nesta retomada. 92backendLinux/55frontend são resultados anteriores do código preservado, não reexecutados nesta etapa documental.
+- Limitações: fonte principalH26410sloopada,nãoHEVCoriginal;umaamostra/perfil,sempercentis;tmp não inclui fonte montada/cache/PUT;semVercelreal. FullE2Eautorizado anterior em IMPORT-LOCAL-E2E.md permanece válido no escopo local.
+
+## Bloqueios e recursos preservados
+
+- Docker daemon indisponível nesta retomada (pipe Linux inexistente). Não reiniciado porque13casos/recuperação concluídos. Estado individual atual não confirmado;5containersSupabase haviam sido iniciados e benchmarks concluídos no marco anterior. Nada removido;volumes/dados/evidências preservados.
+- Privados e mídia em backend/vendor/capacity-20261031 e local-integration-20261031, ignorados. Não versionar/não imprimir credenciais/não sobrescrever.env. Nenhum recurso remoto acessado para escrita.
+
+## Retomar daqui
+
+1. Conferir git status/log e ler backend/IMPORT-CAPACITY.md + CSV. Não repetir matriz sem necessidade.
+2. Decidir worker90s ou piloto30s antes de alterações do produto; atacar deadline/fencing e testes do checklist em ordem.
+3. Se precisar Docker, iniciar somente com autorização já aplicável e inspecionar containers próprios; nunca prune/remover evidências. Validar Vercel/preview/infra somente após autorização específica, com Supabase de teste separado e flagsproduçãooff.
+
+## Entrega e histórico curto
+
+31/10: análise concluída, sem mudança de runtime ou publicação. Relatório inclui métricas, custos/fontes e checklist preciso. Recursos e commits antigos preservados; produção não aprovada.
+
+---
+# Capacidade/hosting TikTok — início31/10/2026
+
+- Pedido: investigar90s/1080p57scontra40s,orçamentos110/lease120/frontend,benchmarksLinux/FFmpeg,plano/configVercel/documentaçãooficial,recuperação epropostaMVP/preview. Autorizadossóbenchmarks/testes/edições/commitslocaisvalidados. NÃOpush/deploy/envVercel/Supabaseremoto/infra paga;preservarcontainers/volumes/evidências ecommitsf7bdbba/32ac6b3/3da729a.
+- Início:devHEADeef597b,árvorelimpa;worktreecorreto e6containersprópriosparados/volumesretidos conferidosporleitura. Nenhuma operação remota deescrita.
+- Em andamento:lercódigo/timeouts,verdocumentaçãoVercel/plano/configsomenteleitura(skillvercel-functions/deployments-cicd),prepararmatrizLinuxCPU/RAM/disco/qualidadeusandomídiaautorizadajáretida,semnovodownloadTikTok.
+- Próximaação:executarbenchmarksreprodutíveisnocontainer/volumetestes,confrontarlimitesefetivos e definirpolítica com evidência. Nãoaumentartimeoutsautomaticamente.
+
+---
+
 # Entrega de continuidade para origin/dev — 31/10/2026
 
 ## Pedido vigente e localização

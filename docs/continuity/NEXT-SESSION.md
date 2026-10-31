@@ -1,3 +1,10 @@
+# Prioridade atual — investigação de capacidade concluída em31/10/2026
+
+Leia primeiro `backend/IMPORT-CAPACITY.md` e `backend/IMPORT-CAPACITY-RESULTS.csv`, depois checkpoint do orquestrador. Os13benchmarks já terminaram: nenhum perfil90s coube no encoder40s/1vCPU. Proposta:worker para90s;API30s apenas candidata a piloto. Não alterar timeout/flag sem plano de orçamento e validação. Nenhum runtime mudou, nenhuma publicação autorizada.
+
+Docker daemon estava indisponível ao retomar; estado individual atual não reconfirmado. Não recriar/remover recursos nem repetir downloads/matriz. Dados privados/evidências/órfãos ficaram preservados em vendor ignorado. Recuperação local real com MP4 retido preservou vídeo publicado; detalhe no relatório. Próxima ação:conferirGit e decidir arquitetura conforme checklist do relatório. Sem push/deploy/Supabase remoto/infra paga.
+
+---
 # Retomada do importador TikTok — dev
 
 Atualizado em31/10/2026, America/Sao_Paulo. Este é o resumo vigente para uma nova sessão; checkpoints abaixo dos marcos atuais contêm histórico superado.
