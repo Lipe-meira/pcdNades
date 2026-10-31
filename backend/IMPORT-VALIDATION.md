@@ -109,3 +109,15 @@ Se for escolhidoSupabaseremotoisolado em vez dessa stack, será necessária outr
 Fontes consultadas: [assinatura de upload](https://supabase.com/docs/reference/javascript/file-buckets-createsigneduploadurl), [assinatura de reprodução](https://supabase.com/docs/reference/javascript/file-buckets-createsignedurl) e [changelog](https://supabase.com/changelog). A implementação doSDK fixado no lockfile também foi inspecionada para métodos/headers e ausência deAbortSignal nos métodos de assinatura/remoção.
 
 **Conclusão:** máximo local desta etapa entregue; caminho completo TikTok→Supabase real→player ainda não demonstrado. Nenhuma aprovação de produção é inferida dos testes.
+
+## Arquivos e commit local entregue
+
+Implementação e auditoria anterior preservadas em`f7bdbba` (`fix(importacao): valida fluxo temporario e protege armazenamento`).31arquivos revisados; nenhum push. O checkpoint recebe um commit local de documentação posterior para registrar esseSHA. Para inspecionar o diff exato: `git show --stat f7bdbba` e `git show f7bdbba`.
+
+- Pipeline: backend/src/application.ts,clip-storage.ts,import-api.ts,import-network.ts,import-processing.ts,import-runtime.ts,import-temporary.ts,tiktok.ts.
+- Testes: backend/tests/clip-storage.test.ts,import-api.test.ts,import-processing.test.ts,import-relay.test.ts,import-temporary.test.ts,playback.test.ts.
+- Smokes: backend/scripts/import-bundle-smoke.mjs,import-comparison-smoke.ts,import-native-session-smoke.ts,import-protected-smoke.ts,import-sql-smoke.mjs,import-temporary-smoke.ts.
+- Frontend: frontend/src/features/admin/ImportLinkEditor.tsx,LineupForm.tsx e frontend/src/services/apiClient.ts.
+- Configuração/documentação: README.md,backend/.env.example,backend/IMPORT-AUDIT.md,IMPORT-VALIDATION.md,IMPORTS.md,README.md,YTDLP-NOTICE.md e docs/continuity/orchestrator.md.
+
+Estado da aprovação: autorização atual usada somente para revisão/edição/testes/commits locais. Preparação da stackDocker/Supabase continua aguardando autorização específica. Nenhuma variável, migration, usuário ou upload remoto foi alterado.

@@ -1,3 +1,54 @@
+# Checkpoint — orchestrator
+
+Atualizado em31/10/2026, America/Sao_Paulo.
+Estado: etapa local concluída; aguardando autorização para infraestrutura isolada. Sistema NÃO declarado pronto para produção.
+
+## Objetivo e pedido atual
+
+Revisar/preservar auditoriaTikTok anterior, validar pipelineStorage/player/hospedagem e criar commits somente locais. Usuário informou que não executou manualmente validação/commit/Supabase/deploy. Preservado tudo, inclusive6arquivos não rastreados anteriores. Sem push/merge/reset/rebase/alteraçõesremotas/deploy.
+
+## Localização do trabalho
+
+- Branchdev; worktreeC:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2; baseb290e43.
+- Implementação local entregue:`f7bdbba` — fix(importacao): valida fluxo temporario e protege armazenamento.31arquivos; relatório/manifesto embackend/IMPORT-VALIDATION.md.
+- Este checkpoint e manifesto são salvos em commitLOCALde documentação posterior; obterSHApor`git log -2`. Nenhum push; main preservada.
+- Nenhum código parcial fora do commit. Somente os2arquivos de documentação deste fechamento estavam modificados antes do commit final; apóscommitconferirárvorelimpa.
+
+## Feito
+
+- Downloader aprovado preservado sem reescrita. Trabalho anterior de modo temporário/limites/diagnósticos/front e scripts agora revisado e commitado.
+- ReproduzidosRED/GREEN e corrigidos3problemas: códigoStorage genérico; assinatura começava apósabort/esperavaSDKmesmocancelada; falta de limpeza pontual da tentativa apósfailed confirmado. AgoraSTORAGE_UNAVAILABLE explícito, espera cancelável, erro sanitizado e remoção da própriachave só apósCASfailed. Resposta ready ambígua/claim perdido nunca autoriza remoção.
+- SDK real+HTTPloopback testam assinatura,PUT/deletepontual,bytes/MIME/upsert:false; não são Supabase real. Fixture yt-dlp/FFmpeg local gera fonte30s,corta10..20->10sH264/AAC,envia1objetoigualsaída/diferentefonte e reobtémMP4válidocomorigem403. Temporários removidos.
+- PostgreSQLWASM PGlite34verificações/5migrationsPASS: permissões/RLS/RPC/slot/idempotência, triggersblockedpending/ready/failed,preservação da granada na substituiçãofailed. NãoPostgREST/Auth/Storage completo.
+- APIplayback testada para published+ready,renewal,assinaturafalha e uso daStoragekeyfinalsemorigem. Frontendseleção/retomada/falha/playercompacto+amplo/URLrenovação testados comfixtures.
+- Documentação vigentebackend/IMPORT-VALIDATION.md e IMPORT-AUDIT.md (testeTikTokreal anterior). README/backendREADME/IMPORTS/YTDLPNOTICE atualizados. Nenhuma migration histórica alterada.
+
+## Validação executada
+
+- Backend92/92 +typecheck/buildPASS. Frontend55/55 +typecheck/buildPASS. Playwright64/64desktop/mobilePASS(2.1min), API/Auth/Storagecontrolados, Browserplugin ausente; ChromiumreproduziuMP4local. Sem revisão manual global de console/visual neste marco.
+- Smokes reais locais:yt-dlp/FFmpeg+SDKHTTP PASS;relayfonte7200s/corte1800..1810->10s/decode/framevermelhoPASS;transporteofflinePASS. Nenhum novo TikTok externo nesta retomada; provaTikTokreal anterior não foi reexecutada nem tratada como StorageE2E.
+- NFTWindows186385981B,9avisos,3binários/hashyt-dlpPASS,sem.env. Não prova runtimeLinux/Vercel.
+- Revisão de31arquivos,scannerpadrõessegredosSEMocorrênciasreais,gitdiffstagedcheckPASS. Tokenscontrolled_local_fixture dos testes são sintéticos e não credenciais reais.
+
+## Bloqueios e dependências
+
+- DockerDesktop instalado,daemonLinuxnãoacessível; WSLsódocker-desktop,CLISupabase/psqlausentes. Nenhuma stackSupabaselocaldisponível nem infraestrutura iniciada.
+- Não validados: SupabaseAuth/PostgREST/RPC/Storage reais comsiteconectado, LinuxVercel, quotasRSS/disco, killsemfinally/órfãos/claimlostreal. SDKsign/remove não aceitamAbortSignal; cancelamento interrompeespera, não garante socketcancelado. Limpeza é best effort e não um coletor remoto.
+- ProduçãoTikTokoff; modotemporaryopt-in e padrão range preservados. Nenhuma env/SQL/Storage/Vercel remotos alterados. Nenhum serviço pago.
+
+## Retomar daqui
+
+1. ConferirGit/HEAD/status e lerbackend/IMPORT-VALIDATION.md antes de qualquer ação.
+2. Solicitar/obterautorização específica para iniciarDockerDesktop e criarstackSupabaseLOCALdescartável(containers/volumes/imagens), aplicar5migrations somente nela, criarusuáriodescartável e testarupload/player. Procedimento exato já documentado; NÃO usarprojetoremoto porinferência.
+3. Seautorizado, validar de pontaaponta combackend/frontendreais: TikTokautorizado->trecho->Storageprivado->ready->grenada->assinatura/renovação/playersemorigem. Guardar apenasresultados não sensíveis.
+4. ValidarLinux/limites/retomada/limpeza nohostplanejado. Só discutirproduçãoapósisso, comautorização própria; push/merge/deploycontinuamproibidos.
+
+## Entrega e histórico curto
+
+- 31/10: f7bdbba implementação local ecommitdocsdefechamento. Sem operação remota. Estado anterior abaixo é histórico e pode conter erros já superados.
+
+---
+
 # Integração local revisada — entrega em preparação (31/10/2026)
 
 - Pedido vigente: preservar alterações anteriores, revisar/testar e criar commits somente locais; serviços remotos/infraestrutura/configuração/deploy exigem autorização. Nada manual do usuário foi presumido.
