@@ -1,3 +1,5 @@
+> Estado posterior,31/10/2026: [validação E2E com Supabase local real](IMPORT-LOCAL-E2E.md) concluída para o trecho10–20s, com Linux/Storage/player e falhas documentados. Produção continua sem autorização; há pendência de timeout para90s/1080p. O conteúdo anterior abaixo conserva o histórico de sua etapa.
+
 # Auditoria local da importação TikTok — 31/10/2026
 
 Estado: **parcial, não publicar nem habilitar**. Branch `dev`, base `b290e43`. Alterações desta auditoria apenas locais, sem commit/push/merge. Nenhum deploy, SQL remoto ou variável de produção foi alterado.

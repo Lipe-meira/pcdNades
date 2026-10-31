@@ -1,3 +1,5 @@
+> Estado posterior,31/10/2026: [validação E2E com Supabase local real](IMPORT-LOCAL-E2E.md) concluída para o trecho10–20s, com Linux/Storage/player e falhas documentados. Produção continua sem autorização; há pendência de timeout para90s/1080p. O conteúdo anterior abaixo conserva o histórico de sua etapa.
+
 # Importação TikTok: plano e contrato
 
 Objetivo: inspecionar um vídeo público autorizado, escolher um intervalo e armazenar um MP4 de até 90 segundos/50.000.000 bytes. Implementação opt-in, sem modificar upload, sem cookies/login, sem contornar bloqueios. YouTube e Instagram continuam desativados.

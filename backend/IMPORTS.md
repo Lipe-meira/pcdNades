@@ -1,3 +1,5 @@
+> Estado posterior,31/10/2026: [validação E2E com Supabase local real](IMPORT-LOCAL-E2E.md) concluída para o trecho10–20s, com Linux/Storage/player e falhas documentados. Produção continua sem autorização; há pendência de timeout para90s/1080p. O conteúdo anterior abaixo conserva o histórico de sua etapa.
+
 > Continuação31/10: revisão, correções Storage/cancelamento/limpeza e roteiro de Supabase real em [IMPORT-VALIDATION.md](IMPORT-VALIDATION.md).92 testes backend,55frontend,64browser e34assertions SQLlocal passaram. Sem Supabase real, deploy ou push; importaçãooff.
 
 > Atualização31/10/2026: relatório vigente em [IMPORT-AUDIT.md](IMPORT-AUDIT.md). Download TikTok protegido em **sessão única yt-dlp**, seguido de recorte local, passou no vídeo autorizado7701782883760983303; o relay e a alternativa inicial com info separado receberam403. Modo `temporary` integrado localmente, opt-in; padrão `range`, flag de habilitaçãofalse. Storage/player/Linux/Vercel ainda pendentes. Nenhum push/deploy/SQL remoto/envprodução. Os resultados30/10 abaixo são históricos; não provam falha universal nem prontidão ponta a ponta.

@@ -1,3 +1,76 @@
+# Checkpoint — orchestrator: TikTok E2E local real concluído
+
+Atualizado em31/10/2026, America/Sao_Paulo. Estado: validação local concluída; serviços do ensaio parados, dados preservados. Nenhuma aprovação de produção.
+
+## Objetivo e autorização vigente
+
+Usuário autorizou DockerDesktop/stackSupabaseLOCALdescartável, ferramentas/imagens oficiais, migrationsapenaslocal/admin/fluxocompleto/falhas/Linux e encerrarserviços preservandodados. Proibidos remotosprod/envVercel/push/merge/deploy/limpezaglobal ou alterações emrecursospreexistentes. Nenhum.envsobrescrito. Código/downloader funcional preservados.
+
+## Localização e Git
+
+- C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2; branchdev; HEADbase32ac6b3, f7bdbba/32ac6b3 preservados. Somente documentação alterada nesta tarefa; semnovocódigodoproduto.
+- Relatório:backend/IMPORT-LOCAL-E2E.md. Checkpoint/relatórios deste marco serão salvos em commitLOCALdocs; identificarSHA comgitlog. Não fazerpush.
+- Config,credenciais,manifestos,scripts operacionais,evidências/logs embackend/vendor/local-integration-20261031,IGNORADOGit. NÃO imprimir/state.private.json/status.private.json/logsCLI; contêmcredenciaislocais. Não hásegredosnosrelatórios.
+
+## Feito — prova REAL
+
+- Stackúnicapcdnades-e2e-20261031-a7f4:DB55422,Auth/REST/Storage55421,backend55430,frontend55431,tudo127.0.0.1validadoantesdeescrever. ProjectIDnão vinculado a remoto;inventárioprévioantesdecriarrecursos.
+- Cinco migrationsaplicadassólocal uma vez;grants/RLS/RPCverificados;adminAuthdescartável/loginreal. PrimeiroPGRST205 resolveu comNOTIFYpgrstreloadschema;nenhuma migrationhistórica alterada.
+- BrowserSEMmocks:login->TikTokautorizadoZSgs9BM9L/7701782883760983303->seleção10..20->queued/processing/ready->smokegravada->Storageprivado->player. Completereal16475.6564ms. Fonte33s anunciados;saída10.000sH264/yuv420p/AAC1080x1920/2761164B. Umobjetoinicialsomentesaída;downloadStorageprobe/decodePASS.
+- Chromiumreproduziu/buscou5s/playeramplo comTiktok ehosts externosBLOQUEADOS;zeroPageErrors. APIrealrenovouURL(2requests),endereço mudou/posição4spreservada. URLcurta1sexpirou/recusada400;bucketsemassinatura400.
+- FalhascomDB/Auth/Storagereais eMP4cacheadoexplicitamente(componenteprocessamentocontrolado paraevitarredownload):Storagecontainerpróprio parado->failed/STORAGE_UNAVAILABLE/tempremovido;PATCHfailedrecusado/granadaanteriorpreservada;abortprocessador->failed/IMPORT_TIMEOUT;PUTrealabortadoemchunks->nenhumobjeto;UIconsultaCancelada/campospreservados/sempublicação;slotglobalRPCbloqueousegundoholder+PROCESSOR_BUSY/pendingqueued;repetiçãomesmomediasemduplicação;respostadereadyperdidaapóscommitreal->ready/objetopreservados.
+- API seleção91s400/semadmin401/sessõesprotegidas. PATCHfailedretornaerrogenéricobanco503, melhoria decontratopendente.
+
+## Linux, testes e recursos
+
+- Containerprópriopcdnades-e2e-20261031-a7f4-linux,imagemoficialnode24-bookworm-slim,2vCPU/2GiB/256PIDs,cópiaversionadasem.env/segredos. NodeLinux24.22.2;Windows24.21.0.
+- Linuxbuild/typecheck+92testesPASS;bootstrapPASS;yt-dlp/FFmpeg/ffprobeLinux/hash/permissõesPASS;smokesfonteHTTPsemRange/corte/Storageprotocolar+fonte7200scorte30min/decodePASS;NFT203951326B/9avisos/3binários/sem.envPASS. VercelNÃOvalidada.
+- StressLinux90s(repetiçãoartificialdotrechoautorizado)57004ms,25961191B,FFmpegVmHWM269356KiB≈263MiB,semOOM. IMPORTANTE: excede40sreservadoshojeaoencodertemporary. Nãoalterei orçamento/downloader. Validar90scompleto/reverdeadlineglobal110s/workerantesdeprodução.
+- Frontend55/55 ebuild/typecheckPASSnestaetapa. 64Playwrightcontrolados sãoetapaanterior;provabrowseratualéE2Ereal. Semrepetir/renomeartestecontroladocomoreal.
+- Snapshotsstackociosa≈400–455MiB;6imagensnovaslistadas≈3.75GBnominaissemdeduplicação. Base11.1MBmedidainicial;Storagefinal8.283492MB/3recortes. AmostragemWindowsnãopegoupicodoprocessamento,nãochamarvalordepico.
+
+## Estado final dos recursos
+
+- Backend/frontend/supervisor próprios ENCERRADOS;portas55421/55422/55430/55431semlisteners. DockerDesktopcontinuaaberto para não afetaroutrosprojetos.
+- 6containersdoensaioparados/retidos:Linux0,Storage0,Auth0,REST255,Kong137,DB137;nenhumOOM. DBreiniciadoentreencerramentos econsultarealconfirmouready/3objetosmetadata;checkpoint/messageshutdowngracefulconfirmadosapós pg_ctl,wrapperterminou137. Nãoomitirterminaçãoforçadainicialnemafirmarperdadados.
+- 3volumesretidos:supabase_db_pcdnades-e2e-20261031-a7f4,supabase_storage_pcdnades-e2e-20261031-a7f4,pcdnades-e2e-20261031-a7f4-node. Imagens/logs/config/snapshotsretidos.
+- Banco:3ready,2failed,1queuedfixturedeconcorrência,zero processing/slotliberado. Granadaprincipalmantevevideo_idoriginal;3objetosfinais,nenhumafonteinteira. IDsprivadosdesessão/teste no manifesto,credenciaissólocal.
+- Containers/volumespreexistentesconferidospresentescomIDsoriginais.Nenhumpurge/prune/stopglobalouoperaçãoindividualsobrerecursopreexistente.
+
+## Retomar daqui
+
+1. ConferirGit/HEAD/status e lerIMPORT-LOCAL-E2E.md. Serviçosestãoparados,nãoassumirURLsativas.
+2. Se retomar ensaio já autorizado,conferirmanifesto/portas e iniciarAPENAScontainersdosufixoexclusivo;usarserve.mjs(browser-playback.mjs reutilizasmokeexistenteSEMnovoTikTok). Nãoexporsegredos/dump.status; nãoaplicarmigrationsdenovoautomaticamente.
+3. Pendênciaprodução:revisarprazo40sencoderantebenchmark90s57s,validarfluxo90scompleto nohostplanejado,quotas/coldstart/network/multiinstância/órfãos e contratoerropublicação. Não criarworkerpago automaticamente.
+4. Nenhuma escritaSupabaseremota/envVercel/habilitação/push/merge/deploy semnovaautorizaçãoespecífica. SucessolocalNÃOautoriza produção.
+
+## Entrega
+
+Relatório e checkpoint versionadossomenteemcommitLOCALdocs,base32ac6b3;nenhumcódigoreescrito. Histórico abaixo podeconterestadossuperados.
+
+---
+
+## Marco E2E REAL LOCAL — 31/10/2026
+
+- Stackpcdnades-e2e-20261031-a7f4 criada autorizada,5containers DB/Auth/REST/Kong/Storage saudáveis. Config/CLI2.102.0/segredos/scripts não versionados embackend/vendor/local-integration-20261031. API55421/DB55422/backend55430/front55431 TODOS127.0.0.1; projeto não vinculado a remoto. Inventário anterior salvo; não operados recursospreexistentes.
+- 5migrations aplicadassólocal uma vez(manifesto privado controla retomada). PrimeiroPostgRESTPGRST205 resolveu comNOTIFYpgrstreloadschema. Grantsservice_role verificadosOK; adminAuthlocaldescartávelcriado.
+- Fluxo browser SEMmocks: loginreal ->TikTokZSgs9BM9L(autorizado33s) ->seleção10..20 ->queued/processing/ready ->smokegravada ->Storageprivado ->player. Mídiaf2921a83-e8d8-4d9e-9765-6754801fa452;granada9c3a28e4-6acb-4819-861b-4fd67ac690cd. Objetoinicialúnico2761164B/final10sH264/AAC; downloadStorageprobe/decodePASS,semfonteinteira. Anonsemassinaturarecusado400;URL1sexpiradarecusada400.
+- ReproduçãoChromiumreal10s1080x1920,seekPASS,playeramploPASS,zeroPageErrors,requestsTikTokbloqueados. RenovaçãoURLassinadaAPIreal2requests comclockbrowser avançado(semalterarhoráriodohost),URLmudou/posição4spreservadaPASS. Primeiraasserçãoplaybackfalhou porlocatorambíguo(radarelista);escopadolista resolveu SEMalterarproduto eSEMredownload.
+- ProcessoapiPID28768/front18552/supervisor5924(session89142) rodando. Estado/credenciais/resultados emstate.private.json; NÃOimprimir. Logsprivados podemcontertokenslocaisdaCLI. Snapshotsanálise preservadosno diretórioignorado.
+- Em andamento:faultsStorage/cancelamento/concorrência/readyambíguo usandoMP4TikTokjávalidado(componenteprocessamentocacheadoexplicitamenteparaevitardownloadsrepetidos), DB/Auth/Storage reais. Depois Linuxisolado seviável/testesautomáticos/relatório/encerrar apenasrecursosdeste teste preservandodados.
+- Próximaaçãoexecutável:conferirstack/própriosPID/manifestoprivado,executarfaultscontrolados e registrar. NENHUMAprodução/envVercel/push/merge/deploy. f7bdbba/32ac6b3preservados.
+
+---
+
+# Supabase local real autorizado — 31/10/2026
+
+- Usuário autorizou iniciarDockerDesktop, criar stackSupabaseLOCALexclusiva, instalar ferramentas/imagens oficiais, aplicar migrationssólocal/criaradmin/validarTikTok->Storage->player e falhas. NÃO recursospreexistentes/remotos/envVercel/push/merge/deploy; não sobrescrever.env. Preservarcommitsf7bdbba/32ac6b3.
+- Início:devHEAD32ac6b3,árvorelimpa,worktreeC:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2 confirmado. Prêtarefa checkpoints/README lidos.
+- Em andamento: iniciarDocker, inventariarcontainers/volumes/imagens antes decriarstackisolada comprojectIDúnico,portas próprias econfig foraGit. Nenhumaescritaatévalidarloopback.
+- Próximaação:confirmardaemonLinux/inventário,instalarCLIisoladafixada/consultarhelp,gerarconfigexclusiva e registrarrecursosdeste teste. Segredos somente arquivoslocaisignorados, nunca logs/checkpoints.
+
+---
+
 # Checkpoint — orchestrator
 
 Atualizado em31/10/2026, America/Sao_Paulo.
