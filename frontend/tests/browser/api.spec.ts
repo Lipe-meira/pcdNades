@@ -1260,3 +1260,17 @@ test("TikTok: acesso recusado orienta MP4 e preserva o vídeo e o cadastro anter
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Granada de teste controlado");
   await expect(page.getByRole("textbox", { name: "Instruções", exact: true })).toHaveValue(grenade.instructions);
 });
+
+test("TikTok: teste privado importa e reproduz sem publicar granada", async ({ page }) => {
+  const state = await setup(page, { imports: true });
+  let privatePlayback = 0;
+  await page.route(`${api}/media/${importId}/import-playback`, route => {
+    privatePlayback++;
+    return reply(route, { status: 200, json: { data: { url: "https://example.com/test.mp4", expiresAt: new Date(Date.now() + 60000).toISOString(), mimeType: "video/mp4" } } });
+  });
+  await openImportForm(page); await consultImport(page);
+  await page.getByRole("button", { name: "Importar e testar em privado" }).click();
+  await expect(page.getByLabel("Vídeo importado para teste privado")).toBeVisible();
+  expect(privatePlayback).toBe(1); expect(state.importCreates).toBe(1); expect(state.published).toHaveLength(0);
+  await expect(page.getByRole("dialog")).toBeVisible();
+});

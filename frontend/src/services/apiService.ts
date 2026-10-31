@@ -383,6 +383,15 @@ export function createApiService(
         "A biblioteca é grande demais para carregar de uma vez. É necessário consultar com paginação na interface.",
       );
     },
+    async testImport(draft, options = {}) {
+      if (draft.media.kind !== "link") throw new Error("Selecione um link para testar.");
+      const mediaId = await resolveMedia(draft, options);
+      const result = await client.request<Envelope<Playback>>(`/media/${encodeURIComponent(mediaId)}/import-playback`, { authenticated: true, signal: options.signal });
+      const playback = result.data;
+      if (!playback?.url || playback.mimeType !== "video/mp4" || !playback.expiresAt || !Number.isFinite(Date.parse(playback.expiresAt))) contractError();
+      try { safeHttpUrl(playback.url); } catch { contractError(); }
+      return { mediaId, playback };
+    },
     createLineup: (draft, options) => save(draft, undefined, options),
     updateLineup: (id, draft, options) => save(draft, id, options),
     async deleteLineup(id) {

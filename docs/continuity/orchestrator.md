@@ -1,3 +1,18 @@
+# Trava TikTok e teste privado — 31/10/2026
+
+Trabalho solicitado concluído localmente na dev (base 6ff4cde): backend exige Auth, is_admin e UUID único MEDIA_TIKTOK_ADMIN_USER_ID, fail-closed, em inspeção/criação/leitura/conclusão/playback das importações. Rota de playback autenticada e privada para mídia própria pronta. Frontend tem botão de teste privado que não cria granada; botão de salvar continua publicação explícita. Nenhuma migration, push main, deploy ou mudança em produção. Backend108 testes e build, frontend55 testes e build, 14 Playwright TikTok com fixtures passaram; nenhum teste real cloud desta mudança. Auditoria em backend/IMPORT-PRODUCTION-AUDIT.md. Backup de produção ainda não foi criado nem restauração verificada; NO-GO para migration/publicação até backup verificável e autorização específica. Não há cadastro privado de smoke: somente teste privado da mídia, smoke normal é pública. Renovação da URL do novo player não validada. Próxima ação: revisar commit local e confirmar identidade do administrador/backup; obter autorização específica antes de operações remotas. Nenhum push solicitado nesta etapa. SHA do commit por git log; caminho C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2.
+
+---
+# Em andamento — trava TikTok para administrador (31/10/2026)
+
+Pedido: implementar trava de identidade autenticada no backend, teste sem publicar smoke, preservar upload/playback, testes/builds e commit local na dev. Base 6ff4cde; worktree dev, auditoria de produção e checkpoint já estavam não commitados e serão preservados. Proibidos migration, merge/push main, deploy e ativação em produção. Primeiro passo: testes de autorização por identidade, conclusão e reprodução privada; depois implementar, validar e documentar. Backup do banco deve ser verificado antes da futura operação, ainda não realizado.
+
+---
+# Auditoria produção TikTok — 31/10/2026
+
+Pedido: auditar migration, infraestrutura e rollback; não executar migration/merge/push/deploy/env. Leia backend/IMPORT-PRODUCTION-AUDIT.md. dev 6ff4cde, origin/main f4aa722, 41 commits. Produção consultada apenas leitura: 3 mídias sem clip/TikTok; bucket privado 50MB MP4; migration de importação ausente; 1 administrador; flags TikTok ausentes, modo default range, duração global90. Testes anteriores 106 backend/55 frontend e builds passam, preflight nativo Vercel OK, E2E cloud pendente. A flag é global para todos admins e capabilities pública; para limitação por um admin específico implementar allowlist e validar. yt-dlp é empacotado apenas quando flag true no build: mudança exige rebuild. Recomendação NO-GO para ativação até controles e aprovação. Próximo passo conferir relatório e obter autorização específica para migration e futura publicação, além de decidir controle de administrador; não executar até autorização. Arquivos não commitados: este checkpoint e backend/IMPORT-PRODUCTION-AUDIT.md. Sem push nesta etapa.
+
+---
 # Estado atual — Preview nativo passou; Supabase Free bloqueado (31/10/2026)
 
 - Pedido: preservar e publicar progresso na dev e continuar Preview gratuito isolado. Worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2, branchdev, baseec0af61; commits7b621a9/fd2997c e anteriores preservados. Push normal autorizado; main/prod/recursos existentes proibidos.

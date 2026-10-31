@@ -1,6 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';
 import {buildApp} from '../src/application.js';
 const id='123e4567-e89b-42d3-a456-426614174000';
+process.env.MEDIA_TIKTOK_ADMIN_USER_ID=id;
 const metadata={provider:'tiktok',sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766',videoId:'7701366996495125766',title:'Tutorial',author:'Autor',durationSeconds:4000};
 test('pilot deadline bounds stalled authentication before DB or extractor writes',async()=>{
  const clients:any={user:()=>({auth:{getUser:()=>new Promise(()=>{})}})};
@@ -11,9 +12,9 @@ test('pilot deadline bounds stalled authentication before DB or extractor writes
 });
 function fake(){
  let inspected=0,created=0;const calls:string[]=[];
- const row={id,owner_id:'admin',status:'queued',source_type:'tiktok',source_url:metadata.sourceUrl,clip:{startSeconds:1800,endSeconds:1810},import_source_id:id,import_snapshot:metadata,attempts:0};
- const service:any={rpc:async(name:string,args:any)=>{calls.push(name);if(name==='claim_import_slot')return {data:true};if(name==='release_import_slot')return {data:null};if(name==='reserve_import_source')return {data:{id,expires_at:'2099-01-01T00:00:00Z'}};if(name==='create_tiktok_import'){created++;assert.equal(args.p_owner,'admin');return {data:row};}throw new Error(name);},from:()=>{const q:any={update:()=>q,eq:()=>q,is:()=>q,select:()=>q,abortSignal:()=>q,maybeSingle:async()=>({data:{id}})};return q;}};
- const clients:any={public:{},service,user:()=>({auth:{getUser:async()=>({data:{user:{id:'admin'}}})},rpc:async()=>({data:true})})};
+ const row={id,owner_id:id,status:'queued',source_type:'tiktok',source_url:metadata.sourceUrl,clip:{startSeconds:1800,endSeconds:1810},import_source_id:id,import_snapshot:metadata,attempts:0};
+ const service:any={rpc:async(name:string,args:any)=>{calls.push(name);if(name==='claim_import_slot')return {data:true};if(name==='release_import_slot')return {data:null};if(name==='reserve_import_source')return {data:{id,expires_at:'2099-01-01T00:00:00Z'}};if(name==='create_tiktok_import'){created++;assert.equal(args.p_owner,id);return {data:row};}throw new Error(name);},from:()=>{const q:any={update:()=>q,eq:()=>q,is:()=>q,select:()=>q,abortSignal:()=>q,maybeSingle:async()=>({data:{id}})};return q;}};
+ const clients:any={public:{},service,user:()=>({auth:{getUser:async()=>({data:{user:{id:id}}})},rpc:async()=>({data:true})})};
  return {clients,calls,row,created:()=>created,inspected:()=>inspected,deps:{available:()=>true,extract:async()=>{inspected++;return {metadata};}}};
 }
 test('inspection requires authentication before extracting and returns only safe metadata',async()=>{

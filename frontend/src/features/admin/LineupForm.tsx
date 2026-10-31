@@ -73,6 +73,8 @@ export function LineupForm({
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<Progress>();
   const [resumeMediaId, setResumeMediaId] = useState<string>();
+  const [testPlayback, setTestPlayback] = useState<string>();
+  useEffect(() => { setTestPlayback(undefined); }, [draft.media]);
   const request = useRef<AbortController | null>(null);
   const demo = service.mode === "demo";
   useEffect(
@@ -414,6 +416,22 @@ export function LineupForm({
               : "O arquivo já foi enviado. Salvar novamente retoma a confirmação ou o acompanhamento, sem reenviar o vídeo."}
           </p>
         )}
+        {draft.media.kind === "link" && service.testImport && <div className="import-test">
+          <button type="button" className="button secondary" disabled={busy || !draft.media.inspection || !draft.media.clip} onClick={async () => {
+            if (submitLock.current) return;
+            submitLock.current = true; setBusy(true); setFailure(undefined); setTestPlayback(undefined);
+            const controller = new AbortController(); request.current = controller;
+            try {
+              const result = await service.testImport!(draft, { signal: controller.signal, mediaId: resumeMediaId, onProgress: value => {
+                setProgress(value); if (value.mediaId) setResumeMediaId(value.mediaId);
+              }});
+              if (!controller.signal.aborted) { setResumeMediaId(result.mediaId); setTestPlayback(result.playback.url); }
+            } catch (error) { if (!controller.signal.aborted) setFailure(error instanceof Error ? error.message : "Não foi possível testar a importação."); }
+            finally { submitLock.current = false; setBusy(false); setProgress(undefined); request.current = null; }
+          }}>Importar e testar em privado</button>
+          <p className="field-hint">O teste armazena apenas o vídeo e não cadastra nem publica uma granada.</p>
+          {testPlayback && <video controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
+        </div>}
         <div className="form-actions">
           <span>
             {demo
