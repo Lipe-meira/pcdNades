@@ -1,3 +1,135 @@
+# Integração local revisada — entrega em preparação (31/10/2026)
+
+- Pedido vigente: preservar alterações anteriores, revisar/testar e criar commits somente locais; serviços remotos/infraestrutura/configuração/deploy exigem autorização. Nada manual do usuário foi presumido.
+- Worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2; branchdev; baseb290e43; nenhum push/merge/reset/rebase. Mudanças anteriores22arquivos preservadas.
+- Downloader real aprovado preservado. Correções adicionais emclip-storage/import-processing: assinatura não inicia apósabort; deixa de aguardar SDK ao cancelar; erroSTORAGE_UNAVAILABLE explícito; remoção somente chave da tentativa apósfailed confirmadoCAS; nunca excluir objeto deready ambíguo. TestesRED/GREEN. SDK semAbortSignal ainda pode finalizar requisição de assinatura/remoção embackground, sem iniciar upload tardio.
+- Validação final: backend92/92+typecheck/buildPASS; frontend55/55+typecheck/buildPASS; Playwright64/64desktop/mobilePASS(2.1min), API/Auth/Storagecontrolados; SQLPGlite34assertions/5migrationsPASS. SQL inclui bloqueiopublicaçãopendente, ready e preservação degranada após substituiçãofailed. NÃO Supabase real.
+- Fixture real yt-dlp/FFmpeg local+SDK/HTTPloopback: corte10..20->10sH264/AAC,1objetoexatamenteigualrecorte,diferentefonte,origem403eMP4armazenadoreobtido/probe/decodePASS. Nenhum novo TikTok externo nesta retomada. Fixture2h/corte30minPASS; transporteofflinePASS.
+- NFTWindows:3binários/hashyt-dlpPASS,186385981B,9avisos,nenhum.env; Linux/Vercelaindanãovalidados. Dockerinstalado masdaemonindisponível; SupabaseCLI/psql ausentes; nenhuma infra iniciada.
+- Relatórios: backend/IMPORT-VALIDATION.md (estado/roteiro/checklist/aprovação proposta), IMPORT-AUDIT.md (teste real anterior), IMPORTS.md; README/backendREADME/YTDLPNOTICE corrigidosparaestadoatual.
+- Em andamento: staging/checagemfinalsegredos/diff e commitLOCALvalidado. Próximaaçãoexecutável: conferirGit/revisardiffstaged e realizarcommitlocal; registrarSHAfinal. Não push/deploy.
+- Pendência que exige autorização: iniciarDockerDesktop e prepararstackSupabaseLOCALdescartável(containers/volumes/imagens), aplicar5migrations sólocal,criarusuáriodescartável/importarMP4evalidarplayerrealconectado. Não usarprojetoremotosemautorizaçãoespecífica.
+
+---
+
+## Marco local verificado — 31/10/2026
+
+- Revisão preservou16modificados+6novos anteriores. Downloader aprovado NÃO reescrito. Backend83/frontend55 e builds iniciaisPASS; browser64/64PASSdesktop/mobile com APIs controladas (Browser plugin ausente, Playwright existente); SQLPGlite0.5.13 local29assertions/5migrationsPASS. Nenhum novo TikTok externo nesta retomada.
+- Bugs adicionais reproduzidosRED/GREEN: erroStorage viravaIMPORT_FAILED; assinatura era solicitada apósabort e aguardavaindefinidamente seSDK não respondesse. Corrigidos storeClip/códigoStorage e tentativa de limpeza pontual só após failed confirmado porCAS; resposta ready ambígua nunca removida.
+- Novos testes SDKreal/HTTPloopback de assinatura/upload/delete; processador/DB em memória; playbackrota com gating ready+publicado e renovação sem TikTok. Fixture yt-dlp/FFmpeg local agora envia somente recorte porSDK e valida MP4reobtido com origem403; NÃO Supabase real. Temporários removidos.
+- NFTWin verificado:3binários presentes,hashyt-dlpPASS,sem.env,186385981B,9avisos; não comprova Linux/Vercel. Dockerdaemonindisponível; Supabaselocalcompleto não disponível. Seminiciarinfra/containersouusarprod.
+- Em andamento: suítefinal/docs/checagemsegredos/staging antes do commit local solicitado. Próximaação:concluirbackend92esperados/build/diff; documentarroteiroexato, commitLOCAL, reportarSHA/pendências. Sem push/merge/deploy/env/SQLremoto.
+
+---
+
+# Retomada autorizada — integração local de Storage/player (31/10/2026)
+
+- Pedido: revisar/preservar todas as alterações anteriores, validar pipeline local e frontend/hospedagem, criar commits somente locais após testes. NÃO push/merge/reset/rebase/deploy/SQL remoto/envprodução ou infraestrutura sem autorização.
+- Estado inicial conferido: worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2, branchdev, HEADb290e43;16arquivosmodificados+6novos preservados. Nenhuma etapa manual do usuário foi presumida concluída.
+- Em andamento: revisão do diff inteiro, arquivos novos, Storage/ready/playback/renovação e migrations/RLS. Docker instalado mas daemon Linux indisponível; somente distribuiçãoWSLdocker-desktop, CLI Supabase/psql não encontrados. Não iniciar infraestrutura nem usar remoto automaticamente.
+- Próxima ação: concluir revisão e testes locais, reproduzir/corrigir bugs concretos sem reescrever downloader aprovado; atualizar relatório/checkpoint e commit local validado. Pendências remotas serão apresentadas para autorização específica.
+
+---
+
+# Checkpoint — orchestrator
+
+Atualizado em: 31/10/2026, America/Sao_Paulo
+Estado: concluído parcialmente — download/recorte real corrigidos localmente; Storage/player/host pendentes.
+
+## Objetivo e pedido atual
+
+Auditar/corrigir importação TikTok autorizada na dev, comparar execução direta/relay e selecionar intervalo com armazenamento exclusivo da saída. Nova evidência do usuário direcionou teste para vídeo7701782883760983303. Não publicar: usuário proíbe push/merge/force-push, deploy, SQL remoto, alteração de variáveis de produção e habilitação em produção.
+
+## Localização do trabalho
+
+- Branch `dev`; worktree `C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2`.
+- Base/HEAD `b290e43`; nenhum commit desta auditoria; nenhum push/merge realizado.
+- Todos os arquivos abaixo continuam somente locais, sem commit; não sobrescrever trabalho:
+
+- `backend/.env.example`
+- `backend/IMPORTS.md`
+- `backend/scripts/import-protected-smoke.ts`
+- `backend/src/application.ts`
+- `backend/src/import-api.ts`
+- `backend/src/import-network.ts`
+- `backend/src/import-processing.ts`
+- `backend/src/import-runtime.ts`
+- `backend/src/tiktok.ts`
+- `backend/tests/import-api.test.ts`
+- `backend/tests/import-processing.test.ts`
+- `backend/tests/import-relay.test.ts`
+- `docs/continuity/orchestrator.md`
+- `frontend/src/features/admin/ImportLinkEditor.tsx`
+- `frontend/src/features/admin/LineupForm.tsx`
+- `frontend/src/services/apiClient.ts`
+- `backend/IMPORT-AUDIT.md`
+- `backend/scripts/import-comparison-smoke.ts`
+- `backend/scripts/import-native-session-smoke.ts`
+- `backend/scripts/import-temporary-smoke.ts`
+- `backend/src/import-temporary.ts`
+- `backend/tests/import-temporary.test.ts`
+
+## Feito
+
+- Reproduzidos e corrigidos limites anunciados90 vs configuração20 e job antigo que ficavaqueued quando a seleção excedia limite menor. Testes RED/GREEN.
+- Comparativo real autorizado: mesmo vídeo/formatoHEVC1080p, relay403; downloader nativo com URL/info separado403; downloader direto passou33.320635s/MP4/HEVC/AAC e decode integral. Corte10..20 H264/yuv420p/AAC10.000s passou.
+- Experimento adicional: extração+download na mesma execução yt-dlp, pelo MESMO proxy protegido/DNS pinado/orçamento, passou; decode integral e corte10..20 passaram. Então modo temporary foi integrado ao importSection com formato exato, ID, probe da fonte/dimensões/codec/duração, recorte e validação final. Execução REAL desse importSection também passou, seleção0..10 ->10.000s, probe/decode. Temporários dos testes removidos.
+- Sem copiar cookie/challenge solver/config de conta. O método de sessão única passou enquanto os separados falharam; perda de contexto é hipótese sustentada, mas causalidade de um componente exato NÃO está provada. Não atribuir ao cookie/Range/proxy/FFmpeg isoladamente.
+- Modo temporário opt-in, padrão range e habilitaçãofalse; sem fallback automático403. Só a saída validada segue para storeClip. SSRF/proxy/lease/CAS/idempotência/publicaçãoready existentes preservados. Upload e YouTube/Instagram não ampliados.
+- Relatório completo: backend/IMPORT-AUDIT.md; IMPORTS.md aponta para o estado novo.
+
+## Em andamento
+
+Nenhuma execução pendente. Alterações locais entregues para revisão/teste; não afirmar E2E Storage/player pronto.
+
+## Retomar daqui
+
+1. Conferir `git status`, branch e HEAD; ler backend/IMPORT-AUDIT.md antes de executar qualquer rede/push.
+2. Revisar diff local e modo temporary; resolver validação de memória/disco, binários/bundle/tempo em Linux/host adequado.
+3. Somente com autorização e ambiente de teste Supabase: revisar/aplicar migration TikTok pendente, Auth/RPC/RLS/bucket privado; validar importação -> somente trecho no Storage -> ready -> publicação -> playback site sem origem. Não usar produção sem autorização.
+4. Registrar resultados reais separados de mocks, depois decidir integração/publicação. Nenhum push autorizado neste pedido.
+
+## Decisões e contrato
+
+- Até90s/50MB de saída ou limite menor configurado; fonteTikTok até7200s dentro de100MB/32conexões de mídia. Temporário baixa fonte completa limitada, FFmpeg local gera trecho escolhido; só trecho vai ao Storage. Limites não são quota rígida do SO; runtime PyInstaller/memória/disco/limpeza pós-kill precisam validaçãohost.
+- Fonte validada com tolerância1s de duração por arredondamento da metadataTikTok, mesma dimensão/codec do formato escolhido; duração final dentro de0.1s da seleção e da política efetiva.
+- Nenhum novo serviço pago, migrations históricas modificadas, envprodução ou deploy. Nenhuma alteração remota do Supabase.
+
+## Validação
+
+- Backend83/83 testes + typecheck/build PASS. DB/Storage dos testes de processador são substituídos; falhaStorage/limpeza temporária real e concorrência local cobertas.
+- Frontend55/55 testes + typecheck/build PASS. Sem novo browser completo nesta auditoria.
+- Fixture yt-dlp+FFmpeg reais HTTP200 sem Range, download idêntico, corte10..20 ->10s/decode e cancelamento prévio PASS.
+- Fixture FFmpeg real7200s, corte1800..1810 ->10s, decode/framevermelho PASS; relay recebeu1.191.936B/2requests; servidor sem Range rejeitado. Transporte offline Node/FFmpeg path/query/Range/headers herdados iguais, diferenças de nomes não provam causaexterna.
+- Testes REAIS TikTok descritos acima, todos Windows local. Consulta pública só leitura de capabilities confirmou90s/50MB e importadoresdisabled em produção31/10. Não se leu chave/env secreta.
+- NÃO executados: Supabase Storage/PostgREST/Auth E2E, playback real no site, Linux/Vercel, SQL remoto ou novo PGlite. `git diff --check` PASS.
+
+## Bloqueios e dependências
+
+- Migration20261030124528_tiktok_import_sessions.sql continua sem aplicação remota; validação de ambiente/bucket/RPC e autorização antes de qualquer teste de escrita.
+- Critério final Storage+reprodução posterior ainda pendente. Download/recorte autorizado real demonstrados; não generalizar para todos os links/casos.
+- Produção preservada; resultados e código desta sessão apenas locais. Nenhuma mensagem/senha/token/URL assinada em disco de continuidade.
+
+## Entrega e histórico curto
+
+- 31/10: implementação local parcial e relatório, HEADb290e43 mantido. Sem commit/push/deploy; histórico anterior abaixo pode conter estados superados.
+
+---
+
+## Auditoria local em andamento — 31/10/2026
+
+- Novo vídeo autorizado7701782883760983303: inspeção33s/HEVC/AAC; relay403; yt-dlp nativo com info mínimo/proxy403; yt-dlp direto com mesmo formato bytevc1_1080p_818654-1 baixou MP4. Probe33.320635s/HEVC/AAC e decode integral PASS; corte10..20 validado10.000s/H264/yuv420p/AAC e decode PASS. Temporários removidos. Sem cookies privados/login/evasão. Challenge cookie NÃO comprovado como causa. Range isoladamente não explica o403.
+- Correções locais: limites respeitam configuração20/90; jobs antigos acima do limite passam failed; modo temporary explícito com proxy/DNS/budget e FFmpeg local, sem fallback403; diagnósticos sanitizados. Alternativa protegida ainda NÃO funciona nesse TikTok real; não habilitar produção.
+- Até aqui: backend78 testes; frontend55 testes/build; backend build/typecheck; fixture real yt-dlpHTTP200 sem Range/corte10s/decode/cancelamento PASS; fixture2h relay corte30min PASS. Consulta pública só leitura: produção90s/50MB e TikTok/IG/YTdesabilitados. Não é Storage/Supabase/Vercel E2E.
+- Branchdev, worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2, baseb290e43. Nenhum commit/push/merge nesta auditoria. Alterações locais em backend/.env.example, application/import-api/import-network/import-processing/import-runtime/tiktok/import-temporary, testes correspondentes, scriptsimport-protected/import-comparison/import-temporary-smoke, frontendImportLinkEditor/LineupForm/apiClient e este checkpoint. Relatório backend/IMPORT-AUDIT.md em preparação.
+- Primeira ação ao retomar: conferir Git, concluir regressões/build/diff e relatório; causa403 continua indeterminada, Storage/reprodução reais pendentes. Sem deploy/SQL remoto/variávelprodução/push/merge. Não repetir teste externo sem objetivo novo e autorização.
+
+## Auditoria/correção local solicitada na dev — 31/10/2026
+
+- Pedido atual: analisar/corrigir importador TikTok com origem autorizada/seleção/storage; diagnóstico403sematribuircausasemprova,verificar90s/config/build/runtime/Supabase. Baseb290e43,worktreedevativo,Gitlimponainicialização.
+- Restrições NOVAS: nenhum push/merge/forcepush/migrationremota/produção/env/deploy. Não realizarnovotesteexterno de mídia semautorizaçãopontual;trabalharfixtureslocais/testescontroladoseevidênciashistóricasdistintas. Código seráalteradolocalmentesehouverbugreproduzível,semchamarfixturedeE2Ereal.
+- Em andamento: inspeçãoarquivosbackend/frontend/migration/tests; skill systematic-debugginglida. Próximaação:reproduzirlimites90/config/estados/SSRF ecorreção pontual comregressão,avaliaralternativatemporáriasegurasemrelaxarproteções.
+
 # Estado vigente — consolidação na dev (31/10/2026)
 
 - Pedido: concluir o envio de todo o trabalho ao GitHub na branch `dev` e deixar o checkout local pronto para o usuário investigar manualmente o download. Não alterar produção.

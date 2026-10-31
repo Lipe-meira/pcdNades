@@ -1,6 +1,6 @@
 import { importerCapabilities, disabledImport, uploadRequest, completeRequest } from './importers.js';
 import {importDependencies,inspectSource,createSourceImport,type ImportDependencies} from './import-api.js';
-import {importLimits} from './tiktok.js';
+import {effectiveImportLimits} from './tiktok.js';
 import {completeImport} from './import-processing.js';
 import { completeInline } from './inline.js';
 import { mapView } from './maps.js';
@@ -16,6 +16,7 @@ type Clients={public:SupabaseClient;service:SupabaseClient;user:(token:string)=>
 export function buildApp(clients?:Clients,imports:ImportDependencies=importDependencies){return configureApp(Fastify({logger:true,bodyLimit:16384}),clients,imports);}
 export function configureApp(app:FastifyInstance,clients?:Clients,imports:ImportDependencies=importDependencies) {
  const limits=readMediaLimits();
+ const importLimits=effectiveImportLimits(limits);
  const uploadEnabled=readUploadEnabled();
  const processingMode=readProcessorMode();
  const trimmingEnabled=readTrimmingEnabled();
@@ -32,8 +33,8 @@ export function configureApp(app:FastifyInstance,clients?:Clients,imports:Import
  app.get('/health',async()=>({data:{status:'ok',configured:!!c}}));
  app.get('/api/v1/maps',async()=>({data:checked(await requireClients().public.from('maps').select('*').order('name')).map((m:any)=>mapView(m,process.env.FRONTEND_URL))}));
  app.get('/api/v1/media/capabilities',async()=>({data:{upload:{enabled:uploadEnabled&&!!c,processingMode,...limits},trimming:{enabled:trimmingEnabled&&uploadEnabled&&!!c&&processingMode==='inline-original',...(!(trimmingEnabled&&uploadEnabled&&!!c&&processingMode==='inline-original')?{reasonCode:'CLIP_UNSUPPORTED'}:{}),maxSourceDurationSeconds:180,maxSourceBytes:50000000,maxDurationSeconds:limits.maxDurationSeconds,minDurationSeconds:0.1,timePrecisionSeconds:0.001},importers:{...importerCapabilities,tiktok:imports.available()&&!!c?{enabled:true,inspection:true,...importLimits}:importerCapabilities.tiktok}}}));
- app.post('/api/v1/media/imports/inspect',async(req,reply)=>{const a=await admin(req);return reply.code(201).send({data:await inspectSource(requireClients().service,a.id,req.body,imports)});});
- app.post('/api/v1/media/imports',async(req,reply)=>{const a=await admin(req);if(req.body&&typeof req.body==='object'&&'sourceUrl' in req.body)return disabledImport(req.body);const asset=await createSourceImport(requireClients().service,a.id,req.body,imports);return reply.code(201).send({data:{...mediaView(asset),mediaId:asset.id}});});
+ app.post('/api/v1/media/imports/inspect',async(req,reply)=>{const a=await admin(req);return reply.code(201).send({data:await inspectSource(requireClients().service,a.id,req.body,imports,limits)});});
+ app.post('/api/v1/media/imports',async(req,reply)=>{const a=await admin(req);if(req.body&&typeof req.body==='object'&&'sourceUrl' in req.body)return disabledImport(req.body);const asset=await createSourceImport(requireClients().service,a.id,req.body,imports,limits);return reply.code(201).send({data:{...mediaView(asset),mediaId:asset.id}});});
  app.get('/api/v1/grenades',async req=>{const f=filters.parse(req.query);let q=requireClients().public.from('grenades').select('*',{count:'exact'});if(f.mapId)q=q.eq('map_id',f.mapId);if(f.type)q=q.eq('type',f.type);if(f.side)q=q.eq('side',f.side);const r=await q.order('created_at',{ascending:false}).order('id',{ascending:false}).range(f.offset,f.offset+f.limit-1);return {data:await Promise.all(checked(r).map(enrich)),pagination:{limit:f.limit,offset:f.offset,total:r.count}};});
  app.get('/api/v1/grenades/:id',async(req:any)=>{const r=checked(await requireClients().public.from('grenades').select('*').eq('id',uuid.parse(req.params.id)).maybeSingle());if(!r)throw failure('NOT_FOUND',404);return {data:await enrich(r)};});
  app.post('/api/v1/grenades',async(req,reply)=>{const {db}=await admin(req);const r=checked(await db.from('grenades').insert(dbBody(body.parse(req.body))).select().single());return reply.code(201).send({data:await enrich(r)});});

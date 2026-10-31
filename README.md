@@ -2,9 +2,9 @@
 
 ## Checkout consolidado para desenvolvimento — 31/10/2026
 
-A branch `dev` reúne a main e todo o trabalho das branches de frontend e backend, incluindo a implementação experimental de importação TikTok. O importador permanece desativado por padrão: a consulta funciona, mas o download no fluxo protegido ainda retorna HTTP403. Nada desta consolidação foi publicado em produção.
+A branch `dev` reúne a main e todo o trabalho das branches de frontend e backend, incluindo a implementação experimental de importação TikTok. O importador permanece desativado por padrão. O modo experimental `temporary` baixou e recortou um TikTok autorizado em teste local real; Storage/Supabase e hospedagem ainda precisam de validação integrada. O relay antigo recebeu HTTP403. Nada desta consolidação foi publicado em produção.
 
-Para continuar a investigação manual, leia [o checkpoint do orquestrador](docs/continuity/orchestrator.md), [o contrato e a arquitetura TikTok](backend/TIKTOK-IMPLEMENTATION.md) e [as evidências e limitações](backend/IMPORTS.md). A migration de sessões de importação ainda não foi aplicada no Supabase. Não é necessário aplicá-la para inspecionar o código ou executar os testes locais controlados.
+Para continuar, leia [o roteiro de validação isolada](backend/IMPORT-VALIDATION.md), [o checkpoint do orquestrador](docs/continuity/orchestrator.md), [o contrato e a arquitetura TikTok](backend/TIKTOK-IMPLEMENTATION.md) e [as evidências e limitações](backend/IMPORTS.md). A migration de sessões de importação ainda não foi aplicada no Supabase. Não é necessário aplicá-la para inspecionar o código ou executar os testes locais controlados.
 
 
 Biblioteca compartilhada de granadas de Counter-Strike 2 para ajudar um time a aprender e treinar lineups.
@@ -36,7 +36,7 @@ Exemplo de uso: cadastrar “Smoke janela — Mirage”, marcar o destino na jan
 - Frontend em **React com TypeScript**, por familiaridade do usuário.
 - Biblioteca para o time treinar granadas de CS2.
 - Cadastro de smokes, flashbangs e molotovs com vídeo curto demonstrativo.
-- Duração máxima de cada vídeo: **20 segundos**.
+- Duração máxima de cada vídeo final: **90 segundos**, respeitando eventual limite menor configurado no backend.
 - Upload de vídeo `.mp4` e fluxo desejado de importação por link do YouTube Shorts ou TikTok: baixar e armazenar uma cópia no projeto, em vez de apenas incorporar o player externo. O suporte de importação por plataforma depende de validação técnica.
 - Marcação do destino da granada no mapa.
 - Conteúdo salvo disponível para outras pessoas que abrirem o site, inclusive em outro dispositivo.

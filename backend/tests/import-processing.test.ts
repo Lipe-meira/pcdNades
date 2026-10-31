@@ -33,3 +33,37 @@ test('access denial and network quota failures remain explicit sanitized termina
   assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,code);assert.ok(!JSON.stringify(r.asset.error).includes('secret'));assert.equal(f.stores(),0);
  }
 });
+
+test('a lower runtime limit terminates an old queued selection without storing or leaving it queued',async()=>{
+ const f=fake({clip:{startSeconds:1800,endSeconds:1830}});
+ const r=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:20},f.deps);
+ assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,'DURATION_EXCEEDED');
+ assert.equal(f.processed(),0);assert.equal(f.stores(),0);assert.equal(f.row().storage_key,'pending.mp4');
+});
+
+test('Storage failure preserves the existing key and removes the temporary directory',async()=>{
+ const f=fake();let directory='';const {dirname}=await import('node:path');const {access}=await import('node:fs/promises');
+ const result=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},{...f.deps,process:async(...args)=>{directory=dirname(args[2]);return f.deps.process(args[0],args[1],args[2]);},store:async()=>{throw new Error('private signing URL');}});
+ assert.equal(result.asset.status,'failed');assert.equal(result.asset.storage_key,'pending.mp4');assert.ok(!JSON.stringify(result.asset.error).includes('private'));await assert.rejects(access(directory));
+});
+
+test('concurrent local processing fails busy before downloading the second asset',async()=>{
+ const first=fake(),second=fake();let unlock!:()=>void,entered!:()=>void;
+ const gate=new Promise<void>(r=>unlock=r),start=new Promise<void>(r=>entered=r);
+ const running=completeImport(first.db,'media',{maxBytes:50000000,maxDurationSeconds:90},{...first.deps,process:async(...args)=>{entered();await gate;return first.deps.process(args[0],args[1],args[2]);}});
+ await start;try{await assert.rejects(completeImport(second.db,'media',{maxBytes:50000000,maxDurationSeconds:90},second.deps),(e:any)=>e.code==='PROCESSOR_BUSY');assert.equal(second.processed(),0);assert.equal(second.row().status,'queued');}finally{unlock();await running;}
+});
+
+test('Storage errors remain explicit and confirmed failed attempts clean only their own output',async()=>{
+ const f=fake();const removed:string[]=[];
+ const deps={...f.deps,store:async()=>{throw Object.assign(new Error('private Storage URL'),{code:'STORAGE_UNAVAILABLE'});},remove:async(_db:any,key:string)=>{removed.push(key);}};
+ const r=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},deps);
+ assert.equal(r.asset.status,'failed');assert.equal(r.asset.error.code,'STORAGE_UNAVAILABLE');assert.equal(r.asset.storage_key,'pending.mp4');assert.deepEqual(removed,['media/import-1.mp4']);
+});
+
+test('ambiguous ready response never removes an object referenced by ready media',async()=>{
+ const f=fake();const removed:string[]=[];
+ const deps={...f.deps,store:async()=>{Object.assign(f.row(),{status:'ready',storage_key:'media/import-1.mp4',locked_until:null});throw new Error('response lost after commit');},remove:async(_db:any,key:string)=>{removed.push(key);}};
+ const r=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},deps);
+ assert.equal(r.asset.status,'ready');assert.deepEqual(removed,[]);
+});

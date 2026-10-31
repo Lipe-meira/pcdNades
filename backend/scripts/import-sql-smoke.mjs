@@ -51,5 +51,17 @@ try{
  for(let i=3;i<10;i++)await db.query('select public.reserve_import_source($1)',[owner]);
  await denied('select public.reserve_import_source($1)',[owner],/IMPORT_RATE_LIMIT/);
  check(Number((await one('select count(*) as total from public.media_assets')).total),1);
+ // Real local PostgreSQL trigger checks; no Storage object is implied by SQL metadata.
+ const insertGrenade="insert into public.grenades(title,map_id,type,side,instructions,target,video_id) values('Fixture','mirage','smoke','T','Fixture', '{\"x\":0.5,\"y\":0.5}', $1) returning id";
+ await denied(insertGrenade,[media.id],/Video must be ready/);
+ await db.query("update public.media_assets set status='processing',attempts=1,locked_until=now()+interval '120 seconds' where id=$1",[media.id]);
+ await db.query("update public.media_assets set status='ready',locked_until=null,storage_key=$2,metadata=$3 where id=$1",[media.id,media.id+'/import-1.mp4',{durationSeconds:10,bytes:4,mimeType:'video/mp4'}]);
+ const grenade=await one(insertGrenade,[media.id]);check(typeof grenade.id,'string');
+ const replacement=await one('select * from public.create_tiktok_import($1,$2,$3)',[available.id,owner,clip]);
+ await db.query("update public.media_assets set status='processing',attempts=1,locked_until=now()+interval '120 seconds' where id=$1",[replacement.id]);
+ await db.query("update public.media_assets set status='failed',locked_until=null,error=$2 where id=$1",[replacement.id,{code:'STORAGE_UNAVAILABLE'}]);
+ await denied('update public.grenades set video_id=$2 where id=$1',[grenade.id,replacement.id],/Video must be ready/);
+ check((await one('select video_id from public.grenades where id=$1',[grenade.id])).video_id,media.id);
+ await denied("update public.media_assets set status='queued' where id=$1",[replacement.id],/Invalid media state transition/);
  console.log(JSON.stringify({engine:'PGlite PostgreSQL WASM 0.5.13',localOnly:true,assertions,appliedMigrations:5,rlsAndGrants:'PASS',atomicSelectionAndIdempotency:'PASS',expiryAndRecovery:'PASS',globalSlot:'PASS',rateLimit:'PASS',remoteSupabaseValidated:false}));
 }finally{await db.close();}

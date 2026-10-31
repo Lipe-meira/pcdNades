@@ -1,3 +1,7 @@
+> Continuação31/10: revisão, correções Storage/cancelamento/limpeza e roteiro de Supabase real em [IMPORT-VALIDATION.md](IMPORT-VALIDATION.md).92 testes backend,55frontend,64browser e34assertions SQLlocal passaram. Sem Supabase real, deploy ou push; importaçãooff.
+
+> Atualização31/10/2026: relatório vigente em [IMPORT-AUDIT.md](IMPORT-AUDIT.md). Download TikTok protegido em **sessão única yt-dlp**, seguido de recorte local, passou no vídeo autorizado7701782883760983303; o relay e a alternativa inicial com info separado receberam403. Modo `temporary` integrado localmente, opt-in; padrão `range`, flag de habilitaçãofalse. Storage/player/Linux/Vercel ainda pendentes. Nenhum push/deploy/SQL remoto/envprodução. Os resultados30/10 abaixo são históricos; não provam falha universal nem prontidão ponta a ponta.
+
 # Vídeos e importação por link
 
 Atualizado em30/10/2026. **Importação TikTok não está pronta para produção.** O usuário autorizou o experimento com yt-dlp. Há código de inspeção, sessões e processamento, mas o download do exemplo foi recusado pelo CDN com403 no caminho protegido. Capabilities continuam off por padrão. YouTube/Instagram permanecem desativados; sem embed como substituto.

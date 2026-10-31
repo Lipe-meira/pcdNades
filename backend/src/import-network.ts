@@ -5,7 +5,8 @@ import {createServer, type IncomingMessage} from 'node:http';
 import {request as httpsRequest} from 'node:https';
 import {randomBytes} from 'node:crypto';
 
-export const importFailure=(code:string,statusCode=422)=>Object.assign(new Error(code),{code,statusCode});
+export type ImportDiagnostic={stage:'metadata'|'downloading'|'transcoding';httpStatus?:number;headerNames?:string[];responseHeaderNames?:string[]};
+export const importFailure=(code:string,statusCode=422,diagnostic?:ImportDiagnostic)=>Object.assign(new Error(code),{code,statusCode,...(diagnostic?{diagnostic}:{})});
 const denied=new BlockList();
 for(const [network,prefix] of [['0.0.0.0',8],['10.0.0.0',8],['100.64.0.0',10],['127.0.0.0',8],['169.254.0.0',16],['172.16.0.0',12],['192.0.0.0',24],['192.0.2.0',24],['192.88.99.0',24],['192.168.0.0',16],['198.18.0.0',15],['198.51.100.0',24],['203.0.113.0',24],['224.0.0.0',3]] as const)denied.addSubnet(network,prefix,'ipv4');
 export const publicIPv4=(ip:string)=>isIPv4(ip)&&!denied.check(ip,'ipv4');
@@ -89,7 +90,8 @@ export async function startMediaRelay(remote:string,headers:ImportHeaders,budget
   if(req.url!==`/${token}.mp4`||req.method!=='GET')throw importFailure('IMPORT_DESTINATION_DENIED');
   const range=req.headers.range;if(!range||!/^bytes=\d+-\d*$/.test(range))throw importFailure('IMPORT_RANGE_REQUIRED');
   const response=await open(remote,budget,{...headers,Range:range,'Accept-Encoding':'identity'});
-  try{if([401,403].includes(response.statusCode??0))throw importFailure('IMPORT_ACCESS_DENIED');if(response.statusCode!==206||response.headers['content-encoding']&&response.headers['content-encoding']!=='identity')throw importFailure('IMPORT_RANGE_UNSUPPORTED');total=validateContentRange(range,response.headers['content-range']??'',response.headers['content-length'],total);}catch(error){response.destroy();throw error;}
+  const diagnostic:ImportDiagnostic={stage:'downloading',httpStatus:response.statusCode,headerNames:[...Object.keys(headers),'Range','Accept-Encoding'],responseHeaderNames:Object.keys(response.headers)};
+  try{if([401,403].includes(response.statusCode??0))throw importFailure('IMPORT_ACCESS_DENIED',422,diagnostic);if(response.statusCode!==206||response.headers['content-encoding']&&response.headers['content-encoding']!=='identity')throw importFailure('IMPORT_RANGE_UNSUPPORTED',422,diagnostic);total=validateContentRange(range,response.headers['content-range']??'',response.headers['content-length'],total);}catch(error){response.destroy();throw error;}
   res.writeHead(206,{'Content-Type':'video/mp4','Content-Range':response.headers['content-range']!,'Accept-Ranges':'bytes',...(response.headers['content-length']?{'Content-Length':response.headers['content-length']}:{})});
   res.on('close',()=>response.destroy());response.on('error',()=>res.destroy());response.pipe(res);
  })().catch(error=>{budget.error??=error instanceof Error?error:importFailure('IMPORT_FAILED');if(!res.headersSent)res.writeHead(502);res.end();});});

@@ -186,12 +186,12 @@ export function LineupForm({
                 "CLIP_INVALID",
                 "CLIP_OUT_OF_RANGE",
                 "CLIP_UNSUPPORTED",
-                "IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "SOURCE_CHANGED",
+                "IMPORT_ACCESS_DENIED", "IMPORT_HTTP_ERROR", "IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "SOURCE_CHANGED",
                 "SOURCE_EXPIRED", "SOURCE_NOT_FOUND", "IMPORT_SELECTION_CONFLICT",
               ].includes(error.code)
             )
               setResumeMediaId(undefined);
-            if (importFailed || error instanceof ApiError && ["IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "INVALID_MEDIA", "FILE_TOO_LARGE",
+            if (importFailed || error instanceof ApiError && ["IMPORT_ACCESS_DENIED", "IMPORT_HTTP_ERROR", "IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "INVALID_MEDIA", "FILE_TOO_LARGE",
               "SOURCE_CHANGED", "SOURCE_EXPIRED", "SOURCE_NOT_FOUND", "IMPORT_SELECTION_CONFLICT", "MEDIA_SELECTION_CHANGED"].includes(error.code))
               setDraft(current => current.media.kind === "link" ? { ...current, media: { kind: "link", sourceUrl: current.media.sourceUrl } } : current);
             setFailure(

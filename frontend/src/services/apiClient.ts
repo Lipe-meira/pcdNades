@@ -9,6 +9,7 @@ const messages: Record<string, string> = {
   PROCESSOR_BUSY: "Outra importação está em processamento. Aguarde e use Retomar importação para tentar o mesmo trecho novamente.",
   IMPORT_NETWORK_LIMIT: "A importação atingiu um limite de obtenção do vídeo. Consulte novamente ou envie um MP4.",
   IMPORT_TIMEOUT: "O trecho não pôde ser importado no tempo disponível. Consulte novamente ou envie um MP4.",
+  IMPORT_HTTP_ERROR: "A fonte respondeu com erro HTTP. Tente novamente mais tarde ou envie um MP4 autorizado.",
   IMPORT_FAILED: "Não foi possível importar este trecho. Consulte novamente ou envie um MP4. O cadastro anterior foi preservado.",
   IMPORT_RATE_LIMIT: "O limite de consultas ou importações foi atingido. Aguarde antes de tentar novamente.",
   ATTEMPTS_EXHAUSTED: "As tentativas deste trecho foram esgotadas. Consulte o link novamente ou envie um MP4.",

@@ -79,7 +79,7 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
         <strong>{value.inspection.title || "Vídeo do TikTok"}</strong>
         {value.inspection.author && <p>Autor: {value.inspection.author}</p>}
         <p>Duração da fonte: {formatTimecode(value.inspection.durationSeconds)}</p>
-        <p className="field-hint">Fontes de até {formatTimecode(value.inspection.limits.maxSourceDurationSeconds)}. Só o trecho escolhido será solicitado para importação.</p>
+        <p className="field-hint">Fontes de até {formatTimecode(value.inspection.limits.maxSourceDurationSeconds)}. Somente o trecho final será salvo. A obtenção temporária da fonte está sujeita aos limites do servidor.</p>
       </div>
       <p className="inline-notice">Prévia visual indisponível para este link. Use a duração e os horários para selecionar o trecho. A consulta ainda não importou nem publicou o vídeo.</p>
       {expired && <p className="field-error" role="alert">A consulta expirou. Consulte novamente para iniciar outra importação. Uma importação já criada pode ser retomada.</p>}

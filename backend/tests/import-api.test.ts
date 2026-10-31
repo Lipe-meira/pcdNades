@@ -26,3 +26,17 @@ test('disabled runtime rejects source sessions and preserves disabled legacy sou
  try{assert.equal((await app.inject({method:'POST',url:'/api/v1/media/imports/inspect',headers,payload:{sourceUrl:metadata.sourceUrl}})).statusCode,503);const r=await app.inject({method:'POST',url:'/api/v1/media/imports',headers,payload:{sourceUrl:metadata.sourceUrl}});assert.equal(r.statusCode,422);assert.equal(r.json().error.code,'PLATFORM_UNSUPPORTED');assert.equal(f.calls.length,0);
  }finally{await app.close();}
 });
+
+test('configured 20s/bytes limits are identical in capabilities, inspection and creation',async()=>{
+ const previousDuration=process.env.MEDIA_MAX_DURATION_SECONDS,previousBytes=process.env.MEDIA_MAX_BYTES;
+ process.env.MEDIA_MAX_DURATION_SECONDS='20';process.env.MEDIA_MAX_BYTES='1000000';
+ const f=fake(),app=buildApp(f.clients,f.deps),headers={authorization:'Bearer token'};
+ try{
+  const caps=(await app.inject({method:'GET',url:'/api/v1/media/capabilities'})).json().data;
+  assert.equal(caps.importers.tiktok.maxDurationSeconds,20);assert.equal(caps.importers.tiktok.maxBytes,1000000);
+  const inspected=await app.inject({method:'POST',url:'/api/v1/media/imports/inspect',headers,payload:{sourceUrl:metadata.sourceUrl}});
+  assert.equal(inspected.json().data.limits.maxDurationSeconds,20);assert.equal(inspected.json().data.limits.maxBytes,1000000);
+  const denied=await app.inject({method:'POST',url:'/api/v1/media/imports',headers,payload:{sourceId:id,clip:{startSeconds:1800,endSeconds:1821}}});
+  assert.equal(denied.statusCode,400);assert.equal(denied.json().error.code,'CLIP_OUT_OF_RANGE');assert.equal(f.created(),0);
+ }finally{await app.close();if(previousDuration===undefined)delete process.env.MEDIA_MAX_DURATION_SECONDS;else process.env.MEDIA_MAX_DURATION_SECONDS=previousDuration;if(previousBytes===undefined)delete process.env.MEDIA_MAX_BYTES;else process.env.MEDIA_MAX_BYTES=previousBytes;}
+});

@@ -1,7 +1,12 @@
 import {z} from 'zod';
 import {recognizeSource,type Clip} from './importers.js';
 import {importFailure} from './import-network.js';
+import {readMediaLimits,type MediaLimits} from './config.js';
 export const importLimits=Object.freeze({maxSourceDurationSeconds:7200,maxDurationSeconds:90,maxBytes:50000000,minDurationSeconds:0.1,timePrecisionSeconds:0.001});
+// The deployed policy may be lower than the protocol ceiling (e.g. 20s).
+export function effectiveImportLimits(limits:MediaLimits=readMediaLimits()){
+ return Object.freeze({...importLimits,maxDurationSeconds:Math.min(importLimits.maxDurationSeconds,limits.maxDurationSeconds),maxBytes:Math.min(importLimits.maxBytes,limits.maxBytes)});
+}
 export const importClipSchema=z.object({startSeconds:z.number().finite().min(0),endSeconds:z.number().finite().max(7200)}).strict().refine(c=>c.endSeconds-c.startSeconds>=0.1-1e-8&&c.endSeconds-c.startSeconds<=90&&[c.startSeconds,c.endSeconds].every(n=>Math.abs(n*1000-Math.round(n*1000))<1e-6));
 export const inspectRequest=z.object({sourceUrl:z.string().min(1).max(2048)}).strict();
 export const selectedImport=z.object({sourceId:z.uuid(),clip:importClipSchema}).strict();

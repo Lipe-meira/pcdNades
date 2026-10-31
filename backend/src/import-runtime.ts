@@ -8,7 +8,9 @@ import {recognizeSource,type Clip} from './importers.js';
 import {importFailure,allowedImportHost,safeHeaders,startMetadataProxy,startMediaRelay,TransferBudget} from './import-network.js';
 import {sourceMetadata,checkImportSelection} from './tiktok.js';
 import {ffmpegBinaryPath,decodeVideo} from './trimming.js';
-import {probeOriginal} from './probe.js';
+import {probeOriginal,probeBinaryPath} from './probe.js';
+import {join} from 'node:path';
+import {readDownloadMode,temporarySessionArgs,validateTemporarySource,encodeTemporaryArgs,processFailure} from './import-temporary.js';
 import type {MediaLimits} from './config.js';
 const require=createRequire(import.meta.url),run=promisify(execFile);
 export const ytDlpVersion='2026.08.19';
@@ -17,7 +19,7 @@ export function ytDlpPath(){if(process.arch!=='x64')throw importFailure('IMPORT_
 export function readTikTokEnabled(env:Record<string,string|undefined>=process.env){const v=env.MEDIA_TIKTOK_IMPORT_ENABLED;if(v===undefined||v==='false')return false;if(v==='true')return true;throw new Error('MEDIA_TIKTOK_IMPORT_ENABLED deve ser true ou false.');}
 let verifiedRuntime:{path:string;mtime:number;size:number;valid:boolean}|undefined;
 export function tikTokRuntimeAvailable(){try{
- if(!readTikTokEnabled())return false;
+ if(!readTikTokEnabled())return false;readDownloadMode();
  const path=ytDlpPath(),file=statSync(path);accessSync(path,constants.X_OK);
  if(verifiedRuntime?.path===path&&verifiedRuntime.mtime===file.mtimeMs&&verifiedRuntime.size===file.size)return verifiedRuntime.valid;
  const valid=createHash('sha256').update(readFileSync(path)).digest('hex')===digests[process.platform as keyof typeof digests];verifiedRuntime={path,mtime:file.mtimeMs,size:file.size,valid};return valid;
@@ -59,16 +61,31 @@ export async function importSection(source:ReturnType<typeof sourceMetadata>,cli
  checkImportSelection(clip,source.durationSeconds);
  await stage('resolving');const resolved=await extractTikTok(source.sourceUrl,controller,dir);
  if(resolved.metadata.videoId!==source.videoId||Math.abs(resolved.metadata.durationSeconds-source.durationSeconds)>0.1)throw importFailure('SOURCE_CHANGED',409);
- const budget=new TransferBudget(100000000,32,controller),relay=await startMediaRelay(resolved.format.url,resolved.format.headers,budget);
+ const budget=new TransferBudget(100000000,32,controller);let close:()=>Promise<void>=async()=>{};
+ let phase:'downloading'|'transcoding'='downloading';
  try{
   await stage('downloading');
-  // Seeking before input + forced MOV enables byte ranges without accepting HLS/DASH playlists.
-  await run(ffmpegBinaryPath(),encodeSectionArgs(relay.url,output,clip,limits.maxBytes),{signal:controller.signal,timeout:65000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true});
+  if(readDownloadMode()==='temporary'){
+   const proxy=await startMetadataProxy(budget);close=()=>proxy.close();
+   const input=join(dir,'source.mp4'),f=resolved.format;
+   // Extraction and native download share one ephemeral extractor context.
+   // No external cookies/config; all connections still cross the pinned proxy.
+   const downloaded=await run(await verifyBinary(),temporarySessionArgs(extractorArgs(source.sourceUrl,proxy.url),f.formatId??'',input),{cwd:dir,signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true,env:{PATH:process.env.PATH,SYSTEMROOT:process.env.SYSTEMROOT,TEMP:dir,TMP:dir,TMPDIR:dir,YTDLP_NO_PLUGINS:'1'}});
+   if(downloaded.stdout.trim()!==source.videoId)throw importFailure('SOURCE_CHANGED',409);
+   const size=(await stat(input)).size;if(size<=0||size>100000000)throw importFailure('IMPORT_NETWORK_LIMIT');
+   await close();close=async()=>{};phase='transcoding';
+   const sourceProbe=await run(probeBinaryPath(),['-v','error','-protocol_whitelist','file','-show_format','-show_streams','-of','json',input],{signal:controller.signal,timeout:10000,maxBuffer:1048576,windowsHide:true});
+   validateTemporarySource(JSON.parse(sourceProbe.stdout),source.durationSeconds,f);
+   await run(ffmpegBinaryPath(),encodeTemporaryArgs(input,output,clip,limits.maxBytes),{signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true});
+  }else{
+   const relay=await startMediaRelay(resolved.format.url,resolved.format.headers,budget);close=()=>relay.close();
+   await run(ffmpegBinaryPath(),encodeSectionArgs(relay.url,output,clip,limits.maxBytes),{signal:controller.signal,timeout:65000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true});
+  }
   await stage('validating');const bytes=(await stat(output)).size;if(bytes>limits.maxBytes)throw importFailure('FILE_TOO_LARGE');
   const metadata=await probeOriginal(output,limits,controller.signal);
   if(Math.abs(metadata.durationSeconds-(clip.endSeconds-clip.startSeconds))>0.1)throw importFailure('INVALID_MEDIA');
   await decodeVideo(output,controller.signal);
   return {...metadata,bytes,clip,sourceDurationSeconds:source.durationSeconds,provenance:source,extractorVersion:ytDlpVersion,transfer:{metadataBytes:resolved.metadataBytes,mediaBytes:budget.bytes,mediaRequests:budget.requests}};
- }catch(error){throw budget.error??(controller.signal.aborted?importFailure('IMPORT_TIMEOUT'):error);}
- finally{await relay.close();}
+ }catch(error){throw budget.error??processFailure(error,controller,phase);}
+ finally{await close();}
 }
