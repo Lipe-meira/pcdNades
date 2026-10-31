@@ -21,7 +21,7 @@ const {build}=require('@vercel/fastify'),{glob}=require('@vercel/build-utils');
 const config=JSON.parse(await readFile(join(work,'vercel.json'),'utf8'));
 const pkg=JSON.parse(await readFile(join(work,'package.json'),'utf8'));
 assert.equal(pkg.engines.node,'24.x');
-assert.equal(config.functions['src/server.ts'].maxDuration,120);
+assert.equal(config.functions,undefined,'Fastify entrypoint duration comes from exported config; avoid /api function globs');
 assert.equal(config.installCommand,'npm ci --ignore-scripts');
 assert.equal(config.buildCommand,'npm run build');
 process.env.MEDIA_TIKTOK_IMPORT_ENABLED='true';

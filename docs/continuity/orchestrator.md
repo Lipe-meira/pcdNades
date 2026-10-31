@@ -1,3 +1,21 @@
+# Estado atual — Preview nativo passou; Supabase Free bloqueado (31/10/2026)
+
+- Pedido: preservar e publicar progresso na dev e continuar Preview gratuito isolado. Worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2, branchdev, baseec0af61; commits7b621a9/fd2997c e anteriores preservados. Push normal autorizado; main/prod/recursos existentes proibidos.
+- Ler primeiro `backend/IMPORT-PREVIEW-RESULTS.md`. Criado somente projetoVercel novo pcdnades-preview-api/prj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH semGit. Preview atual dpl_8FFKSRKDmPJWVQs3qYYQRr8PTmrr READY/targetnull. Preflight realPASS: yt-dlp+FFmpeg+ffprobe/hash/encode/decode em3,375s, tmp538329088bytes, Node24. Health200/configuredfalse. Não confundir com E2ETikTokcloud.
+- Corrigidos globfunctions inválido e defaultHTTPexport Fastify, preservando listenlocal. Teste novo RED→GREEN;106backend/typecheck/buildPASS. Guarda require-preview rejeita qualquer ambiente que não seja Preview, usada apenas no pacote de teste. ProvaLinuxbuilder maxDuration120 semglob. Ver relatório para tentativa inicial Production/Error (nunca serviu) e Preview que falhou bootstrap antes da correção.
+- Supabase orgFree confirmou custo0 mas createproject falhou pelo limite de2ativos. NenhumSupabase criado/modificado; nenhuma credencialprod usada. Não pausar/excluir/upgradear projetos. Bloqueio real para E2Eremoto, aguardar definição do usuário de slotgratuito independente.
+- Próxima ação executável: gitstatus/log e relatório; só depois que houver slotgratuito autorizado, consultarcusto/criarSupabaseNOVO. Então migrations/bucketprivado/admin/envsisolados/frontPreview e E2Eautorizado. Não repetirpreflight semnovamudança. Não habilitar TikTokprodução.
+- Evidências/configprivadas em backend/vendor/preview-live-20261031/ ignorado; não versionar. Containers/volumes/evidências anteriores preservados. Mudanças desta etapa: backend/src/server.ts, vercel.json, .vercelignore, scripts/audit-vercel-artifact.mjs, novo scripts/require-preview.mjs, tests/server-adapter.test.ts, IMPORT-PREVIEW-RESULTS.md e este checkpoint. Entrega em commitlocal e pushnormaldev após revisão; SHAfinal porgitlog/lsremote.
+
+---
+# Primeiro Preview em build —31/10/2026
+
+Gitdev publicado ec0af61 (preflight105tests+LinuxrealPASS). Tentativainicialdpl_GNhaaZQvsYo9f2yqsqfNTGibSYGp:APIcomtargetliteralpreviewretornouProductioneERRORunused_function;cancelamentonegadopoisjáERROR,nenhumappfuncionalpublicado. Verificadoprodreaisinalterados. DocumentaçãoRESTusaomissãodetargetparaPreview;corrigidaconfiglocal(removerfunctions/srcserverglobrejeitado,manterexportconfig120) e builderLinuxconfirmouNode24/120. Adicionadoguardscripts/require-preview.mjs:recusaProduction/dev/envvazioexit42,testesPASS;usadosóbuilddoteste.
+
+Segundatentativa,formatoRESTdocumentadoomittarget+metadatadev: dpl_BJV8PkaQRTDkxbmDfTG2PtjL9iV1,URLpcdnades-preview-qctuqd326-lipe-s-projects1.vercel.app,targetnullCONFIRMADO(Preview),semaliasprod,emINITIALIZING. BuildcommandguardPreviewobrigatório. Sótestprojektprj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH,Hobby,semSupabase. Próximaação:aguardarbuild/logsguard,depoisHTTPpreflightcomtokenprivadonovendor/preview-live-20261031;sebloqueiopararsemcontornar. Mudançasconfig/helperaindalocais,validadas,commitar/pushdevapósregistrodemarco. Nãoalterarmain/projetosexistentes.
+
+---
+
 # Preflight implementado/validado —31/10/2026
 
 Pushautorizadoconcluído:dev/origin=eb20a54,worktreelimponaquelamarco,semprod(mainconfirmadosambosVercel/workflowsemautodeployprod). Agora móduloimport-preflight.ts/tests+serverregister concluídoslocalmente:105backendPASS/build/typecheck eLinuxnative realPASS(yt2026.08.19/hashes/FFmpegH264AAC/probe/tmpwritable,2,446s). Rotaausentedefault/production,secretoprópriodescartávelPreview,semURLs/comandos deusuário/credenciaisSupabase. Estadoemvendor/preview-live-20261031ignorado;tokenNÃOverversionar. SomenteNOVOprj_ubCQuSm6ubSL6OrYahHV2ZmwdYyHteveNode24 e6envsPreviewconfiguradas;HobbyActive/gratuitoconfirmado. Nenhumdeploy/Supabasecriadoainda. Próximaação:únicoPreviewdepreflightcom29fonteswhitelistsem.env/vendor,validartargetPreview eexecutartesteprotegidocomtokenviaheader;se/tmpbloquearpararsemcontornar. Semalteraçõesprojetosreais/main.

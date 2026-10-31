@@ -11,3 +11,4 @@
 !/scripts/prepare-probe.mjs
 !/scripts/prepare-ffmpeg.mjs
 !/scripts/prepare-ytdlp.mjs
+!/scripts/require-preview.mjs
