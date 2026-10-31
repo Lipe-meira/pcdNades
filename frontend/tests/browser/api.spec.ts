@@ -21,7 +21,7 @@ const api = "http://127.0.0.1:5999/api/v1";
 const authOrigin = "http://127.0.0.1:5998";
 const mediaId = "11111111-1111-4111-8111-111111111111";
 const importId = "66666666-6666-4666-8666-666666666666";
-const importLimits = { maxSourceDurationSeconds: 7200, maxDurationSeconds: 90, maxBytes: 50_000_000, minDurationSeconds: .1, timePrecisionSeconds: .001 };
+const importLimits = { maxSourceDurationSeconds: 7200, maxSourceBytes: 50_000_000, maxDurationSeconds: 30, maxBytes: 50_000_000, minDurationSeconds: .1, timePrecisionSeconds: .001 };
 function importInspection(number = 1) { return {
   sourceId: `bbbbbbbb-bbbb-4bbb-8bbb-${String(number).padStart(12, "0")}`,
   provider: "tiktok", sourceUrl: "https://www.tiktok.com/@qa/video/1234567890", videoId: "1234567890",
@@ -1117,7 +1117,7 @@ async function consultImport(page: Page) {
   await expect(page.getByLabel("Início do trecho", { exact: true })).toBeVisible();
 }
 
-test("TikTok: metadados de fonte2h e trecho90 sem prévia falsa, antes de publicar", async ({ page }, testInfo) => {
+test("TikTok: metadados de fonte2h e trecho30 sem prévia falsa, antes de publicar", async ({ page }, testInfo) => {
   const state = await setup(page, { imports: true, importDelay: 5000 });
   const external: string[] = [];
   page.on("request", request => { if (new URL(request.url()).hostname.endsWith("tiktok.com")) external.push(request.url()); });
@@ -1134,9 +1134,9 @@ test("TikTok: metadados de fonte2h e trecho90 sem prévia falsa, antes de public
   await page.getByLabel("Início do trecho", { exact: true }).fill("01:58:29.999");
   await page.getByLabel("Fim do trecho", { exact: true }).fill("02:00:00");
   await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
-  await expect(page.getByRole("alert").first()).toContainText("90");
+  await expect(page.getByRole("alert").first()).toContainText("30");
   expect(state.importCreates).toBe(0);
-  await page.getByLabel("Início do trecho", { exact: true }).fill("01:58:30");
+  await page.getByLabel("Início do trecho", { exact: true }).fill("01:59:30");
   await page.getByLabel("Fim do trecho", { exact: true }).scrollIntoViewIfNeeded();
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: testInfo.outputPath("tiktok-selection.png") });
@@ -1153,7 +1153,7 @@ test("TikTok: metadados de fonte2h e trecho90 sem prévia falsa, antes de public
   await expect(page.getByText("Importando o trecho selecionado…", { exact: true })).toBeVisible({ timeout: 7000 });
   expect(state.published).toHaveLength(0);
   await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 10_000 });
-  expect(state.clip).toEqual({ startSeconds: 7110, endSeconds: 7200 });
+  expect(state.clip).toEqual({ startSeconds: 7170, endSeconds: 7200 });
   expect(state.importCreates).toBe(1);
   expect(state.published[0].video.id).toBe(importId);
   await page.reload();

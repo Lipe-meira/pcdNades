@@ -2,7 +2,7 @@ import {z} from 'zod';
 import {recognizeSource,type Clip} from './importers.js';
 import {importFailure} from './import-network.js';
 import {readMediaLimits,type MediaLimits} from './config.js';
-export const importLimits=Object.freeze({maxSourceDurationSeconds:7200,maxDurationSeconds:90,maxBytes:50000000,minDurationSeconds:0.1,timePrecisionSeconds:0.001});
+export const importLimits=Object.freeze({maxSourceDurationSeconds:7200,maxSourceBytes:50000000,maxDurationSeconds:30,maxBytes:50000000,minDurationSeconds:0.1,timePrecisionSeconds:0.001});
 // The deployed policy may be lower than the protocol ceiling (e.g. 20s).
 export function effectiveImportLimits(limits:MediaLimits=readMediaLimits()){
  return Object.freeze({...importLimits,maxDurationSeconds:Math.min(importLimits.maxDurationSeconds,limits.maxDurationSeconds),maxBytes:Math.min(importLimits.maxBytes,limits.maxBytes)});

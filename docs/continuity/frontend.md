@@ -1,3 +1,9 @@
+# Atualização do piloto — 31/10/2026
+
+A situação vigente desta área está em backend/IMPORT-PILOT-30.md e docs/continuity/orchestrator.md. PilotoTikTok30s/50MB implementado/testado localmente na dev,base87814b3;sem push/deploy/remoto. Backend102Windows/Linux,front55unit+build,64Playwright+12TikTokfinal. E2EStorage/Reactplayer local real com fixtureoffline,sem novo downloadTikTok. Upload/histórico90 e flagsdefaultoff preservados;temporary opt-in. Próximaação:conferirGit e ler relatório antes de auditar bundle/preparar preview que exige autorização específica. Preservar Docker/volumes/vendorprivado. Histórico abaixo é anterior a esta entrega.
+
+---
+
 ## Entrega encerrada — UI TikTok verificada, obtenção real bloqueada (30/10/2026)
 
 - Commits enviados:2bde0fc(parsermm:ss/hh:mm:ss) e e726461(consulta/seleção/sourceId/import/complete/recovery). Follow-up atualfix(frontend): orienta envio de MP4 quando acesso é recusado; consultar git log para SHA. Branchfeat/frontend/worktreeexclusivo,semmain/env/deploy/backend/cookies/login/bypass/redeexternaTikTok.

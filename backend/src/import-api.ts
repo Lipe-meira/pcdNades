@@ -5,6 +5,7 @@ import {recognizeSource} from './importers.js';
 import {inspectRequest,selectedImport,effectiveImportLimits,type sourceMetadata} from './tiktok.js';
 import type {MediaLimits} from './config.js';
 import {importFailure} from './import-network.js';
+import {beforeDeadline} from './import-deadline.js';
 export type ImportDependencies={available:()=>boolean;extract:(url:string,controller:AbortController,dir:string)=>Promise<{metadata:ReturnType<typeof sourceMetadata>}>};
 export const importDependencies:ImportDependencies={available:tikTokRuntimeAvailable,extract:extractTikTok};
 export function importDbResult<T>(result:{data:T;error?:{message?:string}|null}):T{
@@ -14,7 +15,7 @@ export async function inspectSource(db:SupabaseClient,owner:string,input:unknown
  const request=inspectRequest.parse(input);const source=recognizeSource(request.sourceUrl);if(source.provider!=='tiktok')throw importFailure('SOURCE_UNSUPPORTED');
  if(!deps.available())throw importFailure('IMPORT_UNAVAILABLE',503);
  const controller=new AbortController(),holder=randomUUID();const timer=setTimeout(()=>controller.abort(importFailure('IMPORT_TIMEOUT')),25000);timer.unref();let slot=false,dir:string|undefined;
- const rpc=async(name:string,args:Record<string,unknown>)=>{const query=db.rpc(name,args);return await (typeof query.abortSignal==='function'?query.abortSignal(controller.signal):query);};
+ const rpc=async(name:string,args:Record<string,unknown>)=>{const query=db.rpc(name,args),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(5000)]);return await beforeDeadline<any>(typeof query.abortSignal==='function'?query.abortSignal(signal):query,signal);};
  try{
   if(!importDbResult(await rpc('claim_import_slot',{p_holder:holder,p_seconds:30})))throw importFailure('PROCESSOR_BUSY',503);slot=true;
   const session=importDbResult<any>(await rpc('reserve_import_source',{p_owner:owner}));

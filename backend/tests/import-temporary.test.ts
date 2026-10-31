@@ -9,7 +9,7 @@ test('temporary download is explicit, native-only, pinned to one info file and o
  assert.equal(args[args.indexOf('--downloader')+1],'native');
  assert.equal(args[args.indexOf('--load-info-json')+1],'private-info.json');
  assert.equal(args[args.indexOf('--output')+1],'source.mp4');assert.ok(args.includes('--no-part'));assert.ok(args.includes('--no-continue'));
- assert.equal(args[args.indexOf('--max-filesize')+1],'100000000');
+ assert.equal(args[args.indexOf('--max-filesize')+1],'50000000');
  assert.ok(!args.includes('--cookies'));assert.ok(!args.includes('--exec'));assert.ok(!args.includes('--download-sections'));
 });
 

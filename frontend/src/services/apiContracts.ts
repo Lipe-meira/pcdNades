@@ -51,11 +51,12 @@ export type ImporterCapability = Partial<ImportLimits> & {
   message?: string;
 };
 export function checkImportLimits(limits: ImportLimits): ImportLimits {
+  if (limits?.maxSourceBytes !== undefined && (!Number.isSafeInteger(limits.maxSourceBytes) || limits.maxSourceBytes <= 0)) contractError();
   if (!limits || [limits.maxSourceDurationSeconds, limits.maxDurationSeconds, limits.maxBytes,
     limits.minDurationSeconds, limits.timePrecisionSeconds].some(value => !Number.isFinite(value) || value <= 0) ||
     limits.minDurationSeconds > limits.maxDurationSeconds) contractError();
   const result = { ...limits, maxSourceDurationSeconds: Math.min(7200, limits.maxSourceDurationSeconds),
-    maxDurationSeconds: Math.min(90, limits.maxDurationSeconds), maxBytes: Math.min(50_000_000, limits.maxBytes),
+    maxDurationSeconds: Math.min(30, limits.maxDurationSeconds), maxSourceBytes: Math.min(50_000_000, limits.maxSourceBytes ?? 50_000_000), maxBytes: Math.min(50_000_000, limits.maxBytes),
     minDurationSeconds: Math.max(.1, limits.minDurationSeconds), timePrecisionSeconds: Math.max(.001, limits.timePrecisionSeconds) };
   if (result.minDurationSeconds > result.maxDurationSeconds || !Number.isSafeInteger(result.maxBytes)) contractError();
   return result;

@@ -1,3 +1,4 @@
+import {guardImportFile} from './import-file-limit.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {createRequire} from 'node:module';
@@ -40,6 +41,7 @@ export function selectProgressiveFormat(raw:any){
  const selected=typeof raw.url==='string'?{...formats.find((f:any)=>f.url===raw.url),...raw}:undefined;
  const f=selected??formats.filter(acceptable).at(-1);
  if(!f||!acceptable(f))throw importFailure('SOURCE_UNSUPPORTED');
+ if(typeof f.filesize==='number'&&f.filesize>50000000)throw importFailure('FILE_TOO_LARGE');
  return {url:f.url as string,headers:safeHeaders(raw.http_headers,f.http_headers),formatId:typeof f.format_id==='string'?f.format_id.replace(/[^a-zA-Z0-9_.-]/g,'').slice(0,96):null,width:f.width as number,height:f.height as number,videoCodec:f.vcodec as string,audioCodec:f.acodec as string};
 }
 export async function extractTikTok(url:string,controller:AbortController,dir:string){
@@ -61,7 +63,7 @@ export async function importSection(source:ReturnType<typeof sourceMetadata>,cli
  checkImportSelection(clip,source.durationSeconds);
  await stage('resolving');const resolved=await extractTikTok(source.sourceUrl,controller,dir);
  if(resolved.metadata.videoId!==source.videoId||Math.abs(resolved.metadata.durationSeconds-source.durationSeconds)>0.1)throw importFailure('SOURCE_CHANGED',409);
- const budget=new TransferBudget(100000000,32,controller);let close:()=>Promise<void>=async()=>{};
+ const budget=new TransferBudget(60000000,32,controller);let close:()=>Promise<void>=async()=>{};
  let phase:'downloading'|'transcoding'='downloading';
  try{
   await stage('downloading');
@@ -70,12 +72,15 @@ export async function importSection(source:ReturnType<typeof sourceMetadata>,cli
    const input=join(dir,'source.mp4'),f=resolved.format;
    // Extraction and native download share one ephemeral extractor context.
    // No external cookies/config; all connections still cross the pinned proxy.
-   const downloaded=await run(await verifyBinary(),temporarySessionArgs(extractorArgs(source.sourceUrl,proxy.url),f.formatId??'',input),{cwd:dir,signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true,env:{PATH:process.env.PATH,SYSTEMROOT:process.env.SYSTEMROOT,TEMP:dir,TMP:dir,TMPDIR:dir,YTDLP_NO_PLUGINS:'1'}});
+   const stopGuard=guardImportFile(input,controller);
+   let downloaded;try{downloaded=await run(await verifyBinary(),temporarySessionArgs(extractorArgs(source.sourceUrl,proxy.url),f.formatId??'',input),{cwd:dir,signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true,env:{PATH:process.env.PATH,SYSTEMROOT:process.env.SYSTEMROOT,TEMP:dir,TMP:dir,TMPDIR:dir,YTDLP_NO_PLUGINS:'1'}});
+   }finally{stopGuard();}
    if(downloaded.stdout.trim()!==source.videoId)throw importFailure('SOURCE_CHANGED',409);
-   const size=(await stat(input)).size;if(size<=0||size>100000000)throw importFailure('IMPORT_NETWORK_LIMIT');
+   const size=(await stat(input)).size;if(size<=0||size>50000000)throw importFailure('FILE_TOO_LARGE');
    await close();close=async()=>{};phase='transcoding';
    const sourceProbe=await run(probeBinaryPath(),['-v','error','-protocol_whitelist','file','-show_format','-show_streams','-of','json',input],{signal:controller.signal,timeout:10000,maxBuffer:1048576,windowsHide:true});
    validateTemporarySource(JSON.parse(sourceProbe.stdout),source.durationSeconds,f);
+   await stage('transcoding');
    await run(ffmpegBinaryPath(),encodeTemporaryArgs(input,output,clip,limits.maxBytes),{signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true});
   }else{
    const relay=await startMediaRelay(resolved.format.url,resolved.format.headers,budget);close=()=>relay.close();

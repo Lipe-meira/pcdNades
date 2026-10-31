@@ -2,6 +2,13 @@ import {test} from 'node:test';import assert from 'node:assert/strict';
 import {buildApp} from '../src/application.js';
 const id='123e4567-e89b-42d3-a456-426614174000';
 const metadata={provider:'tiktok',sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766',videoId:'7701366996495125766',title:'Tutorial',author:'Autor',durationSeconds:4000};
+test('pilot deadline bounds stalled authentication before DB or extractor writes',async()=>{
+ const clients:any={user:()=>({auth:{getUser:()=>new Promise(()=>{})}})};
+ const app=buildApp(clients,{available:()=>true,extract:async()=>{throw new Error('must not extract');}});
+ try{const start=performance.now();const response=await app.inject({method:'POST',url:'/api/v1/media/imports/inspect',headers:{authorization:'Bearer token'},payload:{sourceUrl:metadata.sourceUrl}});
+ assert.equal(response.statusCode,504);assert.equal(response.json().error.code,'IMPORT_TIMEOUT');assert.ok(performance.now()-start<8000);
+ }finally{await app.close();}
+});
 function fake(){
  let inspected=0,created=0;const calls:string[]=[];
  const row={id,owner_id:'admin',status:'queued',source_type:'tiktok',source_url:metadata.sourceUrl,clip:{startSeconds:1800,endSeconds:1810},import_source_id:id,import_snapshot:metadata,attempts:0};

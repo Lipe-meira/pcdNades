@@ -1,3 +1,9 @@
+# Atualização do piloto — 31/10/2026
+
+A situação vigente desta área está em backend/IMPORT-PILOT-30.md e docs/continuity/orchestrator.md. PilotoTikTok30s/50MB implementado/testado localmente na dev,base87814b3;sem push/deploy/remoto. Backend102Windows/Linux,front55unit+build,64Playwright+12TikTokfinal. E2EStorage/Reactplayer local real com fixtureoffline,sem novo downloadTikTok. Upload/histórico90 e flagsdefaultoff preservados;temporary opt-in. Próximaação:conferirGit e ler relatório antes de auditar bundle/preparar preview que exige autorização específica. Preservar Docker/volumes/vendorprivado. Histórico abaixo é anterior a esta entrega.
+
+---
+
 # Checkpoint — backend
 
 Atualizado em: 30/10/2026, America/Sao_Paulo.

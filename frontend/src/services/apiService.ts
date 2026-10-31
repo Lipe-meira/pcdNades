@@ -342,7 +342,7 @@ export function createApiService(
       const caps = await capabilities(signal);
       if (!caps.importers.tiktok.enabled || !caps.importers.tiktok.inspection) throw new ApiError("IMPORT_UNAVAILABLE");
       const result = await client.request<Envelope<ImportInspection>>("/media/imports/inspect", {
-        method: "POST", authenticated: true, body: { sourceUrl: sourceUrl.trim() }, signal,
+        method: "POST", authenticated: true, body: { sourceUrl: sourceUrl.trim() }, signal, timeoutMs: 40_000,
       });
       return checkImportInspection(result.data);
     },

@@ -5,7 +5,7 @@ import { checkImportInspection, checkCapabilities } from "../src/services/apiCon
 import type { ImportInspection } from "../src/domain/imports";
 import type { LineupDraft } from "../src/domain/types";
 
-const limits = { maxSourceDurationSeconds: 7200, maxDurationSeconds: 90, maxBytes: 50_000_000, minDurationSeconds: .1, timePrecisionSeconds: .001 };
+const limits = { maxSourceDurationSeconds: 7200, maxDurationSeconds: 30, maxBytes: 50_000_000, minDurationSeconds: .1, timePrecisionSeconds: .001 };
 const input = "https://vt.tiktok.com/ZSgqvRtpM/";
 function inspected(): ImportInspection { return { sourceId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", provider: "tiktok", sourceUrl: "https://www.tiktok.com/@qa/video/1234567890", videoId: "1234567890", title: "Vídeo controlado longo", author: null, durationSeconds: 7200, expiresAt: new Date(Date.now() + 900_000).toISOString(), preview: null, previewReasonCode: "PREVIEW_UNAVAILABLE", limits }; }
 const caps = { upload: { enabled: true, maxBytes: 50_000_000, maxDurationSeconds: 90 },
@@ -13,7 +13,7 @@ const caps = { upload: { enabled: true, maxBytes: 50_000_000, maxDurationSeconds
   trimming: { enabled: true, maxSourceDurationSeconds: 180, maxSourceBytes: 50_000_000, maxDurationSeconds: 90, minDurationSeconds: .1, timePrecisionSeconds: .001 } };
 function harness() {
   const inspection = inspected();
-  const clip = { startSeconds: 7110, endSeconds: 7200 };
+  const clip = { startSeconds: 7170, endSeconds: 7200 };
   const media = { id: "media-id", sourceId: inspection.sourceId, sourceType: "tiktok", sourceUrl: inspection.sourceUrl, clip, status: "queued", stage: "resolving", error: null, metadata: { sourceDurationSeconds: 7200 } };
   const state = { creates: 0, completes: 0, publishes: 0, busy: false, network: false, failed: false, mismatch: false };
   const requests: { path: string; body: unknown }[] = [];
@@ -54,7 +54,7 @@ describe("TikTok: consulta vinculada e importação somente do trecho", () => {
     expect(() => checkImportInspection({ ...inspected(), preview: "https://cdn.invalid/fake" } as unknown as ImportInspection)).toThrow();
   });
   it("capabilities usa limites diretos e rejeita inspection sem limites válidos", () => {
-    expect(checkCapabilities(caps).importers.tiktok).toMatchObject({ inspection: true, maxSourceDurationSeconds: 7200, maxDurationSeconds: 90 });
+    expect(checkCapabilities(caps).importers.tiktok).toMatchObject({ inspection: true, maxSourceDurationSeconds: 7200, maxDurationSeconds: 30 });
     for (const tiktok of [
       { enabled: true, inspection: true },
       { enabled: true, inspection: true, limits },
@@ -68,7 +68,7 @@ describe("TikTok: consulta vinculada e importação somente do trecho", () => {
     await expect(h.service.createLineup({ ...h.draft, media: { ...h.draft.media, inspection: { ...h.inspection, expiresAt: new Date(0).toISOString() } } })).rejects.toMatchObject({ code: "SOURCE_EXPIRED" });
     await expect(h.service.createLineup({ ...h.draft, media: { ...h.draft.media, inspectedUrl: "old-url" } })).rejects.toMatchObject({ code: "SOURCE_CHANGED" });
     await expect(h.service.createLineup({ ...h.draft, media: { ...h.draft.media, clip: undefined } })).rejects.toThrow("início e o fim");
-    await expect(h.service.createLineup({ ...h.draft, media: { ...h.draft.media, clip: { startSeconds: 0, endSeconds: 90.001 } } })).rejects.toThrow("90");
+    await expect(h.service.createLineup({ ...h.draft, media: { ...h.draft.media, clip: { startSeconds: 0, endSeconds: 30.001 } } })).rejects.toThrow("30");
     expect(h.state.creates).toBe(0);
   });
   it("PROCESSOR_BUSY retoma o mesmo mediaId com sourceId/clip após expirar a consulta", async () => {
@@ -93,7 +93,7 @@ describe("TikTok: consulta vinculada e importação somente do trecho", () => {
     await expect(h.service.createLineup(h.draft)).rejects.toMatchObject({ code: "IMPORT_NETWORK_LIMIT" });
     expect(h.state.publishes).toBe(0);
   });
-  it("consulta usa deadline30s e distingue timeout sem criar mídia", async () => {
+  it("consulta usa deadline40s e distingue timeout sem criar mídia", async () => {
     const expired = new AbortController(); expired.abort(new DOMException("timeout", "TimeoutError"));
     const active = new AbortController(); let count = 0;
     const timeouts: number[] = [];
@@ -107,7 +107,7 @@ describe("TikTok: consulta vinculada e importação somente do trecho", () => {
         throw new Error("Inspection should have timed out");
       });
       await expect(createApiService(client, async () => {}).inspectImport!(input)).rejects.toMatchObject({ code: "REQUEST_TIMEOUT" });
-      expect(timeouts).toEqual([30_000, 30_000]);
+      expect(timeouts).toEqual([30_000, 40_000]);
     } finally { timer.mockRestore(); }
   });
 });

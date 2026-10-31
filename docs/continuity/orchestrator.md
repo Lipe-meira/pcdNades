@@ -1,3 +1,62 @@
+# Checkpoint — orquestrador: piloto TikTok de 30 segundos
+
+Atualizado em: 31/10/2026, America/Sao_Paulo
+Estado: implementação local concluída; preview e produção não autorizados.
+
+## Objetivo e pedido atual
+
+Preparar piloto TikTok síncrono para Vercel Hobby: fonte50MB, seleção0,1–30s, preservando upload/histórico90, semworker. Somente mudanças/testes/commits locais. Sem push/merge/deploy/Vercel/Supabase remoto/infra paga/flags de produção.
+
+## Localização do trabalho
+
+- Branch dev, worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2; base87814b3. Preservados f7bdbba,32ac6b3,3da729a,87814b3.
+- Entrega em commit local específico; obter SHA com git log. Não fazer push. origin/dev local continuaeef597b, sem fetch nesta etapa.
+- Arquivos relevantes: backend/IMPORT-PILOT-30.md, import-deadline.ts/import-file-limit.ts/import-runtime.ts/import-processing.ts/import-temporary.ts/tiktok.ts/application.ts/import-api.ts, testes e script import-pilot-encoding-smoke.mjs; frontend contratos/editor/cliente/testes. Nenhuma migration ou dependência alterada. Ver git status para alterações não commitadas antes de retomar.
+
+## Feito e decisões
+
+- Limites exclusivos TikTok30s/50MB; fonte pode ser longa até2h, mas sujeita ao deadline. Rede60MB para sessão nativa +8MB da reextração; watcher50ms+max-filesize+stat final. Output até50MB.
+- H264/AAC,superfast,CRF23,fpsmax30,escala semupscale proporcional1080p/retrato1920p. Primeira escala retrato incorreta foi detectada/corrigida; evidência ruim retida e excluída de recomendações.
+- Deadline desdeonRequest: Auth/consultas5s;process até75s;Storage até90s;finalização5s/cleanup limitado110s;lease120/tentativas2 inalterados. Guard de retorno abortado RED→GREEN impede ready incorreto. SDK sem AbortSignal pode concluir chamada subjacente depois, mas sem publicação tardia.
+- Upload independente e schema histórico90 preservados; queued>30 retornaIMPORT_PILOT_LIMIT sem claim/escrita, também comglobal20;readyantigo idempotente. TikTokflagfalse/defaultmode range mantidos;temporary opt-in. YouTube/IG inalterados.
+
+## Validação realmente executada
+
+- Windows102backendPASS+typecheck/build; Linux1vCPU2GiB102PASS+tsc na rodada final. Front55unitPASS+build;Playwright64PASS e12TikTokdesktop/mobile novamente após últimos ajustes do cliente.
+- Linux real offline:30s encode17,177s,total20,808s,13.826.544B,1080×1920;recortes5–15 e29–39 válidos;24fps permaneceu24fps. CS2HEVC1440p/60→1080p30:19,8s encode24,507s,total27,221s,RSS~200MiB. Teste separado do encoder; seletorTikTok não admite fonte1440p atual.
+- Supabase LOCAL real:Authadmin,complete+FFmpeg+PUTprivado+ready+smoke+Reactplayer/seek20s,30s1080×1920,com requests externos bloqueados. SófinalnoStorage,temp removido,idempotência e hash/referência de publicado anterior preservados. Usoufixtureoffline40s, não novo downloadTikTok. Harnesses CORS/FRONTEND_URL/mapa corrigidos sem alterar site ou reupload; falhas/evidências retidas.
+- Sem Vercel real nem novo testeCDN. Não confundir102testes com validação da plataforma. Suite de faults e preservação incluída; SIGKILL real anterior preservado em relatório de capacidade.
+
+## Recursos e bloqueios
+
+- Usuário abriuDocker. Stack própriaSupabase5serviços saudável e permanece ligada; APIs/frontends temporários55432/55433 encerrados. Cinco containers novos de piloto encerradosexit0/retidos; recursos antigos/outros projetos intocados.
+- Evidências/config privada em backend/vendor/pilot-20261031 e pastas anteriores, ignoradas; ~231MB novos arquivos no marco. Nenhuma exclusão de container/volume/vídeo/órfão; nenhum.env sobrescrito. Credenciais/signedURLs nunca versionar/imprimir.
+- BundleLinux anterior~204MB/9warnings não é validação do bundlepreview atual. Medir coldstart/rede/CPU/mem/tmp em Vercel ainda pendente. Não prometer qualquer fonte50MB/30s; rede lenta pode atingir75s.
+
+## Retomar daqui
+
+1. Conferir git status/log e ler backend/IMPORT-PILOT-30.md; relatório é fonte vigente, capacidade anterior continua como evidência histórica.
+2. Revisar qualidade/perfis e auditar bundleLinux/warnings/binários. Não repetir benchmarks/downloads já válidos sem motivo.
+3. Preparar plano de preview isolado conforme checklist. Pedir autorização específica antes de Vercel/Supabase remoto/env/deploy/push/infra; manter produçãooff. Preview não acessa localhost destePC; precisa Supabase remoto DE TESTE isolado autorizado.
+
+## Entrega e histórico curto
+
+31/10: piloto30s/50MB implementado e validado localmente, sem publicação. Relatório registra configuração, testes, evidências simuladas versus reais, recursos, riscos, comandos e prompt de preview. Nenhum funcionamento local significa aprovação de produção.
+
+---
+
+# Piloto30s — marco de implementação31/10/2026
+
+Mudanças locais ainda semcommit: limitesTikTok30s/fonte50MB+rede60MB; watcher arquivo50ms; FFmpeg superfastCRF23/fpsmax30/escala proporcional1080p; histórico90preservado; deadline desdeonRequest90s,process75s,DB/Auth5s,lease120. Testesfocused15PASS,backend94PASSantesnovosguards;buildbackendPASS;frontbuildPASSapós correçãoUTF8,front54/55pendenteajustefixture30.001. Playwright emexecução(logpilot-browser.log). Docker Desktop iniciado(caminhocorretoAppDataLocalProgramsDockerDesktop),daemon ainda inicializando. Próximaação:terminartestes,realFFmpegoffline/Linux,inspecionarstacksemalterarremoto,relatório. Nenhumcommit/push/deploy/srcuploadalterado. Verstatusparalistacompleta.
+
+---
+
+# Piloto TikTok30s — em andamento31/10/2026
+
+Pedido: implementar fonte50MB/trecho30s, otimizarFFmpeg e deadline desdeAuth, testar localmente. Sempush/deploy/remoto/infra; preservar87814b3 e demaiscommits. Base87814b3,dev,worktreecorreto,árvoreiniciallimpa. Lidos relatórios/código/checkpoints. Testes novos import-pilot.test.ts RED:limites90/100MB atuais confirmados. Próximaação:implementar limites exclusivosTikTok, guardaarquivo e deadline, regressões. Não alterar upload/schema histórico90,flagsdefaultoff/modeoptin. Arquivosnovos:backend/tests/import-pilot.test.ts; demais mudanças verstatus. Docker indisponível no último marco; não alegar E2Enovo.
+
+---
+
 # Checkpoint — orquestrador: capacidade TikTok
 
 Atualizado em: 31/10/2026, America/Sao_Paulo

@@ -8,6 +8,7 @@ const messages: Record<string, string> = {
   IMPORT_SELECTION_CONFLICT: "Esta consulta já está vinculada a outro trecho. Consulte o link novamente para uma nova seleção.",
   PROCESSOR_BUSY: "Outra importação está em processamento. Aguarde e use Retomar importação para tentar o mesmo trecho novamente.",
   IMPORT_NETWORK_LIMIT: "A importação atingiu um limite de obtenção do vídeo. Consulte novamente ou envie um MP4.",
+  IMPORT_PILOT_LIMIT: "Esta seleção antiga excede o piloto TikTok de 30 segundos. O vídeo anterior foi preservado. Consulte novamente para selecionar um trecho menor.",
   IMPORT_TIMEOUT: "O trecho não pôde ser importado no tempo disponível. Consulte novamente ou envie um MP4.",
   IMPORT_HTTP_ERROR: "A fonte respondeu com erro HTTP. Tente novamente mais tarde ou envie um MP4 autorizado.",
   IMPORT_FAILED: "Não foi possível importar este trecho. Consulte novamente ou envie um MP4. O cadastro anterior foi preservado.",

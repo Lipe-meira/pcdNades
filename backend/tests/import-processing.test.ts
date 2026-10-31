@@ -13,6 +13,27 @@ test('import stores only validated output, preserves provenance, and terminal co
  assert.equal(result.asset.status,'ready');assert.equal(result.asset.storage_key,'media/import-1.mp4');assert.equal(result.asset.metadata.sourceId,'source');assert.deepEqual(result.asset.clip,{startSeconds:1800,endSeconds:1810});assert.equal(f.stores(),1);
  await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},f.deps);assert.equal(f.processed(),1);assert.deepEqual(f.calls,['claim_import_slot','release_import_slot']);
 });
+
+test('pilot preserves queued historical 90s selections and published historical media',async()=>{
+ const queued=fake({clip:{startSeconds:0,endSeconds:90}});
+ await assert.rejects(completeImport(queued.db,'media',{maxBytes:50000000,maxDurationSeconds:90},queued.deps),(e:any)=>e.code==='IMPORT_PILOT_LIMIT');
+ await assert.rejects(completeImport(queued.db,'media',{maxBytes:50000000,maxDurationSeconds:20},queued.deps),(e:any)=>e.code==='IMPORT_PILOT_LIMIT');
+ assert.equal(queued.row().status,'queued');assert.equal(queued.row().attempts,0);assert.equal(queued.processed(),0);
+ const ready=fake({status:'ready',clip:{startSeconds:0,endSeconds:90},storage_key:'published.mp4'});
+ assert.equal((await completeImport(ready.db,'media',{maxBytes:50000000,maxDurationSeconds:90},ready.deps)).asset.storage_key,'published.mp4');
+});
+test('elapsed request budget prevents processing or publishing ready',async()=>{
+ const f=fake();
+ const result=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},f.deps,performance.now()-76000);
+ assert.equal(result.asset.status,'failed');assert.equal(f.stores(),0);
+});
+test('an aborted processing dependency cannot return metadata and publish ready',async()=>{
+ const f=fake();
+ const result=await completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},{...f.deps,process:async(...args)=>{
+  const metadata=await f.deps.process(args[0],args[1],args[2]);args[5].abort(Object.assign(new Error('private'),{code:'IMPORT_TIMEOUT'}));return metadata;
+ }});
+ assert.equal(result.asset.status,'failed');assert.equal(f.stores(),0);assert.equal(result.asset.error.code,'IMPORT_TIMEOUT');
+});
 test('global slot busy leaves queued asset intact and retry does not create a new selection',async()=>{
  const f=fake();f.denySlot();await assert.rejects(completeImport(f.db,'media',{maxBytes:50000000,maxDurationSeconds:90},f.deps),(e:any)=>e.code==='PROCESSOR_BUSY');assert.equal(f.row().status,'queued');assert.equal(f.row().attempts,0);assert.equal(f.processed(),0);
 });

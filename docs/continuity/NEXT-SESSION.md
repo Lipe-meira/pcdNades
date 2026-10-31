@@ -1,3 +1,11 @@
+# Situação vigente — piloto TikTok30s implementado localmente
+
+Leia primeiro backend/IMPORT-PILOT-30.md e o checkpoint do orquestrador. Usuário escolheu piloto síncrono30s/50MB, semworker. Windows/Linux102backendPASS;front55+64Playwright(+12TikTokfinal)PASS;recorteLinux eStorage/Reactplayer locais reais passaram com fixture autorizada já retida. Sem novo downloadTikTok/Vercelreal. Limites/upload/histórico/flags e evidências detalhados no relatório.
+
+Primeira ação:conferirGit/log/status,lerrelatório e preparar auditoria de bundle/checklist de preview. NÃO publicar/push/merge/deploy/env/Supabase remoto/infra sem autorização específica. Docker está ativo,5serviços próprios locais saudáveis;5containerspiloto encerrados/retidos,privados/vendor ignorados preservados. Não repetir ensaios concluídos sem necessidade.
+
+---
+
 # Prioridade atual — investigação de capacidade concluída em31/10/2026
 
 Leia primeiro `backend/IMPORT-CAPACITY.md` e `backend/IMPORT-CAPACITY-RESULTS.csv`, depois checkpoint do orquestrador. Os13benchmarks já terminaram: nenhum perfil90s coube no encoder40s/1vCPU. Proposta:worker para90s;API30s apenas candidata a piloto. Não alterar timeout/flag sem plano de orçamento e validação. Nenhum runtime mudou, nenhuma publicação autorizada.

@@ -3,6 +3,7 @@ import { validateClip } from "./clip";
 
 export type ImportLimits = {
   maxSourceDurationSeconds: number;
+  maxSourceBytes?: number;
   maxDurationSeconds: number;
   maxBytes: number;
   minDurationSeconds: number;
