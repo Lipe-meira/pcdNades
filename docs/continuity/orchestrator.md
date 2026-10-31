@@ -1,3 +1,18 @@
+# Estado vigente — consolidação na dev (31/10/2026)
+
+- Pedido: concluir o envio de todo o trabalho ao GitHub na branch `dev` e deixar o checkout local pronto para o usuário investigar manualmente o download. Não alterar produção.
+- Worktree ativo: `C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2`, branch `dev`. Base: main local `0a97bf8`; integrações `ae288ff` (backend `5c75558`) e `acf6882` (frontend `494ae91`). Todos os commits da main publicada `f4aa722` e os checkpoints locais anteriores estão incluídos.
+- Verificações: instalação limpa com `npm ci --ignore-scripts`, build/typecheck e 73 testes backend + 55 testes frontend passaram no checkout consolidado em 30/10. Sem novas mudanças de código desde essa execução; em 31/10, fetch/status/diff check e ancestralidade das três branches confirmados. Não houve novo teste externo, navegador ou Supabase nesta consolidação.
+- Entrega: commit de documentação deste fechamento e push somente de `dev`; obter SHA pelo Git. Conferir `HEAD == origin/dev`, árvore limpa e ancestralidade após o push. Nenhum push da main, deploy, alteração de credenciais ou migration remota.
+- Bloqueio conhecido: consulta TikTok funciona, mas o download no fluxo protegido retorna HTTP403. Importador desativado por padrão; migration `backend/migrations/20261030124528_tiktok_import_sessions.sql` ainda NÃO aplicada. Não confundir testes controlados com importação pronta.
+- Primeira ação ao retomar manualmente: conferir Git e ler `backend/TIKTOK-IMPLEMENTATION.md`, `backend/IMPORTS.md` e `docs/continuity/backend.md`. Investigar diferença entre o comando direto que baixou e o fluxo protegido sem sobrescrever os checkpoints/testes existentes. Backend e frontend não devem iniciar mudanças paralelas enquanto o usuário trabalha.
+- Arquivos pendentes antes deste commit: somente README.md e este checkpoint; nenhum código parcial sem commit. Histórico abaixo preservado e pode conter estados anteriores.
+## Consolidação final solicitada na dev — 30/10
+
+- UsuáriosubstituiuconsolidaçãonobackporCRIARdevapartirmain+TUDOfront/back. WorktreePRÓPRIOorquestradorcriado/attachC:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2;branchdevoriginadanamainlocal0a97bf8(códigoigualmainpublicada+checkpoints). MainoriginalF:\projetos\nadesCs2preservada,SEMPUSH.
+- Devmergeoriginfeatbackend5c75558+originfeatfrontend494ae91SEMconflitos. Incluitodoscódigos/migrationspendentes/docs/checkpoints locaisroot. Builds/testsrápidosemexecuçãoinstalaçõesisoladasworktree,semprod/env/SQL/deploy.TikTok403pendente/capOFF,migrationimportNÃOaplicada.
+- Próximaação:confirmarbuilds/testesbackend/frontend/checkpoint,commit/pushAPENASdev,verificarancestralidadeSHAsremotos eárvorelimpa. Chatsavisadosnãoiniciarnovotrabalho;usuárioinvestigará403.
+
 ## Consolidação solicitada na branch do backend — 30/10
 
 - Usuário'pormandetudoprogit'eespecificou'NABRANCHDOBACK'. Consolidaçãoautorizadanafeat/backend:backend5c75558,frontend494ae91echeckpointsrootmain8a0a9d7+estecommitlocal. NÃOmainpush/deploy/publicação.

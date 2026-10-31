@@ -1,5 +1,12 @@
 # pcdNades
 
+## Checkout consolidado para desenvolvimento — 31/10/2026
+
+A branch `dev` reúne a main e todo o trabalho das branches de frontend e backend, incluindo a implementação experimental de importação TikTok. O importador permanece desativado por padrão: a consulta funciona, mas o download no fluxo protegido ainda retorna HTTP403. Nada desta consolidação foi publicado em produção.
+
+Para continuar a investigação manual, leia [o checkpoint do orquestrador](docs/continuity/orchestrator.md), [o contrato e a arquitetura TikTok](backend/TIKTOK-IMPLEMENTATION.md) e [as evidências e limitações](backend/IMPORTS.md). A migration de sessões de importação ainda não foi aplicada no Supabase. Não é necessário aplicá-la para inspecionar o código ou executar os testes locais controlados.
+
+
 Biblioteca compartilhada de granadas de Counter-Strike 2 para ajudar um time a aprender e treinar lineups.
 
 - Repositório: https://github.com/Lipe-meira/pcdNades
