@@ -1,3 +1,17 @@
+# Publicação dev autorizada durante preflight —31/10/2026
+
+Usuário autorizou gitpushorigindevnormal,semforce/rebase/merge/main,continuandoPreview. Branch/worktree/origin confirmados;basefd2997c,árvorecomapenascheckpointdesteinício. Fetchoriginexecutado:origin/dev=eef597b,3locais/0remotos:87814b3,7b621a9,fd2997c. UIreadonlyconfirmaProductionbranchmainempcdnadesepcdnades-api;workflowbackend-linux sóCI(pushmain/PR/manual),semdeploy. Nenhumprod/envexistentealterado. Emrevisão:arquivosde3commits+checkpoint,secrets/binaries/ignorados;depoiscommitdocs e pushnormalvalidado.
+
+Preview:timeVercelHobbyActive/nãopago confirmado(semcartão/adicionais);projetonovo pcdnades-preview-api criado,IDprj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH,team_IdIH9Z57lKO3PxfIz8sDJFqN,semGit/semdeploy/semSupabase. CrioucomNode26default:ajustarsomenteNOVOprojeto para24antesdodeploy. Próximaaçãoapóspush:implementar/testarpreflight protegido porsegredodescartávelsomentePreview(tmp/nativeversions/encodecurto),depois1PreviewAPIsemSupabase. Se/tmpbloquear,pararsemcontornar;somenteapóspassarpodemoscriarSupabasegrátis. O checkpoint registra etapa emandamento,nãofuncionalidadecloudpronta. Nenhumsegredo/ZIP/mídia/vendor será versionado.
+
+---
+
+# Preview isolado autorizado — início,31/10/2026
+
+Usuário autorizou SOMENTE recursos gratuitos NOVOS de teste, sem tocar projetos existentes, sempush/merge/main/prod. Basefd2997c(dev,árvorelimpa). Ordem obrigatória:preflightyt-dlp/tmp naVercelprimeiro;sebloqueio,pararsemcontornar. Sódepoissepassar:SupabaseTESTE/migrations/admin/envs eE2E30s;semupgrade/cobrança. Em andamento:confirmar time/cotasHobby e prepararpreflightlocalsemcredenciais. Próximaação:novo projetoVercelde teste e únicoPreviewcomprobes;Não criarSupabaseantesdopreflight. SkillsVercel/Supabaseaplicados;lerIMPORT-PREVIEW-AUDIT.md. Nenhumaoperaçãoremotadeescritaatéestemarco.
+
+---
+
 # Checkpoint — auditoria pré-preview concluída localmente
 
 Atualizado em: 31/10/2026, America/Sao_Paulo
