@@ -1,3 +1,42 @@
+# Entrega de continuidade para origin/dev — 31/10/2026
+
+## Pedido vigente e localização
+
+Usuário autorizou documentar e publicar o progresso somente na dev, por push normal. Não force-push/rebase/merge/main/deploy/envVercel/SQLremoto/flags ou alterações de recursos locais. Worktree C:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2, originhttps://github.com/Lipe-meira/pcdNades.git.
+
+## Entrega preparada e verificação
+
+- HEADinicial3da729a;origin/devapósfetchb290e43. Semdivergência:0remotosexclusivos/3locais:f7bdbba,32ac6b3,3da729a. Umcommitdocs específico acompanha esta publicação; seuSHAéobtido porgitlog,sem autorreferência no próprio conteúdo. ConferirHEAD==origin/devna retomada.
+- Revisados33arquivosalterados e42blobsdetextoúnicosnas3revisões; nenhumsegredoreal/binary/MP4novo/.envprivado/vendoroulogprivadonoenvio. Tokenscontrolled_local_fixture dos testes são sintéticos. .env.example contém somentemodelo/flagsdefaultoff.
+- Vendorlocalcontinuaignorado/nãorastreado;volumesDockerforaGit.6containersprópriosconfirmadosparados/3volumespreservadosporleitura;nenhumserviçoreativado. Dadosprivadosdeensaiopermanecemsólocal,nãovãoaoGitHub.
+- Código não mudou desdef7bdbba;3da729a eestaentrega sódocumentação. Reutilizadosemseuescopo:92backendLinux+build/typecheck/smokes/NFT,55frontend+build,64browsercontroladosanteriores eE2EbrowsercomSupabaselocalreal. Nenhumredownload/SQLouendpointdeprodução executado nesta publicação.
+- Resumovigente:docs/continuity/NEXT-SESSION.md;relatóriocompleto:backend/IMPORT-LOCAL-E2E.md. Eles registramarquitetura temporary,limites,comandos,estadoDocker,provaE2E eprioridades.
+
+## Retomar e pendências
+
+1. LerAGENTS/README/NEXT-SESSION e conferirGit/HEAD/status/fetch/ancestralidade antes de agir. Não incorporar alterações automaticamente.
+2. Prioridade:encoder90s/1080p levou57.004s emLinux2CPU/2GiB, excedendo40satuais. Revisar política dentrodo110sglobal;testarfluxocompletoreal,cancelamento/recuperação/multiinstância/órfãos. Nãoafirmar90s1080pprontos.
+3. Melhorarerrogenérico503dePATCHcommídiafailed;validarVercelreal(coldstart/binários/bundle/CPU/RAM/disco/rede/prazos)apenascomautorização. LinuxDocker jávalidado, Vercelnão.
+4. Config/manifestos/credenciaissóem backend/vendor/local-integration-20261031ignorado;serviçosparados. Nãoimprimirprivados,nãosobrescrever.env nemlimparrecursospreexistentes.
+5. Produção continuadesabilitada porpadrão e nãoautorizada. Pushdevnãoédeploy; nenhuma migração/env/flagremotaestáautorizada. Futurotrabalhodevepedirautorização própriapararecursos/produção/publicaçãoquandonecessário.
+
+## Publicação e continuidade
+
+Esta documentação integra ocommitdocsfinal da entregaautorizada. Efetuarpushnormaldevsomentecomorigin/devancestraleconferirSHArecebidonoGitHub. Seorigin/devdivergir,pararsemforce/rebase/merge. A resposta deentregareportaSHAfinaleconfirmaçãoremota; na próximasessão verificá-los novamente.
+
+---
+
+# Publicação de progresso na dev autorizada — 31/10/2026
+
+- Pedido atual: revisar commits/segredos, atualizarcontinuidade e publicar APENASdev com pushnormal. NÃOforcepush/rebase/merge/main/deploy/envVercel/SQLremoto/habilitaçãodeflags. Preservarrecursoslocais.
+- Início confirmado:worktreeC:\Users\felip\.codex\worktrees\pcdnades-dev\nadesCs2,originhttps://github.com/Lipe-meira/pcdNades.git,branchdev,HEAD3da729a,árvorelimpa.
+- gitfetchorigin executado;origin/dev=b290e43,0commitsremotosexclusivos/3locaispendentes:f7bdbba,32ac6b3,3da729a. Nãohádivergência neste marco.
+- Em andamento: revisão de33arquivosalteradosnas3revisões,checagemhistoricodecredenciais/binaries/ignorados e documentação de retomada; depoiscommitdocs específico e pushdev autorizado. Nenhum código mudou após os testes válidos. Reutilizar evidências registradas, não executar novo download de mídia ou reativarstack.
+- Recursoschecadossomenteporleitura:6containersprópriosparados/3volumesretidos. Vendorlocalnão rastreado/ignorado;nenhumrecursoDocker será versionado. Nenhumsegredo/testeprivadoseráadicionado.
+- Próximaação: concluirscan/doccommit,confirmarancestralidade+origin/devsemdivergência antes do push,verificarSHAremotoapósenvio. Falha/divergência=>pararpublicação.
+
+---
+
 # Checkpoint — orchestrator: TikTok E2E local real concluído
 
 Atualizado em31/10/2026, America/Sao_Paulo. Estado: validação local concluída; serviços do ensaio parados, dados preservados. Nenhuma aprovação de produção.

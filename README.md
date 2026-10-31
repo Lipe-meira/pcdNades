@@ -4,7 +4,7 @@
 
 A branch `dev` reúne a main e todo o trabalho das branches de frontend e backend, incluindo a implementação experimental de importação TikTok. O importador permanece desativado por padrão. O modo experimental `temporary` passou no fluxo TikTok autorizado → recorte → Supabase local real → player. A evidência completa e as pendências de tempo/hospedagem estão em [IMPORT-LOCAL-E2E.md](backend/IMPORT-LOCAL-E2E.md). Produção/Vercel não foram habilitadas. O relay antigo recebeu HTTP403. Nada desta consolidação foi publicado em produção.
 
-Para continuar, leia [o roteiro de validação isolada](backend/IMPORT-VALIDATION.md), [o checkpoint do orquestrador](docs/continuity/orchestrator.md), [o contrato e a arquitetura TikTok](backend/TIKTOK-IMPLEMENTATION.md) e [as evidências e limitações](backend/IMPORTS.md). A migration de sessões de importação ainda não foi aplicada no Supabase. Não é necessário aplicá-la para inspecionar o código ou executar os testes locais controlados.
+Para continuar, leia primeiro [o resumo para a próxima sessão](docs/continuity/NEXT-SESSION.md), [o roteiro de validação isolada](backend/IMPORT-VALIDATION.md), [o checkpoint do orquestrador](docs/continuity/orchestrator.md), [o contrato e a arquitetura TikTok](backend/TIKTOK-IMPLEMENTATION.md) e [as evidências e limitações](backend/IMPORTS.md). A migration de sessões de importação ainda não foi aplicada no Supabase. Não é necessário aplicá-la para inspecionar o código ou executar os testes locais controlados.
 
 
 Biblioteca compartilhada de granadas de Counter-Strike 2 para ajudar um time a aprender e treinar lineups.
