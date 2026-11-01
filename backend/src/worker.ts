@@ -13,7 +13,7 @@ const pool=new pg.Pool({connectionString:process.env.DATABASE_URL});
 const storage=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROLE_KEY!,{auth:{persistSession:false}}).storage.from('videos-staging');
 async function processOne(){
  await pool.query("update public.media_assets set status='failed',stage=null,locked_until=null,updated_at=now() where status='processing' and locked_until<now() and attempts>=3");
- const {rows}=await pool.query(`with candidate as (select id from public.media_assets where status='queued' or (status='processing' and locked_until<now() and attempts<3) order by created_at for update skip locked limit 1) update public.media_assets m set status='processing',stage='validating',attempts=attempts+1,locked_until=now()+interval '15 minutes',updated_at=now() from candidate c where m.id=c.id returning m.*`);
+ const {rows}=await pool.query(`with candidate as (select id from public.media_assets where source_type='upload' and (status='queued' or (status='processing' and locked_until<now() and attempts<3)) order by created_at for update skip locked limit 1) update public.media_assets m set status='processing',stage='validating',attempts=attempts+1,locked_until=now()+interval '15 minutes',updated_at=now() from candidate c where m.id=c.id returning m.*`);
  const asset=rows[0];if(!asset)return false;
  const dir=await mkdtemp(join(tmpdir(),'pcdnades-'));
  try{
