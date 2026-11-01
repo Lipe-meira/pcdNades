@@ -1,3 +1,8 @@
+# Deploy em andamento — falha de empacotamento (01/11/2026)
+
+PR #1 integrou dev 2ea8a65 em main ff8b2af4c77a8355d9fde6c6cce01fc587f8ff2b. Migration 20261030124528 já consta no histórico e não foi reaplicada; backup/restore informados pelo usuário. Deploy frontend dpl_5wHGTGQKBzMz9uZhSwrJDSBxcWpg READY. Backend dpl_8zFAqpfd2P4i1giSRpkbP6gzgYXb ERROR: .vercelignore removeu 247 arquivos e npm ci não encontrou package-lock.json, que está no Git. Endpoint público da API anterior responde health200, upload disponível e TikTok false. Ativação interrompida. Corrigir removendo allowlist .vercelignore, pois Git exclui vendor/.env/mídia e o projeto backend usa somente arquivos rastreados; revisar diff e teste. Primeira ação ao retomar: confirmar commit de correção e deploy backend com TikTok desligado; validar frontend/API/login/reprodução antes das flags. Não repetir migration nem tocar backups. Usuário autorizou merge/deploy e ativação somente após estabilidade.
+
+---
 # Retomada manual — integração local validada (31/10/2026)
 
 Leia docs/continuity/PRODUCTION-HANDOFF.md primeiro. Base ad39a0b na dev; este checkpoint e handoff em commit local a seguir, push dev autorizado. Git confirmar SHA com git log/ls-remote. Auth/DB/Storage Supabase local reais: segundo admin negado, anônimo negado, admin autorizado reproduziu 5s no Chromium, mídia anterior preservada, sem criar smoke, somente MP4 final; fonte fixture offline, sem prova de download TikTok cloud. Stack local pcdnades-e2e-20261031-a7f4 estava ativa; criou mídia e segundo admin locais preservados. Scripts privados ignorados em backend/vendor/pilot-20261031/admin-private-{integration,browser}.mjs, comandos exatos no handoff. Não modificar containers/volumes anteriores.
