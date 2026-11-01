@@ -1274,3 +1274,37 @@ test("TikTok: teste privado importa e reproduz sem publicar granada", async ({ p
   expect(privatePlayback).toBe(1); expect(state.importCreates).toBe(1); expect(state.published).toHaveLength(0);
   await expect(page.getByRole("dialog")).toBeVisible();
 });
+
+test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) => {
+  const state = await setup(page, { inlineOriginal: true });
+  await page.goto("/"); await signIn(page); await fillInlineForm(page);
+  await page.getByLabel("Tipo", { exact: true }).selectOption("solo_exec");
+  await expect(page.getByRole("button", { name: "Destino 1", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Adicionar destino" }).click();
+  await page.getByLabel("Tipo do destino 2").selectOption("molotov");
+  await page.getByLabel("Coordenada X (%)").fill("65");
+  await page.getByLabel("Coordenada Y (%)").fill("75");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 15000 });
+  expect(state.published).toHaveLength(1);
+  expect((state.published[0] as any).type).toBe("solo_exec");
+  expect((state.published[0] as any).destinations).toEqual([{x:.4,y:.6,type:"smoke"},{x:.65,y:.75,type:"molotov"}]);
+  await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Validação inline controlada, Solo Exec/ })).toHaveCount(2);
+});
+
+test("Solo Exec troca de mapa após selecionar segundo destino sem índice antigo", async ({ page }) => {
+  await setup(page, { inlineOriginal: true });
+  await page.route(`${api}/maps`, route => reply(route, {json:{data:["mirage","inferno"].map(id=>({id,name:id === "mirage" ? "Mirage" : "Inferno",radar:{imageUrl:`/maps/${id}.svg`,width:1024,height:1024,coordinateVersion:`setpos-${id}-ba5f793`}}))}}));
+  await page.goto("/"); await signIn(page); await fillInlineForm(page);
+  await page.getByLabel("Tipo", {exact:true}).selectOption("solo_exec");
+  await page.getByRole("button", {name:"Adicionar destino"}).click();
+  await page.getByLabel("Mapa", {exact:true}).selectOption("inferno");
+  const radar=page.getByRole("img", {name:"Radar do mapa Inferno"});
+  await radar.click({position:{x:50,y:50}});
+  await page.getByRole("button", {name:"Marcar destino",exact:true}).click();
+  await radar.click({position:{x:100,y:100}});
+  await expect(page.getByRole("button",{name:"Destino 1",exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Destino 2",exact:true})).toHaveCount(0);
+  await expect(page.getByLabel("Coordenada X (%)")).not.toHaveValue("");
+});

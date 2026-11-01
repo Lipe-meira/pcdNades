@@ -1,6 +1,8 @@
 import type { Clip } from "./clip";
 import type { ImportInspection } from "./imports";
-export type GrenadeType = "smoke" | "flashbang" | "molotov";
+export type SingleGrenadeType = "smoke" | "flashbang" | "molotov";
+export type GrenadeType = SingleGrenadeType | "solo_exec";
+export type SoloDestination = Target & { type: SingleGrenadeType };
 export type Side = "T" | "CT";
 export type Target = { x: number; y: number };
 export type VideoStatus =
@@ -27,6 +29,7 @@ export type Lineup = {
   instructions: string;
   video: Video;
   target: Target;
+  destinations?: SoloDestination[] | null;
   origin?: Target | null;
   createdAt: string;
   updatedAt: string;
@@ -59,6 +62,7 @@ export const typeLabels: Record<GrenadeType, string> = {
   smoke: "Smoke",
   flashbang: "Flashbang",
   molotov: "Molotov",
+  solo_exec: "Solo Exec",
 };
 export const videoLabels: Record<VideoStatus, string> = {
   missing: "Sem vídeo",

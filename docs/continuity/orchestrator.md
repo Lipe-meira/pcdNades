@@ -1,3 +1,24 @@
+# Solo Exec validado localmente — agentes Reels e prévia em andamento (01/11/2026)
+
+Branch dev base c2f90e5; alterações Solo Exec em commit local a seguir. Ver backend/SOLO-EXEC.md. Um vídeo/origem e até 12 destinos tipados, formulário/radar/filtros/contratos, migration 20261101152756 nova ainda NÃO aplicada remotamente. Migration executada com insert/edição e papel authenticated em Supabase local dentro de transação revertida; teste completo HTTP/Storage real pendente. 110 backend, 55 frontend e 70 Playwright (API controlada) passaram; builds passaram. Revisão independente detectou troca de mapa com índice antigo e ícone genérico, corrigidos; validação PATCH e teste desktop/mobile adicionados. Não publicar na main antes de integrar Reels/prévia e validar ambos. Não mexer em produção/migration remota sem autorização específica.
+
+Agentes /root/reels e /root/preview trabalham em worktrees separados; combinar branches e testar, preservando TikTok/upload. A função Instagram de prova escrita pelo orquestrador foi movida para backend/vendor/reels-probe-20261101/ (ignorada), pois agente Reels desenvolve versão própria. Aguardando entregas e confirmação de limpeza de staging para preview; reavaliar custos e riscos antes de habilitar. Próxima ação: acompanhar mensagens, revisar patches, testar integração local e então preparar publicação completa. Git SHA real por git log; checkpoints e commits Português.
+
+---
+# Coordenação em andamento — Solo Exec, Reels e preview (01/11/2026)
+
+Usuário confirmou Solo Exec como um vídeo, uma origem e múltiplos destinos, e pediu player da fonte antes do corte; também autorizou delegar. Agente reels trabalha em worktree/branch próprio na importação, agente preview no player/armazenamento temporário, agente solo_review audita mudanças do orquestrador sem editar seu worktree. Não integrar/push main/deploy até tudo concluído/testado; não alterar Supabase remoto sem autorização específica. Reels usa fonte autorizada já testada, ver backend/IMPORT-REELS-INVESTIGATION.md.
+
+Branch dev base c2f90e5. Alterações locais não commitadas implementam parcialmente Solo Exec: schema da API, destinos tipados, validação, migration local nova 20261101152756_solo_exec_destinations, formulário, radar, filtros, teste unitário e teste Playwright. Migration rodou somente em transação local revertida; nenhum banco remoto tocado. Backend109 testes, frontend55 e dois testes de navegador Solo Exec passaram; regressão browser completa ainda rodando. backend/src/instagram.ts e teste independente tratam metadados com duração obtida por ffprobe mas não estão integrados; comunicar ao agente Reels, evitar conflito. Usuário pede prévia; não confundir essa preparação com integração pronta.
+
+Próximos passos: receber revisão de segurança Solo Exec, corrigir e testar edição, transições e rollback/compatibilidade; regressão completa; incorporar contratos dos agentes após revisar diffs e testar integração real local; checkpoints e commits separados em dev somente após validação. Não publicar implementação parcial na main. Sem senhas ou URLs assinadas.
+
+---
+# Em andamento — Reels, Solo Exec e prévia de vídeo (01/11/2026)
+
+Usuário pediu importação Reels (URL autorizada e ensaios locais em backend/IMPORT-REELS-INVESTIGATION.md), Solo Exec no cadastro e player da fonte antes de escolher o corte. Esclarecido: Solo Exec é um vídeo, uma origem e múltiplos destinos; cada destino deve permitir tipo de granada. Não alterar produção até entrega integrada e validada; preserve TikTok/upload e dados antigos. Branch dev base c2f90e5. Primeiro teste RED criado em backend/tests/api.test.ts para Solo Exec; ainda sem implementação. Arquivos de evidência Reels estão em backend/vendor/reels-probe-20261101/ ignorados. Próximo: modelo com destinos tipados, validação e edição/radar/filtros, migration nova não remota; em paralelo conceber fonte temporária privada de Reels/TikTok para preview sem depender de /tmp entre invocações, autenticação, duração ausente, limites, limpeza e custos. Não expor CDN nem assinar fonte sem controle; não fingir preview. Não apagar vídeos de teste. Testes unitários RED não indicam funcionalidade entregue.
+
+---
 # Em andamento — importação Instagram Reels (01/11/2026)
 
 Pedido: adaptar importação para Reels; link de referência https://www.instagram.com/reel/DeILaFXzNvu/ e autorização explícita do usuário para teste de download/armazenamento temporário. Base dev ccab294, worktree limpo inicialmente; main fcd360d com TikTok ativo para admin único. Não enviar alterações à main nem fazer deploy antes de conclusão/testes. Não usar cookies privados, login, contornar bloqueios ou novas dependências pagas.

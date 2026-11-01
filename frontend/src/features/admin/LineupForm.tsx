@@ -50,6 +50,7 @@ export function LineupForm({
           side: existing.side,
           instructions: existing.instructions,
           target: existing.target,
+          destinations: existing.destinations,
           origin: existing.origin ?? null,
           media: { kind: "keep" },
         }
@@ -65,6 +66,7 @@ export function LineupForm({
         },
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [destinationIndex, setDestinationIndex] = useState(0);
   const [marking, setMarking] = useState<"origin" | "target">("origin");
   const [originTouched, setOriginTouched] = useState(false);
   const [mapChanged, setMapChanged] = useState(false);
@@ -255,10 +257,12 @@ export function LineupForm({
                       ...current,
                       mapId: event.target.value,
                       target: null,
+                      destinations: null,
                       origin: null,
                     }));
                     setOriginTouched(true);
                     setMapChanged(true);
+                    setDestinationIndex(0);
                     setMarking("origin");
                     setErrors((current) => ({ ...current, target: "", origin: "" }));
                   }}
@@ -275,9 +279,11 @@ export function LineupForm({
                 <select
                   aria-label="Tipo"
                   value={draft.type}
-                  onChange={(event) =>
-                    update("type", event.target.value as GrenadeType)
-                  }
+                  onChange={(event) => {
+                    const type = event.target.value as GrenadeType;
+                    setDestinationIndex(0);
+                    setDraft(current => ({ ...current, type, destinations: type === "solo_exec" && current.target ? [{ ...current.target, type: "smoke" }] : null }));
+                  }}
                 >
                   {Object.entries(typeLabels).map(([key, title]) => (
                     <option key={key} value={key}>
@@ -342,11 +348,17 @@ export function LineupForm({
             <Radar
               demo={demo}
               map={map}
-              target={draft.target}
+              target={draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target}
+              extraTargets={draft.type === "solo_exec" ? draft.destinations : undefined}
               origin={draft.origin}
               marking={marking}
               onOriginChange={(origin) => update("origin", origin)}
-              onTargetChange={(target) => update("target", target)}
+              onTargetChange={(target) => {
+                if (draft.type !== "solo_exec") { update("target", target); return; }
+                const destinations = [...(draft.destinations ?? [])];
+                destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" };
+                setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations }));
+              }}
             />
             <p className="field-hint">Quadrado azul: origem. Mira em areia: destino.</p>
             {existing && !draft.origin && <p className="legacy-origin">
@@ -361,9 +373,21 @@ export function LineupForm({
             <PointCoordinates origin value={draft.origin ?? null} error={errors.origin}
               onChange={(origin) => update("origin", origin)} />
             {errors.origin && <p className="field-error">{errors.origin}</p>}
+            {draft.type === "solo_exec" && <div className="solo-destinations">
+              <h4>Granadas da execução</h4>
+              {(draft.destinations ?? []).map((destination, index) => <div key={index}>
+                <button type="button" aria-pressed={destinationIndex === index} onClick={() => { setDestinationIndex(index); setMarking("target"); }}>Destino {index + 1}</button>
+                <select aria-label={`Tipo do destino ${index + 1}`} value={destination.type} onChange={event => {
+                  const destinations = [...(draft.destinations ?? [])]; destinations[index] = { ...destination, type: event.target.value as "smoke" | "flashbang" | "molotov" }; update("destinations", destinations);
+                }}><option value="smoke">Smoke</option><option value="flashbang">Flashbang</option><option value="molotov">Molotov</option></select>
+                <button type="button" onClick={() => { const destinations = (draft.destinations ?? []).filter((_, i) => i !== index); setDestinationIndex(0); setDraft(current => ({ ...current, destinations, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null })); }}>Remover</button>
+              </div>)}
+              <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
+              {errors.destinations && <p className="field-error">{errors.destinations}</p>}
+            </div>}
             <h4 className="point-heading">Destino da granada</h4>
-            <PointCoordinates value={draft.target} error={errors.target}
-              onChange={(target) => update("target", target)} />
+            <PointCoordinates value={draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target} error={errors.target}
+              onChange={(target) => { if (draft.type !== "solo_exec" || !target) { update("target", target); return; } const destinations = [...(draft.destinations ?? [])]; destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" }; setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations })); }} />
             <p className="field-hint">
               Você também pode preencher as coordenadas pelo teclado. O ponto
               (0%, 0%) fica no canto superior esquerdo da imagem.

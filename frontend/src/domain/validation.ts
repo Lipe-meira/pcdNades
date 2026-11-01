@@ -44,7 +44,7 @@ export function validateDraft(
     errors.title = "Informe um título de até 120 caracteres.";
   if (!mapIds.includes(draft.mapId))
     errors.mapId = "Selecione um mapa disponível.";
-  if (!["smoke", "flashbang", "molotov"].includes(draft.type))
+  if (!["smoke", "flashbang", "molotov", "solo_exec"].includes(draft.type))
     errors.type = "Selecione um tipo válido.";
   if (!["T", "CT"].includes(draft.side)) errors.side = "Selecione T ou CT.";
   if (!draft.instructions.trim() || draft.instructions.length > 6000)
@@ -52,6 +52,7 @@ export function validateDraft(
   if (!draft.target || !isTarget(draft.target))
     errors.target =
       "Marque um destino no radar ou informe as coordenadas entre 0 e 100%.";
+  if (draft.type === "solo_exec" && (!draft.origin || (!draft.destinations?.length || draft.destinations.length > 12) || draft.destinations.some(d => !isTarget(d) || !["smoke", "flashbang", "molotov"].includes(d.type)))) errors.destinations = "Marque a origem e pelo menos um destino válido para o Solo Exec.";
   if (draft.origin != null && !isTarget(draft.origin))
     errors.origin = "Informe uma origem com coordenadas entre 0 e 100%.";
   if (draft.media.kind === "keep" && !editing)

@@ -29,6 +29,7 @@ export function Icon({
     molotov: (
       <path d="M14 3c1 5-5 5-3 9 1-1 3-2 4-4 2 3 4 5 4 8a7 7 0 0 1-14 0c0-3 2-5 4-7-1 4 1 5 1 5 0-5 4-6 4-11Z" />
     ),
+    solo_exec: <><circle cx="12" cy="12" r="8" /><path d="M8 12h8M12 8v8" /></>,
     crosshair: (
       <>
         <circle cx="12" cy="12" r="6" />
