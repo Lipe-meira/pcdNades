@@ -1,3 +1,19 @@
+# Entrega backend prévia privada — 02/11/2026
+
+Implementados POST/GET imports/:sourceId/preview, POSTaguardado200sembackground/202, owner/UUID/expiryfinita/providerflag/heartbeat, slotglobal/reconsultaapósclaim, cache-no-store/assinatura60scom margem11s/TTL15min. Bucketdedicado/reservaantesupload/cleanup lease2min graça2min/órfãos30min/heartbeat8minfailclosed; CLIexterna one-shotsemfalsoscheduler. Capabilitiesprovider.sourcePreview booleanflag+provider+heartbeat, fonteH264AAC; incompatível<=90s transcode40s/50MB/deadline110; maiorincompatível422. ServiçoSDKStoragefetchabort10s, scriptsbootstraplocalrestritos56421/56422, API127.0.0.1:3002. Contratofinaldocs/preview-contract.md.
+
+Verificações:129testes/typecheckPASS apósúltimamargemTTL; build/bootstrapPASS antesmargemTTL(rodarbuildfinalantescommit). RealAuth/PostgREST/StorageLOCAL:Reel DeILaFXzNvu eTikTok ZSgs9BM9L PASSPOST200/Range2061024B/renewTTLinalterado/expiry410/row+objectremoved/noGrenadeCreated. PrimeiraTikTokfalhoucodec; transcodecorrigiue2erodousegundavezPASS. Containers/dadosanteriorespreservados; scriptrecusaantigospreviewsjáexpiradosantescoleta,limpasóprópriasfixtures. SemSQLremoto/reaplicaçãomigrationlocal/push/deploy/main/outrosagentes. Ainda NÃO validado playerbrowser+frontendcombinado/hashmídiaantiga/concorrênciaE2Ecancelamentoreal/Vercel scheduler. Rootpodeorquestrarbrowsercombinadoapóscommit.
+
+Branchfeat/backendbase69fd364(mergeautorizadodev); mudançasexclusivasbackend/,docs/preview-contract.md eestecheckpoint. Próximaação: build/bootstrap/diffcheckfinal/commitlocalvalidado(NÃOpush),reportarSHA/rootcomandosAPIlocal. Se retomar, gitstatusantesações. Nãohabilitarproduçãosemcoletormonitoredexternoconfiável; CLIlocalnãoéagendamentoVercel.
+
+---
+# Retomada prévia privada — 02/11/2026
+
+Pedido vigente: concluir backend da prévia sob orquestração, sem push/main/deploy/SQL remoto/novos agentes. Branch feat/backend estava limpa5c75558; merge normal dev fez fast-forward69fd364 (dev avançou durante inspeção, inicialmente af069a6). Não editei front/root nem worktree alheio: arquivos desses caminhos vieram apenas do merge autorizado. Quatro arquivos parciais copiados do preview worktree: source-preview.ts, source-preview-supabase.ts, source-preview.test.ts e migration20261102000337; ainda não commitados. docs/preview-contract.md novo registra proposta enviada ao root, endpoints ainda ausentes. Nenhuma credencial lida ou stack alterada.
+
+Core lido: reserva antesupload, bucket privado, owner/TTL/lease/órfãos e heartbeat completo8min; falta integrar API/runtime e provar fonte real/limpeza. Próxima ação executável: reler integration import-api/application/runtime atuais e testes/migration completos, alinhar contrato frontend, rodar baseline e testes parciais; só então conectar geração/URLs/maintenance. Stack local isolada autorizada56421/56422 precisa conferência, preservar containers/dados/evidências. FonteReels DeILaFXzNvu eTikTok ZSgs9BM9L autorizadas; evitar download redundante, nenhum cookie/login/bypass. Sem heartbeat confiável, flagdefaultoff/failclosed. Não assumir timer como scheduler Vercel.
+
+---
 # Script reproduzível da integração Solo — 01/11/2026
 
 Após o ensaio real, foi criado backend/scripts/solo-local-e2e.mjs (stack dedicada obrigatória pcdnades-solo-e2e-20261101 em 127.0.0.1:56421/56422, com validação docker inspect). Executado e PASS após validações; cria fixtures locais próprias e apaga somente o Solo criado. Usa diretório de status/usuários por argumento, nunca imprimir ou versionar credenciais. Documentado em backend/SOLO-EXEC-E2E.md. Sem produção; demais agentes podem usar a stack preservada.

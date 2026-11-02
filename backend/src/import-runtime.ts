@@ -78,6 +78,33 @@ export async function extractInstagram(url:string,controller:AbortController,dir
  }catch(error){throw budget.error??processFailure(error,controller,'downloading');}
  finally{await proxy.close();}
 }
+/** Entire bounded source for a private preview; never a published final asset. */
+export async function preparePreviewSource(source:{provider:string;sourceUrl:string;videoId:string;durationSeconds:number},controller:AbortController,dir:string){
+ let file:string;
+ if(source.provider==='instagram'){
+  if(!instagramRuntimeAvailable())throw importFailure('PREVIEW_UNAVAILABLE',503);
+  const resolved=await extractInstagram(source.sourceUrl,controller,dir);
+  if(resolved.metadata.videoId!==source.videoId||Math.abs(resolved.metadata.durationSeconds-source.durationSeconds)>1)throw importFailure('SOURCE_CHANGED',409);
+  file=resolved.localSource;
+ }else if(source.provider==='tiktok'){
+  if(!tikTokRuntimeAvailable())throw importFailure('PREVIEW_UNAVAILABLE',503);
+  const resolved=await extractTikTok(source.sourceUrl,controller,dir);
+  if(resolved.metadata.videoId!==source.videoId||Math.abs(resolved.metadata.durationSeconds-source.durationSeconds)>1)throw importFailure('SOURCE_CHANGED',409);
+  const budget=new TransferBudget(60000000,32,controller),proxy=await startMetadataProxy(budget);file=join(dir,'preview-source.mp4');const stop=guardImportFile(file,controller);
+  try{const downloaded=await run(await verifyBinary(),temporarySessionArgs(extractorArgs(source.sourceUrl,proxy.url),resolved.format.formatId??'',file),{cwd:dir,signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true,env:{PATH:process.env.PATH,SYSTEMROOT:process.env.SYSTEMROOT,TEMP:dir,TMP:dir,TMPDIR:dir,YTDLP_NO_PLUGINS:'1'}});if(downloaded.stdout.trim()!==source.videoId)throw importFailure('SOURCE_CHANGED',409);}finally{stop();await proxy.close();}
+ }else throw importFailure('SOURCE_UNSUPPORTED');
+ const size=(await stat(file)).size;if(size<1||size>50000000)throw importFailure('FILE_TOO_LARGE');
+ let metadata;
+ try{metadata=await probeOriginal(file,{maxBytes:50000000,maxDurationSeconds:7200},controller.signal);}catch(error){
+  if((error as {code?:string}).code!=='UNSUPPORTED_CODEC'||source.durationSeconds>90)throw importFailure('PREVIEW_UNAVAILABLE',422);
+  const output=join(dir,'browser-preview.mp4'),stop=guardImportFile(output,controller);
+  try{await run(ffmpegBinaryPath(),encodeTemporaryArgs(file,output,{startSeconds:0,endSeconds:source.durationSeconds},50000000),{signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true});}finally{stop();}
+  if((await stat(output)).size>50000000)throw importFailure('FILE_TOO_LARGE');
+  metadata=await probeOriginal(output,{maxBytes:50000000,maxDurationSeconds:90},controller.signal);file=output;
+ }
+ if(Math.abs(metadata.durationSeconds-source.durationSeconds)>1)throw importFailure('SOURCE_CHANGED',409);
+ return file;
+}
 export function encodeSectionArgs(url:string,output:string,clip:Clip,maxBytes:number){
  const u=new URL(url);if(u.protocol!=='http:'||u.hostname!=='127.0.0.1'||!u.port||u.username||u.password)throw importFailure('IMPORT_DESTINATION_DENIED');
  checkImportSelection(clip,7200);
