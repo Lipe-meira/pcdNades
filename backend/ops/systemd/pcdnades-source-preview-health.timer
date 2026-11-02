@@ -1,0 +1,12 @@
+# INACTIVE TEMPLATE. Does not detect failure of the entire host without an external observer.
+[Unit]
+Description=Check private preview collector independently every minute
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec=60s
+AccuracySec=1s
+Unit=pcdnades-source-preview-health.service
+
+[Install]
+WantedBy=timers.target

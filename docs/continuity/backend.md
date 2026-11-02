@@ -1,3 +1,35 @@
+# Estado atual — entrega operacional de prévia, 02/11/2026
+
+Objetivo: concluir pendências e encaminhar commits/push ao orquestrador. Usuário autorizou agora commit e push; nenhuma autorização implícita para infraestrutura/produção.
+
+Branch codex/tiktok-preview-backend-20261102; worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2; base 7443dc8; fix commit 472f3c3. Entrega seguinte contém templates inativos, cinco testes simulados e backend/PREVIEW-OPERATIONS-20261102.md. Sem frontend/raiz/contrato alterados.
+
+Verificação final: 39/39 testes direcionados PASS, npm run typecheck PASS. Systemd somente revisado, não instalado nem validado por parser. E2E Auth/Storage NÃO executado: CLI local bloqueada pelo acesso Windows→rede Docker internal; cliente interno HTTP200 comprova caminho Linux possível, descrito no relatório. Laboratório novo parado/preservado, antigos intocados. Sem vídeo externo, migration remota, flag ou deploy.
+
+Pendências: bootstrap Linux pequeno com IDs novos, E2E real Auth/Storage, host aprovado, observador externo/destinatário de alerta. NO-GO ativação; sourcePreview permanece desligado. Primeira ação ao retomar: conferir git status/log e revisar bootstrap histórico sem executar; coordenar plano limitado com orquestrador. Push dos commits 472f3c3 e 5adb870 concluído na branch própria; atualização final do checkpoint acompanha esta entrega, sem force; integração/produção são do orquestrador. Relatório lista inventário exato e fontes de agendamento/custos.
+
+---
+## Marco fix validado — 02/11
+
+GapCOMPROVADO runner: SIGTERM duranteespera mantinhaúltimohealthhealthy atéprobe4min. Novo testeREDhealthyvsstopped; fixescrevestoppedaoencerramento semalterarAPI/8min/cadência.6runner+typecheckPASS;34testesafetados(incluiimport-api/MP4inline/previewauth/cancel)PASS antes5novostestessweep;11runner+sweepnovosPASS. Novo tests/preview-sweep-failures.test.ts comprovaStoragefailure/CASfailure/cap50/abortorphanlisting semheartbeat, bucketfinalnuncatocado (MOCKS).
+
+Diagnóstico limitadodeconectividadeREAL: HTTPfixtureDockerNOVOredeinternal/bind127:56721inspecionado, hostWindowsfetchunreachable, clientNOVOmesmaredeHTTP200. Causa doCLIbootstrapinternaléalcancehost→redenoDockerDesktop; nãoRelaxeiisolamento,nãoreconstruíAuthStorageamplo. Rootorientoufecharentregacom E2EAuthStorageBLOQUEADO. Recursosnovos: pc...http-diag-5491784d eclient-diag-5491784d; serverencerradopordockerstop econtainerspreservados, redespcdnades-preview-ops-20261102-{private,loopback}internalpreservadas. Semvolumenovo correspondenteprojectidobservado. CLIparouseuscontainersantesAuthStorage; antigosintocados. /AppData/Local/pcdnades-preview-ops-20261102-5491784d logs/configprivados preservados.
+
+Próximaação: commitprópriofixrunner/testes/checkpoint, depoistemplates+relatório+finaltests/commit, sempush. Não haverámaisE2E/AuthStorage/download/maintenance/instalaçãosupervisor. Templatesapenasrevisados, não parser systemd/serviçosinstalados. Flagpermaneceoff, NO-GOativaçãohost/monitorremotoausentes.
+## Marco lab/ops — 02/11
+
+RootaprovouNOVOlabprivado C:/Users/felip/AppData/Local/pcdnades-preview-ops-20261102-5491784d,projetoigual/portas56721/56722/56731,netDockerinternalbind127, fixturesapenas. CLIinitnovo/signupemailSMSfalse/config/migrationscopiadasNOVOdir. Startnãofoiadiante: wrapperquotingWindowscorrigidoapós2falhasantescontainers; depoisCLIinternalPG127:56722connectrefused eCLIparousócontainersnovos. NenhumE2E/AuthStorage/granada/escritaAPIrodado, nenhumvelholab/volumealterado; logsnovosprivados. Rootinformado, semrelaxarisolamento. PróximaaçãoavaliarharnessinternoDocker/alternativafixa oureportarbloqueioE2Ehonesto.
+
+Dependênciasnewworktree npmci--ignore-scripts103PASS (comando composto leituradocpatherradoapósinstall, instalaçãoPASS). Adicionados templatesINATIVOSbackend/ops/systemd runner+monitor/timer e.env.exampleprivadosemvalores; nãoinstalados/ativados. Nãoeditarworkflow/remoto/contratos. Ainda semcommit. Schedulergratuitoconfiável nãoidentificado: manterflagoff atéhostmonitoraprovado. Prosseguirtestesgaps e relatório, semrepetirbootstrapindefinidamente.
+# Missão operação prévia TikTok — 02/11/2026 início
+
+NOVO worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2, branch codex/tiktok-preview-backend-20261102/base7443dc8ee53f266f90c0568bb4976c95a5034bfb limpa. Não tocar worktreebackendantigo. Mainpublicada/migrations8aplicadas conformeGateBroot, flagsIG/sourcePreview/YouTubeOFF, TikTok30s50MB/MP490s. Checkpointsantigos abaixo são históricos,nãoretomarbloqueiobackup. AGENTS/README/continuity/pedidohumanointegral+GateBlidos.
+
+Escopo: scheduler/monitorprivado gratuito compatível, gapscomprovados, testesafetados+E2ElocalNOVOfixtures, relatório backend/PREVIEW-OPERATIONS-20261102.md. Contratocongelado200POST/GETTTL/caps8minsem202, rootresponsáveldocs/preview-contract.md. Prévia não publica granada/mídiafinal. Semprodução/remoto/infra/flags/segredos/migrations/deploy/push/novosagentes/downloadexterno. Auth/Storageoriginais/labs/volumes/evidências intocados.
+
+Diagnósticopreliminar: core+runner jáimplementados; host/supervisor/monitorindependente nãooperacional. Docs atuaisoficiaisreconfirmamVercelHobbydiário/GHAdelaydrop/Supabasecronpossívelmasrequerconfigremotaplanejada+StorageAPIack. Plano enviadoROOT: comparação/gates+templatesINATIVOSsupervisor, testesfalhasreais/fixtures, laboratórioNOVOcomIDsportassinalizadosANTESescritaE2E. Próximaação: terminarreviewcore+provargaps,testesafetados,nodepslocalaindainstaladas, prepararbudgetlabidentificado. Nenhumcommit/teste/E2E/runtime nesta missão atéagora.
+
+---
 # Backup autorização2 BLOQUEADO em pré-check — 02/11/2026
 
 PreviewPASS foiinformadoao usuário/rootANTESetapa2, commitLOCAL3d05303. Rootautorizoubackupread-onlyprodução kdyzxxgzvgiffluyjjxu/DBAuthconfigmigrationsgrantsRLSRPC+TODOSStorage/restoreNOVOlocalisolado, semparalelo/root. DestinoNOVOC:/Users/felip/pcdnades-backups-privados/20261102-105919-fresh ACLprotectedtrue,sófelip/Admin/SYSTEM,free1524118142976B; backupantigo20261031-194427preservado. Clientepg_dump17.11confirmadoimagemoficialexistentecomnetworknone.

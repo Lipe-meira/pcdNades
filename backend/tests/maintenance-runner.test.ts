@@ -6,7 +6,7 @@ test('independent health probe detects a dead process despite a previously healt
 test('runner serializes cycles and reports failure then recovery without losing last success',async()=>{
  const controller=new AbortController(),reports:any[]=[];let clock=0,calls=0,active=0,max=0;
  await maintenanceRunner({now:()=>clock,sweep:async()=>{active++;max=Math.max(max,active);clock+=100;active--;if(++calls===2)throw Error('fixture');},report:async h=>{reports.push(h);if(reports.length===3)controller.abort();},sleep:async ms=>{assert.ok(ms<=180000);clock+=ms;}},controller.signal);
- assert.equal(max,1);assert.deepEqual(reports.map(h=>h.status),['healthy','degraded','healthy']);assert.equal(reports[1].lastSuccessAt,reports[0].lastSuccessAt);assert.equal(reports[2].consecutiveFailures,0);
+ assert.equal(max,1);assert.deepEqual(reports.map(h=>h.status),['healthy','degraded','healthy','stopped']);assert.equal(reports[1].lastSuccessAt,reports[0].lastSuccessAt);assert.equal(reports[2].consecutiveFailures,0);
 });
 test('cancellation stops waiting even when an adapter never settles',async()=>{
  const c=new AbortController();let stopped=false;
@@ -21,4 +21,9 @@ test('shutdown abort is propagated and never becomes a success',async()=>{
  const c=new AbortController(),reports:any[]=[];
  await maintenanceRunner({now:()=>0,sweep:async signal=>{c.abort();assert.equal(signal.aborted,true);throw Error('cancelled');},report:async h=>{reports.push(h);},sleep:async()=>{throw Error('must not wait');}},c.signal);
  assert.equal(reports[0].status,'stopped');assert.equal(reports[0].lastSuccessAt,null);assert.equal(reports[0].overdue,true);
+});
+test('shutdown during the waiting period must not leave a healthy status behind',async()=>{
+ const c=new AbortController(),reports:any[]=[];
+ await maintenanceRunner({now:()=>1000000,sweep:async()=>{},report:async h=>{reports.push(h);},sleep:async()=>{c.abort();throw new Error('cancelled wait');}},c.signal);
+ assert.equal(reports[0].status,'healthy');assert.equal(reports.at(-1).status,'stopped');assert.equal(maintenanceHealthy(reports.at(-1),1000000),false);
 });

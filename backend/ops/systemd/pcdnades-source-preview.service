@@ -1,0 +1,28 @@
+# INACTIVE TEMPLATE. Review paths/user/secrets and obtain authorization before installation.
+[Unit]
+Description=pcdNades private source-preview collector
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=pcdnades
+Group=pcdnades
+WorkingDirectory=/opt/pcdnades/backend
+EnvironmentFile=/etc/pcdnades/source-preview.env
+ExecStart=/usr/bin/node --import tsx scripts/source-preview-runner.ts
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=15
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/pcdnades-preview
+
+[Install]
+WantedBy=multi-user.target
