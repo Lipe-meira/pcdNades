@@ -26,7 +26,7 @@ const allowed = new Set([app, api, storage]);
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-let inspection = false, preview = false, media = false, unexpected = false;
+let inspection = false, preview = false, media = false, unexpected = false, stage = "abertura";
 try {
   await context.route("**/*", async route => {
     const request = route.request();
@@ -44,16 +44,24 @@ try {
   });
   const page = await context.newPage();
   await page.goto(app);
+  stage = "abrir administração";
   await page.getByRole("link", { name: "Administração", exact: true }).click();
   await page.getByLabel("E-mail", { exact: true }).fill(email);
   await page.getByLabel("Senha", { exact: true }).fill(password);
+  stage = "login";
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  stage = "formulário de importação";
   await page.getByRole("button", { name: "Importar por link", exact: true }).click();
   await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", { exact: true }).fill(source);
+  if (process.env.PREVIEW_TEST_DRY_RUN === "1") {
+    process.stdout.write("PASS: login e formulário locais, sem consultar a fonte.\n");
+  } else {
+  stage = "consulta e preparo da prévia";
   await page.getByRole("button", { name: "Consultar vídeo", exact: true }).click();
   const video = page.getByLabel("Prévia do vídeo de origem", { exact: true });
   await video.waitFor({ state: "visible", timeout: 150000 });
+  stage = "reprodução";
   await page.waitForFunction(() => {
     const v = document.querySelector('video[aria-label="Prévia do vídeo de origem"]');
     return v && v.readyState >= 2 && Number.isFinite(v.duration) && v.duration > 1;
@@ -66,6 +74,7 @@ try {
     return v.currentTime;
   });
   if (!(position > 0)) throw new Error("A prévia não avançou.");
+  stage = "marcação";
   await page.getByRole("button", { name: "Usar posição como início" }).click();
   const start = await page.getByLabel("Início do trecho", { exact: true }).inputValue();
   await video.evaluate(v => new Promise(resolve => {
@@ -77,8 +86,9 @@ try {
   if (!inspection || !preview || !media || unexpected || !start || !end || start === end)
     throw new Error("Ensaio incompleto: confira player, marcações e tráfego local.");
   process.stdout.write("PASS: prévia local reproduzida e tempos marcados; nenhuma granada criada.\n");
+  }
 } catch {
-  process.stderr.write("Falha no ensaio local; confira a stack e a disponibilidade da prévia sem expor URLs ou credenciais.\n");
+  process.stderr.write(`Falha no ensaio local na etapa: ${stage}; inspect=${inspection} preview=${preview} storage=${media} bloqueio=${unexpected}.\n`);
   process.exitCode = 1;
 } finally {
   await context.close();
