@@ -1,5 +1,16 @@
 # Checkpoint — orquestrador / prévia visual TikTok
 
+## Entrega integrada — 02/11/2026, revisão Draft / ativação bloqueada
+
+- Ler primeiro `docs/TIKTOK-PREVIEW-INTEGRATION-20261102.md`, `backend/PREVIEW-OPERATIONS-20261102.md` e `frontend/docs/TIKTOK-PREVIEW-20261102.md`. Este marco substitui o estado em andamento abaixo; não retomar tarefas históricas de produção.
+- Branch própria `codex/tiktok-preview-integration-20261102`, worktree `C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2`, base main `7443dc8`. Integração local por merges normais, HEAD de código combinado `0fd90c0`. Documentação final será commitada antes da publicação da branch; consultar `git log -1` e `git ls-remote` para SHA final, sem criar SHA circular neste arquivo.
+- Frontend integrado `ad9cf6e`, `aa27824`, `730e9ab`: tempo atual, aviso de não publicação, SOURCE_EXPIRED e reload/resume. Backend integrado `472f3c3`, `5adb870`, `e4b7ed1`: parada saudável corrigida, testes de falhas e templates operacionais INATIVOS. Worktrees especializadas preservadas; backend reportou push próprio em `origin/codex/tiktok-preview-backend-20261102`.
+- Orquestrador validou no conjunto: frontend build/TypeScript, 58 unitários e 88 Playwright PC/mobile PASS; backend build/TypeScript Windows e 142 testes PASS. Browser e adapters são controlados; NÃO são E2E Auth/Storage real. Build backend sem flags não empacotou yt-dlp, não revalida cloud/Linux habilitado.
+- Lab NOVO bloqueado por Windows→bind loopback de rede Docker interna; cliente na rede recebeu HTTP200. Nenhum Auth/Storage novo operacional, nenhum lease frontend, nenhum download externo ou escrita de produção. Dois containers diagnósticos novos parados e duas redes internas preservadas conforme relatório backend; backups/labs antigos intocados. Proposta de desbloqueio: clientes/Playwright dentro da rede Linux, revisão pequena do bootstrap com IDs novos antes de iniciar stack completa.
+- Rechecagem somente leitura Vercel: Preview Branch Tracking OFF nos dois projetos, Production branch main; deployments da release READY. Nenhuma configuração salva. Workflow Linux do PR é somente CI, sem segredos de Supabase/deploy. Diff revisado sem novos vídeos/segredos/dados privados; fixtures sintéticas antigas inalteradas, único exemplo de env novo com valores vazios.
+- Arquivos locais pendentes deste marco: relatório de integração novo e este checkpoint. Próximo passo imediato: conferir diff/sigilo, commit docs, push NORMAL somente da branch própria e abrir PR Draft para main. Não merge/main/dev/deploy/flags/migrations/infra remota. Registrar PR e CI em checkpoint posterior.
+- GO apenas revisão de código; NO-GO ativar prévia. Pendem E2E real, host/coletor supervisionado, observador independente e alerta comprovado, parser/instalação Linux. TikTok/MP4 existentes preservados; prévia/Reels/YouTube continuam OFF. Operações remotas/ativação exigem autorização separada.
+
 ## Marco atual — 02/11/2026, integração ainda pendente
 
 - Worktree própria: `C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2`, branch `codex/tiktok-preview-integration-20261102`, HEAD de planejamento `b0695bf`; sem push. Estado histórico abaixo foi superado por este marco.
