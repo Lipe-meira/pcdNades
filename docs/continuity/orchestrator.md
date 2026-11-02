@@ -1,3 +1,8 @@
+# Retomada de integração — 01/11/2026
+
+Usuário autorizou finalizar Reels, prévia e Solo Exec e publicar somente dev; produção/main/flags/migrations remotas proibidas. Branch dev 11c4462 limpa no início, origin/main fcd360d, divergência 2 commits main e 4 dev; main local em outro worktree desatualizada, não tocar. Worktrees Reels codex/reels e preview feat/preview-fonte continham alterações não commitadas preservadas, agentes anteriores não ativos; novos agentes trabalham exclusivamente nesses worktrees. Agente adicional valida Solo Exec em Supabase local isolado. Primeira ação: integrar origin/main em dev por merge normal após verificar diferenças; revisar trabalho dos agentes, proteção de staging/limpeza, testes integrados e só então push dev. Nunca aplicar migrations remotas, ativar flags ou executar deploy.
+
+---
 # Solo Exec validado localmente — agentes Reels e prévia em andamento (01/11/2026)
 
 Branch dev base c2f90e5; alterações Solo Exec em commit local a seguir. Ver backend/SOLO-EXEC.md. Um vídeo/origem e até 12 destinos tipados, formulário/radar/filtros/contratos, migration 20261101152756 nova ainda NÃO aplicada remotamente. Migration executada com insert/edição e papel authenticated em Supabase local dentro de transação revertida; teste completo HTTP/Storage real pendente. 110 backend, 55 frontend e 70 Playwright (API controlada) passaram; builds passaram. Revisão independente detectou troca de mapa com índice antigo e ícone genérico, corrigidos; validação PATCH e teste desktop/mobile adicionados. Não publicar na main antes de integrar Reels/prévia e validar ambos. Não mexer em produção/migration remota sem autorização específica.
