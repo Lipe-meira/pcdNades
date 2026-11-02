@@ -42,7 +42,7 @@ export function createSupabaseRuntime(
         undefined,
         "Não foi possível enviar o arquivo. O cadastro anterior não foi alterado. Tente novamente.",
       );
-  });
+  }, { previewOrigin: config.supabaseUrl });
   function identity(
     user?: { id: string; email?: string } | null,
   ): AuthIdentity | null {

@@ -67,6 +67,8 @@ async function setup(
     trimming?: boolean;
     durationLimit?: number;
     imports?: boolean;
+    sourcePreview?: boolean;
+    reels?: boolean;
     importDelay?: number;
     importFailure?: string;
     loseImportComplete?: boolean;
@@ -189,8 +191,8 @@ async function setup(
             },
             importers: {
               youtube: { enabled: false },
-              tiktok: options.imports ? { enabled: true, inspection: true, ...importLimits } : { enabled: false },
-              instagram: {
+              tiktok: options.imports ? { enabled: true, inspection: true, sourcePreview: options.sourcePreview === true, ...importLimits } : { enabled: false },
+              instagram: options.reels ? { enabled: true, inspection: true, sourcePreview: options.sourcePreview === true, ...importLimits } : {
                 enabled: false,
                 reasonCode: "PLATFORM_UNSUPPORTED",
                 message: "Integração ainda não habilitada.",
@@ -217,6 +219,7 @@ async function setup(
     if (path === "/media/imports/inspect") {
       state.inspections++;
       state.inspection = importInspection(state.inspections);
+      if (options.reels) state.inspection = { ...state.inspection, provider: "instagram", sourceUrl: "https://www.instagram.com/reel/DeILaFXzNvu/", videoId: "DeILaFXzNvu" };
       return reply(route, { status: 201, json: { data: state.inspection } });
     }
     if (path === "/media/imports") {
@@ -1307,4 +1310,87 @@ test("Solo Exec troca de mapa após selecionar segundo destino sem índice antig
   await expect(page.getByRole("button",{name:"Destino 1",exact:true})).toBeVisible();
   await expect(page.getByRole("button",{name:"Destino 2",exact:true})).toHaveCount(0);
   await expect(page.getByLabel("Coordenada X (%)")).not.toHaveValue("");
+});
+
+
+test("Prévia privada: player marca início e fim sem publicar", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true });
+  const methods: string[] = [];
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, async route => {
+    methods.push(route.request().method());
+    return reply(route, { json: { data: { sourceId: state.inspection.sourceId, status: "ready", sourceExpiresAt: state.inspection.expiresAt, url: `${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`, expiresAt: new Date(Date.now()+60_000).toISOString(), mimeType: "video/mp4" } } });
+  });
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, { status: 206, body: bytes.subarray(start), contentType: "video/mp4", headers: { "accept-ranges": "bytes", "content-range": `bytes ${start}-${bytes.length - 1}/${bytes.length}` } });
+  });
+  await openImportForm(page); await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
+  await expect(video).toBeVisible();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 0.5; });
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.45);
+  await page.getByRole("button",{name:"Usar posição como início"}).click();
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 1.5; });
+  await page.getByRole("button",{name:"Usar posição como fim"}).click();
+  await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
+  expect(methods).toEqual(["POST"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(0);
+});
+
+test("Prévia privada: falha preserva horários, formulário e opção MP4", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true, initial: true });
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => reply(route, {status:503,json:{error:{code:"PREVIEW_UNAVAILABLE"}}}));
+  await openImportForm(page, true); await consultImport(page);
+  await expect(page.getByText(/Não foi possível carregar a prévia/)).toBeVisible();
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toBeEnabled();
+  await expect(page.getByRole("button",{name:"Enviar MP4",exact:true})).toBeEnabled();
+  await expect(page.getByLabel("Título",{exact:true})).toHaveValue("Granada de teste controlado");
+  expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(1);
+});
+
+test("Prévia privada: renovação preserva posição e encerra ao trocar link", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true });
+  const methods: string[] = [];
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => {
+    methods.push(route.request().method());
+    return reply(route, { json: { data: { sourceId: state.inspection.sourceId, status: "ready", sourceExpiresAt: state.inspection.expiresAt, url: `${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture${methods.length}`, expiresAt: new Date(Date.now()+(methods.length === 1 ? 6500 : 60_000)).toISOString(), mimeType: "video/mp4" } } });
+  });
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, { status: 206, body: bytes.subarray(start), contentType: "video/mp4", headers: { "accept-ranges": "bytes", "content-range": `bytes ${start}-${bytes.length - 1}/${bytes.length}` } });
+  });
+  await openImportForm(page); await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.pause(); v.currentTime = .7; v.muted = true; v.volume = .31; });
+  await expect.poll(() => methods.length, { timeout: 8000 }).toBeGreaterThan(1);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.6);
+  expect(await video.evaluate((v: HTMLVideoElement) => ({muted:v.muted,volume:v.volume,paused:v.paused}))).toEqual({muted:true,volume:.31,paused:true});
+  expect(methods.slice(0,2)).toEqual(["POST", "GET"]);
+  await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", {exact:true}).fill("https://www.tiktok.com/@qa/video/1234567891");
+  await expect(video).toHaveCount(0);
+  expect(state.importCreates).toBe(0);
+});
+
+test("Prévia privada: Reels pode consultar e marcar trecho", async ({ page }) => {
+  const state = await setup(page, { reels: true, sourcePreview: true });
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => reply(route, { json: { data: { sourceId: state.inspection.sourceId, status: "ready", sourceExpiresAt: state.inspection.expiresAt, url: `${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`, expiresAt: new Date(Date.now()+60_000).toISOString(), mimeType: "video/mp4" } } }));
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, { status: 206, body: bytes.subarray(start), contentType: "video/mp4", headers: { "accept-ranges": "bytes", "content-range": `bytes ${start}-${bytes.length - 1}/${bytes.length}` } });
+  });
+  await openImportForm(page);
+  await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", {exact:true}).fill("https://www.instagram.com/reel/DeILaFXzNvu/");
+  await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = .5; });
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.45);
+  await page.getByRole("button",{name:"Usar posição como início"}).click();
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  expect(state.importCreates).toBe(0);
 });
