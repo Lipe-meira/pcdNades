@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { LineupService } from "../../services/lineupService";
 import type { ImportInspection } from "../../domain/imports";
+import { formatTimecode } from "../../domain/timecode";
+import { ApiError } from "../../services/apiClient";
 
-export function ImportSourcePreview({ inspection, service, onMark }: {
+export function ImportSourcePreview({ inspection, service, onMark, onExpired }: {
   inspection: ImportInspection;
   service: LineupService;
   onMark: (field: "startSeconds" | "endSeconds", seconds: number) => void;
+  onExpired: () => void;
 }) {
   const video = useRef<HTMLVideoElement>(null);
   const pending = useRef<AbortController | null>(null);
@@ -13,6 +16,7 @@ export function ImportSourcePreview({ inspection, service, onMark }: {
   const [preview, setPreview] = useState<{url: string; expiresAt: string}>();
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
 
   async function load(prepare: boolean) {
     if (!service.sourcePreview) return;
@@ -29,9 +33,10 @@ export function ImportSourcePreview({ inspection, service, onMark }: {
         resume.current = { time: player.currentTime, playing: !player.paused, muted: player.muted, volume: player.volume };
       }
       setPreview({url: data.url, expiresAt: data.expiresAt});
-    } catch {
+    } catch (cause) {
       if (!controller.signal.aborted) {
         setPreview(undefined);
+        if (cause instanceof ApiError && cause.code === "SOURCE_EXPIRED") { onExpired(); return; }
         setError("Não foi possível carregar a prévia. Você ainda pode escolher o trecho pelos horários ou enviar um MP4.");
       }
     } finally { if (pending.current === controller) setLoading(false); }
@@ -56,8 +61,9 @@ export function ImportSourcePreview({ inspection, service, onMark }: {
       {loading ? "Carregando prévia…" : "Carregar prévia do vídeo"}
     </button>}
     {preview && <>
+      <p className="field-hint">Prévia temporária: o trecho ainda não foi importado nem publicado.</p>
       <video ref={video} className="media-preview" src={preview.url} controls playsInline preload="metadata"
-        aria-label="Prévia do vídeo de origem" onLoadedMetadata={(event) => {
+        aria-label="Prévia do vídeo de origem" onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onSeeked={(event) => setCurrentTime(event.currentTarget.currentTime)} onLoadedMetadata={(event) => {
           const state = resume.current;
           if (!state) return;
           resume.current = null;
@@ -66,6 +72,7 @@ export function ImportSourcePreview({ inspection, service, onMark }: {
           player.muted = state.muted; player.volume = state.volume;
           if (state.playing) void player.play().catch(() => {});
         }} onError={() => { setPreview(undefined); setError("A prévia não está disponível. Carregue novamente ou escolha pelos horários."); }} />
+      <p className="field-hint">Posição atual: <output aria-label="Posição atual do vídeo">{formatTimecode(currentTime)}</output></p>
       <div className="import-preview-actions">
         <button type="button" className="button secondary" onClick={() => mark("startSeconds")}>Usar posição como início</button>
         <button type="button" className="button secondary" onClick={() => mark("endSeconds")}>Usar posição como fim</button>
