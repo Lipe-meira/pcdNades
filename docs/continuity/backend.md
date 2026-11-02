@@ -1,3 +1,12 @@
+# Backup autorização2 BLOQUEADO em pré-check — 02/11/2026
+
+PreviewPASS foiinformadoao usuário/rootANTESetapa2, commitLOCAL3d05303. Rootautorizoubackupread-onlyprodução kdyzxxgzvgiffluyjjxu/DBAuthconfigmigrationsgrantsRLSRPC+TODOSStorage/restoreNOVOlocalisolado, semparalelo/root. DestinoNOVOC:/Users/felip/pcdnades-backups-privados/20261102-105919-fresh ACLprotectedtrue,sófelip/Admin/SYSTEM,free1524118142976B; backupantigo20261031-194427preservado. Clientepg_dump17.11confirmadoimagemoficialexistentecomnetworknone.
+
+BLOQUEIOCONCRETO:nenhumPGPASSFILE/PGSERVICEFILE/PGPASSWORD/PGSERVICE/PGHOST/PGUSER/PGDATABASE/DATABASE_URLconfigurado; pgpass/servicepadrãoAPPDATApostgresql eUSERPROFILEausentes;3.envbackendconhecidosnãoexistem. Rootnão conhecePGauthcomprovadaeorientoupararantesexportarparcial. Nenhumtokentrial/reset/conexãosenhabranca/PIIpeloMCP/dump/Auth/Storage/Vault/restoreexecutado. Destino sóprechecks.json+INCOMPLETE-NO-DATA-EXPORTED.txt, NÃOébackup. Rootinformado parausuárioconfigurarPGPASSFILEprivadoforadoGitSEMsenhanochat. Relatório público backend/BACKUP-PREFLIGHT-20261102.md.
+
+Próximaação: docs/diff/commitLOCALsemPUSH/reportarSHA eaguardarauthlegítima. AoretomarrevalidarACL+espaço+PGsomenteleitura+escopoprivilégios/Authconfig/VaultrestaurávelantesqualquerexportStorage. Não iniciarrestoreremoto/localatébackupíntegrovalidado, nãotocarstacksvolumespréexistentes/migrationsprod/main/deploy/flags/backupantigo. Secredencialausentecontinua, nãorepetirbuscaporoutrostokens. PreviewúNICOREADYpreservadotokenprivadoguardado; nenhumaoperaçãoextraCloud.
+
+---
 # Preview real PASS — 02/11/2026 entrega
 
 ÚNICOdeployment dpl_AapyxdXEsXXJsBsaQHTjkPZhydAd /https://pcdnades-preview-a6quelpvg-lipe-s-projects1.vercel.app/READY/targetnullPreview/aliases[]/sourceSHAc8e1fca2849040ac2163ef40e70dd8bc77dd895f. Projeto/timeHobbyUIrootconfirmados. 35files195320Bbackendgitshow+SOMENTEvercel.jsonEXPORTconfigoverrideguard/buildflags; dirtyconfigtrue informado,worktreecódigointacto. Guardlocalexit42 eguardlogremotoPreviewconfirmedPASS. Conectorpreferido usado, authCLIread403 substituídaUIrootsemnovastentativas.
