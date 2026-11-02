@@ -84,7 +84,7 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
         <p className="field-hint">Fonte original de até {(value.inspection.limits.maxSourceBytes ?? 50_000_000) / 1_000_000} MB. Trecho final de até {value.inspection.limits.maxDurationSeconds}s. Somente o trecho será salvo; fontes longas podem exceder o tempo disponível.</p>
       </div>
       {capabilities.importers[value.inspection.provider]?.sourcePreview && !expired && service.sourcePreview ? <ImportSourcePreview
-        key={`preview-${value.inspection.sourceId}`} inspection={value.inspection} service={service} onMark={(field, seconds) => {
+        key={`preview-${value.inspection.sourceId}`} inspection={value.inspection} service={service} onExpired={() => setExpired(true)} onMark={(field, seconds) => {
           if (!value.clip) return;
           onChange({ ...value, clip: { ...value.clip, [field]: seconds } });
           setMarkRevision(current => current + 1);

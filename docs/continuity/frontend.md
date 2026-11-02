@@ -1,3 +1,11 @@
+# Em andamento — UX da prévia TikTok (02/11/2026)
+
+Worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-frontend-20261102/nadesCs2, branch codex/tiktok-preview-frontend-20261102, base 7443dc8; sem push/PR/merge/deploy. Ajustes pontuais em ImportSourcePreview e ImportLinkEditor: tempo atual acessível, aviso de prévia não publicada, SOURCE_EXPIRED encerra preview e pede nova consulta preservando dados. Testes browser alterados em frontend/tests/browser/api.spec.ts; relatório frontend/docs/TIKTOK-PREVIEW-20261102.md. Build/typecheck PASS, 58 unitários PASS, 16 browser controlados PC/celular PASS, 4 focados player/410 PASS e 2 para expiração durante GET PASS. Capturas fixture desktop/mobile em frontend/node_modules/.cache/tiktok-preview-evidence. Não são E2E real. Nenhuma alteração no backend/contrato/produção; nenhuma stack existente tocada, sem download externo. Entrega commitada localmente; aguardando orquestrador coordenar nova stack isolada/lease antes de E2E real. Coletor/heartbeat pendentes para futura ativação. Arquivos da entrega: este checkpoint, relatório e três arquivos frontend mencionados; conferir git status ao retomar.
+
+Follow-up sobre ad9cf6e: reprodução controlada confirmou que, após seek/erro/reload, output permanecia em 1,5s embora o novo vídeo estivesse em 0 (RED desktop/mobile). Corrigida sincronização em loadedmetadata e limpeza da retomada ao preparar nova prévia; renovação preserva posição. Teste direcionado `npm --prefix frontend run test:browser -- --grep 'recarregar após erro sincroniza|renovação preserva posição|expiração na renovação' --project=api-desktop --project=api-mobile --workers=1`: 6/6 PASS; build/typecheck e 58 unitários PASS. E2E real permanece aguardando stack isolada e coordenação de lease; sem push/deploy/produção.
+
+---
+
 # Entrega local — redesign do radar (02/11/2026)
 
 Objetivo: ampliar e reorganizar radares da biblioteca e do formulário, padronizar marcadores circulares e orientar origem → destino, mantendo Solo Exec, legado e contratos. Worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2, branch feat/frontend, base 92b689c; sem push, merge, deploy ou produção por pedido explícito. Nenhuma outra worktree alterada.
