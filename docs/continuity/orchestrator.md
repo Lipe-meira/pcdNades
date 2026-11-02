@@ -1,3 +1,33 @@
+# Integração local concluída — 02/11/2026
+
+## Objetivo e localização
+Finalizar Reels, Solo Exec e prévia de vídeo com cortes, coordenando os chats existentes. Branch dev, worktree C:/Users/felip/.codex/worktrees/pcdnades-dev/nadesCs2; integração em7752027, documentação final em commit a seguir. Mainfcd360d incorporada normalmente, sem alterar main. Fetch confirmou25commits à frente/0 atrás deorigin/dev11c4462 antes da documentação final; push normal dev autorizado e em preparação. Conferir SHA final com gitlog/ls-remote ao retomar. Neste ponto somente README e este checkpoint modificados, concluídos e destinados ao commit final.
+
+## Entregas e responsáveis
+- Frontend chat frontEnd CS2: c0b46c7 (player/seleção/Reels), b22b94a (roteirolocal), f4a304d (ensaioReactreal). Backend chat backend CS2:7b41fd5 (endpoints/Storage/cleanup),6fa67c2 (cancelamento). Integrados por merges normais, preservando Solo/Reels e história. Nenhum novo agente criado. Chats em seus próprios worktrees, limpos ao entregar.
+- Prévia: POST aguardado200ready e GET renovação; admin autorizado+owner, URLs privadas até60s limitadas pela sessão15min, bucket dedicado50MB, flagoff+heartbeat8min. Fonte incompatível<=90s pode converter40s paraH264AAC; longa incompatível indisponível sem impedir seleção manual/importação final. Contrato docs/preview-contract.md.
+- Limpeza: reserva antes upload, lease, graça2min, reconciliação órfãos30min e heartbeat só após sweep completo. CLI one-shot disponível; NÃO existe scheduler cloud configurado. Precisa coletor externo monitorado<=5min antes da produção.
+
+## Verificações realmente realizadas
+- Dev integrada:129backendPASS e build;58frontendPASS e build. Após fix6fa67c2: backend chat131suite/typecheck/buildPASS; orquestrador11testesdirecionadosAPI/core/cancelamentoPASS. FixRED/GREEN preservaRequest.signal e impede assinaturaURL pósabort.
+- Frontend c0b46c7:78/78Playwrightdesktop/mobilePASS com API controlada, incluindoMP4/Solo/TikTok/Reels/falha/renovação. Não repetir sem mudança relevante; diferença posterior só roteiroE2E/documentação.
+- Backend ensaio realAuth/API/Storage local Reels eTikTok:POST200,Range206,renovaçãoTTL,expiry410,remoção row/object ezero granadas. Não equivale aVercel.
+- Frontend f4a304d: React+API+Auth+Storage local REAL reproduziu ReelsDeILaFXzNvu eTikTokZSgs9BM9L e marcou início/fim; tráfego de escrita de granadas bloqueado, nenhuma tentativa detectada. Não comparou contagem/hash antes/depois. Primeiro bootstrapfalhou antes de consultar fonte porFRONTEND_URL ausente; processo corrigido e ambos passaram. API3002/Vite5173 encerrados.
+- Orquestrador reexecutou solo-local-e2e na dev integrada apósserviceFetchglobal:uploadMP4real→ready,permissõesanon/viewer,CRUD/filtro/conversõesSolo,invalidPATCH400,legacyPreserved eplaybackbytesmatchPASS. Criou vídeo/granada tradicional próprios preservados, excluiu somente Solo próprio conforme roteiro.
+- SegurançaGit:45arquivos de diferença origin/dev revisados, nenhum padrão de credencial encontrado; nenhum novoMP4/envreal/vendor/dump/log/privado emdiff. .env.example é modelo. Evidências ebináriosvendor ignorados; worktreepreviewparcial preservado. Maincontinua remota fcd360d. ConsultaVercelget_project somente leitura não expõe branchproduction/previewflag; não alegar revalidação desses campos. Histórico registra deploy sómain/previewdesativado; arquivosCI versionados sómain/PR, nenhuma mudançaCIde publicação nesta entrega.
+
+## Ambiente preservado e reprodução
+Stack pcdnades-solo-e2e-20261101 Auth/REST/Storage127.0.0.1:56421,DB127.0.0.1:56422 ativa; stacks antigas preservadas. Migrations Solo/Reels/preview somente locais já existentes, nenhuma remota nesta tarefa. Configprivada em worktree solo-e2e/backend/vendor/solo-e2e-20261101, nunca imprimir. PréviaUI gerou objetos temporários locais preservados; futura manutenção expirada pode coletá-los, coordenar evidências antes. Nenhum serviço pago provisionado.
+
+Comandos: npm --prefix backend test; npm --prefix backend run build; npm --prefix frontend test; npm --prefix frontend run build. Browser: npm --prefix frontend run test:browser -- --workers=1. API/coleta local: backend/scripts/source-preview-local-api.ts DIRETORIO_PRIVADO maintenance|serve (tsx,FRONTEND_URL=http://127.0.0.1:5173); detalhes e variáveis em docs/preview-contract.md e checkpointfrontend. Não executar novamente downloads por rotina. Roteirofrontend/scripts/source-preview-local.mjs exige envsprivadas e origenslocais, nenhum.envsobrescrito.
+
+## Pendências e primeira ação ao retomar
+1. Conferir Git e resultado do pushnormaldev; leitura inicial deste checkpoint, docs/preview-contract.md,backend/IMPORT-REELS-BACKEND.md,backend/SOLO-EXEC-E2E.md e docs/continuity/PRODUCTION-HANDOFF.md.
+2. GO integração local; NO-GO habilitarprévia cloud semcoletor monitorado e provaLinux/Vercel. Concorrênciamulticonexão/cancelamentorealderede, carga50MB, restauração/backupfresco e prova novabundleLinux ainda pendentes; tests simulados não suprem essas provas.
+3. Preparar autorização específica: backupfresco verificado/restoreisolado, migrationsnovas Solo→Instagram→preview, revisão de configuraçãoVercel. TikTok20261030124528 jáemprodução, NÃOreaplicar. Depois merge/pushmain/deploy separados; flagsReels/prévia somente autorização distinta, admin/vídeoautorizados/testeprivado semsmoke.
+4. RollbackGit não reverte bancoStorage/envs. Manter schema aditivo e dados; nãoapagar objetos finais ou Solo. Plano completo nohandoff. Proibido nesta tarefa main/deploy/envs/migrationsremotas. Não considerar teste local aprovação de produção.
+
+---
 # Coordenação dos chats existentes — 02/11/2026
 
 ## Objetivo e estado
@@ -175,9 +205,6 @@ Estado: auditoria concluída; aguardando autorização específica para recursos
 - Timers75/90/110 elease120 revistos,sem aumento. Coldstart anterior aonRequest,rede50MB,SDKsubjacente/tmp/memóriatotal/concorrênciaFluid ainda exigem host real. Fonte50MB não é garantia de sucesso no prazo. Artefato local não inclui prova do launcher/layers finaisVercel.
 - Uploaddefault90/TikTok30 testados no payload. Remoteenv20 não foi consultado; no preview planejar global90 e gatecapabilities90/30. Não configurarglobal30 e reduzirupload.
 
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
-
 ## Retomar daqui
 
 1. ConferirGit e ler IMPORT-PREVIEW-AUDIT.md/JSON. Não repetir empacotamento/benchmarks semmudanças/necessidade. Privados emvendor não devem ir aGit/deploy.
@@ -236,9 +263,6 @@ Preparar piloto TikTok síncrono para Vercel Hobby: fonte50MB, seleção0,1–30
 - Usuário abriuDocker. Stack própriaSupabase5serviços saudável e permanece ligada; APIs/frontends temporários55432/55433 encerrados. Cinco containers novos de piloto encerradosexit0/retidos; recursos antigos/outros projetos intocados.
 - Evidências/config privada em backend/vendor/pilot-20261031 e pastas anteriores, ignoradas; ~231MB novos arquivos no marco. Nenhuma exclusão de container/volume/vídeo/órfão; nenhum.env sobrescrito. Credenciais/signedURLs nunca versionar/imprimir.
 - BundleLinux anterior~204MB/9warnings não é validação do bundlepreview atual. Medir coldstart/rede/CPU/mem/tmp em Vercel ainda pendente. Não prometer qualquer fonte50MB/30s; rede lenta pode atingir75s.
-
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
 
 ## Retomar daqui
 
@@ -302,9 +326,6 @@ Retomar os benchmarks interrompidos, concluir diagnóstico de limites/hospedagem
 
 - Docker daemon indisponível nesta retomada (pipe Linux inexistente). Não reiniciado porque13casos/recuperação concluídos. Estado individual atual não confirmado;5containersSupabase haviam sido iniciados e benchmarks concluídos no marco anterior. Nada removido;volumes/dados/evidências preservados.
 - Privados e mídia em backend/vendor/capacity-20261031 e local-integration-20261031, ignorados. Não versionar/não imprimir credenciais/não sobrescrever.env. Nenhum recurso remoto acessado para escrita.
-
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
 
 ## Retomar daqui
 
@@ -404,9 +425,6 @@ Usuário autorizou DockerDesktop/stackSupabaseLOCALdescartável, ferramentas/ima
 - Banco:3ready,2failed,1queuedfixturedeconcorrência,zero processing/slotliberado. Granadaprincipalmantevevideo_idoriginal;3objetosfinais,nenhumafonteinteira. IDsprivadosdesessão/teste no manifesto,credenciaissólocal.
 - Containers/volumespreexistentesconferidospresentescomIDsoriginais.Nenhumpurge/prune/stopglobalouoperaçãoindividualsobrerecursopreexistente.
 
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
-
 ## Retomar daqui
 
 1. ConferirGit/HEAD/status e lerIMPORT-LOCAL-E2E.md. Serviçosestãoparados,nãoassumirURLsativas.
@@ -478,9 +496,6 @@ Revisar/preservar auditoriaTikTok anterior, validar pipelineStorage/player/hospe
 - DockerDesktop instalado,daemonLinuxnãoacessível; WSLsódocker-desktop,CLISupabase/psqlausentes. Nenhuma stackSupabaselocaldisponível nem infraestrutura iniciada.
 - Não validados: SupabaseAuth/PostgREST/RPC/Storage reais comsiteconectado, LinuxVercel, quotasRSS/disco, killsemfinally/órfãos/claimlostreal. SDKsign/remove não aceitamAbortSignal; cancelamento interrompeespera, não garante socketcancelado. Limpeza é best effort e não um coletor remoto.
 - ProduçãoTikTokoff; modotemporaryopt-in e padrão range preservados. Nenhuma env/SQL/Storage/Vercel remotos alterados. Nenhum serviço pago.
-
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
 
 ## Retomar daqui
 
@@ -578,9 +593,6 @@ Auditar/corrigir importação TikTok autorizada na dev, comparar execução dire
 ## Em andamento
 
 Nenhuma execução pendente. Alterações locais entregues para revisão/teste; não afirmar E2E Storage/player pronto.
-
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
 
 ## Retomar daqui
 
@@ -1099,9 +1111,6 @@ Coordenar os chats de frontend/backend do pcdNades. Pedido atual: continuar apó
 - Front conclui testes, fallback SPA/documentação e ajuste do limite para 20s; aguardar commits e relatório antes da próxima integração.
 - Backend informou ajuste de duração para teto de 20s com 8 testes passando; confirmar SHA remoto e diff ao revisar.
 - Instituir os checkpoints próprios dos dois chats e preservar as mudanças em suas branches.
-
-## Marco de integração em andamento
-Backend relatou Reels prévia real local200, StorageRange206, renovação sem ampliarTTL, expiry410, cleanupreal e zero granadas. TikTokdownloadreal chegouprobe mas HEVC incompatível; backend testa transcodecurto<=90s40s dentro110global. Front58unitPASS e cenáriosPC/mobilecontroladosPASS, fullbrowser emandamento; não chamar de integraçãorealbrowser. Contrato POSTaguardado200ready/GETrenovação e capabilities.sourcePreview porprovider alinhado entrechats. Backend source-preview e frontend ainda semcommitfinal; não integrarparciais. Handoff atualizado emcb58c21, checkpoint69fd364. Sempushnestaetapa.
 
 ## Retomar daqui
 
