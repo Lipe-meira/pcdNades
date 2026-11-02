@@ -1,5 +1,13 @@
 # Checkpoint — orquestrador / prévia visual TikTok
 
+## Publicação da branch e PR — estado final desta entrega
+
+PR **#4 Draft**, https://github.com/Lipe-meira/pcdNades/pull/4, aberto a partir de `d77234d28945e59c981260f74dcb2c90e92ec863` na branch própria. Push normal confirmado por `ls-remote`; main continua `7443dc8ee53f266f90c0568bb4976c95a5034bfb`. Este checkpoint de publicação é alteração somente documental posterior aos testes, será commitado/enviado na mesma branch. Consultar `git log -1` para HEAD final. CI Linux deve ser conferido no HEAD final; não confundir checks pendentes com falha e não repetir deploy. PR permanece Draft por decisão explícita, não interpretar mergeable=false inicial como conflito comprovado.
+
+Todos os códigos backend/frontend já estavam no HEAD combinado `0fd90c0` testado: 142 backend, 58 frontend e 88 browser controlados PASS. Nenhum código mudou depois. Ambos os chats receberam confirmação da integração e instrução de preservar recursos/aguardar próxima missão, sem iniciar infraestrutura ou novas importações. Não há lease/teste real em andamento. Nenhuma operação de produção efetuada nesta tarefa.
+
+Ao retomar: conferir Git/PR4/CI, ler relatório de integração e plano de laboratório; resolver Auth/Storage isolados com clientes internos antes de solicitar ativação. NÃO merge/deploy/flags/produção automaticamente. A feature completa permanece pendente de E2E real e operação monitorada; templates e testes controlados não satisfazem esses gates.
+
 ## Entrega integrada — 02/11/2026, revisão Draft / ativação bloqueada
 
 - Ler primeiro `docs/TIKTOK-PREVIEW-INTEGRATION-20261102.md`, `backend/PREVIEW-OPERATIONS-20261102.md` e `frontend/docs/TIKTOK-PREVIEW-20261102.md`. Este marco substitui o estado em andamento abaixo; não retomar tarefas históricas de produção.
