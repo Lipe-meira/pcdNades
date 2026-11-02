@@ -1,5 +1,8 @@
 # Integração local concluída — 02/11/2026
 
+## Publicação confirmada
+Push normal origin/dev concluído:11c4462→3d01771a9275fd7173aaab81efa522a91920a0bd; gitls-remote confirmou SHA idêntico, árvore limpa e divergência0/0. Este registro final será commitado e enviado somente dev; SHA final do próprio registro porgitlog/ls-remote. Containers preservados eativos; API/Vite do ensaio encerrados. Nenhum deploy/main/remotoSupabase.
+
 ## Objetivo e localização
 Finalizar Reels, Solo Exec e prévia de vídeo com cortes, coordenando os chats existentes. Branch dev, worktree C:/Users/felip/.codex/worktrees/pcdnades-dev/nadesCs2; integração em7752027, documentação final em commit a seguir. Mainfcd360d incorporada normalmente, sem alterar main. Fetch confirmou25commits à frente/0 atrás deorigin/dev11c4462 antes da documentação final; push normal dev autorizado e em preparação. Conferir SHA final com gitlog/ls-remote ao retomar. Neste ponto somente README e este checkpoint modificados, concluídos e destinados ao commit final.
 
@@ -185,6 +188,9 @@ Usuário autorizou SOMENTE recursos gratuitos NOVOS de teste, sem tocar projetos
 
 Atualizado em: 31/10/2026, America/Sao_Paulo
 Estado: auditoria concluída; aguardando autorização específica para recursos/preview remotos.
+
+## Publicação confirmada
+Push normal origin/dev concluído:11c4462→3d01771a9275fd7173aaab81efa522a91920a0bd; gitls-remote confirmou SHA idêntico, árvore limpa e divergência0/0. Este registro final será commitado e enviado somente dev; SHA final do próprio registro porgitlog/ls-remote. Containers preservados eativos; API/Vite do ensaio encerrados. Nenhum deploy/main/remotoSupabase.
 
 ## Objetivo e localização
 
