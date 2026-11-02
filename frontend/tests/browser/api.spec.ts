@@ -1298,6 +1298,15 @@ test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) 
   expect((state.published[0] as any).destinations).toEqual([{x:.4,y:.6,type:"smoke"},{x:.65,y:.75,type:"molotov"}]);
   await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
   await expect(page.getByRole("button", { name: /Validação inline controlada, Solo Exec/ })).toHaveCount(2);
+  const first = page.getByRole("button", { name: "Validação inline controlada, Solo Exec, destino 1, Smoke, lado T", exact: true });
+  const second = page.getByRole("button", { name: "Validação inline controlada, Solo Exec, destino 2, Molotov, lado T", exact: true });
+  await expect(first).toBeVisible();
+  await expect(second).toBeVisible();
+  await expect(first.locator(".draft-number")).toHaveText("1");
+  await expect(second.locator(".draft-number")).toHaveText("2");
+  await second.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("region", { name: "Detalhes da granada" })).toBeVisible();
 });
 
 test("Solo Exec troca de mapa após selecionar segundo destino sem índice antigo", async ({ page }) => {

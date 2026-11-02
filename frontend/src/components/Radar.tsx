@@ -66,11 +66,11 @@ export function Radar({
   const connections = editing
     ? origin && isTarget(origin) ? (extraTargets?.length ? extraTargets : target ? [target] : []).filter(isTarget).map((point, i) => ({ id: `draft-${i}`, origin, target: point })) : []
     : origins.flatMap(item => (item.destinations?.length ? item.destinations : [item.target]).map((point,i) => ({ id: `${item.id}-${i}`, origin: item.origin!, target: point })));
-  const groups = new Map<string, { item: Lineup; target: Target; markerType: GrenadeType }[]>();
-  lineups.forEach(item => (item.destinations?.length ? item.destinations : [item.target]).forEach(target => {
+  const groups = new Map<string, { item: Lineup; target: Target; markerType: GrenadeType; targetIndex: number }[]>();
+  lineups.forEach(item => (item.destinations?.length ? item.destinations : [item.target]).forEach((target, targetIndex) => {
     const key = `${target.x}:${target.y}`;
     const markerType = "type" in target && (target.type === "smoke" || target.type === "flashbang" || target.type === "molotov") ? target.type : item.type;
-    groups.set(key, [...(groups.get(key) ?? []), { item, target, markerType }]);
+    groups.set(key, [...(groups.get(key) ?? []), { item, target, markerType, targetIndex }]);
   }));
   return (
     <>
@@ -143,12 +143,17 @@ export function Radar({
                 aria-label={
                   items.length > 1
                     ? `${items.length} granadas neste destino`
-                    : `${items[0].item.title}, ${typeLabels[items[0].item.type]}, lado ${items[0].item.side}`
+                    : items[0].item.destinations?.length
+                      ? `${items[0].item.title}, Solo Exec, destino ${items[0].targetIndex + 1}, ${typeLabels[items[0].markerType]}, lado ${items[0].item.side}`
+                      : `${items[0].item.title}, ${typeLabels[items[0].item.type]}, lado ${items[0].item.side}`
                 }
                 onClick={() => { onSelect?.([...new Set(items.map(({ item }) => item.id))]); setExpanded(false); }}
               >
                 <span className="marker-face">
                   <Icon name={items[0].markerType} size={16} />
+                  {items.length === 1 && items[0].item.destinations?.length && (
+                    <span className="draft-number">{items[0].targetIndex + 1}</span>
+                  )}
                   {items.length > 1 && (
                     <span className="marker-count">{items.length}</span>
                   )}

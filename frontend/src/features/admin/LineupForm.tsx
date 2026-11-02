@@ -356,7 +356,11 @@ export function LineupForm({
               selectedTargetIndex={destinationIndex}
               onEditOrigin={() => setMarking("origin")}
               onEditTarget={(index) => { setDestinationIndex(index); setMarking("target"); }}
-              onOriginChange={(origin) => { update("origin", origin); setMarking("target"); }}
+              onOriginChange={(origin) => {
+                update("origin", origin);
+                const destination = draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target;
+                setMarking(destination ? "idle" : "target");
+              }}
               onTargetChange={(target) => {
                 setMarking("idle");
                 if (draft.type !== "solo_exec") { update("target", target); return; }

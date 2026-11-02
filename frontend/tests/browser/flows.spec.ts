@@ -429,6 +429,10 @@ test("radar ampliado mantém coordenadas e orienta origem, destino e ajuste", as
   expect((originBox.x + originBox.width / 2 - bounds.x) / bounds.width).toBeCloseTo(.35, 2);
   expect((originBox.y + originBox.height / 2 - bounds.y) / bounds.height).toBeCloseTo(.45, 2);
   await expect(form.locator(".origin-connections line")).toHaveCount(1);
+  await expect(form.getByText(/Pontos marcados/)).toBeVisible();
+  await image.click({ position: { x: bounds.width * .8, y: bounds.height * .2 } });
+  expect(Number(await form.getByLabel("Coordenada X (%)", { exact: true }).inputValue())).toBeCloseTo(70, 0);
+  expect(Number(await form.getByLabel("Coordenada Y (%)", { exact: true }).inputValue())).toBeCloseTo(75, 0);
 });
 
 test("radar público amplia e permite voltar com Escape", async ({ page }, testInfo) => {
