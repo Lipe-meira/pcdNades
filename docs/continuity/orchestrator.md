@@ -1,4 +1,31 @@
-# Entrega para revisão — PR #3 (02/11/2026)
+# Checkpoint — orquestrador / prévia visual TikTok
+
+Atualizado em02/11/2026,SãoPaulo. Estado: emandamento,chatsbackend/frontenddespachados eativos. Usuárioexigiuorquestração,delenãoimplementartudoaqui. Ler docs/PREVIEW-ORCHESTRATION-20261102.md e docs/preview-contract.md.
+
+## Objetivo e pedido atual
+Concluir previewoperacionalTikTok(assistir/seek/marcariníciofim/importarsótrecho30s) comcollector/scheduler/heartbeat/monitorseguros. SEMmainmerge/deploy/infraremota/flags/escritasprod. Mainpublicada7443dc8,8migrationsjáaplicadas;flagsInstagram/preview/YToff,TikTokMP4existentes. Histórico abaixo temestadossuperados; não retomarbackupouA/B.
+
+## Localização do trabalho
+OrquestradoragoraC:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2,branchcodex/tiktok-preview-integration-20261102,baseHEAD7443dc8. Commitplanejamentopendente,sempush. Releaseworktreea29b6cbdirtydocs históricospreservada,nãomoveremmasa. Backend/frontendantigoslimpos28e10b4/63729faintocados.
+
+## Feito
+Novasworktreesapartirorigin/main7443dc8 paraBEcodex/tiktok-preview-backend-20261102 eFEcodex/tiktok-preview-frontend-20261102. Tarefasenviadasefetivamenteaoschatsbackend CS2(thread01a1853b-dc21-73c1-ac42-d997b4b7c794)local efrontEnd CS2(thread01a1853b-6e1e-79b3-8505-70e2d76056fe)local. Recebidaconfirmaçãostatusactiveambos. ContratocomumPOST200ready/GETrenew/URL60s/source15min/heartbeat8min/alvo5min,sem202/background/fake. Semmudançaprotocoloinicial.
+
+## Em andamento
+BEdiagnosticarunner/cleanup/schedulergratuitorealista,semprovisionar;donoexclusivobackend/checkpointBE/workflowsnovossource-previewinativos. FEidentificou3gapspontuais:tempoatualacessível,avisoprévianãopublicada,SOURCE_EXPIREDantecipadoservidor. Planopontualalinhado,testescontroladosPC/mobile;E2ErealaguardaplanolocalBE/lease. OrquestradornãoeditaBE/FE,apenascontrato/docs/revisão/integração.
+
+## Retomar daqui
+1. ConferirGit/HEAD e wait_threads compacto dosdoischats,semreadpollrepetitivo. CursoresiniciaisBE48834963-6727-4117-96ba-1ae128f04603:1/FE47f1a592-cf30-45b6-bd70-0a818c2307a7:1.
+2. ReceberdiagnósticoBE,scheduler/limitaçõesdocsoficiais e planoNOVOambienteisolado;distribuirdependênciasaoFE. Semtestarexternosemfonteautorizadacoordenada.
+3. Apóscommitslocaisvalidados/revisados,integrarna branchprópria/testarconjunto/prepararPRDraft;sempublicarmain/deploy/flags. Semreimplementarworkpronto.
+
+## Validação/bloqueios
+Gitfetch/worktree/status/checkpoints/contrato conferidos. BE/FEaindanãoentregaramvalidaçãofinal. Portas/credenciais/stack NOVOSpendentes;NÃOutilizarcredentialsprod oualterarlabs/backupsantigos. Nenhumtesterealexecutadonestatarefa peloorquestrador. Scheduleroperacional+monitorremotosaindapendentesdeplanejamento/autorização. MocksnãoevidênciaE2Ereal;cronmanualnãoéserviçooperacional. DefaultpreviewOFFpreservado.
+
+## Arquivos ainda sem commit
+NesteNOVOworktree:docs/PREVIEW-ORCHESTRATION-20261102.md,docs/preview-contract.md(notaestado/schema),docs/continuity/orchestrator.md. Outrosworktreesnãoeditados. CommitsConventionalPortuguêslocais;pushdependederevisão/safetypreviewbranches.
+
+---# Entrega para revisão — PR #3 (02/11/2026)
 
 PR draft: https://github.com/Lipe-meira/pcdNades/pull/3. Branch integration/pcdnades-release no worktree C:/Users/felip/.codex/worktrees/pcdnades-release/nadesCs2. Código validado em25629a5, relatórios44ebff7; este registro final será commitado e enviado na mesma branch. Confirmar HEAD final por git log/ls-remote. Todos os testes integrados passaram:136backend,58frontend,82Playwright final e builds;4 testes de regressão RED→GREEN. Ensaio real PG17.11 derivado do backup:3 migrations,8gruposQA+4negaçõesRLS e DDLrollbackPASS; roles modeladas sem senha, não E2E Auth/Storage integral.
 

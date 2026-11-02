@@ -1,5 +1,7 @@
 # Prévia privada da fonte — contrato implementado02/11/2026
 
+> Estado conhecido após a release7443dc8: schema de prévia já aplicado em produção no GateA (histórico8), mas flag e heartbeat não foram ativados. Não reaplicar migrations com base nas notas históricas abaixo. Nesta etapa os chats trabalham em novas branches da main; protocolo preservado e operação/scheduler ainda em avaliação. Ver docs/PREVIEW-ORCHESTRATION-20261102.md. Nenhuma disponibilidade de produção é inferida de testes locais.
+
 Bearer admin autorizado para importação, exclusivamente proprietário do sourceId. Sem criação de granada ou mídia final. Reels/TikTok/MP4/Solo preservados.
 
 - POST `/api/v1/media/imports/:sourceId/preview`, corpo `{}`: aguarda geração limitada e retorna200ready. NÃO retorna202 ou inicia background. Se slot ocupado,503PROCESSOR_BUSY; cliente pode repetir preservando formulário.
