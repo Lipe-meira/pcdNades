@@ -1,3 +1,20 @@
+# Release integrada para revisão — 02/11/2026
+
+WorktreeATUALdo orquestrador C:/Users/felip/.codex/worktrees/pcdnades-release/nadesCs2, branchintegration/pcdnades-release criada deorigin/mainfcd360d. Pedido autoriza commits/pushbranch/PRmain; NÃOautoriza merge/pushmain/deploy/migrationsremotas/envprod. Dev4e3d4dd e todosHEADsoriginais preservados; mainlocaldesatualizadaF:/projetos/nadesCs2 nãotocada. Backend/Reels/Solojáancestraisdev, sóredesignlocal63729faeraexclusivo. Previewparcialc2f90e5com17arquivosdirtyéobsoleto preservado,nãointegrarGET/TTLantigos.
+
+Ler docs/RELEASE-READINESS.md, docs/continuity/RELEASE-INTEGRATION.md e docs/MIGRATION-REHEARSAL-20261102.md. Mergesnormaisdev10d58ac efrontend9721974semconflitos, fixintegração25629a5após4RED→GREENPC/celular:origemreposicionadanãoarmadestinoexistente, Solo públicoíndice/tipo+badge. Agrupamento/video/contratosoriginaispreservados;frontreviewreadonlyaprovou. Correçõesapenasbranchintegração, feat/frontend63729faintocada.
+
+TestesREALMENTEexecutadosNAintegração:backend136+buildPASS;front58unit/typecheck/buildPASS;Playwright82baseline e82FINALapósfixPASS(2,5min),4direcionadosGREENPASS. BrowserusaAPIcontrolada/demo,nãoinferirE2Ecloud. Capturasdesktop/mobileinspecionadas, cópiaprivadanãosensívelC:/Users/felip/.codex/visualizations/2026/11/02/pcdnades-release-7d5af695. SemnovodownloadTikTok/Reels/serviço.
+
+BackupmanualusuárioSUPEROUbloqueioantigoabaixo:hashCBD08D9F81DEDB87E9375027E680EEA358BAD958E3569B768070B8DF350E07C3conferido. Lab55322eoriginalpreservados. Backend ensaiou3migrations emNOVOcontainersupabase_db_pcdnades-migrations-20261102 PG17.11networknone/semportas, cópiadump, baseline1granada/4mídias/1Auth/0Storage/history5→history8,messmascontagens/hashesagregados. OitogruposQAtransacionais+4negaçõesSQLanon/authPASS,fixturesROLLBACK;outroDBnovoDDLrollbackPASS. RolesNOLOGINplaceholders+--no-owner,nãoclonefullidentidade,nãoAuthStorageHTTP;falhasbootstrapregistradasprivado,nãomascaradas. Dump/laboriginalrechecadosintactos. SomenterelatóriosanitizadocopiadoaoGit,nãodados/scriptsprivados.
+
+ProduçãoREADONLYmetadataatual:5migrationshistóricas(TikTokpresente),3novasausentes, destinos/RPCIG/tablepreviewausentes,bucketprivado50MB. Contagensagregadas1/4/1/0/5coincidemclone. UI VercelreadonlyconfirmouambosProductionmain+autoassignON,ambosPreviewBranchTrackingOFF. NenhumSave/env/deployfeito. Merge mainacionadeploysdos2projetos:DEPENDENTEDEDEPLOYCOORDENADO. MigrationsSolo→IG→previewANTEScódigo,comautorizaçãoexpressa;NÃOreaplicarTikTok.
+
+GOrevisão/PRdraftapóstestes/segurança;NO-GOmergeimediato/produção. Instagram/préviaoffdefault,YouTubeoff;TikTok/MP4preservados. Préviaexigecoletorcloudmonitoradoaindanãoprovisionado. SoloSEMflagapareceráapósdeploy,evitarcriaçãoatéambosREADY. RollbackGitnão desfazDB/envStorage;forwardfix/schemaaditivo,preservarpublicados. Aprovaçãofinaldeproduçãoaindapendente.
+
+Primeiraaçãoaoretomar:conferirbranch/HEAD/status/refremota/PRdestaINTEGRAÇÃO, não retomar automaticamente dev oubackupbloqueadohistórico. PR eSHAfinalregistradosapóspush; nãoSHA circular. Antesqualquermainpediraprovaçãomigrations/rolloutjanela/flagsseparadas. Preservarbackup/labs/worktrees echeckpointsgit. Nãohátrabalhodeagentespendente:frontreadonly;backendensaiofinalPASS semeditarGit.
+
+---
 # Autorizações executadas — Preview PASS / backup bloqueado (02/11/2026)
 
 Estadofinal: Preview concluído, backup interrompido ANTESexport/restore por faltaauthPG. Branchdev/worktree C:/Users/felip/.codex/worktrees/pcdnades-dev/nadesCs2,fontecódigoautorizada c8e1fca2849040ac2163ef40e70dd8bc77dd895f. Entregasdocsbackend3d05303 e28e10b4 integradasnormalmente;commitfinaldocs/pushdev a seguir, SHAfinalporgitlog/ls-remote. Semcodechange/testesredundantes,semnovodeploy.
