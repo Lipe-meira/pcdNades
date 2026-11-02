@@ -1,3 +1,21 @@
+# Coordenação dos chats existentes — 02/11/2026
+
+## Objetivo e estado
+Finalizar prévia real, preservar Solo Exec/Reels/TikTok/MP4, validar integração local e publicar somente dev. Worktree C:/Users/felip/.codex/worktrees/pcdnades-dev/nadesCs2, branch dev, HEAD af069a6. Fetch executado: dev 12 commits à frente/0 atrás de origin/dev; origin/main fcd360d já incorporada. Árvore estava limpa antes deste checkpoint; somente este documento modificado pelo orquestrador. Push pendente da entrega integrada.
+
+## Responsáveis e comunicação
+Chats existentes acessados diretamente e mensagens enviadas com autorização explícita do usuário: frontEnd CS2 (01a1853b-6e1e-79b3-8505-70e2d76056fe), backend CS2 (01a1853b-dc21-73c1-ac42-d997b4b7c794). Nenhum subagente anterior permanece ativo; não depender de preview_resume. Front assume frontend/ e seu checkpoint em feat/frontend; back assume backend/, seu checkpoint e docs/preview-contract.md em feat/backend. Cada um deve integrar dev à própria branch preservando arquivos. Trabalho parcial da branch feat/preview-fonte c2f90e5 continua NÃO COMMITADO e preservado: frontend/player/contratos/testes e backend/source-preview*.ts, teste e migration20261102000337. Chats instruídos a ler/transplantar somente sua área para os próprios worktrees, sem modificar a origem. Não duplicar implementação no orquestrador.
+
+## Validação e ambiente
+Docker confirmado ativo: stack pcdnades-solo-e2e-20261101 Auth/REST/Storage127.0.0.1:56421 e DB127.0.0.1:56422; containers preservados. Resultados anteriores: 120 testes backend na integração Solo+Reels; Solo E2E e Reels E2E locais reais conforme relatórios. Não repetidos nesta retomada. Prévia ainda sem endpoints conectados/scheduler confiável/prova combinada: não declarar pronta. Produção não consultada nem alterada nesta retomada; nenhum deploy/env/migration remota autorizado. Worktrees antigos e evidências privadas preservados.
+
+## Retomar daqui
+1. Acompanhar chats via wait_threads; obter contrato em worktree backend/docs/preview-contract.md e alinhar frontend antes da implementação final.
+2. Revisar entregas, isolamento/TTL/limpeza e compatibilidade com Solo/Reels; integrar commits na dev sem reset/rebase.
+3. Executar regressão combinada e integração real local, diferenciar fixtures de download externo, verificar ausência de publicação automática.
+4. Revisar segredos/temporários, atualizar relatórios e checkpoint, commit e push normal dev; confirmar SHA remoto. Sem main/deploy/migrations remotas. Aprovação específica necessária para futura publicação.
+
+---
 # Reels e Solo integrados; prévia em andamento (01/11/2026)
 
 Dev integra origin/main em 6bb5f17, relatório/script Solo (codex/solo-e2e 82c28ac e 3126c6d) e backend Reels (codex/reels a46c7af, merge f1856b7). Reels real autorizado via proxy/FFmpeg/Auth/API/Storage local isolado PASS, somente trecho final, sem smoke, mídia anterior/hash preservado. Solo Exec real Auth/API/Storage local PASS em stack 127.0.0.1:56421/56422, migration Solo/Instagram aplicadas apenas ali; não confundir com Vercel. 120 testes backend passaram após merge. Instagram flag off por padrão e restrito ao admin atual; migration remota não aplicada.
@@ -1096,3 +1114,4 @@ Coordenar os chats de frontend/backend do pcdNades. Pedido atual: continuar apó
 - `e889e3b`: upload/importação registrados.
 - `056eea8`, `e3b66c0`, `953a2ad`: base frontend, radares licenciados e administração demonstrativa.
 - Publicação inicial em https://pcdnades.vercel.app ; demais entregas aguardam integração.
+
