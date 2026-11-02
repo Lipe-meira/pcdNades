@@ -1,3 +1,8 @@
+# Integração em andamento — main incorporada (01/11/2026)
+
+Após fetch, dev tinha 4 commits à frente e 2 atrás de origin/main; fiz merge normal origin/main fcd360d em dev: 6bb5f17 (após checkpoint cabd3ef), sem conflitos e sem tocar main. Estado local ahead4 em relação a origin/dev, ainda sem push aguardando integrar agentes e testes. Worktree principal limpo antes deste checkpoint. Agent reels_resume retoma codex/reels não commitado; preview_resume feat/preview-fonte não commitado; solo_e2e em ambiente isolado. Continuam proibições de produção, migrations remotas, flags e deploy; não expor credenciais ou arquivos. Próxima ação: aguardar branches testadas, revisar diffs e integrar na dev, reconciliar staging privado e expiração e testar fluxo end-to-end local. Stack Docker iniciada a pedido do usuário.
+
+---
 # Retomada de integração — 01/11/2026
 
 Usuário autorizou finalizar Reels, prévia e Solo Exec e publicar somente dev; produção/main/flags/migrations remotas proibidas. Branch dev 11c4462 limpa no início, origin/main fcd360d, divergência 2 commits main e 4 dev; main local em outro worktree desatualizada, não tocar. Worktrees Reels codex/reels e preview feat/preview-fonte continham alterações não commitadas preservadas, agentes anteriores não ativos; novos agentes trabalham exclusivamente nesses worktrees. Agente adicional valida Solo Exec em Supabase local isolado. Primeira ação: integrar origin/main em dev por merge normal após verificar diferenças; revisar trabalho dos agentes, proteção de staging/limpeza, testes integrados e só então push dev. Nunca aplicar migrations remotas, ativar flags ou executar deploy.
