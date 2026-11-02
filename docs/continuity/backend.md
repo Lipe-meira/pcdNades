@@ -1,3 +1,8 @@
+# Script reproduzível da integração Solo — 01/11/2026
+
+Após o ensaio real, foi criado backend/scripts/solo-local-e2e.mjs (stack dedicada obrigatória pcdnades-solo-e2e-20261101 em 127.0.0.1:56421/56422, com validação docker inspect). Executado e PASS após validações; cria fixtures locais próprias e apaga somente o Solo criado. Usa diretório de status/usuários por argumento, nunca imprimir ou versionar credenciais. Documentado em backend/SOLO-EXEC-E2E.md. Sem produção; demais agentes podem usar a stack preservada.
+
+---
 # Solo Exec — integração local real concluída (01/11/2026)
 
 Branch codex/solo-e2e, base 6bb5f17, worktree C:\Users\felip\.codex\worktrees\pcdnades-solo-e2e\nadesCs2. Relatório: backend/SOLO-EXEC-E2E.md. Stack própria pcdnades-solo-e2e-20261101 ativa em 127.0.0.1:56421/56422, dados/containers preservados e comunicados aos agentes Reels e orquestrador. Migration Solo e históricas aplicadas SOMENTE localmente. Fastify inject + Supabase Auth/PostgREST/Storage reais: upload MP4, ready, create/read/filter/patch/convert/delete da própria fixture, 401/403, PATCH inválido 400, vídeo/registro tradicional preservados e hash de playback equivalente: PASS. Sem Vercel/produção; navegador não foi testado neste ensaio. Evidências/credenciais descartáveis ignoradas em backend/vendor/solo-e2e-20261101/. Próxima ação: integrar Reels/prévia e validar juntos na stack, sem imprimir tokens ou remover recursos. Commit de documentação próprio; verificar SHA por git log.

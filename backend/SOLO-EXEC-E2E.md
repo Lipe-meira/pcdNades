@@ -16,3 +16,14 @@ O ensaio criou dois usuários descartáveis no Auth local (admin e usuário comu
 Evidências privadas locais (não versionar ou imprimir): `backend/vendor/solo-e2e-20261101/`. Scripts `bootstrap.mjs` e `solo-e2e.mjs` verificam explicitamente host e portas locais antes das escritas. `status.private.json` contém configuração descartável e `users.private.json` contém usuários descartáveis; os arquivos são ignorados pelo Git. Não executar bootstrap novamente em um banco existente; não repetir o teste sem considerar que ele cria novas fixtures. Para continuar, ler os arquivos de configuração em memória, jamais imprimir segredos nem URLs assinadas. O ensaio validou bytes reproduzíveis, não abriu o player em navegador; os testes Playwright anteriores usam API simulada. Não prova Vercel ou produção.
 
 Pendências: integração combinada com Reels/prévia após os agentes concluírem; execução de regressão completa na dev integrada; renovação de URL quando aplicável; aprovação e plano de publicação antes de qualquer migration remota. A stack local foi disponibilizada aos outros agentes sem interrompê-la.
+
+## Reprodução do ensaio de API
+
+O script versionado `backend/scripts/solo-local-e2e.mjs` recebe o caminho de um diretório **privado de teste** contendo `status.private.json` e `users.private.json`. Exige o container exato `supabase_db_pcdnades-solo-e2e-20261101`, portas locais 56421/56422 e confirmação de `docker inspect`; falha fechado com outros endereços. Ele cria uma mídia e uma granada tradicional de fixture, preservadas; cria e exclui apenas o Solo Exec de fixture que ele mesmo cria. Escreve relatório em arquivo privado com nome único. Não usar contra produção ou outra stack, não copiar credenciais ao Git.
+
+```powershell
+npm --prefix backend run build
+node backend/scripts/solo-local-e2e.mjs backend/vendor/solo-e2e-20261101
+```
+
+Reexecutado após criação do script versionado: PASS com Auth, PostgREST e Storage reais locais. O script exige stack já criada, migrations locais aplicadas e dois usuários locais autenticáveis com as chaves esperadas; não cria a stack nem usuários.
