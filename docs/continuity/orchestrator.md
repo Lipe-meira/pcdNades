@@ -1,5 +1,17 @@
 # Checkpoint — orquestrador / prévia visual TikTok
 
+## Marco atual — 02/11/2026, integração ainda pendente
+
+- Worktree própria: `C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2`, branch `codex/tiktok-preview-integration-20261102`, HEAD de planejamento `b0695bf`; sem push. Estado histórico abaixo foi superado por este marco.
+- Frontend entregou commits locais `ad9cf6e` e `aa27824`, árvore limpa segundo relatório. Primeiro adiciona tempo atual/aviso de prévia não publicada/expiração antecipada; segundo corrige borda reproduzida RED em desktop e celular: após erro/recarregamento o indicador preservava tempo anterior embora o novo vídeo estivesse em zero. Revisão inicial feita; integração e revisão final ainda pendentes.
+- Front reportou build/typecheck, 58 unitários, 16 browser de base e testes focados: última rodada 6/6 para reload/renovação/410. São testes controlados, não prova de Auth/Storage real. Evidências e relatório em `frontend/docs/TIKTOK-PREVIEW-20261102.md` no worktree do frontend.
+- Backend preparando operação/monitoramento inativos. Vercel Hobby cron diário e GitHub Actions com atrasos não comprovam cadência de cinco minutos. Monitor independente e infraestrutura remota continuam pendências; nenhuma flag ativada.
+- Aprovado apenas NOVO laboratório local privado em `C:/Users/felip/AppData/Local/pcdnades-preview-ops-20261102-5491784d`, project_id homônimo, API/Auth/Storage `127.0.0.1:56721`, PG `56722`, API backend planejada `56731`. Rede interna sem egress, portas loopback, sem SMTP/webhooks. Não usar credenciais, stacks ou volumes anteriores. Fonte externa será fixture controlada; Auth/Storage/FFmpeg devem ser reais para assim rotular os testes.
+- Bloqueio atual: CLI Supabase não conectou ao novo PG pela porta 56722; CLI interrompeu somente seus containers novos. Backend investiga causa e cliente dentro da rede interna, sem relaxar isolamento. API 56731 NÃO está disponível e frontend NÃO recebeu lease para E2E.
+- Referência histórica somente leitura enviada ao backend: bootstrap privado antigo em `backend/vendor/local-integration-20261031/bootstrap.mjs` do worktree dev. Não executar bootstrap antigo nem scripts versionados com portas 56421/56422/IG habilitado. Não repetir downloads externos nesta etapa.
+- Próxima ação: conferir Git e receber diagnóstico do backend; se lab subir, coordenar lease frontend antes de limpeza. Revisar os dois commits frontend e entrega backend, integrar somente nesta branch, validar conjunto e preparar PR Draft após revisão de sigilo e gatilhos de deploy. Não merge/main/deploy/infra remota.
+- Alteração local ainda sem commit neste marco: este checkpoint. Backups e laboratórios anteriores permanecem intocados.
+
 Atualizado em02/11/2026,SãoPaulo. Estado: emandamento,chatsbackend/frontenddespachados eativos. Usuárioexigiuorquestração,delenãoimplementartudoaqui. Ler docs/PREVIEW-ORCHESTRATION-20261102.md e docs/preview-contract.md.
 
 ## Objetivo e pedido atual
