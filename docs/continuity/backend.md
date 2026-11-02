@@ -1,3 +1,21 @@
+# Entrega preparação backend — 02/11/2026
+
+Base devc0868de merge normal emfeat/backend, sempush. Runner privado3min/60s/healthfileatômico0600/SIGTERM+sessionadvisoryPGlock/monitorCLIindependenteidade4min/sucesso8min; querylossaborta. SDK/coreantesheartbeatnega backlogexpiradoinclusiveleased. Semschedulercloudprovisionado, semgatewayHTTPoucredenciaisnovas, flagsdefaultoff. DATABASE_URLdireto/sessionpooler (nãotransactionpooler), supervisor+alertaexternosgates. Relatório completo backend/PRODUCTION-PREFLIGHT.md.
+
+Provas:14testesafetados/typecheckPASS Windows/Linux, cleanLinuxnpmci103pkgs/Node24.22.2/build/bootstrapPASS. Bundleefetivo653arquivos204244544B/ZIP101026900B/Node24/max120/binaries3hash+0755PASS/9warningsELFWindowsesperados, remoteValidatedfalse. Docker2GiB/1CPU/tmp512MiB: noexecfalhouPyInstallerlibz, execnovoContainerPASS. Fixture3s640x360encode569ms/RSSamostrado75046912B/temp262192B;trim1s402ms;SIGKILLdireto256ms;AbortController→trimVideoobservouFFmpegem/proc/cancel79msPASS;cleanupawaitausênciadirPASS. SemCPUagregado/syscalls/piorcaso/cloudinferidos.
+
+PG17dedicado networknonepcdnades-maint-lock-20261102 teste2sessõesreais segundoRunnernegado/crashprimeiro/reacquirePASS. PGlite0.5.13localrevisão8migrationsmemória12assertionsPASSlegado/grantsRLS/Soloinválido/rollback; nenhuma SQLna stackretida/remota. 3novasmigrationsapenasrevisadas, TikTokNÃOreaplicada. Nãoexecuteicoletorreal, não toqueipreviewsUI/containerdadosanteriores/nãoTikTokReelsrede. Novoscontainersdeensaioeexportos mantidosparaevidência; não removivolumes.
+
+Evidência bruta ignorada backend/vendor/final-linux-b6faed096ad84ec5b50cc69cf9d7ec8f/artifact/report.json e containers pcdnades-final-linux-20261102(falhanoexec),pcdnades-final-linux-exec-20261102(PASS),pcdnades-final-native-abort-20261102(PASS),pcdnades-maint-lock-20261102. Próximaação: checagensfinaisafetadas/diff/commitlocalPT/reportarSHA ao root; sempush/main/deploy/envprod/backupreal. Gates supervisorcloudfinanciamento/execmappedtmpVercel/Previewpreflightautorização/migrationsnovas+backup sobroot. Harnesspreflightpreservado, semhabilitar.
+
+---
+# Preparação final produção — 02/11/2026 em andamento
+
+Autorização root: backendrunnerprivadomonitorado/Linuxlimpo/revisão3migrations, sempush/main/deploy/SQLremoto/alteraçõesstackpreservada/novosagentes. Merge normal devc0868de fezfastforwardda6fa67c2; branchfeat/backend. Proposto runnerforegroundserial3min/deadline60s/healthfileprivado/SIGTERM+supervisor; rootaceitou,cloudcusto/supervisorpermanecemgateexterno(rootpesquisaplataformas). Implementando runner+sessionadvisorylockPGprivado paraúnicoprocesso, detecçãoleasebacklogantesheartbeat e testessimulados. Dois testesiniciaisrunner/typecheckPASS antes lock/backlog. Arquivosnovosmaintenance-runner.ts/script/teste; source-preview-supabase.ts alterado; nada commitado ainda.
+
+Próximaação: testesbacklog/cancel/recovery+runner, Linux cleanexportDockerNode24imagemexistente semvolumesantigos, binárioscachehash/npmci/fixtureslocal métricas; reverSolo/IG/preview migrations e rollbacksegurodocumental. Não rodarcoletor realna stack56421/56422 nem apagar previewsUIexistentes. Não redownloadTikTok/Reels. Gates cloud/schedulersemgarantia explícitos. Preservar imagens/containers/volumes/evidências. AGENTS/README/checkpoints lidos.
+
+---
 # Revisão de cancelamento — 02/11/2026
 
 Pedido root: revisão offline somente, sem interferir no E2Efrontend ativo. Base7b41fd5 limpa. Dois bugs comprovados por testes RED->GREEN: serviceFetch ignorava sinal do Request(input); signStorage devolvia URL mesmo após abort durante operação. Corrigidos composição Request.signal/init.signal/deadline10s e beforeDeadline+checkpósoperação para Storagepreview sign/uploadURL/remove/list. Sem alteração de contrato/flags/schema/runtimedownload.
