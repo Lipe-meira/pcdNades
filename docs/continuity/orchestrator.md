@@ -1,3 +1,10 @@
+# Reels e Solo integrados; prévia em andamento (01/11/2026)
+
+Dev integra origin/main em 6bb5f17, relatório/script Solo (codex/solo-e2e 82c28ac e 3126c6d) e backend Reels (codex/reels a46c7af, merge f1856b7). Reels real autorizado via proxy/FFmpeg/Auth/API/Storage local isolado PASS, somente trecho final, sem smoke, mídia anterior/hash preservado. Solo Exec real Auth/API/Storage local PASS em stack 127.0.0.1:56421/56422, migration Solo/Instagram aplicadas apenas ali; não confundir com Vercel. 120 testes backend passaram após merge. Instagram flag off por padrão e restrito ao admin atual; migration remota não aplicada.
+
+Preview_resume trabalha em feat/preview-fonte; backend módulo/DB/bucket temporário E2E local inicial passou, mas ainda faltam endpoints conectados, fonte TikTok, scheduler/heartbeat e teste combinado. Não habilitar sem coleta confiável e execução real; Vercel Hobby cron diário e GitHub Actions pode pausar por inatividade. Agente prepara integração e evidências, sem tocar produção. Próxima ação: integrar branch preview com cuidado em LineupForm e backend (preservar Solo e Reels), validar TTL/limpeza/ownership, rodar teste real combinado e regressão completa, documentar e push normal dev. Não reaplicar migration TikTok em produção ou alterar main, flags, deploys. Worktree dev em merge consolidado, registros por git log.
+
+---
 # Integração em andamento — main incorporada (01/11/2026)
 
 Após fetch, dev tinha 4 commits à frente e 2 atrás de origin/main; fiz merge normal origin/main fcd360d em dev: 6bb5f17 (após checkpoint cabd3ef), sem conflitos e sem tocar main. Estado local ahead4 em relação a origin/dev, ainda sem push aguardando integrar agentes e testes. Worktree principal limpo antes deste checkpoint. Agent reels_resume retoma codex/reels não commitado; preview_resume feat/preview-fonte não commitado; solo_e2e em ambiente isolado. Continuam proibições de produção, migrations remotas, flags e deploy; não expor credenciais ou arquivos. Próxima ação: aguardar branches testadas, revisar diffs e integrar na dev, reconciliar staging privado e expiração e testar fluxo end-to-end local. Stack Docker iniciada a pedido do usuário.
