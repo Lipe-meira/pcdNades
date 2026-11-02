@@ -13,6 +13,24 @@ Branch codex/solo-e2e, base 6bb5f17, worktree C:\Users\felip\.codex\worktrees\pc
 Objetivo: validar criação, edição, conversão, exclusão e permissões usando Supabase local isolado, sem alterar produção ou worktree dev. Branch codex/solo-e2e, worktree C:\Users\felip\.codex\worktrees\pcdnades-solo-e2e\nadesCs2, base 6bb5f17. Docker estava desligado, inicialização solicitada. Próximo: confirmar daemon, preparar stack de teste nova com recursos e portas próprios; aplicar migrations localmente, validar Auth/API/RLS/Storage preservando registros anteriores; informar endpoints ao agente Reels. Nenhuma alteração remota. Preservar containers/volumes/dados existentes e não fazer limpeza global.
 
 ---
+
+# Reels backend validado em Supabase local isolado — 01/11/2026
+
+Branch codex/reels, worktree C:\Users\felip\.codex\worktrees\pcdnades-reels\nadesCs2, base c2f90e5. Código e relatório backend/IMPORT-REELS-BACKEND.md aguardam commit próprio; não tocar main ou produção. Flag Instagram independente default false, admin único permanece exigido. Migration nova 20261101153422 aplicada somente na stack descartável compartilhada 56421/56422; não foi aplicada no remoto. E2E REAL local: login/Auth+API reais, Reel autorizado baixado via proxy restrito, FFprobe 64,664717s, trecho 30–35s em FFmpeg, Storage privado só final 1.022.944 bytes, ready, playback privado/bytes conferidos, sem smoke, mídia anterior preservada por hash; anônimo401 e URL interna400. Sem prova de Vercel. Fonte foi obtida duas vezes, excluída do tmp pelo servidor; E2E criou fixtures privadas na stack local de teste, preservadas.
+
+118 testes backend passaram, typecheck/build passaram; proteção ffprobe file/mov + enable_drefs0/use_absolute_path0 validada com binário e vídeo real. Branch de prévia é desenvolvida separadamente com bucket privado/cleanup; este código não oferece player da fonte. Próximo: commit/push da branch, integração/revisão no orquestrador, agregar preview somente depois de confirmar limpeza confiável e rede; testes combinados de TikTok/upload/Solo e Supabase local. Sem deploy, main, flag ou migration remotos.
+
+---
+# Retomada — importador Reels em validação (01/11/2026)
+
+Objetivo: terminar backend Reels no worktree C:\Users\felip\.codex\worktrees\pcdnades-reels\nadesCs2, branch codex/reels base c2f90e5; preservar alterações anteriores não commitadas. 115 testes e typecheck passaram na retomada. O extrator baixa temporariamente por proxy restrito e obtém duração com ffprobe; flag MEDIA_INSTAGRAM_IMPORT_ENABLED default false. A migration 20261101153422 é nova e sem aplicação remota. Teste real anterior do Reel autorizado extraiu duração 64,664717s e 8.472.243 bytes; não equivale a E2E com Storage. Agente preview trabalha em módulo de staging temporário; contrato proposto GET autenticado por sourceId e capability opcional. Aguardando stack Supabase local isolada do agente Solo para ensaio real; nenhum recurso de produção. Próximo: testar com Auth, permissões, upload e playback reais, revisar migração/tempo/segurança e coordenar staging. Não usar cookies privados nem desativar proteções. Nada foi commitado ou enviado nesta retomada.
+
+---
+# Em andamento — importação Instagram Reels (01/11/2026)
+
+Pedido delegado pelo orquestrador: implementar importador Reels com segurança, teste real autorizado, sem interferir TikTok/upload. Worktree próprio C:\Users\felip\.codex\worktrees\pcdnades-reels\nadesCs2, branch codex/reels, base c2f90e5. Prévia do vídeo é coordenada pelo agente /root/preview. Referência backend/IMPORT-REELS-INVESTIGATION.md: fonte autorizada com duração ausente em metadata, obtida após download local/ffprobe. Sem produção, deploy, migration remota ou main; não usar login privado/cookies/proxy de evasão. Primeiro: definir contrato com preview, escrever testes de provedor e schema, permitir flags separadas, adaptação segura/SSRF, validar real local e atualizar checkpoint antes do commit/push.
+
+---
 # Auditoria pré-preview — 31/10/2026
 
 Estado vigente em backend/IMPORT-PREVIEW-AUDIT.md/JSON e checkpoint orquestrador. Base7b621a9; alterações locais de runtime24,duração120,build/sourceallowlist e ferramenta de auditoria, sem modificarpipeline. ZIP641arquivos/204126812B validado,AL2023nonroot passou comtmp exec;noexec bloqueia yt-dlp. NenhumVercel/Supabase remoto/push/deploy. Próximaação:conferirGit e aguardar autorização específica do plano gratuito de preview, preservandoevidências emvendor/audit-preview-20261031.

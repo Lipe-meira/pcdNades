@@ -8,6 +8,7 @@ import {accessSync,constants,readFileSync,statSync} from 'node:fs';
 import {recognizeSource,type Clip} from './importers.js';
 import {importFailure,allowedImportHost,safeHeaders,startMetadataProxy,startMediaRelay,TransferBudget} from './import-network.js';
 import {sourceMetadata,checkImportSelection} from './tiktok.js';
+import {instagramArgs,instagramFormat,instagramMetadata,validateInstagramProbe,instagramProbeArgs} from './instagram.js';
 import {ffmpegBinaryPath,decodeVideo} from './trimming.js';
 import {probeOriginal,probeBinaryPath} from './probe.js';
 import {join} from 'node:path';
@@ -19,8 +20,11 @@ const digests={linux:'58162f9bfdc27458ea47bfcb311cf47028f17d8154a8bf7d689861d463
 export function ytDlpPath(){if(process.arch!=='x64')throw importFailure('IMPORT_UNAVAILABLE',503);if(process.platform==='linux')return require.resolve('../vendor/yt-dlp_linux');if(process.platform==='win32')return require.resolve('../vendor/yt-dlp.exe');throw importFailure('IMPORT_UNAVAILABLE',503);}
 export function readTikTokEnabled(env:Record<string,string|undefined>=process.env){const v=env.MEDIA_TIKTOK_IMPORT_ENABLED;if(v===undefined||v==='false')return false;if(v==='true')return true;throw new Error('MEDIA_TIKTOK_IMPORT_ENABLED deve ser true ou false.');}
 let verifiedRuntime:{path:string;mtime:number;size:number;valid:boolean}|undefined;
+export function readInstagramEnabled(env:Record<string,string|undefined>=process.env){const v=env.MEDIA_INSTAGRAM_IMPORT_ENABLED;if(v===undefined||v==='false')return false;if(v==='true')return true;throw new Error('MEDIA_INSTAGRAM_IMPORT_ENABLED deve ser true ou false.');}
 export function tikTokRuntimeAvailable(){try{
- if(!readTikTokEnabled())return false;readDownloadMode();
+ if(!readTikTokEnabled())return false;readDownloadMode();return trustedBinaryAvailable();}catch{return false;}}
+export function instagramRuntimeAvailable(){try{return readInstagramEnabled()&&trustedBinaryAvailable();}catch{return false;}}
+function trustedBinaryAvailable(){try{
  const path=ytDlpPath(),file=statSync(path);accessSync(path,constants.X_OK);
  if(verifiedRuntime?.path===path&&verifiedRuntime.mtime===file.mtimeMs&&verifiedRuntime.size===file.size)return verifiedRuntime.valid;
  const valid=createHash('sha256').update(readFileSync(path)).digest('hex')===digests[process.platform as keyof typeof digests];verifiedRuntime={path,mtime:file.mtimeMs,size:file.size,valid};return valid;
@@ -52,6 +56,26 @@ export async function extractTikTok(url:string,controller:AbortController,dir:st
   const raw=JSON.parse(result.stdout);const metadata=sourceMetadata(raw);const format=selectProgressiveFormat(raw);
   return {metadata,format,metadataBytes:budget.bytes};
  }catch(error){throw budget.error??(controller.signal.aborted?importFailure('IMPORT_TIMEOUT'):error instanceof Error&&'statusCode' in error?error:importFailure('IMPORT_FAILED'));}
+ finally{await proxy.close();}
+}
+/** Reels may omit metadata duration. Download an exclusively temporary, bounded
+ * source via the provider-scoped proxy and derive duration with ffprobe. Caller
+ * owns the directory and must remove it on both success and failure. */
+export async function extractInstagram(url:string,controller:AbortController,dir:string){
+ const started=performance.now(),budget=new TransferBudget(60000000,32,controller),proxy=await startMetadataProxy(budget,'instagram');
+ const env={PATH:process.env.PATH,SYSTEMROOT:process.env.SYSTEMROOT,TEMP:dir,TMP:dir,TMPDIR:dir,YTDLP_NO_PLUGINS:'1'};
+ try{
+  const binary=await verifyBinary(),args=instagramArgs(url,proxy.url);
+  const result=await run(binary,args,{cwd:dir,signal:controller.signal,timeout:24000,killSignal:'SIGKILL',maxBuffer:2097152,windowsHide:true,env});
+  const raw=JSON.parse(result.stdout);instagramMetadata(raw,1);const formatId=instagramFormat(raw),input=join(dir,'instagram-source.mp4');
+  const stop=guardImportFile(input,controller);let downloaded;
+  try{downloaded=await run(binary,temporarySessionArgs(args,formatId,input),{cwd:dir,signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true,env});}finally{stop();}
+  if(downloaded.stdout.trim()!==raw.id)throw importFailure('SOURCE_CHANGED',409);
+  const size=(await stat(input)).size;if(size<=0||size>50000000)throw importFailure('FILE_TOO_LARGE');
+  const sourceProbe=await run(probeBinaryPath(),instagramProbeArgs(input),{signal:controller.signal,timeout:10000,maxBuffer:1048576,windowsHide:true});
+  const duration=validateInstagramProbe(JSON.parse(sourceProbe.stdout));
+  return {metadata:instagramMetadata(raw,duration),localSource:input,formatId,metadataBytes:budget.bytes,elapsedMs:Math.round(performance.now()-started)};
+ }catch(error){throw budget.error??processFailure(error,controller,'downloading');}
  finally{await proxy.close();}
 }
 export function encodeSectionArgs(url:string,output:string,clip:Clip,maxBytes:number){
@@ -93,4 +117,18 @@ export async function importSection(source:ReturnType<typeof sourceMetadata>,cli
   return {...metadata,bytes,clip,sourceDurationSeconds:source.durationSeconds,provenance:source,extractorVersion:ytDlpVersion,transfer:{metadataBytes:resolved.metadataBytes,mediaBytes:budget.bytes,mediaRequests:budget.requests}};
  }catch(error){throw budget.error??processFailure(error,controller,phase);}
  finally{await close();}
+}
+
+/** Process the authorized Reel independently of an ephemeral preview: every
+ * request re-downloads through the scoped proxy and validates the source. */
+export async function importInstagramSection(source:ReturnType<typeof instagramMetadata>,clip:Clip,output:string,dir:string,limits:MediaLimits,controller:AbortController,stage:(stage:string)=>Promise<void>){
+ checkImportSelection(clip,source.durationSeconds);
+ try{
+  await stage('resolving');const resolved=await extractInstagram(source.sourceUrl,controller,dir);
+  if(resolved.metadata.videoId!==source.videoId||Math.abs(resolved.metadata.durationSeconds-source.durationSeconds)>1)throw importFailure('SOURCE_CHANGED',409);
+  await stage('transcoding');await run(ffmpegBinaryPath(),encodeTemporaryArgs(resolved.localSource,output,clip,limits.maxBytes),{signal:controller.signal,timeout:40000,killSignal:'SIGKILL',maxBuffer:65536,windowsHide:true});
+  await stage('validating');const bytes=(await stat(output)).size;if(bytes<=0||bytes>limits.maxBytes)throw importFailure('FILE_TOO_LARGE');
+  const metadata=await probeOriginal(output,limits,controller.signal);if(Math.abs(metadata.durationSeconds-(clip.endSeconds-clip.startSeconds))>0.1)throw importFailure('INVALID_MEDIA');await decodeVideo(output,controller.signal);
+  return {...metadata,bytes,clip,sourceDurationSeconds:source.durationSeconds,provenance:source,extractorVersion:ytDlpVersion,transfer:{totalBytes:resolved.metadataBytes}};
+ }catch(error){throw processFailure(error,controller,'transcoding');}
 }
