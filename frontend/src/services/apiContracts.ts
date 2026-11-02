@@ -47,6 +47,7 @@ export type MediaCapabilities = {
 export type ImporterCapability = Partial<ImportLimits> & {
   enabled: boolean;
   inspection?: boolean;
+  sourcePreview?: boolean;
   reasonCode?: string;
   message?: string;
 };
@@ -63,7 +64,7 @@ export function checkImportLimits(limits: ImportLimits): ImportLimits {
 }
 export function checkImportInspection(value: ImportInspection): ImportInspection {
   if (!value || typeof value.sourceId !== "string" || !/^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i.test(value.sourceId) ||
-    value.provider !== "tiktok" || typeof value.sourceUrl !== "string" || recognizeVideoSource(value.sourceUrl)?.platform !== "tiktok" ||
+    !["tiktok", "instagram"].includes(value.provider) || typeof value.sourceUrl !== "string" || recognizeVideoSource(value.sourceUrl)?.platform !== value.provider ||
     typeof value.title !== "string" || (value.author !== null && typeof value.author !== "string") ||
     typeof value.videoId !== "string" || !value.videoId || !Number.isFinite(value.durationSeconds) || value.durationSeconds <= 0 ||
     typeof value.expiresAt !== "string" || !Number.isFinite(Date.parse(value.expiresAt)) || value.preview !== null || value.previewReasonCode !== "PREVIEW_UNAVAILABLE") contractError();
@@ -185,7 +186,7 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
     !text(item.id) ||
     !text(item.title) ||
     !text(item.mapId) ||
-    !["smoke", "flashbang", "molotov"].includes(item.type) ||
+    !["smoke", "flashbang", "molotov", "solo_exec"].includes(item.type) ||
     !["T", "CT"].includes(item.side) ||
     typeof item.instructions !== "string" ||
     !item.target ||
@@ -193,6 +194,7 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
   )
     contractError();
   if (item.origin != null && !isTarget(item.origin)) contractError();
+  if (item.type === "solo_exec" && (!item.origin || !Array.isArray(item.destinations) || !item.destinations.length || item.destinations.some(d => !isTarget(d) || !["smoke", "flashbang", "molotov"].includes(d.type)))) contractError();
   const media = item.video && checkMedia(item.video);
   return {
     ...item,
@@ -232,8 +234,13 @@ export function checkCapabilities(value: MediaCapabilities): MediaCapabilities {
   )
     contractError();
   const trim = value.trimming;
-  if (value.importers.tiktok.inspection !== undefined && typeof value.importers.tiktok.inspection !== "boolean") contractError();
-  if (value.importers.tiktok.inspection) checkImportLimits(value.importers.tiktok as ImportLimits);
+  for (const importer of [value.importers.tiktok, value.importers.instagram]) {
+    if (!importer) continue;
+    if (importer.inspection !== undefined && typeof importer.inspection !== "boolean") contractError();
+    if (importer.sourcePreview !== undefined && typeof importer.sourcePreview !== "boolean") contractError();
+    if (importer.sourcePreview && (!importer.enabled || !importer.inspection)) contractError();
+    if (importer.inspection) checkImportLimits(importer as ImportLimits);
+  }
   if (
     trim &&
     (typeof trim.enabled !== "boolean" ||

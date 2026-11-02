@@ -1,3 +1,5 @@
+> **Estado de desenvolvimento — 02/11/2026:** a `dev` integra Solo Exec, backend de Reels e prévia privada de fonte TikTok/Reels. Reels e prévia ficam desligados por padrão; dependem de migrations e, para prévia, coleta externa monitorada. Isso não altera a produção. Leia [checkpoint atual](docs/continuity/orchestrator.md), [contrato da prévia](docs/preview-contract.md) e [sequência de publicação](docs/continuity/PRODUCTION-HANDOFF.md). Os avisos históricos abaixo sobre TikTok ainda não aplicado/desligado foram superados: o teste privado em produção e a migration TikTok já foram registrados; não reaplicar. Não presumir o estado remoto atual sem verificá-lo.
+
 > Auditoria pré-preview local concluída: [relatório e plano](backend/IMPORT-PREVIEW-AUDIT.md). Payload Linux de204,13MB, Node24/120s; execução real na Vercel e autorização dos recursos de teste ainda pendentes.
 
 > Piloto local atual (31/10/2026): TikTok com fonte até50MB e trecho até30s, sem alterar upload/histórico90s. Implementação, testes e checklist de preview em [IMPORT-PILOT-30.md](backend/IMPORT-PILOT-30.md). Flags continuam desativadas por padrão; nenhuma publicação em produção foi autorizada.

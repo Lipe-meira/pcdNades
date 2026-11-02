@@ -1,3 +1,117 @@
+# Backup autorização2 BLOQUEADO em pré-check — 02/11/2026
+
+PreviewPASS foiinformadoao usuário/rootANTESetapa2, commitLOCAL3d05303. Rootautorizoubackupread-onlyprodução kdyzxxgzvgiffluyjjxu/DBAuthconfigmigrationsgrantsRLSRPC+TODOSStorage/restoreNOVOlocalisolado, semparalelo/root. DestinoNOVOC:/Users/felip/pcdnades-backups-privados/20261102-105919-fresh ACLprotectedtrue,sófelip/Admin/SYSTEM,free1524118142976B; backupantigo20261031-194427preservado. Clientepg_dump17.11confirmadoimagemoficialexistentecomnetworknone.
+
+BLOQUEIOCONCRETO:nenhumPGPASSFILE/PGSERVICEFILE/PGPASSWORD/PGSERVICE/PGHOST/PGUSER/PGDATABASE/DATABASE_URLconfigurado; pgpass/servicepadrãoAPPDATApostgresql eUSERPROFILEausentes;3.envbackendconhecidosnãoexistem. Rootnão conhecePGauthcomprovadaeorientoupararantesexportarparcial. Nenhumtokentrial/reset/conexãosenhabranca/PIIpeloMCP/dump/Auth/Storage/Vault/restoreexecutado. Destino sóprechecks.json+INCOMPLETE-NO-DATA-EXPORTED.txt, NÃOébackup. Rootinformado parausuárioconfigurarPGPASSFILEprivadoforadoGitSEMsenhanochat. Relatório público backend/BACKUP-PREFLIGHT-20261102.md.
+
+Próximaação: docs/diff/commitLOCALsemPUSH/reportarSHA eaguardarauthlegítima. AoretomarrevalidarACL+espaço+PGsomenteleitura+escopoprivilégios/Authconfig/VaultrestaurávelantesqualquerexportStorage. Não iniciarrestoreremoto/localatébackupíntegrovalidado, nãotocarstacksvolumespréexistentes/migrationsprod/main/deploy/flags/backupantigo. Secredencialausentecontinua, nãorepetirbuscaporoutrostokens. PreviewúNICOREADYpreservadotokenprivadoguardado; nenhumaoperaçãoextraCloud.
+
+---
+# Preview real PASS — 02/11/2026 entrega
+
+ÚNICOdeployment dpl_AapyxdXEsXXJsBsaQHTjkPZhydAd /https://pcdnades-preview-a6quelpvg-lipe-s-projects1.vercel.app/READY/targetnullPreview/aliases[]/sourceSHAc8e1fca2849040ac2163ef40e70dd8bc77dd895f. Projeto/timeHobbyUIrootconfirmados. 35files195320Bbackendgitshow+SOMENTEvercel.jsonEXPORTconfigoverrideguard/buildflags; dirtyconfigtrue informado,worktreecódigointacto. Guardlocalexit42 eguardlogremotoPreviewconfirmedPASS. Conectorpreferido usado, authCLIread403 substituídaUIrootsemnovastentativas.
+
+RuntimeenvsexclusivamentePreviewTikTok/IG/sourcepreview/uploadfalse,preflighttrue/token64novosensitiveprivado; nenhumSupabase/DB/Production. Health200configuredfalse/capsalloff/semTOKEN401/UMPOSTsintético200PASS:Node24.22.2Linuxx64uid993/tmpavailable538329088B/mountrw/yt2026.08.19+FFmpeg7.0.2+ffprobeN66595todoshashPASS/encodeDecodePASS4101ms/NodeCPU1861949us/RSS179859456B;tmp/libraryexecVercelPASSsemremount/cleanupfinallyawaitsemerro. Build14s/npmci103/0vulns/cache74.46MB, nenhumupgrade/pagamento solicitado; consumoquotaHobbynãosaldo/faturamentofinal. Bundlecloudexatotamanho nãoexposto, incluídoconfirmado porhash+exec, nãofingirlocalbytescomoCloud.
+
+Relatório backend/PREVIEW-PREFLIGHT-20261102.md; artefatosignoradosvendor/preview-preflight-931f498e209e45a89cce2377b5c4308b/source-manifest.json e remote-result.json. NÃOcopiardiretórioprivadointeiro(token/payload); nenhumsegredoemGit/log. TokenpermaneceguardadoPrevieweprivado, rotafixadiagnóstica protegida, semmanutençãopública. StatusreportadoaoROOTANTESbackup, nenhumaoperação2iniciada.
+
+Próximaação: docs/diff/commitLOCALsemPUSH/reportarSHA ao root. Semredeploy/testeexterno/mídia/Supabase/main/produção/cleanup/backup. Preservarworktree/evidências. Se usuárioautorizaroutroescopo, rootcoordena; estaetapaPreviewconcluída, nãoautorizaativarflags/migrations ouloopdeensaios.
+
+---
+# Único Preview criado — 02/11/2026 aguardando build
+
+DeployÚNICOenviado viaVercelconector: dpl_AapyxdXEsXXJsBsaQHTjkPZhydAd, URLpcdnades-preview-a6quelpvg-lipe-s-projects1.vercel.app,targetnullPreview,INITIALIZING. Atorbackendexclusivo/rootinformado. Projeto prj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH/timecorreto/HobbyconfirmadoUIroot/Node24/Fastify/MaxDuration120/rootvazio/semGitconectado. Código35arquivos195320B exportadogitshowc8e1fca2849040ac2163ef40e70dd8bc77dd895f,apenasvercel.jsonCONFIGoverrideguard+buildflags, gitMetadata.dirtytrueexplicit/configOnlyOverridetrue. Guardlocalexit42nonpreviewPASS, semforjarVERCEL_ENV. TARGETOMITIDOconformeDOCoficial, retornonullPreview.
+
+Previewenvsomenteverificado:runtimeTikTok/IG/sourcepreview/uploadfalse; preflighttrue/token64novo sensitive privado NÃOversionado/logado; limits90s50MB; nenhumSupabase/DB/envProductionhidden0. Semmutaçãoprojetosreais/produção/backup. CLIauth403préchecknãofoiretentadoapósrootorientar; rootUIread-onlyatestouconfigfaltante. Nenhuma cobrança/paidfeature solicitado; usoHobbydentroquota não é relatório de faturamento final.
+
+Próximaaçãoexecutável: GETdeployment porID/pollbuildlogs (semsegredos); seERROR/limitebloqueioPARARSEMREDEPLOY. SeREADY, healthconfiguredfalse/capsoff e UM POSTdiagnósticosintéticotokenheaderprivado, conferirNode/binaries/tmp/hashencodeDecode ecleanup. SeexecbloqueadaPARAR. Evidências/manifestsprivadosignorados backend/vendor/preview-preflight-931f498e209e45a89cce2377b5c4308b; tokenprivadosomentelá/emmemória/Previewenv, nuncaexpornachat/Git. CommitdocscheckpointsemPUSHapósresultado,reportarrootANTESbackup.
+
+---
+# Preview único autorizado — 02/11/2026 em pré-check
+
+Usuário autorizou UM deploy SOMENTE projetoexistente pcdnades-preview-api/prj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH/team_IdIH9Z57lKO3PxfIz8sDJFqN, SHAorigin/devc8e1fca2849040ac2163ef40e70dd8bc77dd895f; semSupabase/somenteharnesssintético, runtimeflagsfalse/buildtemporariamenteempacotaytdlp/guardVERCEL_ENVpreview/token64novo privado. AtorbackendEXCLUSIVO; rootnãoexecutadeployparalelo. Mergeorigin/devnormal fezFFc8e1fca, branchfeat/backend limpaprécheckpoint. Skilldeployments-cicd/env-varsVercellidas, conferirprechecksantesmutação.
+
+ConectorconfirmouID/nome/teamNode24Fastify/livefalse/latestdpl_8FFKSRKDmPJWVQs3qYYQRr8PTmrrREADYtargetnull/domíniosópreview. Listenvs6todosPreviewnenhumSupabasehiddenProductionEnvCount0. Conectorgetteam/projetoSANITIZAplan/root/link/config; CLIauthexistenteREST403projeto/env,nenhuma credencial impressa. Rootconsultadosomenteporcamposnão sensíveis oumecanismoauthválido. AINDAZEROenvmudança/deploy/tokencriado. Próximaação: fecharHobby/rootbackend/gitlink/config comroot/conector,entãosalvarPreviewenvsomenteefazerÚNICOcreatedeploymenttargetomitidosegundosemânticaoficial/guard. Seerro/cobrança/execbloqueada,pararsemredeploy. NÃOiniciarbackup,nãomain/push/envprod/remotoSupabase.
+
+Dadosprivadoslocais ignorados em backend/vendor/preview-preflight-931f498e209e45a89cce2377b5c4308b (scriptprechecksemsegredos embutidos). Toolstatesememória guardouenv/projectresponse,semvalores sensíveisnoslogs. Evidência pública registrar depois. Atual checkpointaindasemcommit aguardandoresultado.
+
+---
+# Entrega preparação backend — 02/11/2026
+
+Base devc0868de merge normal emfeat/backend, sempush. Runner privado3min/60s/healthfileatômico0600/SIGTERM+sessionadvisoryPGlock/monitorCLIindependenteidade4min/sucesso8min; querylossaborta. SDK/coreantesheartbeatnega backlogexpiradoinclusiveleased. Semschedulercloudprovisionado, semgatewayHTTPoucredenciaisnovas, flagsdefaultoff. DATABASE_URLdireto/sessionpooler (nãotransactionpooler), supervisor+alertaexternosgates. Relatório completo backend/PRODUCTION-PREFLIGHT.md.
+
+Provas:14testesafetados/typecheckPASS Windows/Linux, cleanLinuxnpmci103pkgs/Node24.22.2/build/bootstrapPASS. Bundleefetivo653arquivos204244544B/ZIP101026900B/Node24/max120/binaries3hash+0755PASS/9warningsELFWindowsesperados, remoteValidatedfalse. Docker2GiB/1CPU/tmp512MiB: noexecfalhouPyInstallerlibz, execnovoContainerPASS. Fixture3s640x360encode569ms/RSSamostrado75046912B/temp262192B;trim1s402ms;SIGKILLdireto256ms;AbortController→trimVideoobservouFFmpegem/proc/cancel79msPASS;cleanupawaitausênciadirPASS. SemCPUagregado/syscalls/piorcaso/cloudinferidos.
+
+PG17dedicado networknonepcdnades-maint-lock-20261102 teste2sessõesreais segundoRunnernegado/crashprimeiro/reacquirePASS. PGlite0.5.13localrevisão8migrationsmemória12assertionsPASSlegado/grantsRLS/Soloinválido/rollback; nenhuma SQLna stackretida/remota. 3novasmigrationsapenasrevisadas, TikTokNÃOreaplicada. Nãoexecuteicoletorreal, não toqueipreviewsUI/containerdadosanteriores/nãoTikTokReelsrede. Novoscontainersdeensaioeexportos mantidosparaevidência; não removivolumes.
+
+Evidência bruta ignorada backend/vendor/final-linux-b6faed096ad84ec5b50cc69cf9d7ec8f/artifact/report.json e containers pcdnades-final-linux-20261102(falhanoexec),pcdnades-final-linux-exec-20261102(PASS),pcdnades-final-native-abort-20261102(PASS),pcdnades-maint-lock-20261102. Próximaação: checagensfinaisafetadas/diff/commitlocalPT/reportarSHA ao root; sempush/main/deploy/envprod/backupreal. Gates supervisorcloudfinanciamento/execmappedtmpVercel/Previewpreflightautorização/migrationsnovas+backup sobroot. Harnesspreflightpreservado, semhabilitar.
+
+---
+# Preparação final produção — 02/11/2026 em andamento
+
+Autorização root: backendrunnerprivadomonitorado/Linuxlimpo/revisão3migrations, sempush/main/deploy/SQLremoto/alteraçõesstackpreservada/novosagentes. Merge normal devc0868de fezfastforwardda6fa67c2; branchfeat/backend. Proposto runnerforegroundserial3min/deadline60s/healthfileprivado/SIGTERM+supervisor; rootaceitou,cloudcusto/supervisorpermanecemgateexterno(rootpesquisaplataformas). Implementando runner+sessionadvisorylockPGprivado paraúnicoprocesso, detecçãoleasebacklogantesheartbeat e testessimulados. Dois testesiniciaisrunner/typecheckPASS antes lock/backlog. Arquivosnovosmaintenance-runner.ts/script/teste; source-preview-supabase.ts alterado; nada commitado ainda.
+
+Próximaação: testesbacklog/cancel/recovery+runner, Linux cleanexportDockerNode24imagemexistente semvolumesantigos, binárioscachehash/npmci/fixtureslocal métricas; reverSolo/IG/preview migrations e rollbacksegurodocumental. Não rodarcoletor realna stack56421/56422 nem apagar previewsUIexistentes. Não redownloadTikTok/Reels. Gates cloud/schedulersemgarantia explícitos. Preservar imagens/containers/volumes/evidências. AGENTS/README/checkpoints lidos.
+
+---
+# Revisão de cancelamento — 02/11/2026
+
+Pedido root: revisão offline somente, sem interferir no E2Efrontend ativo. Base7b41fd5 limpa. Dois bugs comprovados por testes RED->GREEN: serviceFetch ignorava sinal do Request(input); signStorage devolvia URL mesmo após abort durante operação. Corrigidos composição Request.signal/init.signal/deadline10s e beforeDeadline+checkpósoperação para Storagepreview sign/uploadURL/remove/list. Sem alteração de contrato/flags/schema/runtimedownload.
+
+131testesPASS,11direcionadosPASS,typecheck/build/diffcheckPASS. Nenhumdownload/E2E/maintenance/startAPI/novaautenticação/alteraçãooutroworktree. Revisão não encontrou outrobugcomprovado de concorrência/reservaambígua/expiry: global slot+recheck/reservaantesupload/retémreservaemfalha/TTLgrace+lease permanecem. Não afirmar testes de concorrência/cancelamento de rede real: novos testes são simulados dirigidos.
+
+Gatesprodução: schedulerexternomonitorado<=5min/heartbeat8min; semscheduler negarflag; migrationremotaaindanãoautorizada, Linux/Vercelmemóriatempo e browserE2Ecombinado sob responsabilidadeorquestrador. Requestcancelado fecha a espera; SDKtransport continua tendo teto10s atéabort próprio se não receber sinalglobal, sem retorno tardio deURL/heartbeat. Próximaação: commitlocalfixvalidado/reportarSHA, sempush; aguardarrootapósE2Efrontend. Branchfeat/backend,worktreepróprio. Não reiniciar servidores de outros.
+
+---
+# Entrega backend prévia privada — 02/11/2026
+
+Implementados POST/GET imports/:sourceId/preview, POSTaguardado200sembackground/202, owner/UUID/expiryfinita/providerflag/heartbeat, slotglobal/reconsultaapósclaim, cache-no-store/assinatura60scom margem11s/TTL15min. Bucketdedicado/reservaantesupload/cleanup lease2min graça2min/órfãos30min/heartbeat8minfailclosed; CLIexterna one-shotsemfalsoscheduler. Capabilitiesprovider.sourcePreview booleanflag+provider+heartbeat, fonteH264AAC; incompatível<=90s transcode40s/50MB/deadline110; maiorincompatível422. ServiçoSDKStoragefetchabort10s, scriptsbootstraplocalrestritos56421/56422, API127.0.0.1:3002. Contratofinaldocs/preview-contract.md.
+
+Verificações:129testes/typecheckPASS apósúltimamargemTTL; build/bootstrapPASS antesmargemTTL(rodarbuildfinalantescommit). RealAuth/PostgREST/StorageLOCAL:Reel DeILaFXzNvu eTikTok ZSgs9BM9L PASSPOST200/Range2061024B/renewTTLinalterado/expiry410/row+objectremoved/noGrenadeCreated. PrimeiraTikTokfalhoucodec; transcodecorrigiue2erodousegundavezPASS. Containers/dadosanteriorespreservados; scriptrecusaantigospreviewsjáexpiradosantescoleta,limpasóprópriasfixtures. SemSQLremoto/reaplicaçãomigrationlocal/push/deploy/main/outrosagentes. Ainda NÃO validado playerbrowser+frontendcombinado/hashmídiaantiga/concorrênciaE2Ecancelamentoreal/Vercel scheduler. Rootpodeorquestrarbrowsercombinadoapóscommit.
+
+Branchfeat/backendbase69fd364(mergeautorizadodev); mudançasexclusivasbackend/,docs/preview-contract.md eestecheckpoint. Próximaação: build/bootstrap/diffcheckfinal/commitlocalvalidado(NÃOpush),reportarSHA/rootcomandosAPIlocal. Se retomar, gitstatusantesações. Nãohabilitarproduçãosemcoletormonitoredexternoconfiável; CLIlocalnãoéagendamentoVercel.
+
+---
+# Retomada prévia privada — 02/11/2026
+
+Pedido vigente: concluir backend da prévia sob orquestração, sem push/main/deploy/SQL remoto/novos agentes. Branch feat/backend estava limpa5c75558; merge normal dev fez fast-forward69fd364 (dev avançou durante inspeção, inicialmente af069a6). Não editei front/root nem worktree alheio: arquivos desses caminhos vieram apenas do merge autorizado. Quatro arquivos parciais copiados do preview worktree: source-preview.ts, source-preview-supabase.ts, source-preview.test.ts e migration20261102000337; ainda não commitados. docs/preview-contract.md novo registra proposta enviada ao root, endpoints ainda ausentes. Nenhuma credencial lida ou stack alterada.
+
+Core lido: reserva antesupload, bucket privado, owner/TTL/lease/órfãos e heartbeat completo8min; falta integrar API/runtime e provar fonte real/limpeza. Próxima ação executável: reler integration import-api/application/runtime atuais e testes/migration completos, alinhar contrato frontend, rodar baseline e testes parciais; só então conectar geração/URLs/maintenance. Stack local isolada autorizada56421/56422 precisa conferência, preservar containers/dados/evidências. FonteReels DeILaFXzNvu eTikTok ZSgs9BM9L autorizadas; evitar download redundante, nenhum cookie/login/bypass. Sem heartbeat confiável, flagdefaultoff/failclosed. Não assumir timer como scheduler Vercel.
+
+---
+# Script reproduzível da integração Solo — 01/11/2026
+
+Após o ensaio real, foi criado backend/scripts/solo-local-e2e.mjs (stack dedicada obrigatória pcdnades-solo-e2e-20261101 em 127.0.0.1:56421/56422, com validação docker inspect). Executado e PASS após validações; cria fixtures locais próprias e apaga somente o Solo criado. Usa diretório de status/usuários por argumento, nunca imprimir ou versionar credenciais. Documentado em backend/SOLO-EXEC-E2E.md. Sem produção; demais agentes podem usar a stack preservada.
+
+---
+# Solo Exec — integração local real concluída (01/11/2026)
+
+Branch codex/solo-e2e, base 6bb5f17, worktree C:\Users\felip\.codex\worktrees\pcdnades-solo-e2e\nadesCs2. Relatório: backend/SOLO-EXEC-E2E.md. Stack própria pcdnades-solo-e2e-20261101 ativa em 127.0.0.1:56421/56422, dados/containers preservados e comunicados aos agentes Reels e orquestrador. Migration Solo e históricas aplicadas SOMENTE localmente. Fastify inject + Supabase Auth/PostgREST/Storage reais: upload MP4, ready, create/read/filter/patch/convert/delete da própria fixture, 401/403, PATCH inválido 400, vídeo/registro tradicional preservados e hash de playback equivalente: PASS. Sem Vercel/produção; navegador não foi testado neste ensaio. Evidências/credenciais descartáveis ignoradas em backend/vendor/solo-e2e-20261101/. Próxima ação: integrar Reels/prévia e validar juntos na stack, sem imprimir tokens ou remover recursos. Commit de documentação próprio; verificar SHA por git log.
+
+---
+# Validação Solo Exec em andamento — 01/11/2026
+
+Objetivo: validar criação, edição, conversão, exclusão e permissões usando Supabase local isolado, sem alterar produção ou worktree dev. Branch codex/solo-e2e, worktree C:\Users\felip\.codex\worktrees\pcdnades-solo-e2e\nadesCs2, base 6bb5f17. Docker estava desligado, inicialização solicitada. Próximo: confirmar daemon, preparar stack de teste nova com recursos e portas próprios; aplicar migrations localmente, validar Auth/API/RLS/Storage preservando registros anteriores; informar endpoints ao agente Reels. Nenhuma alteração remota. Preservar containers/volumes/dados existentes e não fazer limpeza global.
+
+---
+
+# Reels backend validado em Supabase local isolado — 01/11/2026
+
+Branch codex/reels, worktree C:\Users\felip\.codex\worktrees\pcdnades-reels\nadesCs2, base c2f90e5. Código e relatório backend/IMPORT-REELS-BACKEND.md aguardam commit próprio; não tocar main ou produção. Flag Instagram independente default false, admin único permanece exigido. Migration nova 20261101153422 aplicada somente na stack descartável compartilhada 56421/56422; não foi aplicada no remoto. E2E REAL local: login/Auth+API reais, Reel autorizado baixado via proxy restrito, FFprobe 64,664717s, trecho 30–35s em FFmpeg, Storage privado só final 1.022.944 bytes, ready, playback privado/bytes conferidos, sem smoke, mídia anterior preservada por hash; anônimo401 e URL interna400. Sem prova de Vercel. Fonte foi obtida duas vezes, excluída do tmp pelo servidor; E2E criou fixtures privadas na stack local de teste, preservadas.
+
+118 testes backend passaram, typecheck/build passaram; proteção ffprobe file/mov + enable_drefs0/use_absolute_path0 validada com binário e vídeo real. Branch de prévia é desenvolvida separadamente com bucket privado/cleanup; este código não oferece player da fonte. Próximo: commit/push da branch, integração/revisão no orquestrador, agregar preview somente depois de confirmar limpeza confiável e rede; testes combinados de TikTok/upload/Solo e Supabase local. Sem deploy, main, flag ou migration remotos.
+
+---
+# Retomada — importador Reels em validação (01/11/2026)
+
+Objetivo: terminar backend Reels no worktree C:\Users\felip\.codex\worktrees\pcdnades-reels\nadesCs2, branch codex/reels base c2f90e5; preservar alterações anteriores não commitadas. 115 testes e typecheck passaram na retomada. O extrator baixa temporariamente por proxy restrito e obtém duração com ffprobe; flag MEDIA_INSTAGRAM_IMPORT_ENABLED default false. A migration 20261101153422 é nova e sem aplicação remota. Teste real anterior do Reel autorizado extraiu duração 64,664717s e 8.472.243 bytes; não equivale a E2E com Storage. Agente preview trabalha em módulo de staging temporário; contrato proposto GET autenticado por sourceId e capability opcional. Aguardando stack Supabase local isolada do agente Solo para ensaio real; nenhum recurso de produção. Próximo: testar com Auth, permissões, upload e playback reais, revisar migração/tempo/segurança e coordenar staging. Não usar cookies privados nem desativar proteções. Nada foi commitado ou enviado nesta retomada.
+
+---
+# Em andamento — importação Instagram Reels (01/11/2026)
+
+Pedido delegado pelo orquestrador: implementar importador Reels com segurança, teste real autorizado, sem interferir TikTok/upload. Worktree próprio C:\Users\felip\.codex\worktrees\pcdnades-reels\nadesCs2, branch codex/reels, base c2f90e5. Prévia do vídeo é coordenada pelo agente /root/preview. Referência backend/IMPORT-REELS-INVESTIGATION.md: fonte autorizada com duração ausente em metadata, obtida após download local/ffprobe. Sem produção, deploy, migration remota ou main; não usar login privado/cookies/proxy de evasão. Primeiro: definir contrato com preview, escrever testes de provedor e schema, permitir flags separadas, adaptação segura/SSRF, validar real local e atualizar checkpoint antes do commit/push.
+
+---
 # Auditoria pré-preview — 31/10/2026
 
 Estado vigente em backend/IMPORT-PREVIEW-AUDIT.md/JSON e checkpoint orquestrador. Base7b621a9; alterações locais de runtime24,duração120,build/sourceallowlist e ferramenta de auditoria, sem modificarpipeline. ZIP641arquivos/204126812B validado,AL2023nonroot passou comtmp exec;noexec bloqueia yt-dlp. NenhumVercel/Supabase remoto/push/deploy. Próximaação:conferirGit e aguardar autorização específica do plano gratuito de preview, preservandoevidências emvendor/audit-preview-20261031.

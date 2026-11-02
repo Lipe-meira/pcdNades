@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { GameMap, Lineup, Target } from "../domain/types";
+import type { GameMap, Lineup, Target, GrenadeType } from "../domain/types";
 import { typeLabels } from "../domain/types";
 import { isTarget, pointFromImage } from "../domain/lineups";
 import { Icon } from "./Icon";
@@ -10,6 +10,7 @@ type Props = {
   selectedId?: string;
   onSelect?: (ids: string[]) => void;
   target?: Target | null;
+  extraTargets?: Target[] | null;
   origin?: Target | null;
   marking?: "origin" | "target";
   onOriginChange?: (point: Target) => void;
@@ -24,6 +25,7 @@ export function Radar({
   selectedId,
   onSelect,
   target,
+  extraTargets,
   origin,
   marking = "target",
   onOriginChange,
@@ -37,13 +39,14 @@ export function Radar({
   const origins = lineups.filter((item) => item.origin && isTarget(item.origin) &&
     (selectedId ? item.id === selectedId : highlightedIds.includes(item.id)));
   const connections = editing
-    ? origin && target && isTarget(origin) && isTarget(target) ? [{ id: "draft", origin, target }] : []
-    : origins.map((item) => ({ id: item.id, origin: item.origin!, target: item.target }));
-  const groups = new Map<string, Lineup[]>();
-  lineups.forEach((item) => {
-    const key = `${item.target.x}:${item.target.y}`;
-    groups.set(key, [...(groups.get(key) ?? []), item]);
-  });
+    ? origin && isTarget(origin) ? (extraTargets?.length ? extraTargets : target ? [target] : []).filter(isTarget).map((point, i) => ({ id: `draft-${i}`, origin, target: point })) : []
+    : origins.flatMap(item => (item.destinations?.length ? item.destinations : [item.target]).map((point,i) => ({ id: `${item.id}-${i}`, origin: item.origin!, target: point })));
+  const groups = new Map<string, { item: Lineup; target: Target; markerType: GrenadeType }[]>();
+  lineups.forEach(item => (item.destinations?.length ? item.destinations : [item.target]).forEach(target => {
+    const key = `${target.x}:${target.y}`;
+    const markerType = "type" in target && (target.type === "smoke" || target.type === "flashbang" || target.type === "molotov") ? target.type : item.type;
+    groups.set(key, [...(groups.get(key) ?? []), { item, target, markerType }]);
+  }));
   return (
     <>
       <div className={`radar-frame ${editing ? "radar-edit" : ""}`}>
@@ -98,7 +101,7 @@ export function Radar({
             {[...groups.entries()].map(([key, items]) => (
               <button
                 key={key}
-                className={`radar-marker ${items[0].type} ${items.some((item) => item.id === selectedId) ? "selected" : ""}`}
+                className={`radar-marker ${items[0].markerType} ${items.some((item) => item.item.id === selectedId) ? "selected" : ""}`}
                 style={{
                   left: `${items[0].target.x * 100}%`,
                   top: `${items[0].target.y * 100}%`,
@@ -106,18 +109,19 @@ export function Radar({
                 aria-label={
                   items.length > 1
                     ? `${items.length} granadas neste destino`
-                    : `${items[0].title}, ${typeLabels[items[0].type]}, lado ${items[0].side}`
+                    : `${items[0].item.title}, ${typeLabels[items[0].item.type]}, lado ${items[0].item.side}`
                 }
-                onClick={() => onSelect?.(items.map((item) => item.id))}
+                onClick={() => onSelect?.([...new Set(items.map(({ item }) => item.id))])}
               >
                 <span className="marker-face">
-                  <Icon name={items[0].type} size={16} />
+                  <Icon name={items[0].markerType} size={16} />
                   {items.length > 1 && (
                     <span className="marker-count">{items.length}</span>
                   )}
                 </span>
               </button>
             ))}
+            {extraTargets?.map((point,index) => isTarget(point) && <div key={`extra-${index}`} className="target-marker" style={{left:`${point.x * 100}%`,top:`${point.y * 100}%`}} aria-hidden="true"><Icon name="crosshair" size={24} /></div>)}
             {target && (
               <div
                 className="target-marker"

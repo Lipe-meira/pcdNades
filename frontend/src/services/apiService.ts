@@ -59,6 +59,7 @@ export function createApiService(
   settings: {
     wait?: (ms: number, signal?: AbortSignal) => Promise<void>;
     maxPolls?: number;
+    previewOrigin?: string;
   } = {},
 ): LineupService {
   async function capabilities(signal?: AbortSignal) {
@@ -81,7 +82,7 @@ export function createApiService(
     for (let index = 0; index < (settings.maxPolls ?? 300); index++) {
       options.signal?.throwIfAborted();
       checkMedia(media);
-      if (media.sourceType === "tiktok" && (media.sourceId !== expectedSourceId || media.sourceUrl !== expectedSourceUrl))
+      if (["tiktok", "instagram"].includes(media.sourceType) && (media.sourceId !== expectedSourceId || media.sourceUrl !== expectedSourceUrl))
         throw new ApiError("MEDIA_SELECTION_CHANGED");
       if (!sameClip(media.clip, expectedClip))
         throw new ApiError("MEDIA_SELECTION_CHANGED");
@@ -113,7 +114,7 @@ export function createApiService(
           { authenticated: true, signal: options.signal },
         )
       ).data;
-      if (media.sourceType === "tiktok" && ["queued", "processing"].includes(media.status))
+      if (["tiktok", "instagram"].includes(media.sourceType) && ["queued", "processing"].includes(media.status))
         media = await completeRecord(media.id, options, true);
     }
     throw new ApiError(
@@ -152,14 +153,15 @@ export function createApiService(
       const error = validateSourceUrl(draft.media.sourceUrl);
       if (error) throw new Error(error);
       const source = recognizeVideoSource(draft.media.sourceUrl);
-      if (!source || source.platform !== "tiktok" || !caps.importers.tiktok.enabled || !caps.importers.tiktok.inspection)
+      if (!source || source.platform === "youtube" || !caps.importers[source.platform]?.enabled || !caps.importers[source.platform]?.inspection)
         throw new ApiError("PLATFORM_UNSUPPORTED", 422);
       const inspection = draft.media.inspection && checkImportInspection(draft.media.inspection);
+      if (inspection && inspection.provider !== source.platform) contractError();
       const issue = importSelectionError(inspection, clip);
       if (issue) throw new Error(issue);
       if (draft.media.inspectedUrl !== draft.media.sourceUrl.trim()) throw new ApiError("SOURCE_CHANGED");
       if (Date.parse(inspection!.expiresAt) <= Date.now()) throw new ApiError("SOURCE_EXPIRED");
-      const limits = checkImportLimits(caps.importers.tiktok as ImportLimits);
+      const limits = checkImportLimits(caps.importers[source.platform] as ImportLimits);
       if (inspection!.durationSeconds > limits.maxSourceDurationSeconds) throw new ApiError("SOURCE_TOO_LONG");
       const changedLimits = validateClip(clip!, { ...inspection!.limits,
         maxDurationSeconds: Math.min(limits.maxDurationSeconds, inspection!.limits.maxDurationSeconds),
@@ -338,13 +340,32 @@ export function createApiService(
     mode: "api",
     capabilities,
     async inspectImport(sourceUrl, signal) {
-      if (recognizeVideoSource(sourceUrl)?.platform !== "tiktok") throw new ApiError("PLATFORM_UNSUPPORTED");
+      const platform = recognizeVideoSource(sourceUrl)?.platform;
+      if (!platform || platform === "youtube") throw new ApiError("PLATFORM_UNSUPPORTED");
       const caps = await capabilities(signal);
-      if (!caps.importers.tiktok.enabled || !caps.importers.tiktok.inspection) throw new ApiError("IMPORT_UNAVAILABLE");
+      if (!caps.importers[platform]?.enabled || !caps.importers[platform]?.inspection) throw new ApiError("IMPORT_UNAVAILABLE");
       const result = await client.request<Envelope<ImportInspection>>("/media/imports/inspect", {
-        method: "POST", authenticated: true, body: { sourceUrl: sourceUrl.trim() }, signal, timeoutMs: 40_000,
+        method: "POST", authenticated: true, body: { sourceUrl: sourceUrl.trim() }, signal, timeoutMs: platform === "instagram" ? 75_000 : 40_000,
       });
-      return checkImportInspection(result.data);
+      const inspection = checkImportInspection(result.data);
+      if (inspection.provider !== platform) contractError();
+      return inspection;
+    },
+    async sourcePreview(sourceId, sessionExpiresAt, prepare, signal) {
+      if (!settings.previewOrigin || !/^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i.test(sourceId) || !Number.isFinite(Date.parse(sessionExpiresAt))) contractError();
+      const result = await client.request<Envelope<{sourceId: string; status: string; sourceExpiresAt: string; url?: string; expiresAt?: string; mimeType?: string}>>(
+        `/media/imports/${encodeURIComponent(sourceId)}/preview`,
+        { method: prepare ? "POST" : "GET", ...(prepare ? { body: {} } : {}), authenticated: true, signal, timeoutMs: prepare ? 150_000 : 30_000 },
+      );
+      const data = result.data;
+      const sourceExpiry = Date.parse(data?.sourceExpiresAt);
+      if (!data || data.sourceId !== sourceId || !Number.isFinite(sourceExpiry) || sourceExpiry <= Date.now() || sourceExpiry > Date.parse(sessionExpiresAt) + 1000) contractError();
+      if (data.status !== "ready" || !data.url || data.mimeType !== "video/mp4" || !data.expiresAt || !Number.isFinite(Date.parse(data.expiresAt)) || Date.parse(data.expiresAt) <= Date.now() || Date.parse(data.expiresAt) > sourceExpiry || Date.parse(data.expiresAt) > Date.now() + 65_000) contractError();
+      try {
+        const url = new URL(safeHttpUrl(data.url));
+        if (url.origin !== new URL(settings.previewOrigin).origin || url.pathname !== `/storage/v1/object/sign/import-previews/${sourceId.toLowerCase()}.mp4`) contractError();
+      } catch { contractError(); }
+      return { status: "ready", url: data.url, mimeType: "video/mp4", expiresAt: data.expiresAt };
     },
     async listMaps(signal) {
       const result = await client.request<Envelope<ApiMap[]>>("/maps", {

@@ -2,11 +2,15 @@ import {remainingSignal,beforeDeadline} from './import-deadline.js';
 import {effectiveImportLimits} from './tiktok.js';
 import {randomUUID} from 'node:crypto';import {mkdtemp,rm,stat} from 'node:fs/promises';import {join} from 'node:path';import {tmpdir} from 'node:os';
 import type {SupabaseClient} from '@supabase/supabase-js';import type {MediaLimits} from './config.js';
-import {importSection,tikTokRuntimeAvailable} from './import-runtime.js';import {storeClip,removeClip} from './clip-storage.js';
+import {importSection,importInstagramSection,tikTokRuntimeAvailable,instagramRuntimeAvailable} from './import-runtime.js';
+import {instagramMetadata} from './instagram.js';import {storeClip,removeClip} from './clip-storage.js';
 import {importFailure} from './import-network.js';import {sourceMetadata,checkImportSelection} from './tiktok.js';
-type Dependencies={available:()=>boolean;process:typeof importSection;store:typeof storeClip;remove?:typeof removeClip};
+type ImportSource=ReturnType<typeof sourceMetadata>|ReturnType<typeof instagramMetadata>;
+type Dependencies={available:(provider?:string)=>boolean;process:(source:any,...args:Parameters<typeof importSection> extends [any,...infer Rest]?Rest:never)=>Promise<any>;store:typeof storeClip;remove?:typeof removeClip};
+const processSource=(source:ImportSource,...args:Parameters<typeof importSection> extends [any,...infer Rest]?Rest:never)=>source.provider==='instagram'?importInstagramSection(source,...args):importSection(source,...args);
+const availableSource=(provider?:string)=>provider==='instagram'?instagramRuntimeAvailable():tikTokRuntimeAvailable();
 let active=false;
-export async function completeImport(db:SupabaseClient,id:string,limits:MediaLimits,deps:Dependencies={available:tikTokRuntimeAvailable,process:importSection,store:storeClip,remove:removeClip},started=performance.now()){
+export async function completeImport(db:SupabaseClient,id:string,limits:MediaLimits,deps:Dependencies={available:availableSource,process:processSource,store:storeClip,remove:removeClip},started=performance.now()){
  const controller=new AbortController(),signal=controller.signal;const timer=setTimeout(()=>controller.abort(importFailure('IMPORT_TIMEOUT')),Math.max(1,90000-(performance.now()-started)));timer.unref();
  const holder=randomUUID();let slot=false,local=false,dir:string|undefined;
  const checked=async(query:any)=>{const bounded=AbortSignal.any([signal,AbortSignal.timeout(5000)]);const result:any=await beforeDeadline(typeof query.abortSignal==='function'?query.abortSignal(bounded):query,bounded);if(result.error)throw importFailure('SERVICE_UNAVAILABLE',503);return result.data;};
@@ -14,14 +18,14 @@ export async function completeImport(db:SupabaseClient,id:string,limits:MediaLim
  const current=async()=>{const row=await checked(table().select('*').eq('id',id).maybeSingle());if(!row)throw importFailure('NOT_FOUND',404);return row;};
  try{
   const asset=await current();if(['ready','failed'].includes(asset.status))return {status:200,asset};
-  if(asset.source_type!=='tiktok'||!asset.import_source_id||!asset.import_snapshot)throw importFailure('SOURCE_UNSUPPORTED');
+  if(!['tiktok','instagram'].includes(asset.source_type)||!asset.import_source_id||!asset.import_snapshot)throw importFailure('SOURCE_UNSUPPORTED');
   if(asset.status==='processing'&&new Date(asset.locked_until).getTime()>Date.now())return {status:202,asset};
   if(!['queued','processing'].includes(asset.status))throw importFailure('MEDIA_STATE_CONFLICT',409);
   if(asset.attempts>=2){const failed=await checked(table().update({status:'failed',stage:null,locked_until:null,error:{code:'ATTEMPTS_EXHAUSTED',message:'Tentativas esgotadas. Inspecione o link novamente.'}}).eq('id',id).eq('status','processing').eq('attempts',asset.attempts).lte('locked_until',new Date().toISOString()).select().maybeSingle());return {status:failed?200:202,asset:failed??await current()};}
   if(asset.clip.endSeconds-asset.clip.startSeconds>30)throw importFailure('IMPORT_PILOT_LIMIT',409);
-  if(!deps.available())throw importFailure('IMPORT_UNAVAILABLE',503);
+  if(!deps.available(asset.source_type))throw importFailure('IMPORT_UNAVAILABLE',503);
   const snapshot=asset.import_snapshot;
-  const source=sourceMetadata({webpage_url:snapshot.sourceUrl,id:snapshot.videoId,title:snapshot.title,uploader:snapshot.author,duration:snapshot.durationSeconds});
+  const raw={webpage_url:snapshot.sourceUrl,id:snapshot.videoId,title:snapshot.title,uploader:snapshot.author,duration:snapshot.durationSeconds};const source=asset.source_type==='instagram'?instagramMetadata(raw,snapshot.durationSeconds):sourceMetadata(raw);
   if(active)throw importFailure('PROCESSOR_BUSY',503);active=true;local=true;
   if(!await checked(db.rpc('claim_import_slot',{p_holder:holder,p_seconds:120})))throw importFailure('PROCESSOR_BUSY',503);slot=true;
   let query=table().update({status:'processing',stage:'resolving',attempts:asset.attempts+1,locked_until:new Date(Date.now()+120000).toISOString()}).eq('id',id).eq('status',asset.status).eq('attempts',asset.attempts);
