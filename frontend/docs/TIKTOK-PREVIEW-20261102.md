@@ -27,3 +27,7 @@ Produção permanece com prévia desabilitada; esta alteração não a ativa e m
 ## Follow-up de sincronização após erro
 
 Um teste controlado reproduziu em desktop e celular o indicador parado em 00:01.5 após o player falhar e ser recarregado em 00:00. A leitura dos metadados agora sincroniza o indicador com o elemento real; uma nova preparação limpa a posição pendente de uma renovação anterior. Renovação bem-sucedida continua restaurando posição/estado. Resultado: 2 casos RED anteriores à correção; 6/6 casos direcionados PASS após correção (recarregamento, renovação e expiração, em PC/celular); build/typecheck e 58 unitários PASS. Sem E2E ou download externo nesta etapa.
+
+## Bloqueio do laboratório isolado
+
+O orquestrador informou que o novo laboratório responde HTTP 200 a cliente Docker dentro da rede isolada, mas a conexão do host Windows ao bind em 127.0.0.1 nessa rede expira. Não há API/lease disponível para o ensaio de navegador com Auth e Storage reais. O isolamento foi mantido; não foram usados laboratórios antigos, não houve repetição de testes e nenhuma resposta controlada substitui a evidência real pendente. Os dois commits frontend foram integrados localmente pelo orquestrador, que executa sua própria regressão; resultado não confirmado neste relatório.
