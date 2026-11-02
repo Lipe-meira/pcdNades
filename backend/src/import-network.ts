@@ -14,10 +14,15 @@ const globalIPv6=new BlockList(),specialIPv6=new BlockList();globalIPv6.addSubne
 for(const [ip,prefix]of [['2001::',23],['2001:db8::',32],['2002::',16],['3fff::',20]] as const)specialIPv6.addSubnet(ip,prefix,'ipv6');
 const publicDNSAddress=(ip:string)=>publicIPv4(ip)||(isIPv6(ip)&&globalIPv6.check(ip,'ipv6')&&!specialIPv6.check(ip,'ipv6'));
 const domains=['tiktok.com','tiktokv.com','tiktokcdn.com','tiktokcdn-us.com','tiktokv.us','byteoversea.com','ibytedtos.com','ibyteimg.com','muscdn.com','ttwstatic.com','akamaized.net'];
-export function allowedImportHost(host:string){return /^[a-z0-9.-]+$/.test(host)&&domains.some(d=>host===d||host.endsWith(`.${d}`));}
+export type NetworkProvider = 'tiktok' | 'instagram';
+export function allowedImportHost(host:string, provider:NetworkProvider='tiktok'){
+ if(!/^[a-z0-9.-]+$/.test(host))return false;
+ if(provider==='instagram')return ['instagram.com','www.instagram.com','m.instagram.com'].includes(host)||/^instagram\.[a-z0-9-]+\.fna\.fbcdn\.net$/.test(host)||/^scontent(?:-[a-z0-9-]+)?\.cdninstagram\.com$/.test(host);
+ return domains.some(d=>host===d||host.endsWith(`.${d}`));
+}
 // Inspect ALL A/AAAA answers, then connect only to a validated IPv4 address.
-export async function pinnedAddress(host:string,resolve:(host:string)=>Promise<string[]>=async h=>(await lookup(h,{all:true,verbatim:true})).map(a=>a.address)){
- if(!allowedImportHost(host))throw importFailure('IMPORT_DESTINATION_DENIED');
+export async function pinnedAddress(host:string,resolve:(host:string)=>Promise<string[]>=async h=>(await lookup(h,{all:true,verbatim:true})).map(a=>a.address),provider:NetworkProvider='tiktok'){
+ if(!allowedImportHost(host,provider))throw importFailure('IMPORT_DESTINATION_DENIED');
  const addresses=await resolve(host);if(!addresses.length||addresses.some(ip=>!publicDNSAddress(ip)))throw importFailure('IMPORT_DESTINATION_DENIED');
  const selected=addresses.find(publicIPv4);if(!selected)throw importFailure('IMPORT_DESTINATION_DENIED');return selected;
 }
@@ -60,7 +65,7 @@ export async function openRemote(raw:string,budget:TransferBudget,headers:Record
  return response;
 }
 
-export async function startMetadataProxy(budget:TransferBudget){
+export async function startMetadataProxy(budget:TransferBudget,provider:NetworkProvider='tiktok'){
  const sockets=new Set<Duplex>();const token=randomBytes(24).toString('hex');
  const server=createServer((_req,res)=>{res.writeHead(403);res.end();});
  server.maxConnections=8;server.headersTimeout=5000;server.requestTimeout=10000;
@@ -68,7 +73,7 @@ export async function startMetadataProxy(budget:TransferBudget){
   sockets.add(client);client.on('error',()=>{});client.on('close',()=>sockets.delete(client));
   void (async()=>{
    if(req.headers['proxy-authorization']!==`Basic ${Buffer.from(`${token}:`).toString('base64')}`||!req.url||!/^([a-z0-9.-]+):443$/.test(req.url))throw importFailure('IMPORT_DESTINATION_DENIED');
-   budget.request();const host=req.url.slice(0,-4),ip=await pinnedAddress(host);
+   budget.request();const host=req.url.slice(0,-4),ip=await pinnedAddress(host,undefined,provider);
    if(budget.controller.signal.aborted)throw budget.error??importFailure('IMPORT_TIMEOUT');
    const upstream=connect({host:ip,port:443});sockets.add(upstream);upstream.on('close',()=>sockets.delete(upstream));
    upstream.on('error',()=>client.destroy());upstream.setTimeout(10000,()=>upstream.destroy());

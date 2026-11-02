@@ -67,6 +67,8 @@ async function setup(
     trimming?: boolean;
     durationLimit?: number;
     imports?: boolean;
+    sourcePreview?: boolean;
+    reels?: boolean;
     importDelay?: number;
     importFailure?: string;
     loseImportComplete?: boolean;
@@ -189,8 +191,8 @@ async function setup(
             },
             importers: {
               youtube: { enabled: false },
-              tiktok: options.imports ? { enabled: true, inspection: true, ...importLimits } : { enabled: false },
-              instagram: {
+              tiktok: options.imports ? { enabled: true, inspection: true, sourcePreview: options.sourcePreview === true, ...importLimits } : { enabled: false },
+              instagram: options.reels ? { enabled: true, inspection: true, sourcePreview: options.sourcePreview === true, ...importLimits } : {
                 enabled: false,
                 reasonCode: "PLATFORM_UNSUPPORTED",
                 message: "Integração ainda não habilitada.",
@@ -217,6 +219,7 @@ async function setup(
     if (path === "/media/imports/inspect") {
       state.inspections++;
       state.inspection = importInspection(state.inspections);
+      if (options.reels) state.inspection = { ...state.inspection, provider: "instagram", sourceUrl: "https://www.instagram.com/reel/DeILaFXzNvu/", videoId: "DeILaFXzNvu" };
       return reply(route, { status: 201, json: { data: state.inspection } });
     }
     if (path === "/media/imports") {
@@ -1273,4 +1276,134 @@ test("TikTok: teste privado importa e reproduz sem publicar granada", async ({ p
   await expect(page.getByLabel("Vídeo importado para teste privado")).toBeVisible();
   expect(privatePlayback).toBe(1); expect(state.importCreates).toBe(1); expect(state.published).toHaveLength(0);
   await expect(page.getByRole("dialog")).toBeVisible();
+});
+
+test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) => {
+  const state = await setup(page, { inlineOriginal: true });
+  await page.goto("/"); await signIn(page); await fillInlineForm(page);
+  await page.getByLabel("Tipo", { exact: true }).selectOption("solo_exec");
+  await expect(page.getByRole("button", { name: "Destino 1", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Adicionar destino" }).click();
+  await page.getByLabel("Tipo do destino 2").selectOption("molotov");
+  await page.getByLabel("Coordenada X (%)").fill("65");
+  await page.getByLabel("Coordenada Y (%)").fill("75");
+  await page.getByRole("button", { name: "Selecionar destino 1 para reposicionar" }).click();
+  await expect(page.getByRole("button", { name: "Destino 1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Selecionar destino 2 para reposicionar" }).click();
+  await expect(page.getByRole("button", { name: "Destino 2", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 15000 });
+  expect(state.published).toHaveLength(1);
+  expect((state.published[0] as any).type).toBe("solo_exec");
+  expect((state.published[0] as any).destinations).toEqual([{x:.4,y:.6,type:"smoke"},{x:.65,y:.75,type:"molotov"}]);
+  await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Validação inline controlada, Solo Exec/ })).toHaveCount(2);
+  const first = page.getByRole("button", { name: "Validação inline controlada, Solo Exec, destino 1, Smoke, lado T", exact: true });
+  const second = page.getByRole("button", { name: "Validação inline controlada, Solo Exec, destino 2, Molotov, lado T", exact: true });
+  await expect(first).toBeVisible();
+  await expect(second).toBeVisible();
+  await expect(first.locator(".draft-number")).toHaveText("1");
+  await expect(second.locator(".draft-number")).toHaveText("2");
+  await second.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("region", { name: "Detalhes da granada" })).toBeVisible();
+});
+
+test("Solo Exec troca de mapa após selecionar segundo destino sem índice antigo", async ({ page }) => {
+  await setup(page, { inlineOriginal: true });
+  await page.route(`${api}/maps`, route => reply(route, {json:{data:["mirage","inferno"].map(id=>({id,name:id === "mirage" ? "Mirage" : "Inferno",radar:{imageUrl:`/maps/${id}.svg`,width:1024,height:1024,coordinateVersion:`setpos-${id}-ba5f793`}}))}}));
+  await page.goto("/"); await signIn(page); await fillInlineForm(page);
+  await page.getByLabel("Tipo", {exact:true}).selectOption("solo_exec");
+  await page.getByRole("button", {name:"Adicionar destino"}).click();
+  await page.getByLabel("Mapa", {exact:true}).selectOption("inferno");
+  const radar=page.getByRole("img", {name:"Radar do mapa Inferno"});
+  await radar.click({position:{x:50,y:50}});
+  await page.getByRole("button", {name:"Marcar destino",exact:true}).click();
+  await radar.click({position:{x:100,y:100}});
+  await expect(page.getByRole("button",{name:"Destino 1",exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Destino 2",exact:true})).toHaveCount(0);
+  await expect(page.getByLabel("Coordenada X (%)")).not.toHaveValue("");
+});
+
+
+test("Prévia privada: player marca início e fim sem publicar", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true });
+  const methods: string[] = [];
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, async route => {
+    methods.push(route.request().method());
+    return reply(route, { json: { data: { sourceId: state.inspection.sourceId, status: "ready", sourceExpiresAt: state.inspection.expiresAt, url: `${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`, expiresAt: new Date(Date.now()+60_000).toISOString(), mimeType: "video/mp4" } } });
+  });
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, { status: 206, body: bytes.subarray(start), contentType: "video/mp4", headers: { "accept-ranges": "bytes", "content-range": `bytes ${start}-${bytes.length - 1}/${bytes.length}` } });
+  });
+  await openImportForm(page); await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
+  await expect(video).toBeVisible();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 0.5; });
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.45);
+  await page.getByRole("button",{name:"Usar posição como início"}).click();
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 1.5; });
+  await page.getByRole("button",{name:"Usar posição como fim"}).click();
+  await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
+  expect(methods).toEqual(["POST"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(0);
+});
+
+test("Prévia privada: falha preserva horários, formulário e opção MP4", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true, initial: true });
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => reply(route, {status:503,json:{error:{code:"PREVIEW_UNAVAILABLE"}}}));
+  await openImportForm(page, true); await consultImport(page);
+  await expect(page.getByText(/Não foi possível carregar a prévia/)).toBeVisible();
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toBeEnabled();
+  await expect(page.getByRole("button",{name:"Enviar MP4",exact:true})).toBeEnabled();
+  await expect(page.getByLabel("Título",{exact:true})).toHaveValue("Granada de teste controlado");
+  expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(1);
+});
+
+test("Prévia privada: renovação preserva posição e encerra ao trocar link", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true });
+  const methods: string[] = [];
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => {
+    methods.push(route.request().method());
+    return reply(route, { json: { data: { sourceId: state.inspection.sourceId, status: "ready", sourceExpiresAt: state.inspection.expiresAt, url: `${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture${methods.length}`, expiresAt: new Date(Date.now()+(methods.length === 1 ? 6500 : 60_000)).toISOString(), mimeType: "video/mp4" } } });
+  });
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, { status: 206, body: bytes.subarray(start), contentType: "video/mp4", headers: { "accept-ranges": "bytes", "content-range": `bytes ${start}-${bytes.length - 1}/${bytes.length}` } });
+  });
+  await openImportForm(page); await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.pause(); v.currentTime = .7; v.muted = true; v.volume = .31; });
+  await expect.poll(() => methods.length, { timeout: 8000 }).toBeGreaterThan(1);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.6);
+  expect(await video.evaluate((v: HTMLVideoElement) => ({muted:v.muted,volume:v.volume,paused:v.paused}))).toEqual({muted:true,volume:.31,paused:true});
+  expect(methods.slice(0,2)).toEqual(["POST", "GET"]);
+  await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", {exact:true}).fill("https://www.tiktok.com/@qa/video/1234567891");
+  await expect(video).toHaveCount(0);
+  expect(state.importCreates).toBe(0);
+});
+
+test("Prévia privada: Reels pode consultar e marcar trecho", async ({ page }) => {
+  const state = await setup(page, { reels: true, sourcePreview: true });
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => reply(route, { json: { data: { sourceId: state.inspection.sourceId, status: "ready", sourceExpiresAt: state.inspection.expiresAt, url: `${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`, expiresAt: new Date(Date.now()+60_000).toISOString(), mimeType: "video/mp4" } } }));
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, { status: 206, body: bytes.subarray(start), contentType: "video/mp4", headers: { "accept-ranges": "bytes", "content-range": `bytes ${start}-${bytes.length - 1}/${bytes.length}` } });
+  });
+  await openImportForm(page);
+  await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", {exact:true}).fill("https://www.instagram.com/reel/DeILaFXzNvu/");
+  await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = .5; });
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.45);
+  await page.getByRole("button",{name:"Usar posição como início"}).click();
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  expect(state.importCreates).toBe(0);
 });

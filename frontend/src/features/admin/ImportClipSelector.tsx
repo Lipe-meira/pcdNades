@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Clip } from "../../domain/clip";
 import type { ImportInspection } from "../../domain/imports";
 import { importSelectionError } from "../../domain/imports";
 import { formatTimecode, parseTimecode } from "../../domain/timecode";
 
-export function ImportClipSelector({ inspection, clip, disabled, onChange }: {
-  inspection: ImportInspection; clip: Clip; disabled: boolean; onChange: (clip: Clip) => void;
+export function ImportClipSelector({ inspection, clip, disabled, onChange, markRevision = 0 }: {
+  inspection: ImportInspection; clip: Clip; disabled: boolean; onChange: (clip: Clip) => void; markRevision?: number;
 }) {
   const [text, setText] = useState({ startSeconds: formatTimecode(clip.startSeconds), endSeconds: formatTimecode(clip.endSeconds) });
+  useEffect(() => { if (markRevision) setText({ startSeconds: formatTimecode(clip.startSeconds), endSeconds: formatTimecode(clip.endSeconds) }); }, [markRevision]);
   const error = importSelectionError(inspection, clip);
   return <div className="import-clip">
     <h4>2. Selecione o trecho</h4>

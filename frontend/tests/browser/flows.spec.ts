@@ -320,12 +320,12 @@ test("PNGs dos filtros carregam e falhas preservam texto e teclado", async ({ pa
   const panel = page.getByRole("complementary", { name: "Filtros da biblioteca" });
   const types = page.getByRole("group", { name: "Tipo de granada" });
   const sides = page.getByRole("group", { name: "Lado do time" });
-  await expect(types.getByRole("button")).toHaveCount(4);
+  await expect(types.getByRole("button")).toHaveCount(5);
   await expect(sides.getByRole("button")).toHaveCount(3);
-  await expect(panel.locator("img")).toHaveCount(7);
+  await expect(panel.locator("img")).toHaveCount(8);
   for (const [name, file, width] of [
     ["Todas", "all", 200], ["Smoke", "smoke", 200], ["Molotov", "molotov", 200],
-    ["Flashbang", "flashbang", 200], ["Ambos", "both", 128], ["CT", "ct", 128], ["T", "t", 128],
+    ["Flashbang", "flashbang", 200], ["Solo Exec", "all", 200], ["Ambos", "both", 128], ["CT", "ct", 128], ["T", "t", 128],
   ] as const) {
     const image = panel.getByRole("button", { name, exact: true }).locator("img");
     await expect(image).toHaveAttribute("src", `/filter-icons/${file}.png`);
@@ -365,9 +365,9 @@ test("origem e destino no formulário: modos, zeros, coordenadas da imagem e tro
   const image = page.getByRole("dialog").getByAltText("Radar do mapa Mirage");
   await page.getByRole("button", { name: "Marcar origem", exact: true }).click();
   const bounds = (await image.boundingBox())!;
-  await image.click({ position: { x: bounds.width * .2, y: bounds.height * .3 } });
-  expect(Number(await page.getByLabel("Origem X (%)", { exact: true }).inputValue())).toBeCloseTo(20, 0);
-  expect(Number(await page.getByLabel("Origem Y (%)", { exact: true }).inputValue())).toBeCloseTo(30, 0);
+  await image.click({ position: { x: bounds.width * .25, y: bounds.height * .35 } });
+  expect(Number(await page.getByLabel("Origem X (%)", { exact: true }).inputValue())).toBeCloseTo(25, 0);
+  expect(Number(await page.getByLabel("Origem Y (%)", { exact: true }).inputValue())).toBeCloseTo(35, 0);
   await page.getByRole("button", { name: "Marcar destino", exact: true }).focus();
   await page.keyboard.press("Enter");
   await image.click({ position: { x: bounds.width * .7, y: bounds.height * .6 } });
@@ -375,8 +375,8 @@ test("origem e destino no formulário: modos, zeros, coordenadas da imagem e tro
   const marker = page.getByRole("dialog").locator(".origin-marker");
   const box = (await marker.boundingBox())!;
   const actual = (await image.boundingBox())!;
-  expect((box.x + box.width / 2 - actual.x) / actual.width).toBeCloseTo(.2, 2);
-  expect((box.y + box.height / 2 - actual.y) / actual.height).toBeCloseTo(.3, 2);
+  expect((box.x + box.width / 2 - actual.x) / actual.width).toBeCloseTo(.25, 2);
+  expect((box.y + box.height / 2 - actual.y) / actual.height).toBeCloseTo(.35, 2);
   await expect(page.getByRole("dialog").locator(".origin-connections line")).toHaveCount(1);
   await page.screenshot({ path: testInfo.outputPath("origin-form.png"), fullPage: true });
   await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
@@ -396,4 +396,57 @@ test("origem e destino no formulário: modos, zeros, coordenadas da imagem e tro
   await page.getByRole("button", { name: /^Origem e destino QA Smoke/ }).click();
   await expect(page.getByText("Origem no radar: 0%, 100%.", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Origem de Origem e destino QA", exact: true })).toBeVisible();
+});
+
+test("radar ampliado mantém coordenadas e orienta origem, destino e ajuste", async ({ page }, testInfo) => {
+  await enterAdmin(page);
+  await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  const form = page.locator(".dialog-wide");
+  const image = form.getByAltText("Radar do mapa Mirage");
+  let bounds = (await image.boundingBox())!;
+  const point = { x: bounds.width * .2, y: bounds.height * .25 };
+  if (testInfo.project.name === "mobile") await image.tap({ position: point });
+  else await image.click({ position: point });
+  await expect(form.getByText("Clique no radar para marcar onde a granada cai.")).toBeVisible();
+  await image.click({ position: { x: bounds.width * .7, y: bounds.height * .75 } });
+  await expect(form.getByText(/Pontos marcados/)).toBeVisible();
+  await image.click({ position: { x: bounds.width * .5, y: bounds.height * .5 } });
+  expect(Number(await form.getByLabel("Coordenada X (%)", { exact: true }).inputValue())).toBeCloseTo(70, 0);
+  await form.getByRole("button", { name: "Ampliar radar" }).click();
+  const expanded = page.getByRole("dialog", { name: "Radar ampliado: Mirage" });
+  await expect(expanded).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("radar-ampliado.png") });
+  await expanded.getByRole("button", { name: "Selecionar origem para reposicionar" }).click();
+  bounds = (await image.boundingBox())!;
+  await image.click({ position: { x: bounds.width * .35, y: bounds.height * .45 } });
+  expect(Number(await form.getByLabel("Origem X (%)", { exact: true }).inputValue())).toBeCloseTo(35, 0);
+  await page.keyboard.press("Escape");
+  await expect(expanded).toHaveCount(0);
+  await expect(form).toBeVisible();
+  const marker = form.getByRole("button", { name: "Selecionar origem para reposicionar" });
+  const originBox = (await marker.boundingBox())!;
+  bounds = (await image.boundingBox())!;
+  expect((originBox.x + originBox.width / 2 - bounds.x) / bounds.width).toBeCloseTo(.35, 2);
+  expect((originBox.y + originBox.height / 2 - bounds.y) / bounds.height).toBeCloseTo(.45, 2);
+  await expect(form.locator(".origin-connections line")).toHaveCount(1);
+  await expect(form.getByText(/Pontos marcados/)).toBeVisible();
+  await image.click({ position: { x: bounds.width * .8, y: bounds.height * .2 } });
+  expect(Number(await form.getByLabel("Coordenada X (%)", { exact: true }).inputValue())).toBeCloseTo(70, 0);
+  expect(Number(await form.getByLabel("Coordenada Y (%)", { exact: true }).inputValue())).toBeCloseTo(75, 0);
+});
+
+test("radar público amplia e permite voltar com Escape", async ({ page }, testInfo) => {
+  await page.goto("/");
+  const image = page.getByRole("img", { name: "Radar do mapa Mirage" });
+  await expect(image).toBeVisible();
+  const normalWidth = (await image.boundingBox())!.width;
+  await page.screenshot({ path: testInfo.outputPath("radar-biblioteca.png"), fullPage: true });
+  await page.getByRole("button", { name: "Ampliar radar", exact: true }).click();
+  const expanded = page.getByRole("dialog", { name: "Radar ampliado: Mirage" });
+  await expect(expanded).toBeVisible();
+  if (testInfo.project.name === "desktop")
+    expect((await image.boundingBox())!.width).toBeGreaterThan(normalWidth * 1.15);
+  await page.keyboard.press("Escape");
+  await expect(expanded).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Ampliar radar", exact: true })).toBeFocused();
 });

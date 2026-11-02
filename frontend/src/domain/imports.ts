@@ -11,7 +11,7 @@ export type ImportLimits = {
 };
 export type ImportInspection = {
   sourceId: string;
-  provider: "tiktok";
+  provider: "tiktok" | "instagram";
   sourceUrl: string;
   videoId: string;
   title: string;

@@ -123,7 +123,7 @@ export function Library({
             <span className="legend-hint">
               Selecione um ponto ou use a lista ao lado.
             </span>
-            <span><i className="origin-legend" />Origem (quadrado)</span>
+            <span><i className="origin-legend" />Origem (+)</span>
             <span>Destino (círculo)</span>
           </div>
         </section>
@@ -225,6 +225,10 @@ export function Library({
                   <p className="detail-origin">{selected.origin
                     ? `Origem no radar: ${(selected.origin.x * 100).toLocaleString("pt-BR")}%, ${(selected.origin.y * 100).toLocaleString("pt-BR")}%.`
                     : "Origem não cadastrada."}</p>
+              {selected.type === "solo_exec" && selected.destinations?.length ? <div className="solo-destination-summary">
+                <h3>Granadas da execução</h3>
+                <ol>{selected.destinations.map((destination, index) => <li key={index}>{typeLabels[destination.type]} · {(destination.x * 100).toLocaleString("pt-BR")}%, {(destination.y * 100).toLocaleString("pt-BR")}%</li>)}</ol>
+              </div> : null}
               <div className="detail-meta">
                 <span className={`type-text ${selected.type}`}>
                   <Icon name={selected.type} size={16} />

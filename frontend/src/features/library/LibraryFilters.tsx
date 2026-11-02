@@ -24,7 +24,7 @@ export function LibraryFilters({ filters, lineups, onChange }: {
       <div className="nade-types">
         <h2>Tipos de granada</h2>
         <div role="group" aria-label="Tipo de granada" aria-describedby={`${id}-hint`}>
-          {(["all", "smoke", "molotov", "flashbang"] as const).map((type) => {
+          {(["all", "smoke", "molotov", "flashbang", "solo_exec"] as const).map((type) => {
             const label = type === "all" ? "Todas" : typeLabels[type];
             const count = type === "all" ? candidates.length
               : candidates.filter((item) => item.type === type).length;
@@ -34,7 +34,7 @@ export function LibraryFilters({ filters, lineups, onChange }: {
                 aria-describedby={`${id}-${type}-count`}
                 onClick={() => onChange({ type })}>
                 <span className={`nade-type-icon ${type}`}>
-                  <FilterImage name={type} />
+                  <FilterImage name={type === "solo_exec" ? "all" : type} />
                 </span>
                 <span>{label}</span>
                 <span id={`${id}-${type}-count`} className="nade-type-count">

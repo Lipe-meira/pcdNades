@@ -4,6 +4,7 @@ import type { LineupService } from "../../services/lineupService";
 import type { MediaCapabilities } from "../../services/apiContracts";
 import { recognizeVideoSource } from "../../domain/videoSource";
 import { formatTimecode } from "../../domain/timecode";
+import { ImportSourcePreview } from "./ImportSourcePreview";
 import { ImportClipSelector } from "./ImportClipSelector";
 import { ApiError } from "../../services/apiClient";
 
@@ -14,11 +15,12 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
   const [busy, setBusy] = useState(false);
   const [issue, setIssue] = useState<string>();
   const [expired, setExpired] = useState(false);
+  const [markRevision, setMarkRevision] = useState(0);
   const request = useRef<AbortController | null>(null);
   const sequence = useRef(0);
   const source = recognizeVideoSource(value.sourceUrl);
-  const enabled = source?.platform === "tiktok" && capabilities.importers.tiktok.enabled &&
-    capabilities.importers.tiktok.inspection === true && !!service.inspectImport;
+  const importer = source && source.platform !== "youtube" ? capabilities.importers[source.platform] : undefined;
+  const enabled = importer?.enabled === true && importer.inspection === true && !!service.inspectImport;
   useEffect(() => () => { sequence.current++; request.current?.abort(); }, []);
   useEffect(() => {
     if (!value.inspection) { setExpired(false); return; }
@@ -40,9 +42,9 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
     <div className="importer-status">
       {(["youtube", "tiktok", "instagram"] as const).map(platform => <p key={platform}>
         <strong>{platform === "youtube" ? "YouTube Shorts" : platform === "tiktok" ? "TikTok" : "Instagram Reels"}</strong>
-        {" — "}{platform === "tiktok" && capabilities.importers.tiktok.enabled && capabilities.importers.tiktok.inspection
+        {" — "}{platform !== "youtube" && capabilities.importers[platform]?.enabled && capabilities.importers[platform]?.inspection
           ? "Disponível" : "Indisponível"}
-        {!(platform === "tiktok" && capabilities.importers.tiktok.enabled && capabilities.importers.tiktok.inspection) &&
+        {!(platform !== "youtube" && capabilities.importers[platform]?.enabled && capabilities.importers[platform]?.inspection) &&
           <span> · {capabilities.importers[platform]?.message || "Integração ainda não habilitada. Use MP4 quando disponível."}</span>}
       </p>)}
     </div>
@@ -76,15 +78,20 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
     {issue && <p className="field-error" role="alert">{issue}</p>}
     {value.inspection && <>
       <div className="import-metadata">
-        <strong>{value.inspection.title || "Vídeo do TikTok"}</strong>
+        <strong>{value.inspection.title || "Vídeo da origem"}</strong>
         {value.inspection.author && <p>Autor: {value.inspection.author}</p>}
         <p>Duração da fonte: {formatTimecode(value.inspection.durationSeconds)}</p>
         <p className="field-hint">Fonte original de até {(value.inspection.limits.maxSourceBytes ?? 50_000_000) / 1_000_000} MB. Trecho final de até {value.inspection.limits.maxDurationSeconds}s. Somente o trecho será salvo; fontes longas podem exceder o tempo disponível.</p>
       </div>
-      <p className="inline-notice">Prévia visual indisponível para este link. Use a duração e os horários para selecionar o trecho. A consulta ainda não importou nem publicou o vídeo.</p>
+      {capabilities.importers[value.inspection.provider]?.sourcePreview && !expired && service.sourcePreview ? <ImportSourcePreview
+        key={`preview-${value.inspection.sourceId}`} inspection={value.inspection} service={service} onMark={(field, seconds) => {
+          if (!value.clip) return;
+          onChange({ ...value, clip: { ...value.clip, [field]: seconds } });
+          setMarkRevision(current => current + 1);
+        }} /> : <p className="inline-notice">Prévia visual indisponível para este link. Use a duração e os horários para selecionar o trecho. A consulta ainda não importou nem publicou o vídeo.</p>}
       {expired && <p className="field-error" role="alert">A consulta expirou. Consulte novamente para iniciar outra importação. Uma importação já criada pode ser retomada.</p>}
-      {value.clip && <ImportClipSelector key={value.inspection.sourceId} inspection={value.inspection}
-        clip={value.clip} disabled={expired} onChange={(clip) => onChange({ ...value, clip })} />}
+      {value.clip && <ImportClipSelector key={`selector-${value.inspection.sourceId}`} inspection={value.inspection}
+        clip={value.clip} disabled={expired} markRevision={markRevision} onChange={(clip) => onChange({ ...value, clip })} />}
     </>}
   </div>;
 }

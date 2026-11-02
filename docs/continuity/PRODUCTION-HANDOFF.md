@@ -1,3 +1,25 @@
+# Estado vigente — preparação em desenvolvimento (02/11/2026)
+
+**Este bloco prevalece sobre o histórico abaixo.** A migration TikTok20261030124528 já foi aplicada em produção; TikTok teve teste privado real em produção documentado no checkpoint do orquestrador. Não reaplicar a migration nem assumir que as flags continuam desligadas. Produção não foi consultada ou alterada nesta retomada. Dev incorpora mainfcd360d e implementações locais Solo/Reels; prévia em conclusão nos chats frontend/backend. Não é autorização para publicar.
+
+## Sequência segura da próxima publicação
+1. Concluir prévia e contratos, testes combinados e evidências locais; revisar commits e arquivos privados, publicar somente dev. Migrations novas em ordem:20261101152756_solo_exec_destinations,20261101153422_instagram_import_sessions,20261102000337_import_source_previews. Última ainda parcial, revisar versão final do backend antes de usar.
+2. Após autorização específica, inspecionar estado remoto atual (SHAs, deploys, flags, limites, migrations, buckets). Confirmar previews desativados e branch de produção antes de qualquer push que possa publicar. Não presumir configuração remota pelo arquivo local.
+3. Antes de migrations: obter backup fresco autorizado em diretório privado fora do Git, conferir integridade e restaurar em banco local isolado compatível. Inventariar Auth, roles, histórico, metadados e bytes de Storage separadamente; dump SQL não salva os vídeos. Backup antigo verificado pelo usuário não prova recuperação do estado atual. Nunca copiar credenciais/dumps reais para relatórios.
+4. Solicitar aprovação das migrations exatas após revisar constraints, funções, RLS e grants contra estado existente. Aplicação no banco real ALTERA PRODUÇÃO; não executar nesta tarefa. Manter Reels/prévia desativados; TikTok existente deve conservar comportamento autorizado.
+5. Merge normal dev→main e push ALTERAM PRODUÇÃO via Vercel e exigem aprovação específica. Capturar deploys anteriores e validar builds/login/biblioteca/MP4/Solo/playback antes de novas flags.
+6. Flags de Reels/prévia e configuração de limpeza ALTERAM PRODUÇÃO e exigem aprovação separada. Prévia permanece fechada sem coletor monitorado confiável; heartbeat não substitui scheduler. Confirmar custo zero, orçamento de CPU/tmp/rede e bundle Linux antes de ativar. Não habilitar YouTube.
+7. Teste controlado por admin autorizado, vídeo autorizado, reprodução privada sem POST/PATCH de granada. Publicar smoke é ação distinta e explícita. Verificar fonte temporária removida após TTL/coleta e mídia final preservada. Interromper novas tentativas em falha crítica.
+
+## Rollback sem perda de dados
+- Código: preparar git revert do merge com parent correto, revisão e push normal somente com autorização; nunca reset/force. Conservar SHAs/deploys anteriores.
+- Vercel: rollback do deploy e restauração das configurações são operações distintas; variáveis de projeto podem continuar alteradas. Confirmar o comportamento atual na documentação antes de executar. Desativar só a funcionalidade nova problemática mediante autorização, preservando o TikTok já existente e upload.
+- Banco: rollback Git NÃO desfaz migration. Preferir manter schema aditivo e dados; não remover destinos/Solo ou objetos referenciados. Front antigo pode não representar Solo Exec recém-publicado: testar essa compatibilidade antes do corte. Reversão de schema exige inventário, backup, migration compensatória e autorização própria.
+- Storage: não restaurar/excluir em massa para corrigir código. Coletor deve tocar exclusivamente bucket de prévia e objetos comprovadamente expirados, sem objetos finais/publicados. Restore real por cima de produção é destrutivo e não está autorizado.
+
+As instruções históricas abaixo incluem situações já superadas (TikTok desligado/migration ausente). Ler os checkpoints atuais e relatórios Solo/Reels/prévia antes de executar qualquer comando.
+
+---
 # Continuidade: integração privada e backup — 31/10/2026
 
 ## Estado verificado
