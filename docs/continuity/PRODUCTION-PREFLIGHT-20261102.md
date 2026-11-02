@@ -1,6 +1,12 @@
 # Preparação de produção — 02/11/2026
 
-Estado: em execução. Nenhum deploy, migration remota, extração de backup ou alteração de configuração autorizado nesta etapa. Evidência local não substitui runtime cloud.
+## Atualização após autorizações separadas
+
+O usuário autorizou um único Preview sintético e, após receber seu resultado, backup fresco somente leitura e restore local isolado. O Preview passou: `dpl_AapyxdXEsXXJsBsaQHTjkPZhydAd`, target null/READY/aliases[], fonte `c8e1fca2849040ac2163ef40e70dd8bc77dd895f`. Node24.22.2, integridade e execução de FFmpeg/ffprobe/yt-dlp, /tmp e encode/decode0,2s passaram em4.101ms. Runtime upload/TikTok/Reels/prévia off e configured:false, nenhuma credencial Supabase. Somente configuração de build da exportação diferiu do SHA, com guarda Preview explícita; nenhum código Git alterado. Relatório: [Preview real](../../backend/PREVIEW-PREFLIGHT-20261102.md).
+
+Backup foi interrompido nos pré-requisitos: conexão PostgreSQL de produção não está configurada nos mecanismos conhecidos. Nenhum dump, cópia Storage ou restore iniciado. Novo diretório privado `C:/Users/felip/pcdnades-backups-privados/20261102-105919-fresh` contém apenas prechecks e marcador INCOMPLETE, não dados de produção; ACL restrita e espaço conferidos, backup antigo preservado. Relatório: [bloqueio do backup](../../backend/BACKUP-PREFLIGHT-20261102.md). Retomar quando o operador configurar libpq/PGPASSFILE privado e informar SOMENTE caminho, sem senha no chat; a autorização do mesmo escopo persiste.
+
+Nenhuma migration remota, main/Production, exclusão de dados ou serviço pago foi executado. Projetos reais continuam nos deployments anteriores. **NO-GO publicação:** backup fresco restaurável e coletor cloud supervisionado/monitorado permanecem pendentes; preflight sintético não comprova importação externa/Auth/Storage na nuvem. As seções abaixo registram o plano anterior e a sequência ainda necessária, sem ampliar autorizações.
 
 ## Estado remoto revalidado, somente leitura
 
