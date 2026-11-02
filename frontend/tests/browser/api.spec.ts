@@ -1451,3 +1451,25 @@ test("Prévia privada: expiração na renovação encerra player e conserva sele
   await expect(page.getByLabel("Início do trecho",{exact:true})).toBeDisabled();
   expect(methods).toEqual(["POST","GET"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(1);
 });
+
+test("Prévia privada: recarregar após erro sincroniza posição do novo vídeo", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true });
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => reply(route, {json:{data:{sourceId:state.inspection.sourceId,status:"ready",sourceExpiresAt:state.inspection.expiresAt,url:`${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`,expiresAt:new Date(Date.now()+60_000).toISOString(),mimeType:"video/mp4"}}}));
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, {status:206,body:bytes.subarray(start),contentType:"video/mp4",headers:{"accept-ranges":"bytes","content-range":`bytes ${start}-${bytes.length - 1}/${bytes.length}`}});
+  });
+  await openImportForm(page); await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem",{exact:true});
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 1.5; });
+  await expect(page.getByLabel("Posição atual do vídeo")).toHaveText("00:01.5");
+  await video.evaluate(v => v.dispatchEvent(new Event("error")));
+  await expect(video).toHaveCount(0);
+  await page.getByRole("button",{name:"Carregar prévia do vídeo",exact:true}).click();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await expect(page.getByLabel("Posição atual do vídeo")).toHaveText("00:00");
+  expect(await video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBe(0);
+  expect(state.importCreates).toBe(0);
+});

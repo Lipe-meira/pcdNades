@@ -21,6 +21,7 @@ export function ImportSourcePreview({ inspection, service, onMark, onExpired }: 
   async function load(prepare: boolean) {
     if (!service.sourcePreview) return;
     pending.current?.abort();
+    if (prepare) resume.current = null;
     const controller = new AbortController();
     pending.current = controller;
     setError(undefined);
@@ -65,10 +66,11 @@ export function ImportSourcePreview({ inspection, service, onMark, onExpired }: 
       <video ref={video} className="media-preview" src={preview.url} controls playsInline preload="metadata"
         aria-label="Prévia do vídeo de origem" onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onSeeked={(event) => setCurrentTime(event.currentTarget.currentTime)} onLoadedMetadata={(event) => {
           const state = resume.current;
-          if (!state) return;
-          resume.current = null;
           const player = event.currentTarget;
+          if (!state) { setCurrentTime(player.currentTime); return; }
+          resume.current = null;
           player.currentTime = Math.min(state.time, Number.isFinite(player.duration) ? player.duration : state.time);
+          setCurrentTime(player.currentTime);
           player.muted = state.muted; player.volume = state.volume;
           if (state.playing) void player.play().catch(() => {});
         }} onError={() => { setPreview(undefined); setError("A prévia não está disponível. Carregue novamente ou escolha pelos horários."); }} />

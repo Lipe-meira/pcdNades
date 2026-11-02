@@ -23,3 +23,7 @@ As respostas de API/Auth/Storage e o vídeo são fixtures controladas, não evid
 ## Dependências e pendências
 
 Produção permanece com prévia desabilitada; esta alteração não a ativa e mocks não provam disponibilidade externa. E2E real depende do backend e do orquestrador organizarem nova stack local isolada e coordenarem fonte e lease. O coletor monitorado e heartbeat válido continuam pré-requisitos de ativação. Não foram executados downloads externos, scripts de manutenção, migrations, mudanças remotas, deploy ou publicação.
+
+## Follow-up de sincronização após erro
+
+Um teste controlado reproduziu em desktop e celular o indicador parado em 00:01.5 após o player falhar e ser recarregado em 00:00. A leitura dos metadados agora sincroniza o indicador com o elemento real; uma nova preparação limpa a posição pendente de uma renovação anterior. Renovação bem-sucedida continua restaurando posição/estado. Resultado: 2 casos RED anteriores à correção; 6/6 casos direcionados PASS após correção (recarregamento, renovação e expiração, em PC/celular); build/typecheck e 58 unitários PASS. Sem E2E ou download externo nesta etapa.
