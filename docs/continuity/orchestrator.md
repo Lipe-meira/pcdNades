@@ -1,3 +1,31 @@
+# Preparação final entregue — 02/11/2026
+
+Estado: aguardando autorização específica para Preview e backup fresco; NO-GO ativar prévia cloud. Branchdev,worktree C:/Users/felip/.codex/worktrees/pcdnades-dev/nadesCs2. Basec0868de,frontend92b689c integrado2b561b2,backend5536764 integradoa11cf78; somente docs finais pendentes deste commit, pushnormaldev autorizado a seguir. Confirmar SHA final e remoto com gitlog/ls-remote; não escrever SHA circular no próprio commit.
+
+Leia PRIMEIRO docs/continuity/PRODUCTION-PREFLIGHT-20261102.md e backend/PRODUCTION-PREFLIGHT.md. Entrega: runner privado3min/deadline60s/healthfile+probeindependente, advisorysessionlockPG e bloqueio deheartbeat combacklogexpiradoleased. Não há destino/supervisor/alerta cloud configurado. Probes detectam saúde local; ausência do host exige observador independente. GateAPI8min preservado. Root não apagou préviasUI/volumes; backend fezensaios isolados sem chamarstackpreservada.
+
+Validaçãoafetada:14testesWindows/Linux/backend integradoPASS,typecheck/build/bootstrapLinuxPASS. Artifactreport conferido:Node24.22.2,653files,204244544B payload/101026900BZIP,max120,3bináriosX_OK/hashPASS,9warningsELF/Windowsrevisados. Fixture640x360 encode569ms/trim1s402ms,AbortController→trimVideo→FFmpeg79msPASS; nãocancelHTTP nem piorcaso50MB. TmpnoexecfalhouPyInstallerlibz,novo containerlocalexecPASS:gateVercelpendente. PGisolado2clientes lock/crash/reacquirePASS. PGlitelocal12checks3migrationsPASS; nãorestorebackupreal. Front revisãoestática sembug, testesanteriores58/78/E2Erealreusados,semrepetição. NenhumTikTok/Reels redownload nesta tarefa.
+
+Estado remoto SOMENTEleitura revalidado:prodfrontdpl_H53RgJ4Egb4ApoFhZMecrP5v7rLA/API dpl_BZpBeAFb4WR4e8VXP15sCyXPn2yo ambosREADYmainfcd360d;capabilitieshealthok/upload90TikTok30ativos/IGfalse. Supabase17.11,bucketvideos-stagingprivado50MB,migrationTikTokpresente3novasausentes; somenteVault entreextcron/net/http/vault. Previewexistenteprj_ubCQuSm6ubSL6OrYahHV2ZmwdYyHREADYtargetnullNode24; listagemenvnomessemdecrypt mostrou sóflagsTikTok/limites/preflight,semSupabasesecrets. DoisSupabaseativos impedem afirmarslotFreeextra. Nenhuma envprod/dado real foi exportado. Nenhum deploy/migrationremota/configremota alterado.
+
+Recursospreservados:stacksSupabaseanteriores ativas; containersnovospcdnades-final-linux-20261102(noexecExit1),pcdnades-final-linux-exec-20261102(Exit0),pcdnades-final-native-abort-20261102(Exit0),pcdnades-maint-lock-20261102(PGativo). Evidênciasraw ignoradas no worktreebackend/vendor/final-linux-b6faed096ad84ec5b50cc69cf9d7ec8f. SemlimpezaDocker. Código/checkpointsdos2chats entregues eworktreeslimpos.
+
+Primeiraaçãoao retomar: gitstatus/fetch/SHA e relatóriofinal; obter autorização de UM Previewisoladonoprojetoexistente,semSupabaseprod/novosserviços/pagamento, flagsruntimeoff/preflighttokenprivado; obter autorização separada de backupfresco DB/Auth/histórico/objetos para diretórioprivadonovo+restorelocalisolado. NÃO executar sem resposta. Runnercloud/canalalerta exigemdecisão; RenderCroncobrançavariávelcom pisoUS$1/mês(teto não fixo),não contratado; Hobbydiário/GHAbesteffortnão satisfazemcoletor5min garantido. SupabaseCroné candidato nãoimplementado/não autorizar superfíciepública porinferência.
+
+Publicação futura:backupverificado→migrationsSolo20261101152756→IG20261101153422→preview20261102000337→merge/deploy aprovados→smoketestlegado→coletorsupervisionado/monitor→flags aprovadas→testeprivadoadmin. NÃOreaplicarTikTok20261030124528. SoloSEMflag: apareceráapósdeploy, exigirflagseoperadorquiserocultar. RollbackGit/deploy/flags/DB/Storage separados, nãoapagarfinal/publicado. Plano detalhado/variáveis/testes/custos/aprovações no relatório. Semmain/force/rebase/produtivo nestaentrega.
+
+---
+# Preparação final de produção — em andamento (02/11/2026)
+
+Pedido: resolver coletor monitorado, validar bundle/runtime Linux atual, revisar migrations e preparar backup/publicação; não reimplementar funções ou repetir downloads. Base devc0868dec3c891b91c1c2f7d84a3958809a147e13, worktreeprincipal limpo ao iniciar. Fetch confirmado:dev/origin-dev0/0,dev/main29/0. Sem main/deploy remoto/migrationsremotas/envprodução/extração de backup/infra paga. Push normal dev permitido após validação.
+
+Delegação direta aos dois chats existentes enviada: backend faz backend/coletor/runtimeLinux/revisãomigrations no própriofeat/backend; frontend revisa indisponibilidade/configcompatibilidade no própriofeat/frontend. Sem novos agentes, sem implementação duplicada. Root pesquisa opções cloud/custos, inspeciona projetoPreview existente SOMENTEleitura e consolida plano backup/restore/publicação. Docker e evidências anteriores preservados; préviasUI anteriores não devem ser apagadas pelos ensaios. Coletor local não é scheduler cloud. API failclosed deve continuar8min.
+
+Marco: root inspecionou produção SOMENTEleitura. Front/API VercelREADYmainfcd360d, Preview antigoREADYtargetnullNode24. Supabase17.11, migrationTikTokpresente e3novasausentes,bucketvideos-stagingprivado50MB. Capabilitiesupload90/TikTok30ativos,IGfalse; nenhumenv lido. Plano docs/continuity/PRODUCTION-PREFLIGHT-20261102.md preparado comalternativascoleta,backup/restore/rollout/rollback e pedidoPreviewconcreto. Frontrevisãoestática92b689cintegrada2b561b2semnovoteste; backendrelatouLinuxbundle204,24MB/zip101,03MB/hashperms+native/lockPGisoladopass, aguardarcommitevidênciafinalantesintegrar. Backendimplementarunner3min/healthprobe/lock/backlog; schedulercloudnãoexiste. Nenhumbackup/deploy/migrationremotorealizado.
+
+Primeira ação ao retomar: acompanhar entregas dos dois chats, conferir relatório de alternativas e arquitetura antes de integrar. Fontes oficiais e versões atuais devem embasar decisões. Não pedir aprovação de deploy antes de produzir plano concreto de destino/envs/custo/testes/isolamento. Checkpoints e relatórios anteriores abaixo continuam histórico, não autorização.
+
+---
 # Integração local concluída — 02/11/2026
 
 ## Publicação confirmada
