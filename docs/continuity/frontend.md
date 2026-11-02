@@ -1,5 +1,7 @@
 # Em andamento — prévia privada de fontes (02/11/2026)
 
+Após entrega c0b46c7 integrada pelo orquestrador, preparado frontend/scripts/source-preview-local.mjs para futuro ensaio de navegador com API, Auth e Storage locais reais. O roteiro não inicia stack, exige variáveis privadas, limita origens ao localhost e Supabase 56421, bloqueia escrita de granadas e não registra URLs ou credenciais. Não executá-lo sem coordenação prévia de fonte e lease; ele inspeciona a fonte e pode iniciar obtenção. Backend e contrato seguem em integração; nenhum teste real pelo frontend foi executado nesta etapa.
+
 Worktree pcdnades-frontend, branch feat/frontend, base local integrada af069a6 (fast-forward). Trabalho parcial em pcdnades-preview é referência somente leitura; preservar Solo e Reels da base. Não alterar backend, outro worktree, produção ou main; sem push/deploy nesta etapa.
 
 Contrato em alinhamento: POST autenticado /api/v1/media/imports/:sourceId/preview aguarda preparo e retorna 200 ready; GET na mesma rota renova; admin e proprietário, fonte válida por até 15 minutos. Resposta pronta contém sourceId, status, url assinada, expiresAt, sourceExpiresAt e mimeType; assinatura até 60 segundos sem estender a fonte. 503 PREVIEW_UNAVAILABLE, 404 para ausente/outro proprietário, 410 SOURCE_EXPIRED e 503 PROCESSOR_BUSY. Backend confirmou que não haverá processamento 202; o documento no worktree backend ainda precisa refletir essa atualização.
