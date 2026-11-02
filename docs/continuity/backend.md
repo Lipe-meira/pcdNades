@@ -1,3 +1,13 @@
+# Solo Exec — integração local real concluída (01/11/2026)
+
+Branch codex/solo-e2e, base 6bb5f17, worktree C:\Users\felip\.codex\worktrees\pcdnades-solo-e2e\nadesCs2. Relatório: backend/SOLO-EXEC-E2E.md. Stack própria pcdnades-solo-e2e-20261101 ativa em 127.0.0.1:56421/56422, dados/containers preservados e comunicados aos agentes Reels e orquestrador. Migration Solo e históricas aplicadas SOMENTE localmente. Fastify inject + Supabase Auth/PostgREST/Storage reais: upload MP4, ready, create/read/filter/patch/convert/delete da própria fixture, 401/403, PATCH inválido 400, vídeo/registro tradicional preservados e hash de playback equivalente: PASS. Sem Vercel/produção; navegador não foi testado neste ensaio. Evidências/credenciais descartáveis ignoradas em backend/vendor/solo-e2e-20261101/. Próxima ação: integrar Reels/prévia e validar juntos na stack, sem imprimir tokens ou remover recursos. Commit de documentação próprio; verificar SHA por git log.
+
+---
+# Validação Solo Exec em andamento — 01/11/2026
+
+Objetivo: validar criação, edição, conversão, exclusão e permissões usando Supabase local isolado, sem alterar produção ou worktree dev. Branch codex/solo-e2e, worktree C:\Users\felip\.codex\worktrees\pcdnades-solo-e2e\nadesCs2, base 6bb5f17. Docker estava desligado, inicialização solicitada. Próximo: confirmar daemon, preparar stack de teste nova com recursos e portas próprios; aplicar migrations localmente, validar Auth/API/RLS/Storage preservando registros anteriores; informar endpoints ao agente Reels. Nenhuma alteração remota. Preservar containers/volumes/dados existentes e não fazer limpeza global.
+
+---
 # Auditoria pré-preview — 31/10/2026
 
 Estado vigente em backend/IMPORT-PREVIEW-AUDIT.md/JSON e checkpoint orquestrador. Base7b621a9; alterações locais de runtime24,duração120,build/sourceallowlist e ferramenta de auditoria, sem modificarpipeline. ZIP641arquivos/204126812B validado,AL2023nonroot passou comtmp exec;noexec bloqueia yt-dlp. NenhumVercel/Supabase remoto/push/deploy. Próximaação:conferirGit e aguardar autorização específica do plano gratuito de preview, preservandoevidências emvendor/audit-preview-20261031.
