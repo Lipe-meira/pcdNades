@@ -67,6 +67,10 @@ export async function runSourcePreviewMaintenance(db:SupabaseClient,origin:strin
   lookup:async id=>ports.lookup(id),remove:async key=>ports.remove(key),
  },now);
  if(!orphans.complete)throw fail();
+ // An unexpired cleanup lease may belong to a stalled peer. Skipping it is not
+ // evidence of a complete sweep; never refresh health while expired jobs remain.
+ const backlog=result(await db.from('import_preview_jobs').select('source_id').lte('expires_at',new Date(now-120000).toISOString()).limit(1).abortSignal(signal));
+ if(backlog?.length)throw fail();
  result(await db.rpc('mark_source_preview_sweep').abortSignal(signal));
  return {removed,orphansRemoved:orphans.removed};
 }
