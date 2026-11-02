@@ -1,3 +1,32 @@
+# Preview real PASS — 02/11/2026 entrega
+
+ÚNICOdeployment dpl_AapyxdXEsXXJsBsaQHTjkPZhydAd /https://pcdnades-preview-a6quelpvg-lipe-s-projects1.vercel.app/READY/targetnullPreview/aliases[]/sourceSHAc8e1fca2849040ac2163ef40e70dd8bc77dd895f. Projeto/timeHobbyUIrootconfirmados. 35files195320Bbackendgitshow+SOMENTEvercel.jsonEXPORTconfigoverrideguard/buildflags; dirtyconfigtrue informado,worktreecódigointacto. Guardlocalexit42 eguardlogremotoPreviewconfirmedPASS. Conectorpreferido usado, authCLIread403 substituídaUIrootsemnovastentativas.
+
+RuntimeenvsexclusivamentePreviewTikTok/IG/sourcepreview/uploadfalse,preflighttrue/token64novosensitiveprivado; nenhumSupabase/DB/Production. Health200configuredfalse/capsalloff/semTOKEN401/UMPOSTsintético200PASS:Node24.22.2Linuxx64uid993/tmpavailable538329088B/mountrw/yt2026.08.19+FFmpeg7.0.2+ffprobeN66595todoshashPASS/encodeDecodePASS4101ms/NodeCPU1861949us/RSS179859456B;tmp/libraryexecVercelPASSsemremount/cleanupfinallyawaitsemerro. Build14s/npmci103/0vulns/cache74.46MB, nenhumupgrade/pagamento solicitado; consumoquotaHobbynãosaldo/faturamentofinal. Bundlecloudexatotamanho nãoexposto, incluídoconfirmado porhash+exec, nãofingirlocalbytescomoCloud.
+
+Relatório backend/PREVIEW-PREFLIGHT-20261102.md; artefatosignoradosvendor/preview-preflight-931f498e209e45a89cce2377b5c4308b/source-manifest.json e remote-result.json. NÃOcopiardiretórioprivadointeiro(token/payload); nenhumsegredoemGit/log. TokenpermaneceguardadoPrevieweprivado, rotafixadiagnóstica protegida, semmanutençãopública. StatusreportadoaoROOTANTESbackup, nenhumaoperação2iniciada.
+
+Próximaação: docs/diff/commitLOCALsemPUSH/reportarSHA ao root. Semredeploy/testeexterno/mídia/Supabase/main/produção/cleanup/backup. Preservarworktree/evidências. Se usuárioautorizaroutroescopo, rootcoordena; estaetapaPreviewconcluída, nãoautorizaativarflags/migrations ouloopdeensaios.
+
+---
+# Único Preview criado — 02/11/2026 aguardando build
+
+DeployÚNICOenviado viaVercelconector: dpl_AapyxdXEsXXJsBsaQHTjkPZhydAd, URLpcdnades-preview-a6quelpvg-lipe-s-projects1.vercel.app,targetnullPreview,INITIALIZING. Atorbackendexclusivo/rootinformado. Projeto prj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH/timecorreto/HobbyconfirmadoUIroot/Node24/Fastify/MaxDuration120/rootvazio/semGitconectado. Código35arquivos195320B exportadogitshowc8e1fca2849040ac2163ef40e70dd8bc77dd895f,apenasvercel.jsonCONFIGoverrideguard+buildflags, gitMetadata.dirtytrueexplicit/configOnlyOverridetrue. Guardlocalexit42nonpreviewPASS, semforjarVERCEL_ENV. TARGETOMITIDOconformeDOCoficial, retornonullPreview.
+
+Previewenvsomenteverificado:runtimeTikTok/IG/sourcepreview/uploadfalse; preflighttrue/token64novo sensitive privado NÃOversionado/logado; limits90s50MB; nenhumSupabase/DB/envProductionhidden0. Semmutaçãoprojetosreais/produção/backup. CLIauth403préchecknãofoiretentadoapósrootorientar; rootUIread-onlyatestouconfigfaltante. Nenhuma cobrança/paidfeature solicitado; usoHobbydentroquota não é relatório de faturamento final.
+
+Próximaaçãoexecutável: GETdeployment porID/pollbuildlogs (semsegredos); seERROR/limitebloqueioPARARSEMREDEPLOY. SeREADY, healthconfiguredfalse/capsoff e UM POSTdiagnósticosintéticotokenheaderprivado, conferirNode/binaries/tmp/hashencodeDecode ecleanup. SeexecbloqueadaPARAR. Evidências/manifestsprivadosignorados backend/vendor/preview-preflight-931f498e209e45a89cce2377b5c4308b; tokenprivadosomentelá/emmemória/Previewenv, nuncaexpornachat/Git. CommitdocscheckpointsemPUSHapósresultado,reportarrootANTESbackup.
+
+---
+# Preview único autorizado — 02/11/2026 em pré-check
+
+Usuário autorizou UM deploy SOMENTE projetoexistente pcdnades-preview-api/prj_ubCQuSm6ubSL6OrYahHV2ZmwdYyH/team_IdIH9Z57lKO3PxfIz8sDJFqN, SHAorigin/devc8e1fca2849040ac2163ef40e70dd8bc77dd895f; semSupabase/somenteharnesssintético, runtimeflagsfalse/buildtemporariamenteempacotaytdlp/guardVERCEL_ENVpreview/token64novo privado. AtorbackendEXCLUSIVO; rootnãoexecutadeployparalelo. Mergeorigin/devnormal fezFFc8e1fca, branchfeat/backend limpaprécheckpoint. Skilldeployments-cicd/env-varsVercellidas, conferirprechecksantesmutação.
+
+ConectorconfirmouID/nome/teamNode24Fastify/livefalse/latestdpl_8FFKSRKDmPJWVQs3qYYQRr8PTmrrREADYtargetnull/domíniosópreview. Listenvs6todosPreviewnenhumSupabasehiddenProductionEnvCount0. Conectorgetteam/projetoSANITIZAplan/root/link/config; CLIauthexistenteREST403projeto/env,nenhuma credencial impressa. Rootconsultadosomenteporcamposnão sensíveis oumecanismoauthválido. AINDAZEROenvmudança/deploy/tokencriado. Próximaação: fecharHobby/rootbackend/gitlink/config comroot/conector,entãosalvarPreviewenvsomenteefazerÚNICOcreatedeploymenttargetomitidosegundosemânticaoficial/guard. Seerro/cobrança/execbloqueada,pararsemredeploy. NÃOiniciarbackup,nãomain/push/envprod/remotoSupabase.
+
+Dadosprivadoslocais ignorados em backend/vendor/preview-preflight-931f498e209e45a89cce2377b5c4308b (scriptprechecksemsegredos embutidos). Toolstatesememória guardouenv/projectresponse,semvalores sensíveisnoslogs. Evidência pública registrar depois. Atual checkpointaindasemcommit aguardandoresultado.
+
+---
 # Entrega preparação backend — 02/11/2026
 
 Base devc0868de merge normal emfeat/backend, sempush. Runner privado3min/60s/healthfileatômico0600/SIGTERM+sessionadvisoryPGlock/monitorCLIindependenteidade4min/sucesso8min; querylossaborta. SDK/coreantesheartbeatnega backlogexpiradoinclusiveleased. Semschedulercloudprovisionado, semgatewayHTTPoucredenciaisnovas, flagsdefaultoff. DATABASE_URLdireto/sessionpooler (nãotransactionpooler), supervisor+alertaexternosgates. Relatório completo backend/PRODUCTION-PREFLIGHT.md.
