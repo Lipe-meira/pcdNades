@@ -111,3 +111,26 @@ describe("TikTok: consulta vinculada e importação somente do trecho", () => {
     } finally { timer.mockRestore(); }
   });
 });
+
+it("aceita inspeção Reels somente quando origem e plataforma correspondem", () => {
+ const value = {...inspected(), provider:"instagram" as const, sourceUrl:"https://www.instagram.com/reel/DeILaFXzNvu/", videoId:"DeILaFXzNvu", durationSeconds:64.664717};
+ expect(checkImportInspection(value).provider).toBe("instagram");
+ expect(() => checkImportInspection({...value,sourceUrl:inspected().sourceUrl})).toThrow();
+});
+
+it("não aceita flag de prévia inválida nem inspeção Reels sem limites", () => {
+ expect(() => checkCapabilities({...caps,importers:{...caps.importers,tiktok:{...caps.importers.tiktok,sourcePreview:'sim'}}} as any)).toThrow();
+ expect(() => checkCapabilities({...caps,importers:{...caps.importers,instagram:{enabled:true,inspection:true}}} as any)).toThrow();
+});
+it("prévia exige fonte, armazenamento e validade próprios, com POST e GET autenticados", async () => {
+ const sourceId=inspected().sourceId,origin='https://example.supabase.co',sourceExpiresAt=new Date(Date.now()+900_000).toISOString(),expires=new Date(Date.now()+60_000).toISOString();
+ let returnedUrl=`${origin}/storage/v1/object/sign/import-previews/${sourceId}.mp4?token=fixture`,returnedExpiry=expires, returnedId=sourceId;
+ const methods:string[]=[];
+ const client=new ApiClient('/api/v1',async()=> 'fixture',async(_url,options)=>{ methods.push(options?.method ?? 'GET'); expect(new Headers(options?.headers).get('Authorization')).toBe('Bearer fixture'); return Response.json({data:{sourceId:returnedId,status:'ready',sourceExpiresAt,url:returnedUrl,expiresAt:returnedExpiry,mimeType:'video/mp4'}}); });
+ const service=createApiService(client,async()=>{},{previewOrigin:origin});
+ const result=await service.sourcePreview!(sourceId,sourceExpiresAt,true); expect(result.status).toBe('ready'); if(result.status==='ready') expect(result.url).toBe(returnedUrl);
+ await service.sourcePreview!(sourceId,sourceExpiresAt,false); expect(methods).toEqual(['POST','GET']);
+ for(const value of [`https://evil.test/storage/v1/object/sign/import-previews/${sourceId}.mp4?token=x`,`${origin}/storage/v1/object/sign/import-previews/another.mp4?token=x`,`${origin}/storage/v1/object/sign/videos-staging/${sourceId}.mp4?token=x`]){returnedUrl=value;await expect(service.sourcePreview!(sourceId,sourceExpiresAt,true)).rejects.toThrow()}
+ returnedUrl=`${origin}/storage/v1/object/sign/import-previews/${sourceId}.mp4?token=fixture`;returnedExpiry=new Date(Date.now()+600_000).toISOString();await expect(service.sourcePreview!(sourceId,sourceExpiresAt,true)).rejects.toThrow();
+ returnedExpiry=expires; returnedId='00000000-0000-4000-8000-000000000000'; await expect(service.sourcePreview!(sourceId,sourceExpiresAt,true)).rejects.toThrow();
+});

@@ -129,8 +129,9 @@ export function LineupForm({
           if (draft.media.kind === "file" && draft.media.file && !fileReady)
             nextErrors.media =
               "Aguarde a prévia carregar e escolha um MP4 reproduzível.";
-          if (draft.media.kind === "link" && recognizeVideoSource(draft.media.sourceUrl)?.platform === "tiktok" &&
-            capabilities.importers.tiktok.enabled && capabilities.importers.tiktok.inspection) {
+          const sourcePlatform = draft.media.kind === "link" ? recognizeVideoSource(draft.media.sourceUrl)?.platform : undefined;
+          const sourceCapability = sourcePlatform && sourcePlatform !== "youtube" ? capabilities.importers[sourcePlatform] : undefined;
+          if (draft.media.kind === "link" && sourceCapability?.enabled && sourceCapability.inspection) {
             const issue = importSelectionError(draft.media.inspection, draft.media.clip);
             if (issue) nextErrors.media = issue;
             else if (draft.media.inspectedUrl !== draft.media.sourceUrl.trim()) nextErrors.media = "O link mudou. Consulte o vídeo novamente.";

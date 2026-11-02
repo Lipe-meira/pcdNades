@@ -10,6 +10,7 @@ export interface LineupService {
   capabilities(signal?: AbortSignal): Promise<MediaCapabilities>;
   inspectImport?(sourceUrl: string, signal?: AbortSignal): Promise<ImportInspection>;
   playback(video: Video, signal?: AbortSignal): Promise<Playback>;
+  sourcePreview?(sourceId: string, expiresAt: string, prepare: boolean, signal?: AbortSignal): Promise<Playback & { status: "ready"; expiresAt: string }>;
   testImport?(draft: LineupDraft, options?: SaveOptions): Promise<{ mediaId: string; playback: Playback }>;
   listMaps(signal?: AbortSignal): Promise<GameMap[]>;
   listLineups(signal?: AbortSignal): Promise<Lineup[]>;

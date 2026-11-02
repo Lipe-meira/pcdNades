@@ -1,3 +1,12 @@
+# Em andamento — prévia privada de fontes (02/11/2026)
+
+Worktree pcdnades-frontend, branch feat/frontend, base local integrada af069a6 (fast-forward). Trabalho parcial em pcdnades-preview é referência somente leitura; preservar Solo e Reels da base. Não alterar backend, outro worktree, produção ou main; sem push/deploy nesta etapa.
+
+Contrato em alinhamento: POST autenticado /api/v1/media/imports/:sourceId/preview aguarda preparo e retorna 200 ready; GET na mesma rota renova; admin e proprietário, fonte válida por até 15 minutos. Resposta pronta contém sourceId, status, url assinada, expiresAt, sourceExpiresAt e mimeType; assinatura até 60 segundos sem estender a fonte. 503 PREVIEW_UNAVAILABLE, 404 para ausente/outro proprietário, 410 SOURCE_EXPIRED e 503 PROCESSOR_BUSY. Backend confirmou que não haverá processamento 202; o documento no worktree backend ainda precisa refletir essa atualização.
+
+Implementado localmente: player privado com marcação pelo tempo atual, renovação e retomada, validação da origem/bucket/objeto/prazo, cancelamento na troca de fonte e fallback manual/MP4. TikTok e Reels usam capability sourcePreview por plataforma, já presente no backend em andamento. Build e 58 testes unitários passaram; regressão completa isolada 78/78 Playwright, incluindo Solo, MP4, TikTok, Reels, renovação e falha em PC/celular. Uma execução anterior teve falha de trace por duas execuções simultâneas e foi substituída pela execução isolada. Nunca registrar URLs assinadas nem credenciais neste arquivo. Nenhuma operação real externa é evidência de funcionamento de TikTok ou Reels.
+
+---
 # Atualização do piloto — 31/10/2026
 
 A situação vigente desta área está em backend/IMPORT-PILOT-30.md e docs/continuity/orchestrator.md. PilotoTikTok30s/50MB implementado/testado localmente na dev,base87814b3;sem push/deploy/remoto. Backend102Windows/Linux,front55unit+build,64Playwright+12TikTokfinal. E2EStorage/Reactplayer local real com fixtureoffline,sem novo downloadTikTok. Upload/histórico90 e flagsdefaultoff preservados;temporary opt-in. Próximaação:conferirGit e ler relatório antes de auditar bundle/preparar preview que exige autorização específica. Preservar Docker/volumes/vendorprivado. Histórico abaixo é anterior a esta entrega.
