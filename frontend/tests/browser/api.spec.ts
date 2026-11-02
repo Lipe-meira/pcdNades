@@ -1287,6 +1287,10 @@ test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) 
   await page.getByLabel("Tipo do destino 2").selectOption("molotov");
   await page.getByLabel("Coordenada X (%)").fill("65");
   await page.getByLabel("Coordenada Y (%)").fill("75");
+  await page.getByRole("button", { name: "Selecionar destino 1 para reposicionar" }).click();
+  await expect(page.getByRole("button", { name: "Destino 1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Selecionar destino 2 para reposicionar" }).click();
+  await expect(page.getByRole("button", { name: "Destino 2", exact: true })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 15000 });
   expect(state.published).toHaveLength(1);

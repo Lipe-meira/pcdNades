@@ -123,7 +123,7 @@ export function Library({
             <span className="legend-hint">
               Selecione um ponto ou use a lista ao lado.
             </span>
-            <span><i className="origin-legend" />Origem (quadrado)</span>
+            <span><i className="origin-legend" />Origem (+)</span>
             <span>Destino (círculo)</span>
           </div>
         </section>

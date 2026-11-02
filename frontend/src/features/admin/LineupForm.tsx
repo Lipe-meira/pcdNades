@@ -67,7 +67,7 @@ export function LineupForm({
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [destinationIndex, setDestinationIndex] = useState(0);
-  const [marking, setMarking] = useState<"origin" | "target">("origin");
+  const [marking, setMarking] = useState<"origin" | "target" | "idle">("origin");
   const [originTouched, setOriginTouched] = useState(false);
   const [mapChanged, setMapChanged] = useState(false);
   const [failure, setFailure] = useState<string>();
@@ -344,7 +344,7 @@ export function LineupForm({
                 onClick={() => setMarking("target")}>Marcar destino</button>
             </div>
             <p className="field-hint" role="status">
-              {marking === "origin" ? "Marcando origem: posição do jogador." : "Marcando destino: onde a granada cai."}
+              {marking === "origin" ? "Clique no radar para marcar a posição de lançamento." : marking === "target" ? "Clique no radar para marcar onde a granada cai." : "Pontos marcados. Selecione um ponto para reposicioná-lo."}
             </p>
             <Radar
               demo={demo}
@@ -353,15 +353,19 @@ export function LineupForm({
               extraTargets={draft.type === "solo_exec" ? draft.destinations : undefined}
               origin={draft.origin}
               marking={marking}
-              onOriginChange={(origin) => update("origin", origin)}
+              selectedTargetIndex={destinationIndex}
+              onEditOrigin={() => setMarking("origin")}
+              onEditTarget={(index) => { setDestinationIndex(index); setMarking("target"); }}
+              onOriginChange={(origin) => { update("origin", origin); setMarking("target"); }}
               onTargetChange={(target) => {
+                setMarking("idle");
                 if (draft.type !== "solo_exec") { update("target", target); return; }
                 const destinations = [...(draft.destinations ?? [])];
                 destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" };
                 setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations }));
               }}
             />
-            <p className="field-hint">Quadrado azul: origem. Mira em areia: destino.</p>
+            <p className="field-hint">Círculo com +: origem. Círculo com mira: destino. Selecione um ponto para ajustar.</p>
             {existing && !draft.origin && <p className="legacy-origin">
               {existing.origin == null
                 ? "Origem não cadastrada. Este cadastro antigo pode continuar sem origem; você também pode marcar a posição do jogador."
