@@ -6,7 +6,7 @@ Branch codex/tiktok-preview-backend-20261102; worktree C:/Users/felip/.codex/wor
 
 Verificação final: 39/39 testes direcionados PASS, npm run typecheck PASS. Systemd somente revisado, não instalado nem validado por parser. E2E Auth/Storage NÃO executado: CLI local bloqueada pelo acesso Windows→rede Docker internal; cliente interno HTTP200 comprova caminho Linux possível, descrito no relatório. Laboratório novo parado/preservado, antigos intocados. Sem vídeo externo, migration remota, flag ou deploy.
 
-Pendências: bootstrap Linux pequeno com IDs novos, E2E real Auth/Storage, host aprovado, observador externo/destinatário de alerta. NO-GO ativação; sourcePreview permanece desligado. Primeira ação ao retomar: conferir git status/log e revisar bootstrap histórico sem executar; coordenar plano limitado com orquestrador. Push deve ser feito só na branch própria, sem force; integração/produção são do orquestrador. Relatório lista inventário exato e fontes de agendamento/custos.
+Pendências: bootstrap Linux pequeno com IDs novos, E2E real Auth/Storage, host aprovado, observador externo/destinatário de alerta. NO-GO ativação; sourcePreview permanece desligado. Primeira ação ao retomar: conferir git status/log e revisar bootstrap histórico sem executar; coordenar plano limitado com orquestrador. Push dos commits 472f3c3 e 5adb870 concluído na branch própria; atualização final do checkpoint acompanha esta entrega, sem force; integração/produção são do orquestrador. Relatório lista inventário exato e fontes de agendamento/custos.
 
 ---
 ## Marco fix validado — 02/11
@@ -567,4 +567,3 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Usuário autorizou testar yt-dlp no exemplo corrigido vt/ZSgqvRtpM; teste real de rede/download é EXCLUSIVO do orquestrador, não duplicar.
 - Tarefa independente backend: avaliar metadata/preview, intervalo<=90s antes de baixar, fonte longa sem teto180 antigo, transferência/CPU/retries/deadline/SSRF CDNs.50MBFINALpermanece, limites fonte/rede separados precisam proposta explícita.
 - Próxima ação consultar docs yt-dlp/FFmpeg, preparar plano/PoCoffline sem execução de extrator contraURL. Sem cookies/login/DRMbypass/serviçoterceiro/pacotepago/deploy/SQL/env. Bloqueio de download real =>registrar/parar, não contornar.
-
