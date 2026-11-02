@@ -1,3 +1,14 @@
+# Estado atual — entrega operacional de prévia, 02/11/2026
+
+Objetivo: concluir pendências e encaminhar commits/push ao orquestrador. Usuário autorizou agora commit e push; nenhuma autorização implícita para infraestrutura/produção.
+
+Branch codex/tiktok-preview-backend-20261102; worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2; base 7443dc8; fix commit 472f3c3. Entrega seguinte contém templates inativos, cinco testes simulados e backend/PREVIEW-OPERATIONS-20261102.md. Sem frontend/raiz/contrato alterados.
+
+Verificação final: 39/39 testes direcionados PASS, npm run typecheck PASS. Systemd somente revisado, não instalado nem validado por parser. E2E Auth/Storage NÃO executado: CLI local bloqueada pelo acesso Windows→rede Docker internal; cliente interno HTTP200 comprova caminho Linux possível, descrito no relatório. Laboratório novo parado/preservado, antigos intocados. Sem vídeo externo, migration remota, flag ou deploy.
+
+Pendências: bootstrap Linux pequeno com IDs novos, E2E real Auth/Storage, host aprovado, observador externo/destinatário de alerta. NO-GO ativação; sourcePreview permanece desligado. Primeira ação ao retomar: conferir git status/log e revisar bootstrap histórico sem executar; coordenar plano limitado com orquestrador. Push deve ser feito só na branch própria, sem force; integração/produção são do orquestrador. Relatório lista inventário exato e fontes de agendamento/custos.
+
+---
 ## Marco fix validado — 02/11
 
 GapCOMPROVADO runner: SIGTERM duranteespera mantinhaúltimohealthhealthy atéprobe4min. Novo testeREDhealthyvsstopped; fixescrevestoppedaoencerramento semalterarAPI/8min/cadência.6runner+typecheckPASS;34testesafetados(incluiimport-api/MP4inline/previewauth/cancel)PASS antes5novostestessweep;11runner+sweepnovosPASS. Novo tests/preview-sweep-failures.test.ts comprovaStoragefailure/CASfailure/cap50/abortorphanlisting semheartbeat, bucketfinalnuncatocado (MOCKS).
@@ -556,3 +567,4 @@ Manter backend pcdNades em TypeScript/Fastify/PostgreSQL/Supabase. Pedido atual:
 - Usuário autorizou testar yt-dlp no exemplo corrigido vt/ZSgqvRtpM; teste real de rede/download é EXCLUSIVO do orquestrador, não duplicar.
 - Tarefa independente backend: avaliar metadata/preview, intervalo<=90s antes de baixar, fonte longa sem teto180 antigo, transferência/CPU/retries/deadline/SSRF CDNs.50MBFINALpermanece, limites fonte/rede separados precisam proposta explícita.
 - Próxima ação consultar docs yt-dlp/FFmpeg, preparar plano/PoCoffline sem execução de extrator contraURL. Sem cookies/login/DRMbypass/serviçoterceiro/pacotepago/deploy/SQL/env. Bloqueio de download real =>registrar/parar, não contornar.
+
