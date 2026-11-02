@@ -1,4 +1,11 @@
-# Em andamento — prévia privada de fontes (02/11/2026)
+# Entrega local — redesign do radar (02/11/2026)
+
+Objetivo: ampliar e reorganizar radares da biblioteca e do formulário, padronizar marcadores circulares e orientar origem → destino, mantendo Solo Exec, legado e contratos. Worktree C:/Users/felip/.codex/worktrees/pcdnades-frontend/nadesCs2, branch feat/frontend, base 92b689c; sem push, merge, deploy ou produção por pedido explícito. Nenhuma outra worktree alterada.
+
+Concluído: coordenadas relativas à imagem preservadas; filtros em faixa superior, radar maior e resultados laterais; formulário mais largo. O Radar compartilhado expande sem remontar, com Escape e foco; origem/destinos circulares selecionáveis, Solo numerado e sequência origem→destino com pausa após marcar. Arquivos: Radar.tsx, Library.tsx, LineupForm.tsx, styles.css, tests/browser/flows.spec.ts, tests/browser/api.spec.ts e este checkpoint. Build/typecheck PASS; 58 unitários PASS; suíte browser 82/82 PASS e mais 6 testes direcionados após últimos ajustes PASS, desktop/celular e toque. Um teste antigo foi ajustado porque o ponto passou a ser selecionável. Nenhum lint configurado no package.json. Capturas antes/depois no modo demo em C:/Users/felip/.codex/visualizations/2026/10/29/01a1853b-6e1e-79b3-8505-70e2d76056fe/radar-redesign. Commit local a seguir; sem push, merge ou deploy. Próximo: orquestrador revisar e integrar quando houver autorização.
+
+---
+# Histórico — prévia privada de fontes (02/11/2026)
 
 Revisão de preparação para produção: branch feat/frontend avançada por fast-forward até dev c0868de; nenhuma alteração de comportamento necessária identificada. Vercel usa raiz frontend, `npm ci`, `npm run build`, saída dist e rewrite SPA. Antes da publicação confirmar no ambiente correto `VITE_DATA_MODE=api` (ausente implica demo), `VITE_API_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`; somente chave publicável no bundle. Backend requer origens compatíveis em `FRONTEND_URL` e `CORS_ORIGINS`. Flags `MEDIA_TIKTOK_IMPORT_ENABLED`, `MEDIA_INSTAGRAM_IMPORT_ENABLED` e `MEDIA_SOURCE_PREVIEW_ENABLED` pertencem ao backend; prévia requer coleta e heartbeat confiáveis antes de habilitar. Não validar nem alterar valores ou ambientes remotos nesta etapa.
 
