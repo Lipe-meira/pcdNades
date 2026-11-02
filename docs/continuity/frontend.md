@@ -4,6 +4,8 @@ Worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-frontend-202611
 
 Follow-up sobre ad9cf6e: reprodução controlada confirmou que, após seek/erro/reload, output permanecia em 1,5s embora o novo vídeo estivesse em 0 (RED desktop/mobile). Corrigida sincronização em loadedmetadata e limpeza da retomada ao preparar nova prévia; renovação preserva posição. Teste direcionado `npm --prefix frontend run test:browser -- --grep 'recarregar após erro sincroniza|renovação preserva posição|expiração na renovação' --project=api-desktop --project=api-mobile --workers=1`: 6/6 PASS; build/typecheck e 58 unitários PASS. E2E real permanece aguardando stack isolada e coordenação de lease; sem push/deploy/produção.
 
+Bloqueio E2E local informado pelo orquestrador em 02/11: laboratório novo isolado responde HTTP 200 de cliente Docker dentro da própria rede, mas conexão do host Windows ao bind 127.0.0.1 na rede interna expira. Sem API/lease disponível para o ensaio do frontend; isolamento preservado. Não usar labs antigos nem substituir integração real por mock. Os commits ad9cf6e e aa27824 foram integrados localmente pelo orquestrador, que executa regressão própria; resultado dessa execução ainda não confirmado neste registro. Nenhum teste repetido ou código alterado nesta etapa. Próximo: aguardar solução isolada e autorização/lease antes de E2E Auth/Storage.
+
 ---
 
 # Entrega local — redesign do radar (02/11/2026)
