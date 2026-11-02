@@ -1,3 +1,12 @@
+# Revisão de cancelamento — 02/11/2026
+
+Pedido root: revisão offline somente, sem interferir no E2Efrontend ativo. Base7b41fd5 limpa. Dois bugs comprovados por testes RED->GREEN: serviceFetch ignorava sinal do Request(input); signStorage devolvia URL mesmo após abort durante operação. Corrigidos composição Request.signal/init.signal/deadline10s e beforeDeadline+checkpósoperação para Storagepreview sign/uploadURL/remove/list. Sem alteração de contrato/flags/schema/runtimedownload.
+
+131testesPASS,11direcionadosPASS,typecheck/build/diffcheckPASS. Nenhumdownload/E2E/maintenance/startAPI/novaautenticação/alteraçãooutroworktree. Revisão não encontrou outrobugcomprovado de concorrência/reservaambígua/expiry: global slot+recheck/reservaantesupload/retémreservaemfalha/TTLgrace+lease permanecem. Não afirmar testes de concorrência/cancelamento de rede real: novos testes são simulados dirigidos.
+
+Gatesprodução: schedulerexternomonitorado<=5min/heartbeat8min; semscheduler negarflag; migrationremotaaindanãoautorizada, Linux/Vercelmemóriatempo e browserE2Ecombinado sob responsabilidadeorquestrador. Requestcancelado fecha a espera; SDKtransport continua tendo teto10s atéabort próprio se não receber sinalglobal, sem retorno tardio deURL/heartbeat. Próximaação: commitlocalfixvalidado/reportarSHA, sempush; aguardarrootapósE2Efrontend. Branchfeat/backend,worktreepróprio. Não reiniciar servidores de outros.
+
+---
 # Entrega backend prévia privada — 02/11/2026
 
 Implementados POST/GET imports/:sourceId/preview, POSTaguardado200sembackground/202, owner/UUID/expiryfinita/providerflag/heartbeat, slotglobal/reconsultaapósclaim, cache-no-store/assinatura60scom margem11s/TTL15min. Bucketdedicado/reservaantesupload/cleanup lease2min graça2min/órfãos30min/heartbeat8minfailclosed; CLIexterna one-shotsemfalsoscheduler. Capabilitiesprovider.sourcePreview booleanflag+provider+heartbeat, fonteH264AAC; incompatível<=90s transcode40s/50MB/deadline110; maiorincompatível422. ServiçoSDKStoragefetchabort10s, scriptsbootstraplocalrestritos56421/56422, API127.0.0.1:3002. Contratofinaldocs/preview-contract.md.

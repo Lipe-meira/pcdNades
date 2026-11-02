@@ -2,9 +2,14 @@ import type {SupabaseClient} from '@supabase/supabase-js';
 import {readFile,lstat} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {importFailure} from './import-network.js';
+import {beforeDeadline} from './import-deadline.js';
 import {previewKey,stageSourcePreview,readSourcePreview,cleanupSourcePreviews,reconcilePreviewOrphans,type PreviewPorts,type PreviewRow} from './source-preview.js';
 const bucket='import-previews';
 const fail=()=>importFailure('PREVIEW_UNAVAILABLE',503);
+async function storageOperation<T>(operation:()=>PromiseLike<T>,signal:AbortSignal):Promise<T>{
+ if(signal.aborted)throw fail();
+ const value=await beforeDeadline(operation(),signal);if(signal.aborted)throw fail();return value;
+}
 function result<T>(r:{data:T;error:unknown}):T{if(r.error)throw fail();return r.data;}
 function row(v:any):PreviewRow|null{if(!v||!v.source_id)return null;return {sourceId:v.source_id,ownerId:v.owner_id,key:v.object_key,expiresAt:v.expires_at,state:v.state,holder:v.holder,lockedUntil:v.locked_until};}
 export function safePreviewSignedUrl(raw:string,origin:string,prefix:string,key:string){
@@ -20,7 +25,7 @@ export function supabasePreviewPorts(db:SupabaseClient,origin:string,signal:Abor
   upload:async(key,path)=>{
    const id=key.endsWith('.mp4')?key.slice(0,-4):'';if(previewKey(id)!==key)throw fail();
    const file=await lstat(path);if(!file.isFile()||file.size<1||file.size>50000000)throw fail();
-   const s=result(await storage.createSignedUploadUrl(key,{upsert:false}));
+   const s=result(await storageOperation(()=>storage.createSignedUploadUrl(key,{upsert:false}),signal));
    if(!s)throw fail();const url=safePreviewSignedUrl(s.signedUrl,origin,'/storage/v1/object/upload/sign/import-previews/',key);
    const bytes=await readFile(path,{signal});if(bytes.length!==file.size||signal.aborted)throw fail();
    const response=await fetch(url,{method:'PUT',headers:{'content-type':'video/mp4','x-upsert':'false','cache-control':'no-store'},body:new Uint8Array(bytes),signal,redirect:'error'});
@@ -28,9 +33,9 @@ export function supabasePreviewPorts(db:SupabaseClient,origin:string,signal:Abor
   },
   ready:async(sourceId,ownerId)=>result(await db.rpc('finish_source_preview',{p_source:sourceId,p_owner:ownerId}).abortSignal(signal))===true,
   lookup:async(sourceId)=>row(result(await db.from('import_preview_jobs').select('*').eq('source_id',sourceId).abortSignal(signal).maybeSingle())),
-  sign:async(key,seconds)=>{const s=result(await storage.createSignedUrl(key,seconds));if(!s)throw fail();return safePreviewSignedUrl(s.signedUrl,origin,'/storage/v1/object/sign/import-previews/',key)},
+  sign:async(key,seconds)=>{const s=result(await storageOperation(()=>storage.createSignedUrl(key,seconds),signal));if(!s)throw fail();return safePreviewSignedUrl(s.signedUrl,origin,'/storage/v1/object/sign/import-previews/',key)},
   claimExpired:async()=>{const holder=randomUUID();return row(result(await db.rpc('claim_source_preview_cleanup',{p_holder:holder}).abortSignal(signal)))},
-  remove:async key=>{if(previewKey(key.slice(0,-4))!==key)throw fail();result(await storage.remove([key]))},
+  remove:async key=>{if(previewKey(key.slice(0,-4))!==key)throw fail();result(await storageOperation(()=>storage.remove([key]),signal))},
   release:async(sourceId,holder)=>{if(result(await db.rpc('finish_source_preview_cleanup',{p_source:sourceId,p_holder:holder}).abortSignal(signal))!==true)throw fail()},
  };
 }
@@ -58,7 +63,7 @@ export async function runSourcePreviewMaintenance(db:SupabaseClient,origin:strin
  const removed=await cleanupSourcePreviews(ports,now,50);if(removed===50)throw fail();
  const storage=db.storage.from(bucket);
  const orphans=await reconcilePreviewOrphans({
-  list:async(offset,limit)=>{const items=result(await storage.list('',{offset,limit,sortBy:{column:'name',order:'asc'}}));if(!items)throw fail();return items.map(item=>({name:item.name,createdAt:item.created_at??null}))},
+  list:async(offset,limit)=>{const items=result(await storageOperation(()=>storage.list('',{offset,limit,sortBy:{column:'name',order:'asc'}}),signal));if(!items)throw fail();return items.map(item=>({name:item.name,createdAt:item.created_at??null}))},
   lookup:async id=>ports.lookup(id),remove:async key=>ports.remove(key),
  },now);
  if(!orphans.complete)throw fail();
