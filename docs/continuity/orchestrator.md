@@ -1,3 +1,12 @@
+# Entrega para revisão — PR #3 (02/11/2026)
+
+PR draft: https://github.com/Lipe-meira/pcdNades/pull/3. Branch integration/pcdnades-release no worktree C:/Users/felip/.codex/worktrees/pcdnades-release/nadesCs2. Código validado em25629a5, relatórios44ebff7; este registro final será commitado e enviado na mesma branch. Confirmar HEAD final por git log/ls-remote. Todos os testes integrados passaram:136backend,58frontend,82Playwright final e builds;4 testes de regressão RED→GREEN. Ensaio real PG17.11 derivado do backup:3 migrations,8gruposQA+4negaçõesRLS e DDLrollbackPASS; roles modeladas sem senha, não E2E Auth/Storage integral.
+
+GO para revisão. NÃO fazer merge agora: main aciona produção e as três migrations ainda precisam de autorização/aplicação remota antes do código. Prévia e Reels continuam off; coletor cloud só bloqueia ATIVAÇÃO da prévia, não exige ser contratado para publicar o resto desligado. YouTube off, upload/TikTok preservados. Não houve deploy, escrita de produção ou mudança em branches originais. Dev4e3d4dd/frontend63729fa/backend28e10b4/mainfcd360d preservadas; partialpreview permanece intacta.
+
+Primeira ação na retomada: ler docs/RELEASE-READINESS.md e docs/MIGRATION-REHEARSAL-20261102.md; verificar estado do PR, CI e refs. Não repetir ensaios/importações por rotina. Obter aprovação explícita de migrations Solo→Instagram→preview, janela/backup e merge/deploy coordenados. Não reaplicar TikTok. Não ativar flags novas sem aprovação separada. Clone QA e lab original preservados; nenhum dado ou segredo no Git. CI remoto pendente deve ser verificado antes de aprovação final; mergeable:false inicial do conector/draft não é prova de conflito, pois main é ancestral local.
+
+---
 # Release integrada para revisão — 02/11/2026
 
 WorktreeATUALdo orquestrador C:/Users/felip/.codex/worktrees/pcdnades-release/nadesCs2, branchintegration/pcdnades-release criada deorigin/mainfcd360d. Pedido autoriza commits/pushbranch/PRmain; NÃOautoriza merge/pushmain/deploy/migrationsremotas/envprod. Dev4e3d4dd e todosHEADsoriginais preservados; mainlocaldesatualizadaF:/projetos/nadesCs2 nãotocada. Backend/Reels/Solojáancestraisdev, sóredesignlocal63729faeraexclusivo. Previewparcialc2f90e5com17arquivosdirtyéobsoleto preservado,nãointegrarGET/TTLantigos.

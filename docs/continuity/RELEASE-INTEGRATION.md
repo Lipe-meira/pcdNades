@@ -20,3 +20,8 @@ Próximaação: merge normal dev, depois frontend; revisar conflitos/contratos; 
 
 ## Fechamento
 Backend136/buildPASS;frontend58/buildPASS;PlaywrightFINAL82/82PASS apósfix,4direcionadosGREEN. SQLclonePG17.11:3migrationsPASS/8gruposQA+4negaçõesreais/DDLrollbackPASS,rolesmodeladasnãofull. Relatório sanitizado docs/MIGRATION-REHEARSAL-20261102.md. GO PRdraft,NO-GOmergeimediato;mainautoProductione3migrationspendentes.
+
+## PR e entrega publicada
+PR draft https://github.com/Lipe-meira/pcdNades/pull/3 para main, criado após auditoria e push normal da integration/pcdnades-release. Primeira entrega44ebff7 (código25629a5), ref remota conferida. Registro final do PR seguirá em commit de documentação na mesma branch; SHA final por git log/ls-remote. Dev4e3d4dd,frontend63729fa,backend28e10b4 e mainfcd360d continuam preservados. Nenhum merge do PR/deploy/manual/migration remota.
+
+Conector na criação retornou mergeable:false com draft:true; não interpretar isso como conflito de código: origin/main é ancestral da integração e os merges locais não tiveram conflito. Não tornar ready nem fazer merge automaticamente; decisão depende de migrations/CI/revisão/autorização. Checks remotos podem estar pendentes e não substituem os resultados locais registrados.
