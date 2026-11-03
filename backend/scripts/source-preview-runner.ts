@@ -7,8 +7,12 @@ const health=resolve(file),db=createClient(origin,key,{auth:{persistSession:fals
 process.once('SIGTERM',()=>controller.abort());process.once('SIGINT',()=>controller.abort());
 await mkdir(dirname(health),{recursive:true,mode:0o700});
 const lock=new pg.Client({connectionString:process.env.DATABASE_URL,connectionTimeoutMillis:5000,query_timeout:5000});
-lock.on('error',()=>controller.abort());
+const lockLost=new Error('MAINTENANCE_LOCK_LOST');
+const abortForLockLoss=()=>controller.abort(lockLost);
+lock.on('error',abortForLockLoss);
 try{
  await lock.connect();const acquired=await lock.query('select pg_try_advisory_lock(762001140) as acquired');if(!acquired.rows[0].acquired)throw new Error('MAINTENANCE_ALREADY_RUNNING');
- await maintenanceRunner({now:Date.now,sweep:async signal=>{try{await lock.query('select 1');}catch{controller.abort();throw new Error('MAINTENANCE_LOCK_LOST');}if(controller.signal.aborted)throw new Error('MAINTENANCE_LOCK_LOST');return runSourcePreviewMaintenance(db,origin,signal);},sleep:(ms,signal)=>sleep(ms,undefined,{signal}),report:async status=>{const tmp=`${health}.${process.pid}.tmp`;await writeFile(tmp,JSON.stringify(status),{mode:0o600});await rename(tmp,health);console.log(JSON.stringify(status));}},controller.signal);
+ await maintenanceRunner({now:Date.now,sweep:async signal=>{try{await lock.query('select 1');}catch{abortForLockLoss();throw lockLost;}controller.signal.throwIfAborted();return runSourcePreviewMaintenance(db,origin,signal);},sleep:(ms,signal)=>sleep(ms,undefined,{signal}),report:async status=>{const tmp=`${health}.${process.pid}.tmp`;await writeFile(tmp,JSON.stringify(status),{mode:0o600});await rename(tmp,health);console.log(JSON.stringify(status));}},controller.signal);
+ // A lost lock must trigger Restart=on-failure after recording the stopped state.
+ if(controller.signal.reason===lockLost)throw lockLost;
 }catch{console.error('Coletor encerrado sem confirmação de saúde; conferir supervisor/healthfile.');process.exitCode=1;}finally{await lock.end();}
