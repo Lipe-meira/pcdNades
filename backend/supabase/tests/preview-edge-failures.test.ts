@@ -8,7 +8,7 @@ const moduleText = original.replace('Deno.serve(async (request) => {', 'export d
 const { default: handler } = await import(`data:application/typescript,${encodeURIComponent(moduleText)}`);
 
 // Each request below is synthetic. No database, storage or monitoring service is contacted.
-for (const fault of ['storage', 'database', 'concurrency']) {
+for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease']) {
   Deno.test({
     name: `preview sweep fails closed on ${fault}`,
     sanitizeOps: false,
@@ -31,7 +31,10 @@ for (const fault of ['storage', 'database', 'concurrency']) {
           locked = true;
           return Response.json(true);
         }
-        if (url.pathname.endsWith('/claim_source_preview_cleanup')) return Response.json(null);
+        if (url.pathname.endsWith('/claim_source_preview_cleanup')) {
+          if (fault === 'invalid-lease') return Response.json({source_id:'123e4567-e89b-42d3-a456-426614174000', object_key:'123e4567-e89b-42d3-a456-426614174000.mp4', holder:'223e4567-e89b-42d3-a456-426614174000', expires_at:'invalid', locked_until:'invalid'});
+          return Response.json(null);
+        }
         if (url.pathname.endsWith('/object/list/import-previews')) {
           if (fault === 'storage') return new Response(null, { status: 503 });
           if (fault === 'concurrency') { started(); await gate; }

@@ -1,3 +1,15 @@
+# Revisão final Edge — 03/11/2026
+
+Correção comprovada: datas inválidas do job geravam NaN e contornavam comparações da validade. Handler agora exige timestamps finitos. Testes Deno simulados 4/4, deno check e npm typecheck passaram. Branch codex/tiktok-preview-backend-20261102 com base e4b7ed1, commits locais 263e6e0, 949edec, 84fb82d, 1e0553e, 753ced5 e 0007a32, mais commit desta revisão, sem push. Arquivos e migrations conferidos por git diff contra origin da própria branch.
+
+Revisão: claim e finish usam CAS por titular e relógio do banco; função antiga revogada para impedir bypass, por isso migration e runner atualizado exigem coordenação. Edge limita chamadas a 10 s e execução a 60 s contra lease de 120 s, mas ainda falta demonstrar que uma operação remota ambígua não conclui depois da expiração. O heartbeat só é confirmado pelo titular após sweep completo. Após finish a trava é liberada antes do ping, então uma execução concorrente pode iniciar e falhar antes do ping anterior chegar. O ping confirma a execução anterior, não a saúde da seguinte. Monitor deve se basear em ausência de sucessos e essa janela precisa de validação operacional. Token próprio é comparado por digest e rota usa verify_jwt=false. O fluxo real do gateway com apikey e chave secret ainda não foi validado em ambiente hospedado, tampouco invalidação/rotação de token e falhas reais. Não ativar até revisão destes pontos, teste do cron, falhas e concorrência com runner.
+
+Rejeição: comando PowerShell único destinado a criar e executar harness Deno que encaminharia para PostgREST/Storage do laboratório, injetando falhas e concorrência. Retorno Rejected, blocked by policy, sem razão adicional. Não executou. Não repetir por fragmentação nem outro mecanismo. Alternativa permitida sem rede exerceu handler com respostas simuladas. Piloto anterior de dez ciclos imediatos em Deno usou PostgREST/Storage reais e monitor simulado, sem simular intervalo de três minutos ou runtime Edge hospedado.
+
+Próximo passo: orquestrador revisar código e decisão operacional; para validação remota mínima, separar ambiente isolado autorizado com credenciais efêmeras e observador, testar gateway e respostas de erro sem reproduzir a ação rejeitada. Avaliar previamente procedimento explicitamente permitido. Nenhuma mutação remota executada nesta revisão. Laboratórios e volumes da etapa anterior permanecem preservados.
+
+---
+
 # Testes de falha isolados — 03/11/2026
 
 A revisão automática rejeitou a criação e execução, por um único comando PowerShell, de harness Deno que encaminharia chamadas para Auth/PostgREST/Storage do laboratório e injetaria falhas de Storage e banco, além de concorrência. Mensagem exibida: Rejected, blocked by policy. Nenhuma razão adicional foi fornecida e a chamada não executou.

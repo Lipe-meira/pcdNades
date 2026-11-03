@@ -43,7 +43,8 @@ Deno.serve(async (request) => {
     for (; removed < 50; removed++) {
       const job = await rpc('claim_source_preview_cleanup', { p_holder: crypto.randomUUID() });
       if (!job?.source_id) break;
-      if (!uuid.test(job.source_id) || job.object_key !== `${job.source_id}.mp4` || !uuid.test(job.holder) || Date.parse(job.expires_at) + 120_000 > Date.now() || Date.parse(job.locked_until) <= Date.now()) throw new Error('INVALID_JOB');
+      const expires = Date.parse(job.expires_at), lockedUntil = Date.parse(job.locked_until);
+      if (!uuid.test(job.source_id) || job.object_key !== `${job.source_id}.mp4` || !uuid.test(job.holder) || !Number.isFinite(expires) || !Number.isFinite(lockedUntil) || expires + 120_000 > Date.now() || lockedUntil <= Date.now()) throw new Error('INVALID_JOB');
       await remove(job.object_key);
       if (!await rpc('finish_source_preview_cleanup', { p_source: job.source_id, p_holder: job.holder })) throw new Error('CLAIM_LOST');
     }
