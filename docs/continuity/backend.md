@@ -1,3 +1,79 @@
+# Fechamento focado Edge — 03/11/2026
+
+Revisão sobre 923ac62 confirmou que heartbeat e release usam titular e vigência no banco e que o gate de leitura depende do heartbeat no banco, nunca do ping. Corrigida a pequena janela entre selecionar a trava e atualizar heartbeat: o UPDATE reavalia titular e validade usando clock_timestamp. Teste SQL real transacional em preview_edge_1103 PASS para titular errado, expiração, heartbeat inalterado, recuperação, retenção e release. Deno 6/6 simulados e deno check PASS. PG parado ao final. A migration alterada é local e exige novo piloto antes de ativação.
+
+Operação tardia: CAS impede confirmação ou release de titular vencido. Abort e deadlines limitam espera do cliente, mas não provam que servidor remoto parou a operação em voo. Ping atrasado pode chegar mesmo após cancelamento. Não é autoridade do gate, e tampouco prova saúde de execução posterior. O antigo RPC de heartbeat é revogado pela migration, logo migration e runner novo precisam de implantação coordenada. Não há prova real de execução simultânea Edge/runner ou gateway hospedado.
+
+Decisão: código pode ser apresentado ao orquestrador para PR Draft Edge separado do PR4, identificado como não pronto para ativação ou merge operacional. Pendências: 10 ciclos na migration final com Storage real, concorrência/falhas reais, comportamento após timeout, agenda real de 3 min, alerta externo e autenticação no gateway. A ação rejeitada de harness PowerShell com injeção de falhas não pode ser reproduzida por equivalentes ou fragmentação. O retorno foi Rejected, blocked by policy, sem detalhe. Não há procedimento alternativo confirmado como permitido para aquela mesma ação. Antes de qualquer ensaio futuro, obter procedimento explicitamente permitido e aprovação de ambiente isolado com credenciais efêmeras e monitor independente. Primeiro validar schema/roles e gateway, depois ciclo normal/alerta e somente falhas previstas no procedimento aprovado. Nenhum recurso remoto foi criado aqui.
+
+Branch codex/tiktok-preview-backend-20261102, base 923ac62, commit local desta correção, push pendente sob coordenação. Laboratórios preservados. Próxima ação: enviar commit e limitações ao orquestrador para decisão do Draft.
+
+---
+
+# Trava durante monitoramento — 03/11/2026
+
+A função finish agora confirma heartbeat mantendo a trava. O Edge só libera a trava com CAS após resposta bem-sucedida do ping, e o ping recebe o sinal de cancelamento combinado ao timeout. O runner sem ping libera com CAS após confirmação. Em falha/cancelamento a trava permanece até vencer. release também confere vencimento. A migration segue local e ainda não publicada.
+
+Testes: Deno 5/5 simulados, incluindo concorrência durante ping e cancelamento, Node 12/12 focados, npm typecheck PASS. SQL real no banco local preview_edge_1103 em transação com rollback confirmou finish mantém trava, exclusão concorrente, release titular e vencimento. PG parado novamente. Os dez ciclos anteriores testaram versão anterior da migration e precisam repetição aprovada na versão final.
+
+Limite: um ping já entregue pela rede pode chegar ao serviço mesmo após cancelamento ou expiração da trava. O timeout e o sinal reduzem a janela, mas não comprovam cancelamento remoto. Monitor atesta apenas sweep já confirmado. Falta validação de gateway hospedado, comportamento de operações remotas após timeout e falhas reais. A ação da harness bloqueada não foi repetida. Sem produção ou serviços remotos. Próxima ação: orquestrador revisar limite e coordenar procedimento explicitamente permitido para os testes pendentes. Branch codex/tiktok-preview-backend-20261102, base anterior 9be9082, commit local desta etapa, sem push.
+
+---
+
+# Revisão final Edge — 03/11/2026
+
+Correção comprovada: datas inválidas do job geravam NaN e contornavam comparações da validade. Handler agora exige timestamps finitos. Testes Deno simulados 4/4, deno check e npm typecheck passaram. Branch codex/tiktok-preview-backend-20261102 com base e4b7ed1, commits locais 263e6e0, 949edec, 84fb82d, 1e0553e, 753ced5 e 0007a32, mais commit desta revisão, sem push. Arquivos e migrations conferidos por git diff contra origin da própria branch.
+
+Revisão: claim e finish usam CAS por titular e relógio do banco; função antiga revogada para impedir bypass, por isso migration e runner atualizado exigem coordenação. Edge limita chamadas a 10 s e execução a 60 s contra lease de 120 s, mas ainda falta demonstrar que uma operação remota ambígua não conclui depois da expiração. O heartbeat só é confirmado pelo titular após sweep completo. Após finish a trava é liberada antes do ping, então uma execução concorrente pode iniciar e falhar antes do ping anterior chegar. O ping confirma a execução anterior, não a saúde da seguinte. Monitor deve se basear em ausência de sucessos e essa janela precisa de validação operacional. Token próprio é comparado por digest e rota usa verify_jwt=false. O fluxo real do gateway com apikey e chave secret ainda não foi validado em ambiente hospedado, tampouco invalidação/rotação de token e falhas reais. Não ativar até revisão destes pontos, teste do cron, falhas e concorrência com runner.
+
+Rejeição: comando PowerShell único destinado a criar e executar harness Deno que encaminharia para PostgREST/Storage do laboratório, injetando falhas e concorrência. Retorno Rejected, blocked by policy, sem razão adicional. Não executou. Não repetir por fragmentação nem outro mecanismo. Alternativa permitida sem rede exerceu handler com respostas simuladas. Piloto anterior de dez ciclos imediatos em Deno usou PostgREST/Storage reais e monitor simulado, sem simular intervalo de três minutos ou runtime Edge hospedado.
+
+Próximo passo: orquestrador revisar código e decisão operacional; para validação remota mínima, separar ambiente isolado autorizado com credenciais efêmeras e observador, testar gateway e respostas de erro sem reproduzir a ação rejeitada. Avaliar previamente procedimento explicitamente permitido. Nenhuma mutação remota executada nesta revisão. Laboratórios e volumes da etapa anterior permanecem preservados.
+
+---
+
+# Testes de falha isolados — 03/11/2026
+
+A revisão automática rejeitou a criação e execução, por um único comando PowerShell, de harness Deno que encaminharia chamadas para Auth/PostgREST/Storage do laboratório e injetaria falhas de Storage e banco, além de concorrência. Mensagem exibida: Rejected, blocked by policy. Nenhuma razão adicional foi fornecida e a chamada não executou.
+
+Alternativa autorizada executada: testes Deno sem rede, totalmente simulados, usando o próprio código do handler. Três cenários passaram: Storage indisponível, banco indisponível e concorrência. Falhas não atualizam heartbeat nem enviam ping; concorrente recebe 409 e a execução titular pode concluir. Comando: deno test --allow-read=supabase/functions/preview-sweep/index.ts --allow-env supabase/tests/preview-edge-failures.test.ts. Não substitui teste de falhas com serviços reais. Dez ciclos anteriores usaram serviços locais reais e monitor simulado. Pendentes teste real de falhas e runner concorrente, Cron e operação externa.
+
+---
+
+# Piloto Deno e Storage — 03/11/2026
+
+Migration final validada em banco local separado preview_edge_1103. Teste transacional service_role confirmou exclusão, titular, expiração, recuperação, heartbeat e revogação do heartbeat antigo. Banco original preservado. Criado também preview_edge_1103b com restauração preservando owners para serviços Auth/PostgREST/Storage reais e volume Storage novo.
+
+Dez chamadas consecutivas imediatas do handler executaram em Deno 2.5.6 com REST/Storage reais, monitor simulado e encaminhamento de transporte no teste. As dez retornaram 204, dez pings simulados, Auth health real passou, bytes de sentinela de mídia final foram preservados e RPC antigo foi negado. Não prova runtime hospedado Edge ou intervalo real de três minutos. Primeira cópia sem owners causou erro de Auth/Storage e foi preservada; segunda funcionou. Nenhum serviço remoto.
+
+Teste adicional planejado de falhas, recuperação e concorrência foi rejeitado automaticamente ao iniciar comando de criação da harness. Não foi executado. Continuam pendentes teste de falhas no handler real, monitor em falha, interoperabilidade prática com runner, Cron real e intervalo completo. Recursos novos pcdn-preview-edge-1103 e 1103b parados, volumes e bancos preservados, arquivo dump temporário no container PG e evidências privadas em AppData/Local/pcdn-preview-lab-1103. PG original parado novamente. Branch codex/tiktok-preview-backend-20261102, base 1e0553e, sem push desta etapa.
+
+---
+
+# Progresso Edge e coletor legado — 03/11/2026
+
+O runner legado agora adquire a mesma trava global do Edge e só renova heartbeat via finish com titular. A migration local revoga execução da função antiga de heartbeat para impedir bypass por código legado. Implantação requer migração e código coordenados, pois versões antigas deixam de atualizar heartbeat. Cron SQL manual de 3 minutos usa Vault e net.http_post, mas ainda não foi executado ou testado com pg_cron/pg_net. config Edge desativa verificação JWT e usa token explícito do handler.
+
+PASS: 12 testes simulados focados, typecheck antes do ajuste e deno check. O teste PostgreSQL anterior cobriu versão anterior da migration, não a revogação adicionada agora. Não foi feito piloto de 10 ciclos com Storage real, nem teste real do cron ou ping de monitor. Primeira ação ao retomar: ensaiar migration final e compatibilidade com runner em banco isolado novo, criar harness para dez ciclos no Storage real e falhas. Cuidado para não apagar fixtures do laboratório histórico. Ainda não pronto para integração ou ativação. Branch codex/tiktok-preview-backend-20261102; mudanças locais serão commitadas, push pendente.
+
+---
+
+# Coletor Edge em implementação — 03/11/2026
+
+Migration local e primeira versão Edge criadas em backend/supabase. Lease global com claim CAS, heartbeat condicionado ao titular e validade, sweep exclusivo do bucket privado, falhas conservam lease até expirar, ping após confirmação. Cron é apenas comentário inativo, ainda falta implementação concreta. Nenhum deploy ou serviço remoto.
+
+Executado: deno check PASS, npm typecheck PASS, migration aplicada somente ao PG pcdn-preview-lab-1103 e teste SQL transacional com service_role PASS para concorrência, titular, vencimento e recuperação, rollback. PG parado ao final. Pendente: testes do handler, dez ciclos reais Auth/Storage, falhas/cancelamento/concorrência, monitor simulado, configuração Edge e Cron concretos, auditoria de interoperabilidade com runner legado. Esta versão ainda não é entrega operacional. Primeira ação ao retomar: revisar proteção contra coexistência do runner antigo, criar harness real e validar Storage/Edge antes de integração. Branch codex/tiktok-preview-backend-20261102, base 949edec, alterações locais da missão ainda não enviadas.
+
+---
+
+# Missão coletor Edge — 03/11/2026
+
+Pedido atual: preparar coletor Supabase Cron + Edge e monitor Healthchecks, validar dez ciclos e falhas em laboratório isolado, sem serviços remotos ou alterações de produção. Orquestrador integra commit 263e6e0 ao PR #4. Branch própria codex/tiktok-preview-backend-20261102, HEAD 949edec, base e4b7ed1, dois commits locais ainda sem push. Ancestralidade de 263e6e0 confirmada. Ensaio anterior PG real comprovou exit 1 após perda da trava e exit 0 após SIGTERM, TypeScript estrito passou. Orquestrador informado.
+
+Próxima ação: ler contrato e código do sweep existente, preparar desenho e implementação com lease por execução, Storage API, CAS e heartbeat cercado por lease, autenticação e timeout, ping somente após sucesso. Em seguida preparar Cron inativo, testes e piloto local real com dez ciclos e falhas. Nenhuma implementação nova, teste novo ou mutação remota foi executada nesta missão. Laboratório anterior pcdn-preview-lab-1103 está parado e preservado. Arquivo deste checkpoint ainda não commitado.
+
+---
+
 # Estado atual — laboratório interno concluído, 03/11/2026
 
 Objetivo. Desbloquear a validação Auth/Storage/Chromium do PR #4 e definir condições para operação do coletor. Validação local concluída. Operação remota ainda depende de ambiente, monitor e destinatário aprovados.
