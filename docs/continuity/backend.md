@@ -1,3 +1,26 @@
+# Estado atual — laboratório interno concluído, 03/11/2026
+
+Objetivo. Desbloquear a validação Auth/Storage/Chromium do PR #4 e definir condições para operação do coletor. Validação local concluída. Operação remota ainda depende de ambiente, monitor e destinatário aprovados.
+
+Branch `codex/tiktok-preview-backend-20261102` no worktree `C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2`. Base `e4b7ed1` publicada. Correção local `263e6e0` e commit separado para relatório/checkpoint. Sem push desta etapa sob coordenação. Frontend de referência `545f1c6` copiado de git archive, intacto.
+
+PASS. Oito migrations no PG novo, GoTrue/PostgREST/Storage reais, prévia privada assinada com Range 206 e expiração real, recorte FFmpeg de 2 s, player da tela Chromium com marcação de 0,5 a 1,5 s, sweep real com falha e cancelamento injetados e hashes finais preservados. Zero cadastros de granadas. Aquisição substituída por fixture sintética. Parser systemd 252 passou. Perda real da conexão PG mudou exit 0 para 1 e SIGTERM manteve exit 0. TypeScript estrito do runner passou. Sem rodada ampla repetida.
+
+Relatório `backend/PREVIEW-LAB-20261103.md` lista comandos, falhas de configuração da harness, nomes e estado dos recursos. Lab `pcdn-preview-lab-1103` parado e preservado, dois volumes novos, rede interna sem peers ativos. Evidência privada fora do Git. A inspeção inicial exibiu chave TLS descartável de gateway local histórico na ferramenta. Os relatórios e o lab novo não a reutilizam.
+
+Retomar. Conferir Git e o relatório. Orquestrador revisa os commits locais. Para ativar, escolher host Linux já disponível ou desenhar adaptação Cron/Edge, aprovar host e observador externo, validar alerta por ausência de sucesso e recuperação no ambiente escolhido. Cadência 3 min, alvo 5 min e heartbeat máximo 8 min. Sem alterações a produção ou a flags neste ensaio.
+
+---
+
+# Laboratório interno de prévia — 03/11/2026
+
+Em andamento no worktree pcdnades-tiktok-preview-backend-20261102, branch codex/tiktok-preview-backend-20261102, base e4b7ed1 publicada. PR de integração #4. Validar Auth, REST, Storage e reprodução com fixture sintética, depois comparar operação do coletor. Commit local sob coordenação.
+
+Plano enviado ao orquestrador. Recursos novos pcdn-preview-lab-1103, rede interna sem portas publicadas, PG/Auth/REST/Storage com imagens locais pinadas e credenciais efêmeras. Primeira ação provar PG via DNS interno. A inspeção histórica exibiu chave TLS descartável do Kong local no output da ferramenta. Inspeções seguintes filtram campos e o lab usa credenciais novas. Nenhuma escrita no lab histórico. Contrato, README e checkpoints lidos. Docker Linux indisponível na retomada inicial, verificando o serviço. Validações do novo laboratório pendentes.
+
+Marco intermediário. Docker Desktop voltou após iniciar a instalação local. Banco PG17.6 novo respondeu por DNS interno, Auth/REST/Storage subiram e as oito migrations passaram com ON_ERROR_STOP. Versão Chromium Linux 156 e systemd 252 em imagem de ferramentas local separada. Parser verificou os três templates com exit 0. Vite compilou o frontend intacto 545f1c6 em diretório privado. Primeiro E2E reproduziu prévia de 4 s e recorte de 2 s no Chromium com HTTP 206, renovação e bloqueio de acesso anon. Ensaio prosseguiu até Storage apagar os objetos, mas o assert da harness esperava 404 e esta versão retornou 400 para objeto ausente. Segunda execução encontrou o heartbeat remanescente do primeiro ensaio. Harness agora verifica erro explícito de objeto ausente e inicia teste do gate com heartbeat nulo no banco novo. Terceira execução em curso. Próximo passo é concluir a tela real e testar a perda da conexão exclusiva do coletor.
+---
+
 # Estado atual — entrega operacional de prévia, 02/11/2026
 
 Objetivo: concluir pendências e encaminhar commits/push ao orquestrador. Usuário autorizou agora commit e push; nenhuma autorização implícita para infraestrutura/produção.
