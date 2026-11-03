@@ -1326,7 +1326,7 @@ test("Solo Exec troca de mapa após selecionar segundo destino sem índice antig
 });
 
 
-test("Prévia privada: player marca início e fim sem publicar", async ({ page }) => {
+test("Prévia privada: player marca início e fim sem publicar", async ({ page }, testInfo) => {
   const state = await setup(page, { imports: true, sourcePreview: true });
   const methods: string[] = [];
   await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, async route => {
@@ -1341,14 +1341,22 @@ test("Prévia privada: player marca início e fim sem publicar", async ({ page }
   await openImportForm(page); await consultImport(page);
   const video = page.getByLabel("Prévia do vídeo de origem", {exact:true});
   await expect(video).toBeVisible();
+  await expect(page.getByText("Prévia temporária: o trecho ainda não foi importado nem publicado.")).toBeVisible();
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
-  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 0.5; });
+  await video.evaluate(async (v: HTMLVideoElement) => { v.muted = true; await v.play(); });
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(false);
+  await video.evaluate((v: HTMLVideoElement) => { v.pause(); v.currentTime = 0.5; });
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.45);
+  await expect(page.getByLabel("Posição atual do vídeo")).toHaveText("00:00.5");
   await page.getByRole("button",{name:"Usar posição como início"}).click();
   await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
   await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 1.5; });
   await page.getByRole("button",{name:"Usar posição como fim"}).click();
   await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
+  await expect(page.getByLabel("Ajustar início da importação")).toHaveValue("0.5");
+  await expect(page.getByLabel("Ajustar fim da importação")).toHaveValue("1.5");
+  await page.locator(".import-source-preview").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("tiktok-preview.png") });
   expect(methods).toEqual(["POST"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(0);
 });
 
@@ -1405,5 +1413,63 @@ test("Prévia privada: Reels pode consultar e marcar trecho", async ({ page }) =
   await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.45);
   await page.getByRole("button",{name:"Usar posição como início"}).click();
   await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  expect(state.importCreates).toBe(0);
+});
+
+
+test("Prévia privada: fonte expirada pelo servidor exige nova consulta e preserva formulário", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true, initial: true });
+  let attempts = 0;
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => { attempts++; return reply(route, {status:410,json:{error:{code:"SOURCE_EXPIRED"}}}); });
+  await openImportForm(page, true); await consultImport(page);
+  await expect(page.getByText(/A consulta expirou/)).toBeVisible();
+  await expect(page.getByLabel("Início do trecho", {exact:true})).toBeDisabled();
+  await expect(page.getByRole("button", {name:"Consultar novamente",exact:true})).toBeEnabled();
+  await expect(page.getByRole("button", {name:"Enviar MP4",exact:true})).toBeEnabled();
+  await expect(page.getByLabel("Título", {exact:true})).toHaveValue("Granada de teste controlado");
+  expect(attempts).toBe(1); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(1);
+});
+
+test("Prévia privada: expiração na renovação encerra player e conserva seleção", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true, initial: true });
+  const methods: string[] = [];
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => {
+    methods.push(route.request().method());
+    if (route.request().method() === "GET") return reply(route, {status:410,json:{error:{code:"SOURCE_EXPIRED"}}});
+    return reply(route, {json:{data:{sourceId:state.inspection.sourceId,status:"ready",sourceExpiresAt:state.inspection.expiresAt,url:`${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`,expiresAt:new Date(Date.now()+6500).toISOString(),mimeType:"video/mp4"}}});
+  });
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, {status:206,body:bytes.subarray(start),contentType:"video/mp4",headers:{"accept-ranges":"bytes","content-range":`bytes ${start}-${bytes.length - 1}/${bytes.length}`}});
+  });
+  await openImportForm(page, true); await consultImport(page);
+  await page.getByLabel("Início do trecho",{exact:true}).fill("00:01");
+  await expect(page.getByText(/A consulta expirou/)).toBeVisible({timeout:10000});
+  await expect(page.getByLabel("Prévia do vídeo de origem",{exact:true})).toHaveCount(0);
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:01");
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toBeDisabled();
+  expect(methods).toEqual(["POST","GET"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(1);
+});
+
+test("Prévia privada: recarregar após erro sincroniza posição do novo vídeo", async ({ page }) => {
+  const state = await setup(page, { imports: true, sourcePreview: true });
+  await page.route(`${api}/media/imports/${state.inspection.sourceId}/preview`, route => reply(route, {json:{data:{sourceId:state.inspection.sourceId,status:"ready",sourceExpiresAt:state.inspection.expiresAt,url:`${authOrigin}/storage/v1/object/sign/import-previews/${state.inspection.sourceId}.mp4?token=fixture`,expiresAt:new Date(Date.now()+60_000).toISOString(),mimeType:"video/mp4"}}}));
+  const bytes = await readFile(samplePath);
+  await page.route(`${authOrigin}/storage/v1/object/sign/import-previews/**`, route => {
+    const start = Number(/bytes=(\d+)-/.exec(route.request().headers().range ?? "")?.[1] ?? 0);
+    return reply(route, {status:206,body:bytes.subarray(start),contentType:"video/mp4",headers:{"accept-ranges":"bytes","content-range":`bytes ${start}-${bytes.length - 1}/${bytes.length}`}});
+  });
+  await openImportForm(page); await consultImport(page);
+  const video = page.getByLabel("Prévia do vídeo de origem",{exact:true});
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await video.evaluate((v: HTMLVideoElement) => { v.currentTime = 1.5; });
+  await expect(page.getByLabel("Posição atual do vídeo")).toHaveText("00:01.5");
+  await video.evaluate(v => v.dispatchEvent(new Event("error")));
+  await expect(video).toHaveCount(0);
+  await page.getByRole("button",{name:"Carregar prévia do vídeo",exact:true}).click();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThanOrEqual(1);
+  await expect(page.getByLabel("Posição atual do vídeo")).toHaveText("00:00");
+  expect(await video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBe(0);
   expect(state.importCreates).toBe(0);
 });

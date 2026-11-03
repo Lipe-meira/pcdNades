@@ -1,4 +1,96 @@
-# Entrega para revisão — PR #3 (02/11/2026)
+# Checkpoint — orquestrador / prévia visual TikTok
+
+## Cron + Edge — 03/11/2026 em andamento
+
+Usuário escolheu Supabase Cron + Edge a cada três minutos, com Healthchecks independente. Autorizou testes locais e push normal do fix `263e6e0` ao PR4 mantendo Draft. Proibiu merge main, deploy, flags, mudanças e credenciais remotas de produção, recursos pagos e testes com escrita em produção.
+
+Missão encaminhada ao chat Backend `01a1853b-dc21-73c1-ac42-d997b4b7c794`. Backend avalia fix e prepara coletor Edge, lease/CAS, heartbeat, agendamento e simulador de monitor em branch própria. Orquestrador integra o fix ao PR4 após revisão, preservando worktrees e commits. Frontend em espera. Validar dez ciclos e falhas no laboratório isolado, identificando precisamente qualquer componente simulado. PR4 permanece Draft. HEAD inicial da branch de integração `7393a17`, PR remoto inicial `545f1c6`.
+
+## Gate operacional local concluído — 03/11/2026
+
+Backend concluiu Auth/REST/Storage e player reais no laboratório novo com fixture sintética e 8 migrations locais. A tela intacta `545f1c6` fez login e marcou 0,5–1,5 s no vídeo real. Passaram Range 206, renovação/expiração, isolamento de proprietário, recorte FFmpeg 2 s, zero granadas, sweep real com falha/cancelamento/recuperação, heartbeat e hashes finais. Parser systemd 252 exit 0 para três units. Frontend não acionado.
+
+Perda PG comprovada exit 0 antes e exit 1/stopped depois do fix local `263e6e0`; SIGTERM voluntário exit 0/stopped preservado. TypeScript focal passou. Relatório/checkpoint backend `949edec` na branch própria, limpo e sem push. Relatório integrado `docs/TIKTOK-PREVIEW-OPERATIONS-GATE.md`. Inspeção do lab histórico exibiu chave TLS descartável na saída local da ferramenta; os novos artefatos e commits não contêm a chave. Teste Chromium sem sandbox dentro do container isolado sem privilégios e sem egress, somente fixture.
+
+Rede `pcdn-preview-lab-1103` internal=true, zero peers ativos após testes. Quatro serviços parados, volumes/logs privados preservados. PR4 conferido Draft no HEAD remoto `545f1c6`. O worktree do orquestrador registra relatório e checkpoint em commit local. Nenhum push desta missão, deploy, operação de produção ou suíte antiga repetida.
+
+Próximo passo: definir se há host Linux contínuo e responsável. Sem host confirmado, preparar ensaio isolado Cron + Edge com lease por execução e observador externo. Se houver host, usar runner/systemd com `263e6e0`. Autorizar separadamente instalação/recursos remotos, segredos e destinatário. Provar cadência, alerta, recuperação e fail-closed antes da ativação. GO para ensaio operacional isolado. NO-GO para produção. Manter PR Draft e integrar o fix de recuperação na próxima revisão.
+
+## Marco do laboratório — 03/11/2026
+
+Backend retomou após o limite de uso e aprovamos plano restrito `pcdn-preview-lab-1103`, rede Docker `internal`, volumes novos, sem portas host, socket Docker ou modo privilegiado. `docker network inspect` confirmou `Internal=true`. PG17.6 respondeu por DNS interno. Backend informou Auth/REST/Storage ativos, schemas confirmados e oito migrations aplicadas ao banco novo. Orquestrador conferiu containers novos ativos sem mapeamento de portas.
+
+Ensaio de preview/player/recorte/limpeza em andamento. A revisão apontou possível saída zero após perda da conexão PG no runner, incompatível com `Restart=on-failure`. Backend recebeu pedido de reprodução focada após o E2E principal. Frontend permanece em espera. O plano de infraestrutura e alertas está em `docs/TIKTOK-PREVIEW-OPERATIONS-GATE.md`, local e sem commit; decisão depende de host Linux contínuo disponível. Nenhum teste automatizado antigo repetido.
+
+Segundo marco backend: parser Linux aceitou as três units e Chromium reproduziu prévia de 4 s e recorte final de 2 s com Storage real e HTTP 206 no harness. Ainda em teste a tela do app, expiração natural, limpeza/falhas e perda de PG. Não usar o sucesso do harness como resultado da tela.
+
+Terceiro marco: backend reportou PASS API/Storage real, URL vencida naturalmente, 410 de fonte expirada, falha DELETE induzida com lease/retry, cancelamento, limpeza de órfão e hashes finais iguais. Reprodução da tela do PR segue em ensaio focal após ajuste da URL de API do lab. Perda da sessão PG reproduzida com `pg_terminate_backend` apenas da conexão do runner novo, que registrou `stopped` e saiu 0. `Restart=on-failure` não cobre essa saída. Backend prepara correção local com código de falha para perda PG e saída 0 em SIGTERM voluntário, testando só os caminhos afetados. PR4 remoto conferido Draft/545f1c6.
+
+## Nova missão operacional — 02/11/2026, em andamento
+
+Pedido humano: desbloquear Auth/Storage reais em NOVO laboratório Linux interno e escolher operação do coletor, sem repetir desenvolvimento/testes aprovados. PR4 permanece Draft no HEAD inicial `545f1c609337f2b440f8b1ae0e2abaf8e58a36b0`; worktree/branch de integração acima preservados e limpos ao iniciar. Nenhuma autorização de produção, provisionamento remoto, credenciais remotas, deploy, migration remota ou flags.
+
+Missão enviada efetivamente ao chat backend existente `01a1853b-dc21-73c1-ac42-d997b4b7c794`, host local, no worktree/branch backend próprios. Prioridades: clientes dentro da rede Docker interna (sem bind Windows), serviços reais e credenciais efêmeras, preview/player/recorte fixture/owner/TTL/cleanup/heartbeat/falhas, validação parser systemd. Exigir plano limitado antes de bootstrap estrutural ou privilégio adicional; não usar Docker socket dentro de container, privileged ou host networking sem revisão da necessidade/riscos e decisão. Frontend permanece em espera e só será acionado por defeito comprovado.
+
+Orquestrador revisa infraestrutura e documentação oficial em paralelo; não edita implementação backend/frontend. Próxima ação: receber plano do Backend e verificar isolamento/recursos; depois coordenar evidências, revisar entrega pontual e concluir GO/NO-GO operacional. Resultados automatizados anteriores continuam válidos, mas não substituem E2E real. Checkpoint alterado localmente neste início, sem commit/push desta missão ainda.
+
+## Publicação da branch e PR — estado final desta entrega
+
+PR **#4 Draft**, https://github.com/Lipe-meira/pcdNades/pull/4, aberto a partir de `d77234d28945e59c981260f74dcb2c90e92ec863` na branch própria. Push normal confirmado por `ls-remote`; main continua `7443dc8ee53f266f90c0568bb4976c95a5034bfb`. Este checkpoint de publicação é alteração somente documental posterior aos testes, será commitado/enviado na mesma branch. Consultar `git log -1` para HEAD final. CI Linux deve ser conferido no HEAD final; não confundir checks pendentes com falha e não repetir deploy. PR permanece Draft por decisão explícita, não interpretar mergeable=false inicial como conflito comprovado.
+
+Todos os códigos backend/frontend já estavam no HEAD combinado `0fd90c0` testado: 142 backend, 58 frontend e 88 browser controlados PASS. Nenhum código mudou depois. Ambos os chats receberam confirmação da integração e instrução de preservar recursos/aguardar próxima missão, sem iniciar infraestrutura ou novas importações. Não há lease/teste real em andamento. Nenhuma operação de produção efetuada nesta tarefa.
+
+Ao retomar: conferir Git/PR4/CI, ler relatório de integração e plano de laboratório; resolver Auth/Storage isolados com clientes internos antes de solicitar ativação. NÃO merge/deploy/flags/produção automaticamente. A feature completa permanece pendente de E2E real e operação monitorada; templates e testes controlados não satisfazem esses gates.
+
+## Entrega integrada — 02/11/2026, revisão Draft / ativação bloqueada
+
+- Ler primeiro `docs/TIKTOK-PREVIEW-INTEGRATION-20261102.md`, `backend/PREVIEW-OPERATIONS-20261102.md` e `frontend/docs/TIKTOK-PREVIEW-20261102.md`. Este marco substitui o estado em andamento abaixo; não retomar tarefas históricas de produção.
+- Branch própria `codex/tiktok-preview-integration-20261102`, worktree `C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2`, base main `7443dc8`. Integração local por merges normais, HEAD de código combinado `0fd90c0`. Documentação final será commitada antes da publicação da branch; consultar `git log -1` e `git ls-remote` para SHA final, sem criar SHA circular neste arquivo.
+- Frontend integrado `ad9cf6e`, `aa27824`, `730e9ab`: tempo atual, aviso de não publicação, SOURCE_EXPIRED e reload/resume. Backend integrado `472f3c3`, `5adb870`, `e4b7ed1`: parada saudável corrigida, testes de falhas e templates operacionais INATIVOS. Worktrees especializadas preservadas; backend reportou push próprio em `origin/codex/tiktok-preview-backend-20261102`.
+- Orquestrador validou no conjunto: frontend build/TypeScript, 58 unitários e 88 Playwright PC/mobile PASS; backend build/TypeScript Windows e 142 testes PASS. Browser e adapters são controlados; NÃO são E2E Auth/Storage real. Build backend sem flags não empacotou yt-dlp, não revalida cloud/Linux habilitado.
+- Lab NOVO bloqueado por Windows→bind loopback de rede Docker interna; cliente na rede recebeu HTTP200. Nenhum Auth/Storage novo operacional, nenhum lease frontend, nenhum download externo ou escrita de produção. Dois containers diagnósticos novos parados e duas redes internas preservadas conforme relatório backend; backups/labs antigos intocados. Proposta de desbloqueio: clientes/Playwright dentro da rede Linux, revisão pequena do bootstrap com IDs novos antes de iniciar stack completa.
+- Rechecagem somente leitura Vercel: Preview Branch Tracking OFF nos dois projetos, Production branch main; deployments da release READY. Nenhuma configuração salva. Workflow Linux do PR é somente CI, sem segredos de Supabase/deploy. Diff revisado sem novos vídeos/segredos/dados privados; fixtures sintéticas antigas inalteradas, único exemplo de env novo com valores vazios.
+- Arquivos locais pendentes deste marco: relatório de integração novo e este checkpoint. Próximo passo imediato: conferir diff/sigilo, commit docs, push NORMAL somente da branch própria e abrir PR Draft para main. Não merge/main/dev/deploy/flags/migrations/infra remota. Registrar PR e CI em checkpoint posterior.
+- GO apenas revisão de código; NO-GO ativar prévia. Pendem E2E real, host/coletor supervisionado, observador independente e alerta comprovado, parser/instalação Linux. TikTok/MP4 existentes preservados; prévia/Reels/YouTube continuam OFF. Operações remotas/ativação exigem autorização separada.
+
+## Marco atual — 02/11/2026, integração ainda pendente
+
+- Worktree própria: `C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2`, branch `codex/tiktok-preview-integration-20261102`, HEAD de planejamento `b0695bf`; sem push. Estado histórico abaixo foi superado por este marco.
+- Frontend entregou commits locais `ad9cf6e` e `aa27824`, árvore limpa segundo relatório. Primeiro adiciona tempo atual/aviso de prévia não publicada/expiração antecipada; segundo corrige borda reproduzida RED em desktop e celular: após erro/recarregamento o indicador preservava tempo anterior embora o novo vídeo estivesse em zero. Revisão inicial feita; integração e revisão final ainda pendentes.
+- Front reportou build/typecheck, 58 unitários, 16 browser de base e testes focados: última rodada 6/6 para reload/renovação/410. São testes controlados, não prova de Auth/Storage real. Evidências e relatório em `frontend/docs/TIKTOK-PREVIEW-20261102.md` no worktree do frontend.
+- Backend preparando operação/monitoramento inativos. Vercel Hobby cron diário e GitHub Actions com atrasos não comprovam cadência de cinco minutos. Monitor independente e infraestrutura remota continuam pendências; nenhuma flag ativada.
+- Aprovado apenas NOVO laboratório local privado em `C:/Users/felip/AppData/Local/pcdnades-preview-ops-20261102-5491784d`, project_id homônimo, API/Auth/Storage `127.0.0.1:56721`, PG `56722`, API backend planejada `56731`. Rede interna sem egress, portas loopback, sem SMTP/webhooks. Não usar credenciais, stacks ou volumes anteriores. Fonte externa será fixture controlada; Auth/Storage/FFmpeg devem ser reais para assim rotular os testes.
+- Bloqueio atual: CLI Supabase não conectou ao novo PG pela porta 56722; CLI interrompeu somente seus containers novos. Backend investiga causa e cliente dentro da rede interna, sem relaxar isolamento. API 56731 NÃO está disponível e frontend NÃO recebeu lease para E2E.
+- Referência histórica somente leitura enviada ao backend: bootstrap privado antigo em `backend/vendor/local-integration-20261031/bootstrap.mjs` do worktree dev. Não executar bootstrap antigo nem scripts versionados com portas 56421/56422/IG habilitado. Não repetir downloads externos nesta etapa.
+- Próxima ação: conferir Git e receber diagnóstico do backend; se lab subir, coordenar lease frontend antes de limpeza. Revisar os dois commits frontend e entrega backend, integrar somente nesta branch, validar conjunto e preparar PR Draft após revisão de sigilo e gatilhos de deploy. Não merge/main/deploy/infra remota.
+- Alteração local ainda sem commit neste marco: este checkpoint. Backups e laboratórios anteriores permanecem intocados.
+
+Atualizado em02/11/2026,SãoPaulo. Estado: emandamento,chatsbackend/frontenddespachados eativos. Usuárioexigiuorquestração,delenãoimplementartudoaqui. Ler docs/PREVIEW-ORCHESTRATION-20261102.md e docs/preview-contract.md.
+
+## Objetivo e pedido atual
+Concluir previewoperacionalTikTok(assistir/seek/marcariníciofim/importarsótrecho30s) comcollector/scheduler/heartbeat/monitorseguros. SEMmainmerge/deploy/infraremota/flags/escritasprod. Mainpublicada7443dc8,8migrationsjáaplicadas;flagsInstagram/preview/YToff,TikTokMP4existentes. Histórico abaixo temestadossuperados; não retomarbackupouA/B.
+
+## Localização do trabalho
+OrquestradoragoraC:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-integration-20261102/nadesCs2,branchcodex/tiktok-preview-integration-20261102,baseHEAD7443dc8. Commitplanejamentopendente,sempush. Releaseworktreea29b6cbdirtydocs históricospreservada,nãomoveremmasa. Backend/frontendantigoslimpos28e10b4/63729faintocados.
+
+## Feito
+Novasworktreesapartirorigin/main7443dc8 paraBEcodex/tiktok-preview-backend-20261102 eFEcodex/tiktok-preview-frontend-20261102. Tarefasenviadasefetivamenteaoschatsbackend CS2(thread01a1853b-dc21-73c1-ac42-d997b4b7c794)local efrontEnd CS2(thread01a1853b-6e1e-79b3-8505-70e2d76056fe)local. Recebidaconfirmaçãostatusactiveambos. ContratocomumPOST200ready/GETrenew/URL60s/source15min/heartbeat8min/alvo5min,sem202/background/fake. Semmudançaprotocoloinicial.
+
+## Em andamento
+BEdiagnosticarunner/cleanup/schedulergratuitorealista,semprovisionar;donoexclusivobackend/checkpointBE/workflowsnovossource-previewinativos. FEidentificou3gapspontuais:tempoatualacessível,avisoprévianãopublicada,SOURCE_EXPIREDantecipadoservidor. Planopontualalinhado,testescontroladosPC/mobile;E2ErealaguardaplanolocalBE/lease. OrquestradornãoeditaBE/FE,apenascontrato/docs/revisão/integração.
+
+## Retomar daqui
+1. ConferirGit/HEAD e wait_threads compacto dosdoischats,semreadpollrepetitivo. CursoresiniciaisBE48834963-6727-4117-96ba-1ae128f04603:1/FE47f1a592-cf30-45b6-bd70-0a818c2307a7:1.
+2. ReceberdiagnósticoBE,scheduler/limitaçõesdocsoficiais e planoNOVOambienteisolado;distribuirdependênciasaoFE. Semtestarexternosemfonteautorizadacoordenada.
+3. Apóscommitslocaisvalidados/revisados,integrarna branchprópria/testarconjunto/prepararPRDraft;sempublicarmain/deploy/flags. Semreimplementarworkpronto.
+
+## Validação/bloqueios
+Gitfetch/worktree/status/checkpoints/contrato conferidos. BE/FEaindanãoentregaramvalidaçãofinal. Portas/credenciais/stack NOVOSpendentes;NÃOutilizarcredentialsprod oualterarlabs/backupsantigos. Nenhumtesterealexecutadonestatarefa peloorquestrador. Scheduleroperacional+monitorremotosaindapendentesdeplanejamento/autorização. MocksnãoevidênciaE2Ereal;cronmanualnãoéserviçooperacional. DefaultpreviewOFFpreservado.
+
+## Arquivos ainda sem commit
+NesteNOVOworktree:docs/PREVIEW-ORCHESTRATION-20261102.md,docs/preview-contract.md(notaestado/schema),docs/continuity/orchestrator.md. Outrosworktreesnãoeditados. CommitsConventionalPortuguêslocais;pushdependederevisão/safetypreviewbranches.
+
+---# Entrega para revisão — PR #3 (02/11/2026)
 
 PR draft: https://github.com/Lipe-meira/pcdNades/pull/3. Branch integration/pcdnades-release no worktree C:/Users/felip/.codex/worktrees/pcdnades-release/nadesCs2. Código validado em25629a5, relatórios44ebff7; este registro final será commitado e enviado na mesma branch. Confirmar HEAD final por git log/ls-remote. Todos os testes integrados passaram:136backend,58frontend,82Playwright final e builds;4 testes de regressão RED→GREEN. Ensaio real PG17.11 derivado do backup:3 migrations,8gruposQA+4negaçõesRLS e DDLrollbackPASS; roles modeladas sem senha, não E2E Auth/Storage integral.
 

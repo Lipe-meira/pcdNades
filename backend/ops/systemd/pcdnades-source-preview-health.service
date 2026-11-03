@@ -1,0 +1,15 @@
+# INACTIVE TEMPLATE. A failed unit is observable, not a delivered human alert.
+[Unit]
+Description=pcdNades independent collector-health probe
+
+[Service]
+Type=oneshot
+User=pcdnades
+Group=pcdnades
+WorkingDirectory=/opt/pcdnades/backend
+ExecStart=/usr/bin/node --import tsx scripts/source-preview-health.ts /var/lib/pcdnades-preview/health.json
+TimeoutStartSec=15
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
