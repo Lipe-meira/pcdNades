@@ -1,5 +1,11 @@
 # Checkpoint — orquestrador / prévia visual TikTok
 
+## Cron + Edge — 03/11/2026 em andamento
+
+Usuário escolheu Supabase Cron + Edge a cada três minutos, com Healthchecks independente. Autorizou testes locais e push normal do fix `263e6e0` ao PR4 mantendo Draft. Proibiu merge main, deploy, flags, mudanças e credenciais remotas de produção, recursos pagos e testes com escrita em produção.
+
+Missão encaminhada ao chat Backend `01a1853b-dc21-73c1-ac42-d997b4b7c794`. Backend avalia fix e prepara coletor Edge, lease/CAS, heartbeat, agendamento e simulador de monitor em branch própria. Orquestrador integra o fix ao PR4 após revisão, preservando worktrees e commits. Frontend em espera. Validar dez ciclos e falhas no laboratório isolado, identificando precisamente qualquer componente simulado. PR4 permanece Draft. HEAD inicial da branch de integração `7393a17`, PR remoto inicial `545f1c6`.
+
 ## Gate operacional local concluído — 03/11/2026
 
 Backend concluiu Auth/REST/Storage e player reais no laboratório novo com fixture sintética e 8 migrations locais. A tela intacta `545f1c6` fez login e marcou 0,5–1,5 s no vídeo real. Passaram Range 206, renovação/expiração, isolamento de proprietário, recorte FFmpeg 2 s, zero granadas, sweep real com falha/cancelamento/recuperação, heartbeat e hashes finais. Parser systemd 252 exit 0 para três units. Frontend não acionado.
