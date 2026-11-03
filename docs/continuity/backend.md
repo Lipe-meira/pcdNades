@@ -1,3 +1,17 @@
+# Revisão do Draft Edge empilhado — 03/11/2026
+
+Branch própria codex/tiktok-preview-backend-20261102, worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2, HEAD inicial 042a50c limpo, nove commits à frente da origin própria. A base PR4 e80e2f1 existe e contém 949edec e 263e6e0, mas não é ancestral do HEAD backend. Merge-base 949edec. Diff de três pontos identifica sete commits exclusivos Edge, de 84fb82d a 042a50c, e nove arquivos de backend/checkpoint. Comparação direta mostra reversões de frontend e docs do PR4 porque os históricos divergiram. Não usar a branch atual diretamente como head de um PR empilhado. Orquestrador deve integrar os commits exclusivos numa branch nova baseada em e80e2f1, preservando alterações do PR4. Este checkpoint é commit local adicional.
+
+Revisado: autenticação por token próprio com verify_jwt=false, tempo limitado e chaves fora do código, lease global CAS com heartbeat/release condicionados ao titular e validade, runner novo na mesma trava, revogação do heartbeat antigo, bucket dedicado via Storage API e cron manual de três minutos com valores no Vault. Busca de padrões comuns de credenciais não encontrou correspondências nos arquivos Edge verificados. Autenticação e apikey no gateway real, rotação e implantação coordenada ainda precisam validação. Ping é observabilidade, o gate consulta heartbeat. Timeout não garante cancelamento remoto e ping atrasado pode sinalizar sucesso anterior. Lease permanece durante ping.
+
+Verificações executadas nesta revisão: Deno 6/6 com respostas simuladas, deno check PASS, Node 12/12 com dependências simuladas, npm typecheck PASS, git diff --check PASS. Evidência anterior: SQL real local com rollback validou titular/vencimento/heartbeat da migration final. Dez ciclos Deno anteriores usaram Auth health/PostgREST/Storage reais, mas migration anterior, chamadas imediatas e monitor simulado. Não prova runtime hospedado, intervalo de três minutos, falhas reais ou concorrência Edge/runner.
+
+Rejeição: um comando PowerShell único para criar e executar harness Deno encaminhando a PostgREST/Storage locais e injetando falhas/concorrência recebeu Rejected, blocked by policy, sem justificativa adicional. Não executar ação equivalente por fragmentação ou outra ferramenta. Recursos anteriores preservados. Pendências para ativação: procedimento explicitamente permitido, dez ciclos com migration final e Storage real, falhas/concorrência, operações após timeout, autenticação gateway, cron real e alerta independente. Recomendo apenas Draft para revisão, sem afirmar aprovação operacional. Sem push ou mutação remota nesta etapa.
+
+Próximo passo: comunicar SHAs, arquivos, testes e conflitos potenciais ao orquestrador, que coordena branch de integração do PR. Ao retomar, conferir status e este checkpoint.
+
+---
+
 # Fechamento focado Edge — 03/11/2026
 
 Revisão sobre 923ac62 confirmou que heartbeat e release usam titular e vigência no banco e que o gate de leitura depende do heartbeat no banco, nunca do ping. Corrigida a pequena janela entre selecionar a trava e atualizar heartbeat: o UPDATE reavalia titular e validade usando clock_timestamp. Teste SQL real transacional em preview_edge_1103 PASS para titular errado, expiração, heartbeat inalterado, recuperação, retenção e release. Deno 6/6 simulados e deno check PASS. PG parado ao final. A migration alterada é local e exige novo piloto antes de ativação.
