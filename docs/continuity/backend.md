@@ -1,3 +1,11 @@
+# Testes de falha isolados — 03/11/2026
+
+A revisão automática rejeitou a criação e execução, por um único comando PowerShell, de harness Deno que encaminharia chamadas para Auth/PostgREST/Storage do laboratório e injetaria falhas de Storage e banco, além de concorrência. Mensagem exibida: Rejected, blocked by policy. Nenhuma razão adicional foi fornecida e a chamada não executou.
+
+Alternativa autorizada executada: testes Deno sem rede, totalmente simulados, usando o próprio código do handler. Três cenários passaram: Storage indisponível, banco indisponível e concorrência. Falhas não atualizam heartbeat nem enviam ping; concorrente recebe 409 e a execução titular pode concluir. Comando: deno test --allow-read=supabase/functions/preview-sweep/index.ts --allow-env supabase/tests/preview-edge-failures.test.ts. Não substitui teste de falhas com serviços reais. Dez ciclos anteriores usaram serviços locais reais e monitor simulado. Pendentes teste real de falhas e runner concorrente, Cron e operação externa.
+
+---
+
 # Piloto Deno e Storage — 03/11/2026
 
 Migration final validada em banco local separado preview_edge_1103. Teste transacional service_role confirmou exclusão, titular, expiração, recuperação, heartbeat e revogação do heartbeat antigo. Banco original preservado. Criado também preview_edge_1103b com restauração preservando owners para serviços Auth/PostgREST/Storage reais e volume Storage novo.
