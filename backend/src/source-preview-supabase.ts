@@ -59,6 +59,8 @@ export async function getImportPreview(db:SupabaseClient,input:{sourceId:string;
 }
 /** Run via a monitored scheduler. No heartbeat is written on any incomplete sweep. */
 export async function runSourcePreviewMaintenance(db:SupabaseClient,origin:string,signal:AbortSignal){
+ const holder=randomUUID();
+ if(result(await db.rpc('claim_preview_sweep',{p_holder:holder}).abortSignal(signal))!==true)throw fail();
  const ports=supabasePreviewPorts(db,origin,signal),now=Date.now();
  const removed=await cleanupSourcePreviews(ports,now,50);if(removed===50)throw fail();
  const storage=db.storage.from(bucket);
@@ -71,6 +73,6 @@ export async function runSourcePreviewMaintenance(db:SupabaseClient,origin:strin
  // evidence of a complete sweep; never refresh health while expired jobs remain.
  const backlog=result(await db.from('import_preview_jobs').select('source_id').lte('expires_at',new Date(now-120000).toISOString()).limit(1).abortSignal(signal));
  if(backlog?.length)throw fail();
- result(await db.rpc('mark_source_preview_sweep').abortSignal(signal));
+ if(result(await db.rpc('finish_preview_sweep',{p_holder:holder}).abortSignal(signal))!==true)throw fail();
  return {removed,orphansRemoved:orphans.removed};
 }

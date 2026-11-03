@@ -42,4 +42,5 @@ begin
 end $$;
 revoke all on function public.claim_preview_sweep(uuid), public.finish_preview_sweep(uuid), public.release_preview_sweep(uuid) from public, anon, authenticated;
 grant execute on function public.claim_preview_sweep(uuid), public.finish_preview_sweep(uuid), public.release_preview_sweep(uuid) to service_role;
+revoke execute on function public.mark_source_preview_sweep() from service_role;
 commit;

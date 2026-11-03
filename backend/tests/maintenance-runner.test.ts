@@ -14,7 +14,7 @@ test('cancellation stops waiting even when an adapter never settles',async()=>{
 });
 test('leased expired backlog prevents a successful maintenance heartbeat',async()=>{
  const {runSourcePreviewMaintenance}=await import('../src/source-preview-supabase.js');let marked=0;
- const db:any={storage:{from:()=>({list:async()=>({data:[],error:null})})},rpc:(name:string)=>{if(name==='mark_source_preview_sweep')marked++;return {abortSignal:async()=>({data:null,error:null})};},from:()=>{const q:any={select:()=>q,lte:()=>q,limit:()=>q,abortSignal:async()=>({data:[{source_id:'leased-fixture'}],error:null})};return q;}};
+ const db:any={storage:{from:()=>({list:async()=>({data:[],error:null})})},rpc:(name:string)=>{if(name==='finish_preview_sweep')marked++;return {abortSignal:async()=>({data:name==='claim_preview_sweep'?true:null,error:null})};},from:()=>{const q:any={select:()=>q,lte:()=>q,limit:()=>q,abortSignal:async()=>({data:[{source_id:'leased-fixture'}],error:null})};return q;}};
  await assert.rejects(runSourcePreviewMaintenance(db,'https://project.supabase.test',new AbortController().signal),/PREVIEW_UNAVAILABLE/);assert.equal(marked,0);
 });
 test('shutdown abort is propagated and never becomes a success',async()=>{

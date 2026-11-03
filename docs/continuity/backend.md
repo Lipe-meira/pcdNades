@@ -1,3 +1,11 @@
+# Progresso Edge e coletor legado — 03/11/2026
+
+O runner legado agora adquire a mesma trava global do Edge e só renova heartbeat via finish com titular. A migration local revoga execução da função antiga de heartbeat para impedir bypass por código legado. Implantação requer migração e código coordenados, pois versões antigas deixam de atualizar heartbeat. Cron SQL manual de 3 minutos usa Vault e net.http_post, mas ainda não foi executado ou testado com pg_cron/pg_net. config Edge desativa verificação JWT e usa token explícito do handler.
+
+PASS: 12 testes simulados focados, typecheck antes do ajuste e deno check. O teste PostgreSQL anterior cobriu versão anterior da migration, não a revogação adicionada agora. Não foi feito piloto de 10 ciclos com Storage real, nem teste real do cron ou ping de monitor. Primeira ação ao retomar: ensaiar migration final e compatibilidade com runner em banco isolado novo, criar harness para dez ciclos no Storage real e falhas. Cuidado para não apagar fixtures do laboratório histórico. Ainda não pronto para integração ou ativação. Branch codex/tiktok-preview-backend-20261102; mudanças locais serão commitadas, push pendente.
+
+---
+
 # Coletor Edge em implementação — 03/11/2026
 
 Migration local e primeira versão Edge criadas em backend/supabase. Lease global com claim CAS, heartbeat condicionado ao titular e validade, sweep exclusivo do bucket privado, falhas conservam lease até expirar, ping após confirmação. Cron é apenas comentário inativo, ainda falta implementação concreta. Nenhum deploy ou serviço remoto.
