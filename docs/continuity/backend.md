@@ -1,3 +1,15 @@
+# Fechamento focado Edge — 03/11/2026
+
+Revisão sobre 923ac62 confirmou que heartbeat e release usam titular e vigência no banco e que o gate de leitura depende do heartbeat no banco, nunca do ping. Corrigida a pequena janela entre selecionar a trava e atualizar heartbeat: o UPDATE reavalia titular e validade usando clock_timestamp. Teste SQL real transacional em preview_edge_1103 PASS para titular errado, expiração, heartbeat inalterado, recuperação, retenção e release. Deno 6/6 simulados e deno check PASS. PG parado ao final. A migration alterada é local e exige novo piloto antes de ativação.
+
+Operação tardia: CAS impede confirmação ou release de titular vencido. Abort e deadlines limitam espera do cliente, mas não provam que servidor remoto parou a operação em voo. Ping atrasado pode chegar mesmo após cancelamento. Não é autoridade do gate, e tampouco prova saúde de execução posterior. O antigo RPC de heartbeat é revogado pela migration, logo migration e runner novo precisam de implantação coordenada. Não há prova real de execução simultânea Edge/runner ou gateway hospedado.
+
+Decisão: código pode ser apresentado ao orquestrador para PR Draft Edge separado do PR4, identificado como não pronto para ativação ou merge operacional. Pendências: 10 ciclos na migration final com Storage real, concorrência/falhas reais, comportamento após timeout, agenda real de 3 min, alerta externo e autenticação no gateway. A ação rejeitada de harness PowerShell com injeção de falhas não pode ser reproduzida por equivalentes ou fragmentação. O retorno foi Rejected, blocked by policy, sem detalhe. Não há procedimento alternativo confirmado como permitido para aquela mesma ação. Antes de qualquer ensaio futuro, obter procedimento explicitamente permitido e aprovação de ambiente isolado com credenciais efêmeras e monitor independente. Primeiro validar schema/roles e gateway, depois ciclo normal/alerta e somente falhas previstas no procedimento aprovado. Nenhum recurso remoto foi criado aqui.
+
+Branch codex/tiktok-preview-backend-20261102, base 923ac62, commit local desta correção, push pendente sob coordenação. Laboratórios preservados. Próxima ação: enviar commit e limitações ao orquestrador para decisão do Draft.
+
+---
+
 # Trava durante monitoramento — 03/11/2026
 
 A função finish agora confirma heartbeat mantendo a trava. O Edge só libera a trava com CAS após resposta bem-sucedida do ping, e o ping recebe o sinal de cancelamento combinado ao timeout. O runner sem ping libera com CAS após confirmação. Em falha/cancelamento a trava permanece até vencer. release também confere vencimento. A migration segue local e ainda não publicada.

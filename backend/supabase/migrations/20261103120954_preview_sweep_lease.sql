@@ -27,8 +27,12 @@ begin
  select true into ok from private.preview_sweep_lease
  where singleton and holder = p_holder and locked_until > clock_timestamp() for update;
  if not coalesce(ok, false) then return false; end if;
- update public.import_preview_maintenance set swept_at = clock_timestamp() where singleton;
- if not found then raise exception 'PREVIEW_HEARTBEAT_MISSING'; end if;
+ update public.import_preview_maintenance set swept_at = clock_timestamp()
+ where singleton and exists (
+   select 1 from private.preview_sweep_lease
+   where singleton and holder = p_holder and locked_until > clock_timestamp()
+ );
+ if not found then return false; end if;
  return true;
 end $$;
 

@@ -8,7 +8,7 @@ const moduleText = original.replace('Deno.serve(async (request) => {', 'export d
 const { default: handler } = await import(`data:application/typescript,${encodeURIComponent(moduleText)}`);
 
 // Each request below is synthetic. No database, storage or monitoring service is contacted.
-for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease', 'ping-cancel']) {
+for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease', 'ping-cancel', 'expired-global-lease']) {
   Deno.test({
     name: `preview sweep fails closed on ${fault}`,
     sanitizeOps: false,
@@ -51,7 +51,10 @@ for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease', 'pin
           if (fault === 'database') return new Response(null, { status: 503 });
           return Response.json([]);
         }
-        if (url.pathname.endsWith('/finish_preview_sweep')) { heartbeat++; return Response.json(true); }
+        if (url.pathname.endsWith('/finish_preview_sweep')) {
+          if (fault === 'expired-global-lease') return Response.json(false);
+          heartbeat++; return Response.json(true);
+        }
         if (url.pathname.endsWith('/release_preview_sweep')) { locked = false; return Response.json(true); }
         throw new Error('Unexpected fixture request');
       };
