@@ -1,5 +1,33 @@
 # Checkpoint — orquestrador / prévia visual TikTok
 
+## Gate operacional local concluído — 03/11/2026
+
+Backend concluiu Auth/REST/Storage e player reais no laboratório novo com fixture sintética e 8 migrations locais. A tela intacta `545f1c6` fez login e marcou 0,5–1,5 s no vídeo real. Passaram Range 206, renovação/expiração, isolamento de proprietário, recorte FFmpeg 2 s, zero granadas, sweep real com falha/cancelamento/recuperação, heartbeat e hashes finais. Parser systemd 252 exit 0 para três units. Frontend não acionado.
+
+Perda PG comprovada exit 0 antes e exit 1/stopped depois do fix local `263e6e0`; SIGTERM voluntário exit 0/stopped preservado. TypeScript focal passou. Relatório/checkpoint backend `949edec` na branch própria, limpo e sem push. Relatório integrado `docs/TIKTOK-PREVIEW-OPERATIONS-GATE.md`. Inspeção do lab histórico exibiu chave TLS descartável na saída local da ferramenta; os novos artefatos e commits não contêm a chave. Teste Chromium sem sandbox dentro do container isolado sem privilégios e sem egress, somente fixture.
+
+Rede `pcdn-preview-lab-1103` internal=true, zero peers ativos após testes. Quatro serviços parados, volumes/logs privados preservados. PR4 conferido Draft no HEAD remoto `545f1c6`. O worktree do orquestrador registra relatório e checkpoint em commit local. Nenhum push desta missão, deploy, operação de produção ou suíte antiga repetida.
+
+Próximo passo: definir se há host Linux contínuo e responsável. Sem host confirmado, preparar ensaio isolado Cron + Edge com lease por execução e observador externo. Se houver host, usar runner/systemd com `263e6e0`. Autorizar separadamente instalação/recursos remotos, segredos e destinatário. Provar cadência, alerta, recuperação e fail-closed antes da ativação. GO para ensaio operacional isolado. NO-GO para produção. Manter PR Draft e integrar o fix de recuperação na próxima revisão.
+
+## Marco do laboratório — 03/11/2026
+
+Backend retomou após o limite de uso e aprovamos plano restrito `pcdn-preview-lab-1103`, rede Docker `internal`, volumes novos, sem portas host, socket Docker ou modo privilegiado. `docker network inspect` confirmou `Internal=true`. PG17.6 respondeu por DNS interno. Backend informou Auth/REST/Storage ativos, schemas confirmados e oito migrations aplicadas ao banco novo. Orquestrador conferiu containers novos ativos sem mapeamento de portas.
+
+Ensaio de preview/player/recorte/limpeza em andamento. A revisão apontou possível saída zero após perda da conexão PG no runner, incompatível com `Restart=on-failure`. Backend recebeu pedido de reprodução focada após o E2E principal. Frontend permanece em espera. O plano de infraestrutura e alertas está em `docs/TIKTOK-PREVIEW-OPERATIONS-GATE.md`, local e sem commit; decisão depende de host Linux contínuo disponível. Nenhum teste automatizado antigo repetido.
+
+Segundo marco backend: parser Linux aceitou as três units e Chromium reproduziu prévia de 4 s e recorte final de 2 s com Storage real e HTTP 206 no harness. Ainda em teste a tela do app, expiração natural, limpeza/falhas e perda de PG. Não usar o sucesso do harness como resultado da tela.
+
+Terceiro marco: backend reportou PASS API/Storage real, URL vencida naturalmente, 410 de fonte expirada, falha DELETE induzida com lease/retry, cancelamento, limpeza de órfão e hashes finais iguais. Reprodução da tela do PR segue em ensaio focal após ajuste da URL de API do lab. Perda da sessão PG reproduzida com `pg_terminate_backend` apenas da conexão do runner novo, que registrou `stopped` e saiu 0. `Restart=on-failure` não cobre essa saída. Backend prepara correção local com código de falha para perda PG e saída 0 em SIGTERM voluntário, testando só os caminhos afetados. PR4 remoto conferido Draft/545f1c6.
+
+## Nova missão operacional — 02/11/2026, em andamento
+
+Pedido humano: desbloquear Auth/Storage reais em NOVO laboratório Linux interno e escolher operação do coletor, sem repetir desenvolvimento/testes aprovados. PR4 permanece Draft no HEAD inicial `545f1c609337f2b440f8b1ae0e2abaf8e58a36b0`; worktree/branch de integração acima preservados e limpos ao iniciar. Nenhuma autorização de produção, provisionamento remoto, credenciais remotas, deploy, migration remota ou flags.
+
+Missão enviada efetivamente ao chat backend existente `01a1853b-dc21-73c1-ac42-d997b4b7c794`, host local, no worktree/branch backend próprios. Prioridades: clientes dentro da rede Docker interna (sem bind Windows), serviços reais e credenciais efêmeras, preview/player/recorte fixture/owner/TTL/cleanup/heartbeat/falhas, validação parser systemd. Exigir plano limitado antes de bootstrap estrutural ou privilégio adicional; não usar Docker socket dentro de container, privileged ou host networking sem revisão da necessidade/riscos e decisão. Frontend permanece em espera e só será acionado por defeito comprovado.
+
+Orquestrador revisa infraestrutura e documentação oficial em paralelo; não edita implementação backend/frontend. Próxima ação: receber plano do Backend e verificar isolamento/recursos; depois coordenar evidências, revisar entrega pontual e concluir GO/NO-GO operacional. Resultados automatizados anteriores continuam válidos, mas não substituem E2E real. Checkpoint alterado localmente neste início, sem commit/push desta missão ainda.
+
 ## Publicação da branch e PR — estado final desta entrega
 
 PR **#4 Draft**, https://github.com/Lipe-meira/pcdNades/pull/4, aberto a partir de `d77234d28945e59c981260f74dcb2c90e92ec863` na branch própria. Push normal confirmado por `ls-remote`; main continua `7443dc8ee53f266f90c0568bb4976c95a5034bfb`. Este checkpoint de publicação é alteração somente documental posterior aos testes, será commitado/enviado na mesma branch. Consultar `git log -1` para HEAD final. CI Linux deve ser conferido no HEAD final; não confundir checks pendentes com falha e não repetir deploy. PR permanece Draft por decisão explícita, não interpretar mergeable=false inicial como conflito comprovado.
