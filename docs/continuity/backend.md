@@ -1,3 +1,13 @@
+# Piloto Deno e Storage — 03/11/2026
+
+Migration final validada em banco local separado preview_edge_1103. Teste transacional service_role confirmou exclusão, titular, expiração, recuperação, heartbeat e revogação do heartbeat antigo. Banco original preservado. Criado também preview_edge_1103b com restauração preservando owners para serviços Auth/PostgREST/Storage reais e volume Storage novo.
+
+Dez chamadas consecutivas imediatas do handler executaram em Deno 2.5.6 com REST/Storage reais, monitor simulado e encaminhamento de transporte no teste. As dez retornaram 204, dez pings simulados, Auth health real passou, bytes de sentinela de mídia final foram preservados e RPC antigo foi negado. Não prova runtime hospedado Edge ou intervalo real de três minutos. Primeira cópia sem owners causou erro de Auth/Storage e foi preservada; segunda funcionou. Nenhum serviço remoto.
+
+Teste adicional planejado de falhas, recuperação e concorrência foi rejeitado automaticamente ao iniciar comando de criação da harness. Não foi executado. Continuam pendentes teste de falhas no handler real, monitor em falha, interoperabilidade prática com runner, Cron real e intervalo completo. Recursos novos pcdn-preview-edge-1103 e 1103b parados, volumes e bancos preservados, arquivo dump temporário no container PG e evidências privadas em AppData/Local/pcdn-preview-lab-1103. PG original parado novamente. Branch codex/tiktok-preview-backend-20261102, base 1e0553e, sem push desta etapa.
+
+---
+
 # Progresso Edge e coletor legado — 03/11/2026
 
 O runner legado agora adquire a mesma trava global do Edge e só renova heartbeat via finish com titular. A migration local revoga execução da função antiga de heartbeat para impedir bypass por código legado. Implantação requer migração e código coordenados, pois versões antigas deixam de atualizar heartbeat. Cron SQL manual de 3 minutos usa Vault e net.http_post, mas ainda não foi executado ou testado com pg_cron/pg_net. config Edge desativa verificação JWT e usa token explícito do handler.
