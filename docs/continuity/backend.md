@@ -1,3 +1,19 @@
+# Coletor Edge em implementação — 03/11/2026
+
+Migration local e primeira versão Edge criadas em backend/supabase. Lease global com claim CAS, heartbeat condicionado ao titular e validade, sweep exclusivo do bucket privado, falhas conservam lease até expirar, ping após confirmação. Cron é apenas comentário inativo, ainda falta implementação concreta. Nenhum deploy ou serviço remoto.
+
+Executado: deno check PASS, npm typecheck PASS, migration aplicada somente ao PG pcdn-preview-lab-1103 e teste SQL transacional com service_role PASS para concorrência, titular, vencimento e recuperação, rollback. PG parado ao final. Pendente: testes do handler, dez ciclos reais Auth/Storage, falhas/cancelamento/concorrência, monitor simulado, configuração Edge e Cron concretos, auditoria de interoperabilidade com runner legado. Esta versão ainda não é entrega operacional. Primeira ação ao retomar: revisar proteção contra coexistência do runner antigo, criar harness real e validar Storage/Edge antes de integração. Branch codex/tiktok-preview-backend-20261102, base 949edec, alterações locais da missão ainda não enviadas.
+
+---
+
+# Missão coletor Edge — 03/11/2026
+
+Pedido atual: preparar coletor Supabase Cron + Edge e monitor Healthchecks, validar dez ciclos e falhas em laboratório isolado, sem serviços remotos ou alterações de produção. Orquestrador integra commit 263e6e0 ao PR #4. Branch própria codex/tiktok-preview-backend-20261102, HEAD 949edec, base e4b7ed1, dois commits locais ainda sem push. Ancestralidade de 263e6e0 confirmada. Ensaio anterior PG real comprovou exit 1 após perda da trava e exit 0 após SIGTERM, TypeScript estrito passou. Orquestrador informado.
+
+Próxima ação: ler contrato e código do sweep existente, preparar desenho e implementação com lease por execução, Storage API, CAS e heartbeat cercado por lease, autenticação e timeout, ping somente após sucesso. Em seguida preparar Cron inativo, testes e piloto local real com dez ciclos e falhas. Nenhuma implementação nova, teste novo ou mutação remota foi executada nesta missão. Laboratório anterior pcdn-preview-lab-1103 está parado e preservado. Arquivo deste checkpoint ainda não commitado.
+
+---
+
 # Estado atual — laboratório interno concluído, 03/11/2026
 
 Objetivo. Desbloquear a validação Auth/Storage/Chromium do PR #4 e definir condições para operação do coletor. Validação local concluída. Operação remota ainda depende de ambiente, monitor e destinatário aprovados.

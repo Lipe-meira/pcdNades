@@ -1,0 +1,7 @@
+-- INACTIVE TEMPLATE. Review the project, Vault names and authentication before use.
+-- This file does not schedule anything by itself. Do not execute in production
+-- until the isolated pilot, deployment and independent monitoring are approved.
+-- Schedule: */3 * * * *
+-- The job must call net.http_post with the Edge URL and x-preview-sweep-token
+-- obtained from Vault. Inspect net._http_response for failures without logging
+-- the secret or signed URLs. Configure Healthchecks grace independently.
