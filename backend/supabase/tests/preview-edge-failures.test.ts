@@ -8,7 +8,7 @@ const moduleText = original.replace('Deno.serve(async (request) => {', 'export d
 const { default: handler } = await import(`data:application/typescript,${encodeURIComponent(moduleText)}`);
 
 // Each request below is synthetic. No database, storage or monitoring service is contacted.
-for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease']) {
+for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease', 'ping-cancel']) {
   Deno.test({
     name: `preview sweep fails closed on ${fault}`,
     sanitizeOps: false,
@@ -23,9 +23,16 @@ for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease']) {
       let resume!: () => void, started!: () => void;
       const gate = new Promise<void>(resolve => { resume = resolve; });
       const waiting = new Promise<void>(resolve => { started = resolve; });
-      globalThis.fetch = async (input) => {
+      globalThis.fetch = async (input, init) => {
         const url = new URL(input instanceof Request ? input.url : String(input));
-        if (url.hostname === 'hc-ping.com') { pings++; return new Response('ok'); }
+        if (url.hostname === 'hc-ping.com') {
+          pings++;
+          if (fault === 'ping-cancel') {
+            started();
+            await new Promise<void>((_, reject) => init?.signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true }));
+          }
+          return new Response('ok');
+        }
         if (url.pathname.endsWith('/claim_preview_sweep')) {
           if (locked) return Response.json(false);
           locked = true;
@@ -45,6 +52,7 @@ for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease']) {
           return Response.json([]);
         }
         if (url.pathname.endsWith('/finish_preview_sweep')) { heartbeat++; return Response.json(true); }
+        if (url.pathname.endsWith('/release_preview_sweep')) { locked = false; return Response.json(true); }
         throw new Error('Unexpected fixture request');
       };
       try {
@@ -59,6 +67,15 @@ for (const fault of ['storage', 'database', 'concurrency', 'invalid-lease']) {
           assertEquals((await first).status, 204);
           assertEquals(heartbeat, 1);
           assertEquals(pings, 1);
+        } else if (fault === 'ping-cancel') {
+          const controller = new AbortController();
+          const first = handler(new Request('https://local.test', { method: 'POST', headers: { 'x-preview-sweep-token': 'fixture-token' }, signal: controller.signal }));
+          await waiting;
+          assertEquals(heartbeat, 1);
+          assertEquals((await handler(request())).status, 409);
+          controller.abort();
+          assertEquals((await first).status, 503);
+          assertEquals(locked, true);
         } else {
           assertEquals((await handler(request())).status, 503);
           assertEquals(heartbeat, 0);

@@ -24,8 +24,8 @@ create function public.finish_preview_sweep(p_holder uuid) returns boolean
 language plpgsql security invoker set search_path = '' as $$
 declare ok boolean;
 begin
- update private.preview_sweep_lease set holder = null, locked_until = null
- where singleton and holder = p_holder and locked_until > clock_timestamp() returning true into ok;
+ select true into ok from private.preview_sweep_lease
+ where singleton and holder = p_holder and locked_until > clock_timestamp() for update;
  if not coalesce(ok, false) then return false; end if;
  update public.import_preview_maintenance set swept_at = clock_timestamp() where singleton;
  if not found then raise exception 'PREVIEW_HEARTBEAT_MISSING'; end if;
@@ -37,7 +37,7 @@ language plpgsql security invoker set search_path = '' as $$
 declare ok boolean;
 begin
  update private.preview_sweep_lease set holder = null, locked_until = null
- where singleton and holder = p_holder returning true into ok;
+ where singleton and holder = p_holder and locked_until > clock_timestamp() returning true into ok;
  return coalesce(ok, false);
 end $$;
 revoke all on function public.claim_preview_sweep(uuid), public.finish_preview_sweep(uuid), public.release_preview_sweep(uuid) from public, anon, authenticated;

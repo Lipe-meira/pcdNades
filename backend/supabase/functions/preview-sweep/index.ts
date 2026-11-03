@@ -73,11 +73,13 @@ Deno.serve(async (request) => {
     if (!Array.isArray(backlog) || backlog.length) throw new Error('BACKLOG');
     signal.throwIfAborted();
     if (!await rpc('finish_preview_sweep', { p_holder: holder })) throw new Error('LEASE_LOST');
-    claimed = false;
     const ping = new URL(env('PREVIEW_HEALTHCHECK_URL'));
     if (ping.protocol !== 'https:' || ping.hostname !== 'hc-ping.com' || ping.username || ping.password || ping.search || ping.hash) throw new Error('INVALID_MONITOR');
-    const result = await fetch(ping, { signal: AbortSignal.timeout(5000), redirect: 'error' });
+    const result = await fetch(ping, { signal: AbortSignal.any([signal, AbortSignal.timeout(5000)]), redirect: 'error' });
     if (!result.ok) throw new Error('MONITOR_FAILED');
+    signal.throwIfAborted();
+    if (!await rpc('release_preview_sweep', { p_holder: holder })) throw new Error('LEASE_LOST');
+    claimed = false;
     return new Response(null, { status: 204 });
   } catch {
     return new Response(null, { status: 503 });

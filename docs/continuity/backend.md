@@ -1,3 +1,13 @@
+# Trava durante monitoramento — 03/11/2026
+
+A função finish agora confirma heartbeat mantendo a trava. O Edge só libera a trava com CAS após resposta bem-sucedida do ping, e o ping recebe o sinal de cancelamento combinado ao timeout. O runner sem ping libera com CAS após confirmação. Em falha/cancelamento a trava permanece até vencer. release também confere vencimento. A migration segue local e ainda não publicada.
+
+Testes: Deno 5/5 simulados, incluindo concorrência durante ping e cancelamento, Node 12/12 focados, npm typecheck PASS. SQL real no banco local preview_edge_1103 em transação com rollback confirmou finish mantém trava, exclusão concorrente, release titular e vencimento. PG parado novamente. Os dez ciclos anteriores testaram versão anterior da migration e precisam repetição aprovada na versão final.
+
+Limite: um ping já entregue pela rede pode chegar ao serviço mesmo após cancelamento ou expiração da trava. O timeout e o sinal reduzem a janela, mas não comprovam cancelamento remoto. Monitor atesta apenas sweep já confirmado. Falta validação de gateway hospedado, comportamento de operações remotas após timeout e falhas reais. A ação da harness bloqueada não foi repetida. Sem produção ou serviços remotos. Próxima ação: orquestrador revisar limite e coordenar procedimento explicitamente permitido para os testes pendentes. Branch codex/tiktok-preview-backend-20261102, base anterior 9be9082, commit local desta etapa, sem push.
+
+---
+
 # Revisão final Edge — 03/11/2026
 
 Correção comprovada: datas inválidas do job geravam NaN e contornavam comparações da validade. Handler agora exige timestamps finitos. Testes Deno simulados 4/4, deno check e npm typecheck passaram. Branch codex/tiktok-preview-backend-20261102 com base e4b7ed1, commits locais 263e6e0, 949edec, 84fb82d, 1e0553e, 753ced5 e 0007a32, mais commit desta revisão, sem push. Arquivos e migrations conferidos por git diff contra origin da própria branch.

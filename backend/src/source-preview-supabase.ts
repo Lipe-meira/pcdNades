@@ -74,5 +74,6 @@ export async function runSourcePreviewMaintenance(db:SupabaseClient,origin:strin
  const backlog=result(await db.from('import_preview_jobs').select('source_id').lte('expires_at',new Date(now-120000).toISOString()).limit(1).abortSignal(signal));
  if(backlog?.length)throw fail();
  if(result(await db.rpc('finish_preview_sweep',{p_holder:holder}).abortSignal(signal))!==true)throw fail();
+ if(result(await db.rpc('release_preview_sweep',{p_holder:holder}).abortSignal(signal))!==true)throw fail();
  return {removed,orphansRemoved:orphans.removed};
 }
