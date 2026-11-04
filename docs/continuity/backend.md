@@ -1,3 +1,65 @@
+# Publicação autorizada PR5 Draft — 04/11/2026
+
+Em andamento: usuário autorizou consolidar correções/evidências e push normal exclusivamente da branch do PR5, mantendo Draft e acompanhando CI. Branch codex/tiktok-preview-edge-review-20261103/worktree próprio, HEAD inicial0c60260; fetch remoto03b632f, divergência0/1, mainf4389af sem alterações concorrentes. Revisado diff completo de código e documentos; nada de front/downloader/dependências novo nesta entrega. Credencial privada do Lab está fora do Git e não será lida ou copiada nesta publicação.
+
+Preflight deploy: conector Vercel confirmou projetos porém omitiu tracking; REST com auth CLI retornou403, sem alteração. Painel autenticado confirmou Production Branch=main e Preview Branch Tracking=off em AMBOS pcdnades/pcdnades-api. Contexto Git só vincula esses dois projetos ao repo; pcdnades-preview-api não tem vínculo Git listado. Workflow único Linux somente build/test sem segredos/Supabase/deploy. Push desta branch não dispara deploy nessas configurações observadas. Nenhum ajuste remoto realizado.
+
+Próximos passos: scan limitado de segredos/arquivos proibidos + diffcheck, commit documental coeso, push fast-forward nesta branch, confirmar SHA remoto/Draft e CI do HEAD exato. Não repetir ensaios Gate/Lab/player/monitor. Se houver divergência remota ou CI falhar, interromper/diagnosticar sem merge. Documentação consolidada docs/PR5-OPERATIONAL-READINESS-20261104.md e relatórios de recusa/gate; manter NO-GO produção e pendências de falhas reais/timeout/Edge-runner/gate hospedado. Publicação não autoriza execução de qualquer procedimento remoto documentado.
+
+---
+# Gate vencido local com Lab — PASS, 04/11/2026 15h19 Brasília
+
+Usuário confirmou arquivo privado e autorizou execução; ACL owner/única regra usuário/herança desativada e ausência de reparse points conferidas. URL exata Lab e credencial escopo legítimo validados sem revelar valores. Função real sourcePreviewAvailable executada UMA vez via Node/tsx stdin, argumento local true sem process.env. Exatamente3 GETs HTTP200 ao único host/path/tabela permitidos; nenhum retry, endpoint adicional ou listener. Linha válida em todas, heartbeat17:12:02.332103UTC, idades4043238/4043317/4043388ms; relógio HTTPS comparado ao midpoint local, diferenças629/390/315ms. Resultado false confirmado por idade>480000ms, não erro/flag/ausência. Heartbeat final igual. PASS de integração local, não capability HTTP hospedada nem transição temporal8min.
+
+HEAD0c602609ee221b9a7525a503ef01be011e2cb570/branch codex/tiktok-preview-edge-review-20261103 e worktree preservados. Sem backend escutando porta, coletor, Cron, Healthchecks, flags persistentes, escrita remota ou arquivos de configuração modificados. Chave continua somente no arquivo privado fora Git, nunca copiada para código/log. Alterados apenas este checkpoint e relatório docs/PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Relatório do instalador anterior também permanece novo local. Sem commit/push/merge.
+
+Retomar: não repetir gate local/recusa/ciclos/alertas aprovados. Próxima entrega proposta é autorização de consolidação documental+push do PR5 Draft/CI exato, sem deploy; em paralelo resolver procedimento expressamente permitido para falhas reais PG/Storage, operações tardias e Edge-runner, sem equivalentes da harness bloqueada. Gate hospedado também pendente de ambiente/autorização isolados. NO-GO produção permanece.
+
+---
+# Configuração privada vazia preparada — aguardando preenchimento manual
+
+Usuário autorizou criar somente arquivo privado fora do Git e restringir ACL. Criado C:/Users/felip/AppData/Local/pcdnades-credentials/preview-lab/heartbeat-gate.env, com SUPABASE_URL do Lab qtixfjntddsxjirxwqon e SUPABASE_SERVICE_ROLE_KEY vazia. Pasta nova e arquivo com herança desativada e uma única regra Allow FullControl para SID do usuário corrente, owner usuário; ACLs verificadas. Nenhuma credencial existente copiada, nenhum segredo criado/rotacionado ou exibido. Não abrir editor automaticamente nem executar teste.
+
+Retomar somente após confirmação de preenchimento do usuário: validar ACL, ausência de reparse point, nomes dos dois campos, URL exata e chave não vazia sem imprimir conteúdo; depois prosseguir com ensaio único previamente autorizado, máximo3 GETs exclusivamente na tabela maintenance do Lab. Não ler valores em logs nem registrar hash de chave. Sem GET/execução da função nesta etapa. HEAD0c60260 e documentos pendentes preservados; sem commit/push/merge. Chave deve ser preenchida pessoalmente e pertencer ao Lab, nunca produção.
+
+---
+# Gate real local — preflight interrompido por configuração privada ausente
+
+Usuário autorizou única execução mínima (máximo3 GETs Lab). HEAD0c602609ee221b9a7525a503ef01be011e2cb570 confirmado. Não identificada credencial privada configurada para qtixfjntddsxjirxwqon: env do processo ausente, PR5 só .env.example; client.env/edge-client.env antigos apontam para outro destino local e não foram reutilizados. Nenhum segredo impresso. Solicitado somente caminho privado ao usuário. INCONCLUSIVO de preparação, não defeito do gate. ZERO GETs, ZERO chamadas da função, nenhum processo/backend iniciado; sem retry, remoto, flags ou configuração alterada.
+
+Retomar: ler resposta com caminho privado, conferir destino Lab e configuração segura sem revelar valores; só então ensaio único autorizado do plano docs/PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Não usar credencial de produção, gerar chave nem pedir valor no chat. Preservar alterações documentais não commitadas. Relatório e checkpoint atualizados; sem commit/push/merge. Pendências críticas continuam falhas reais PG/Storage, Edge-runner concorrente, efeitos tardios e gate hospedado. Não reproduzir harness bloqueada.
+
+---
+# Plano gate vencido — 04/11/2026, somente preparação
+
+Revisado código sourcePreviewAvailable (idade<=480000ms válida, acima fecha) e ligação em capabilities; testes source-preview.test.ts e preview-api.test.ts existentes. Não executado backend, teste ou consulta remota nesta tarefa. Plano docs/PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md propõe função real local+SDK+três GETs exclusivos no Lab, argumento local true sem alterar process.env/flags persistidas, leitura bem-sucedida e idade real comprovadas para evitar falso PASS por erro/flag. Precisa autorização específica e credencial privada exclusiva do Lab; se ausente parar. Não afirmar HTTP hospedado nem transição8min; gate permanece pendente nesse ambiente. Reusar testes simulados sem confundir evidência real; opcional filtrar teste de capabilities caso resultado específico anterior não esteja confirmado.
+
+HEAD0c602609ee221b9a7525a503ef01be011e2cb570, branch/worktree PR5 preservados. Só documentos locais modificados/novos: este checkpoint, PR5-INSTALLER-LAB-PLAN-20261104.md e PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Sem commit/push/merge. Próxima ação: solicitar autorização de execução mínima, depois conferir destino/credencial segura e preparar runner sem rede fora da allowlist. Não reativar Cron/monitor nem repetir harness. Falhas reais, concorrência Edge/runner e efeitos após timeout continuam separados, NO-GO produção.
+
+---
+# Ensaio de recusa PR5 concluído — 04/11/2026 14h52 Brasília
+
+PASS. Única execução autorizada do DO exato de0c60260 no Lab, BEGIN READ ONLY, timeouts2s/8s, advisory lock e guardas. Exceção esperada P0001/Job already exists; inspect it before installation capturada exclusivamente pelo wrapper para permitir ROLLBACK explícito no mesmo lote. Sem retentar. Backend da tentativa100617; leitura independente100619. Comparação automática: job/hash/inactive,11 execuções, zero fila/execução, lease livre, heartbeat17:12:02UTC, fixture e metadados dos dois objetos idênticos. Lock livre. Nenhum novo hash dos bytes calculado. Não houve Edge, Vault write, Cron alteração, Healthchecks, produção, push ou merge.
+
+Relatório atualizado docs/PR5-INSTALLER-LAB-PLAN-20261104.md. HEAD permanece0c602609ee221b9a7525a503ef01be011e2cb570, branch codex/tiktok-preview-edge-review-20261103, worktree pcdnades-edge-review-20261103/nadesCs2. Só este checkpoint modificado e relatório novo não rastreado; sem commit nesta sessão. Próxima ação: revisar plano de gate vencido em backend local/leitura Lab e obter procedimento expressamente permitido para falhas reais/conclusão tardia/Edge-runner; não repetir harness bloqueada nem testes já aprovados. Produção continua NO-GO; fixture vence18:08 Brasília e não pode ser usada em novo sweep por inferência.
+
+---
+# Ensaio protegido autorizado — 04/11/2026 14h52 Brasília
+
+Em andamento. Usuário autorizou uma única execução do DO do commit0c60260 no Lab em BEGIN READ ONLY, com rollback e comparação independente. Preflight17:51UTC: projeto saudável confirmado, postgres, zero outras sessões cliente não idle, lock livre, um Cron inativo id1/hash7454fb1d1c20f2b75b5e0c01895dacef,11 execuções concluídas, nenhuma em andamento/fila HTTP, lease livre e fixtures preservadas. Arquivo físico SHA256AF5B76CA6865924B9445BE005E4FE539D36074BEB05BC7660541A77C75FAD62E e git diff contra commit vazio. Sem novo push/commit.
+
+Próxima ação única: wrapper de controle captura somente P0001 com mensagem exata esperada, permitindo executar ROLLBACK explícito no mesmo lote. O DO interior é lido diretamente do git show, sem alterações; não há retry. Erro diverso interrompe. Em seguida leitura independente compara baseline, sem Edge/cron/ping. A captura não mascara erros diferentes. Nenhuma alteração de recurso remoto autorizada.
+
+---
+# Preflight somente leitura do instalador — 04/11/2026 14h46 Brasília
+
+Estado: preparação concluída, aguardando decisão do usuário. Worktree/branch PR5 preservados; HEAD0c602609ee221b9a7525a503ef01be011e2cb570, sem push. Tarefa autorizou apenas revisão e leituras remotas no Lab. Nenhum SQL de instalação/DO executado; nenhuma alteração remota, nenhum teste de escrita.
+
+Leituras confirmaram Lab qtixfjntddsxjirxwqon ACTIVE_HEALTHY sa-east-1, organização maalmxusvlnltyqhzjds; PG17.11, nove migrations. Cron id1 pcdnades-preview-sweep-lab, postgres, */3, inactive; hash md5 do comando7454fb1d1c20f2b75b5e0c01895dacef;11 execuções concluídas, zero em andamento/fila HTTP. Lease livre; heartbeat17:12:02UTC. Três nomes Vault existem uma vez cada (valores não consultados). Grants permitem schedule/alter_job, SELECT cron.job, negam UPDATE; postgres BYPASSRLS permite visibilidade integral cron.job apesar da policy por username. Dois objetos1860bytes/ETag anterior preservados em metadados, sem novo download/hash de bytes. Job ready vence21:08:56UTC (18:08 Brasília), ainda válido às17:46UTC. Após esse vencimento não chamar coletor sem novo plano de proteção.
+
+Próximo passo proposto: obter autorização para uma única avaliação do instalador exato em BEGIN READ ONLY, com guardas de identidade/hash/job inativo e advisory lock, esperando Job already exists; rollback e comparação pós-teste em conexão nova. Não cria/altera jobs nem chama coletor. Isso valida recusa hospedada, não criação ou concorrência hospedadas. Ver plano docs/PR5-INSTALLER-LAB-PLAN-20261104.md. Caminho de criação exigiria autorização de ambiente/job dedicado, sem substituir job preservado; não necessário agora. Falhas reais/concorrência Edge-runner/timeouts/gate8min continuam separados e bloqueados conforme relatório anterior. Harness rejeitada não repetida. Documentos desta sessão locais sem commit/push.
+
+---
 # Entrega técnica local PR5 — 04/11/2026
 
 Estado: concluído localmente; NO-GO produção. Worktree C:/Users/felip/.codex/worktrees/pcdnades-edge-review-20261103/nadesCs2, branch codex/tiktok-preview-edge-review-20261103, base 03b632fa367feafcd4d55ecd20de12ded75dbbb7. Sem push autorizado; commit local desta entrega (ver git log). PR remoto permanece no HEAD anterior, CI remoto não cobre esta entrega.
