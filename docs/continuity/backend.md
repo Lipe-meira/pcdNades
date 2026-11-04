@@ -1,3 +1,188 @@
+# Publicação PR5 concluída — 04/11/2026
+
+Correção0c60260 e consolidaçãoc74447276b2360060d78719e6d4bbf0ef4382871 enviadas por push normal exclusivamente à branch codex/tiktok-preview-edge-review-20261103. PR5 aberto/Draft/base main/mergeable confirmado. Main remota permanecef4389af34807c0f5f31a23d9e4b6c0649d19b1b5. CI Linux run41888999919 de c744472 PASS em todas as etapas (build/test/bootstrap/trace/MP4); Deno e ensaios reais fora desse workflow. Este commit subsequente só registra documentação; consultar checks do HEAD final do PR5 para sua confirmação correspondente. https://github.com/Lipe-meira/pcdNades/pull/5 e https://github.com/Lipe-meira/pcdNades/actions/runs/41888999919 .
+
+Vercel somente leitura antes/depois: frontend dpl_BDVC85iUQ8PNhmdNTFX9Ck5mCvg1 e API dpl_eJZ2uWTa1gXG6bCTr1JjVhU9FyCV iguais/READY; main única branch Production e Preview tracking off nos dois projetos. Nenhum deploy/flag/variável/Supabase/Cron/Healthchecks alterado. Revisão limitada de16 arquivos do diff não encontrou padrões de segredos ou env/vídeos/evidência privada; não equivale a auditoria exaustiva. Credencial Lab permanece fora Git e não foi lida nesta publicação.
+
+Relatórios entregues: PR5-OPERATIONAL-READINESS-20261104.md (matriz atual), PR5-TECHNICAL-CORRECTIONS-20261104.md, PR5-INSTALLER-LAB-PLAN-20261104.md e PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Descrição do PR atualizada para evidências reais sem alegar operação aprovada. GO revisão Draft, NO-GO merge/produção/ativação. Próxima ação ao retomar: conferir HEAD/CI final e obter procedimento expressamente permitido para falhas reais PG/Storage e operações tardias, depois Edge-runner e gate hospedado. Não repetir testes aprovados nem recriar harness bloqueada. Esforço de código limitado; prazo operacional depende de procedimento/autorizações/evidências ainda desconhecidos. Sem autorização de escrita remota, merge ou rollout produtivo.
+
+---
+# Publicação autorizada PR5 Draft — 04/11/2026
+
+Em andamento: usuário autorizou consolidar correções/evidências e push normal exclusivamente da branch do PR5, mantendo Draft e acompanhando CI. Branch codex/tiktok-preview-edge-review-20261103/worktree próprio, HEAD inicial0c60260; fetch remoto03b632f, divergência0/1, mainf4389af sem alterações concorrentes. Revisado diff completo de código e documentos; nada de front/downloader/dependências novo nesta entrega. Credencial privada do Lab está fora do Git e não será lida ou copiada nesta publicação.
+
+Preflight deploy: conector Vercel confirmou projetos porém omitiu tracking; REST com auth CLI retornou403, sem alteração. Painel autenticado confirmou Production Branch=main e Preview Branch Tracking=off em AMBOS pcdnades/pcdnades-api. Contexto Git só vincula esses dois projetos ao repo; pcdnades-preview-api não tem vínculo Git listado. Workflow único Linux somente build/test sem segredos/Supabase/deploy. Push desta branch não dispara deploy nessas configurações observadas. Nenhum ajuste remoto realizado.
+
+Próximos passos: scan limitado de segredos/arquivos proibidos + diffcheck, commit documental coeso, push fast-forward nesta branch, confirmar SHA remoto/Draft e CI do HEAD exato. Não repetir ensaios Gate/Lab/player/monitor. Se houver divergência remota ou CI falhar, interromper/diagnosticar sem merge. Documentação consolidada docs/PR5-OPERATIONAL-READINESS-20261104.md e relatórios de recusa/gate; manter NO-GO produção e pendências de falhas reais/timeout/Edge-runner/gate hospedado. Publicação não autoriza execução de qualquer procedimento remoto documentado.
+
+---
+# Gate vencido local com Lab — PASS, 04/11/2026 15h19 Brasília
+
+Usuário confirmou arquivo privado e autorizou execução; ACL owner/única regra usuário/herança desativada e ausência de reparse points conferidas. URL exata Lab e credencial escopo legítimo validados sem revelar valores. Função real sourcePreviewAvailable executada UMA vez via Node/tsx stdin, argumento local true sem process.env. Exatamente3 GETs HTTP200 ao único host/path/tabela permitidos; nenhum retry, endpoint adicional ou listener. Linha válida em todas, heartbeat17:12:02.332103UTC, idades4043238/4043317/4043388ms; relógio HTTPS comparado ao midpoint local, diferenças629/390/315ms. Resultado false confirmado por idade>480000ms, não erro/flag/ausência. Heartbeat final igual. PASS de integração local, não capability HTTP hospedada nem transição temporal8min.
+
+HEAD0c602609ee221b9a7525a503ef01be011e2cb570/branch codex/tiktok-preview-edge-review-20261103 e worktree preservados. Sem backend escutando porta, coletor, Cron, Healthchecks, flags persistentes, escrita remota ou arquivos de configuração modificados. Chave continua somente no arquivo privado fora Git, nunca copiada para código/log. Alterados apenas este checkpoint e relatório docs/PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Relatório do instalador anterior também permanece novo local. Sem commit/push/merge.
+
+Retomar: não repetir gate local/recusa/ciclos/alertas aprovados. Próxima entrega proposta é autorização de consolidação documental+push do PR5 Draft/CI exato, sem deploy; em paralelo resolver procedimento expressamente permitido para falhas reais PG/Storage, operações tardias e Edge-runner, sem equivalentes da harness bloqueada. Gate hospedado também pendente de ambiente/autorização isolados. NO-GO produção permanece.
+
+---
+# Configuração privada vazia preparada — aguardando preenchimento manual
+
+Usuário autorizou criar somente arquivo privado fora do Git e restringir ACL. Criado C:/Users/felip/AppData/Local/pcdnades-credentials/preview-lab/heartbeat-gate.env, com SUPABASE_URL do Lab qtixfjntddsxjirxwqon e SUPABASE_SERVICE_ROLE_KEY vazia. Pasta nova e arquivo com herança desativada e uma única regra Allow FullControl para SID do usuário corrente, owner usuário; ACLs verificadas. Nenhuma credencial existente copiada, nenhum segredo criado/rotacionado ou exibido. Não abrir editor automaticamente nem executar teste.
+
+Retomar somente após confirmação de preenchimento do usuário: validar ACL, ausência de reparse point, nomes dos dois campos, URL exata e chave não vazia sem imprimir conteúdo; depois prosseguir com ensaio único previamente autorizado, máximo3 GETs exclusivamente na tabela maintenance do Lab. Não ler valores em logs nem registrar hash de chave. Sem GET/execução da função nesta etapa. HEAD0c60260 e documentos pendentes preservados; sem commit/push/merge. Chave deve ser preenchida pessoalmente e pertencer ao Lab, nunca produção.
+
+---
+# Gate real local — preflight interrompido por configuração privada ausente
+
+Usuário autorizou única execução mínima (máximo3 GETs Lab). HEAD0c602609ee221b9a7525a503ef01be011e2cb570 confirmado. Não identificada credencial privada configurada para qtixfjntddsxjirxwqon: env do processo ausente, PR5 só .env.example; client.env/edge-client.env antigos apontam para outro destino local e não foram reutilizados. Nenhum segredo impresso. Solicitado somente caminho privado ao usuário. INCONCLUSIVO de preparação, não defeito do gate. ZERO GETs, ZERO chamadas da função, nenhum processo/backend iniciado; sem retry, remoto, flags ou configuração alterada.
+
+Retomar: ler resposta com caminho privado, conferir destino Lab e configuração segura sem revelar valores; só então ensaio único autorizado do plano docs/PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Não usar credencial de produção, gerar chave nem pedir valor no chat. Preservar alterações documentais não commitadas. Relatório e checkpoint atualizados; sem commit/push/merge. Pendências críticas continuam falhas reais PG/Storage, Edge-runner concorrente, efeitos tardios e gate hospedado. Não reproduzir harness bloqueada.
+
+---
+# Plano gate vencido — 04/11/2026, somente preparação
+
+Revisado código sourcePreviewAvailable (idade<=480000ms válida, acima fecha) e ligação em capabilities; testes source-preview.test.ts e preview-api.test.ts existentes. Não executado backend, teste ou consulta remota nesta tarefa. Plano docs/PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md propõe função real local+SDK+três GETs exclusivos no Lab, argumento local true sem alterar process.env/flags persistidas, leitura bem-sucedida e idade real comprovadas para evitar falso PASS por erro/flag. Precisa autorização específica e credencial privada exclusiva do Lab; se ausente parar. Não afirmar HTTP hospedado nem transição8min; gate permanece pendente nesse ambiente. Reusar testes simulados sem confundir evidência real; opcional filtrar teste de capabilities caso resultado específico anterior não esteja confirmado.
+
+HEAD0c602609ee221b9a7525a503ef01be011e2cb570, branch/worktree PR5 preservados. Só documentos locais modificados/novos: este checkpoint, PR5-INSTALLER-LAB-PLAN-20261104.md e PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Sem commit/push/merge. Próxima ação: solicitar autorização de execução mínima, depois conferir destino/credencial segura e preparar runner sem rede fora da allowlist. Não reativar Cron/monitor nem repetir harness. Falhas reais, concorrência Edge/runner e efeitos após timeout continuam separados, NO-GO produção.
+
+---
+# Ensaio de recusa PR5 concluído — 04/11/2026 14h52 Brasília
+
+PASS. Única execução autorizada do DO exato de0c60260 no Lab, BEGIN READ ONLY, timeouts2s/8s, advisory lock e guardas. Exceção esperada P0001/Job already exists; inspect it before installation capturada exclusivamente pelo wrapper para permitir ROLLBACK explícito no mesmo lote. Sem retentar. Backend da tentativa100617; leitura independente100619. Comparação automática: job/hash/inactive,11 execuções, zero fila/execução, lease livre, heartbeat17:12:02UTC, fixture e metadados dos dois objetos idênticos. Lock livre. Nenhum novo hash dos bytes calculado. Não houve Edge, Vault write, Cron alteração, Healthchecks, produção, push ou merge.
+
+Relatório atualizado docs/PR5-INSTALLER-LAB-PLAN-20261104.md. HEAD permanece0c602609ee221b9a7525a503ef01be011e2cb570, branch codex/tiktok-preview-edge-review-20261103, worktree pcdnades-edge-review-20261103/nadesCs2. Só este checkpoint modificado e relatório novo não rastreado; sem commit nesta sessão. Próxima ação: revisar plano de gate vencido em backend local/leitura Lab e obter procedimento expressamente permitido para falhas reais/conclusão tardia/Edge-runner; não repetir harness bloqueada nem testes já aprovados. Produção continua NO-GO; fixture vence18:08 Brasília e não pode ser usada em novo sweep por inferência.
+
+---
+# Ensaio protegido autorizado — 04/11/2026 14h52 Brasília
+
+Em andamento. Usuário autorizou uma única execução do DO do commit0c60260 no Lab em BEGIN READ ONLY, com rollback e comparação independente. Preflight17:51UTC: projeto saudável confirmado, postgres, zero outras sessões cliente não idle, lock livre, um Cron inativo id1/hash7454fb1d1c20f2b75b5e0c01895dacef,11 execuções concluídas, nenhuma em andamento/fila HTTP, lease livre e fixtures preservadas. Arquivo físico SHA256AF5B76CA6865924B9445BE005E4FE539D36074BEB05BC7660541A77C75FAD62E e git diff contra commit vazio. Sem novo push/commit.
+
+Próxima ação única: wrapper de controle captura somente P0001 com mensagem exata esperada, permitindo executar ROLLBACK explícito no mesmo lote. O DO interior é lido diretamente do git show, sem alterações; não há retry. Erro diverso interrompe. Em seguida leitura independente compara baseline, sem Edge/cron/ping. A captura não mascara erros diferentes. Nenhuma alteração de recurso remoto autorizada.
+
+---
+# Preflight somente leitura do instalador — 04/11/2026 14h46 Brasília
+
+Estado: preparação concluída, aguardando decisão do usuário. Worktree/branch PR5 preservados; HEAD0c602609ee221b9a7525a503ef01be011e2cb570, sem push. Tarefa autorizou apenas revisão e leituras remotas no Lab. Nenhum SQL de instalação/DO executado; nenhuma alteração remota, nenhum teste de escrita.
+
+Leituras confirmaram Lab qtixfjntddsxjirxwqon ACTIVE_HEALTHY sa-east-1, organização maalmxusvlnltyqhzjds; PG17.11, nove migrations. Cron id1 pcdnades-preview-sweep-lab, postgres, */3, inactive; hash md5 do comando7454fb1d1c20f2b75b5e0c01895dacef;11 execuções concluídas, zero em andamento/fila HTTP. Lease livre; heartbeat17:12:02UTC. Três nomes Vault existem uma vez cada (valores não consultados). Grants permitem schedule/alter_job, SELECT cron.job, negam UPDATE; postgres BYPASSRLS permite visibilidade integral cron.job apesar da policy por username. Dois objetos1860bytes/ETag anterior preservados em metadados, sem novo download/hash de bytes. Job ready vence21:08:56UTC (18:08 Brasília), ainda válido às17:46UTC. Após esse vencimento não chamar coletor sem novo plano de proteção.
+
+Próximo passo proposto: obter autorização para uma única avaliação do instalador exato em BEGIN READ ONLY, com guardas de identidade/hash/job inativo e advisory lock, esperando Job already exists; rollback e comparação pós-teste em conexão nova. Não cria/altera jobs nem chama coletor. Isso valida recusa hospedada, não criação ou concorrência hospedadas. Ver plano docs/PR5-INSTALLER-LAB-PLAN-20261104.md. Caminho de criação exigiria autorização de ambiente/job dedicado, sem substituir job preservado; não necessário agora. Falhas reais/concorrência Edge-runner/timeouts/gate8min continuam separados e bloqueados conforme relatório anterior. Harness rejeitada não repetida. Documentos desta sessão locais sem commit/push.
+
+---
+# Entrega técnica local PR5 — 04/11/2026
+
+Estado: concluído localmente; NO-GO produção. Worktree C:/Users/felip/.codex/worktrees/pcdnades-edge-review-20261103/nadesCs2, branch codex/tiktok-preview-edge-review-20261103, base 03b632fa367feafcd4d55ecd20de12ded75dbbb7. Sem push autorizado; commit local desta entrega (ver git log). PR remoto permanece no HEAD anterior, CI remoto não cobre esta entrega.
+
+Feito: instalador Cron serializado com advisory_xact_lock762001141 em DO único, verificação de duplicidade/aliases/segredos, cron.alter_job para instalação inativa, sem FOR UPDATE em tabela gerenciada. Corrigido diagnóstico do comando manual: erro não implica heartbeat intacto. Teste de regressão confirma falha de release após heartbeat. Revisão Backend não encontrou defeito comprovado no CAS; migration preservada. Atualizados docs/EDGE-REVIEW-PILOT.md e docs/PR5-TECHNICAL-CORRECTIONS-20261104.md com rollout obrigatório, procedimentos, limites e próxima validação.
+
+Validação: Node13/13 (dependências simuladas), npm run typecheck PASS; Deno6/6 simulados e deno check PASS. Primeira chamada Deno sem permissão env falhou por configuração local; repetição com allow-env limitado e sem permissão de rede passou. Nenhuma revisão automática foi rejeitada nesta tarefa e a harness previamente rejeitada não foi repetida.
+
+SQL real: PostgreSQL17.11/pg_cron1.6.4 em container novo sem rede, scheduler off; Vault fixture SQL sintética, não valida criptografia/ACL hospedadas. Teste final do template passou em duas sessões concorrentes (uma instala, outra recusa), criação inativa, repetição sem alteração, alias recusado, segredo ausente e zero execuções. Bootstrap inicial precisou corrigir usuário/db, fixture Vault e grant local de alter_job; não transportar esses grants ao gerenciado. Containers criados pcdnades-cron-sql-review-20261104 e pcdnades-cron-sql-review-20261104-final estão parados, discos preservados; nenhum container preexistente alterado. npm ci --ignore-scripts somente neste worktree; sem lockfile alterado.
+
+Retomar: conferir git status/log, ler relatório técnico, revisar diff local e pedir autorização de push/CI e de ensaio do instalador no Lab, separadamente. Não reativar Cron/Healthchecks nem executar remotos por inferência. Faltam falhas reais PG/Storage, concorrência Edge/runner, requisições tardias e fechamento hospedado após8min. Obter procedimento expressamente permitido antes de ensaios de falha; não substituir a harness bloqueada por equivalente. Produção/flags/main/PR remoto intactos. Publicação operacional continua bloqueada.
+
+Arquivos desta entrega: backend/supabase/ops/preview-cron.sql; backend/scripts/source-preview-maintenance.ts; backend/scripts/test-preview-cron-local.mjs; backend/tests/preview-sweep-failures.test.ts; docs/EDGE-REVIEW-PILOT.md; docs/PR5-TECHNICAL-CORRECTIONS-20261104.md; este checkpoint. Antes do commit todos estavam locais; após commit conferir status. Nenhuma alteração de frontend, contratos ou migrations.
+
+---
+# Preparação técnica local PR5 — 04/11/2026
+
+Estado: em andamento. Pedido: corrigir instalação concorrente do Cron, procedimentos gerenciados e diagnósticos, sem publicar ou executar operações remotas. Worktree pcdnades-edge-review-20261103/nadesCs2; branch codex/tiktok-preview-edge-review-20261103; base 03b632fa367feafcd4d55ecd20de12ded75dbbb7; sem push autorizado.
+
+Primeira etapa: substituir check/schedule separado por instalação serializada e transacional, criada inativa; revisar recuperação via cron.alter_job. Preservar migration histórica. Conferir runner/CAS e registrar limites de cancelamento remoto. Não reproduzir a harness rejeitada. Lab Cron e Healthchecks permanecem parados; nenhuma consulta remota necessária.
+
+Validações pendentes: SQL local e testes afetados, TypeScript e diff/segredos. Relatório de referência lido no worktree do orquestrador: docs/PR5-OPERATIONAL-READINESS-20261104.md. Próxima ação: editar template e procedimentos no worktree PR5, depois validar antes de qualquer commit local.
+
+---
+# Revisão do Draft Edge empilhado — 03/11/2026
+
+Branch própria codex/tiktok-preview-backend-20261102, worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2, HEAD inicial 042a50c limpo, nove commits à frente da origin própria. A base PR4 e80e2f1 existe e contém 949edec e 263e6e0, mas não é ancestral do HEAD backend. Merge-base 949edec. Diff de três pontos identifica sete commits exclusivos Edge, de 84fb82d a 042a50c, e nove arquivos de backend/checkpoint. Comparação direta mostra reversões de frontend e docs do PR4 porque os históricos divergiram. Não usar a branch atual diretamente como head de um PR empilhado. Orquestrador deve integrar os commits exclusivos numa branch nova baseada em e80e2f1, preservando alterações do PR4. Este checkpoint é commit local adicional.
+
+Revisado: autenticação por token próprio com verify_jwt=false, tempo limitado e chaves fora do código, lease global CAS com heartbeat/release condicionados ao titular e validade, runner novo na mesma trava, revogação do heartbeat antigo, bucket dedicado via Storage API e cron manual de três minutos com valores no Vault. Busca de padrões comuns de credenciais não encontrou correspondências nos arquivos Edge verificados. Autenticação e apikey no gateway real, rotação e implantação coordenada ainda precisam validação. Ping é observabilidade, o gate consulta heartbeat. Timeout não garante cancelamento remoto e ping atrasado pode sinalizar sucesso anterior. Lease permanece durante ping.
+
+Verificações executadas nesta revisão: Deno 6/6 com respostas simuladas, deno check PASS, Node 12/12 com dependências simuladas, npm typecheck PASS, git diff --check PASS. Evidência anterior: SQL real local com rollback validou titular/vencimento/heartbeat da migration final. Dez ciclos Deno anteriores usaram Auth health/PostgREST/Storage reais, mas migration anterior, chamadas imediatas e monitor simulado. Não prova runtime hospedado, intervalo de três minutos, falhas reais ou concorrência Edge/runner.
+
+Rejeição: um comando PowerShell único para criar e executar harness Deno encaminhando a PostgREST/Storage locais e injetando falhas/concorrência recebeu Rejected, blocked by policy, sem justificativa adicional. Não executar ação equivalente por fragmentação ou outra ferramenta. Recursos anteriores preservados. Pendências para ativação: procedimento explicitamente permitido, dez ciclos com migration final e Storage real, falhas/concorrência, operações após timeout, autenticação gateway, cron real e alerta independente. Recomendo apenas Draft para revisão, sem afirmar aprovação operacional. Sem push ou mutação remota nesta etapa.
+
+Próximo passo: comunicar SHAs, arquivos, testes e conflitos potenciais ao orquestrador, que coordena branch de integração do PR. Ao retomar, conferir status e este checkpoint.
+
+---
+
+# Fechamento focado Edge — 03/11/2026
+
+Revisão sobre 923ac62 confirmou que heartbeat e release usam titular e vigência no banco e que o gate de leitura depende do heartbeat no banco, nunca do ping. Corrigida a pequena janela entre selecionar a trava e atualizar heartbeat: o UPDATE reavalia titular e validade usando clock_timestamp. Teste SQL real transacional em preview_edge_1103 PASS para titular errado, expiração, heartbeat inalterado, recuperação, retenção e release. Deno 6/6 simulados e deno check PASS. PG parado ao final. A migration alterada é local e exige novo piloto antes de ativação.
+
+Operação tardia: CAS impede confirmação ou release de titular vencido. Abort e deadlines limitam espera do cliente, mas não provam que servidor remoto parou a operação em voo. Ping atrasado pode chegar mesmo após cancelamento. Não é autoridade do gate, e tampouco prova saúde de execução posterior. O antigo RPC de heartbeat é revogado pela migration, logo migration e runner novo precisam de implantação coordenada. Não há prova real de execução simultânea Edge/runner ou gateway hospedado.
+
+Decisão: código pode ser apresentado ao orquestrador para PR Draft Edge separado do PR4, identificado como não pronto para ativação ou merge operacional. Pendências: 10 ciclos na migration final com Storage real, concorrência/falhas reais, comportamento após timeout, agenda real de 3 min, alerta externo e autenticação no gateway. A ação rejeitada de harness PowerShell com injeção de falhas não pode ser reproduzida por equivalentes ou fragmentação. O retorno foi Rejected, blocked by policy, sem detalhe. Não há procedimento alternativo confirmado como permitido para aquela mesma ação. Antes de qualquer ensaio futuro, obter procedimento explicitamente permitido e aprovação de ambiente isolado com credenciais efêmeras e monitor independente. Primeiro validar schema/roles e gateway, depois ciclo normal/alerta e somente falhas previstas no procedimento aprovado. Nenhum recurso remoto foi criado aqui.
+
+Branch codex/tiktok-preview-backend-20261102, base 923ac62, commit local desta correção, push pendente sob coordenação. Laboratórios preservados. Próxima ação: enviar commit e limitações ao orquestrador para decisão do Draft.
+
+---
+
+# Trava durante monitoramento — 03/11/2026
+
+A função finish agora confirma heartbeat mantendo a trava. O Edge só libera a trava com CAS após resposta bem-sucedida do ping, e o ping recebe o sinal de cancelamento combinado ao timeout. O runner sem ping libera com CAS após confirmação. Em falha/cancelamento a trava permanece até vencer. release também confere vencimento. A migration segue local e ainda não publicada.
+
+Testes: Deno 5/5 simulados, incluindo concorrência durante ping e cancelamento, Node 12/12 focados, npm typecheck PASS. SQL real no banco local preview_edge_1103 em transação com rollback confirmou finish mantém trava, exclusão concorrente, release titular e vencimento. PG parado novamente. Os dez ciclos anteriores testaram versão anterior da migration e precisam repetição aprovada na versão final.
+
+Limite: um ping já entregue pela rede pode chegar ao serviço mesmo após cancelamento ou expiração da trava. O timeout e o sinal reduzem a janela, mas não comprovam cancelamento remoto. Monitor atesta apenas sweep já confirmado. Falta validação de gateway hospedado, comportamento de operações remotas após timeout e falhas reais. A ação da harness bloqueada não foi repetida. Sem produção ou serviços remotos. Próxima ação: orquestrador revisar limite e coordenar procedimento explicitamente permitido para os testes pendentes. Branch codex/tiktok-preview-backend-20261102, base anterior 9be9082, commit local desta etapa, sem push.
+
+---
+
+# Revisão final Edge — 03/11/2026
+
+Correção comprovada: datas inválidas do job geravam NaN e contornavam comparações da validade. Handler agora exige timestamps finitos. Testes Deno simulados 4/4, deno check e npm typecheck passaram. Branch codex/tiktok-preview-backend-20261102 com base e4b7ed1, commits locais 263e6e0, 949edec, 84fb82d, 1e0553e, 753ced5 e 0007a32, mais commit desta revisão, sem push. Arquivos e migrations conferidos por git diff contra origin da própria branch.
+
+Revisão: claim e finish usam CAS por titular e relógio do banco; função antiga revogada para impedir bypass, por isso migration e runner atualizado exigem coordenação. Edge limita chamadas a 10 s e execução a 60 s contra lease de 120 s, mas ainda falta demonstrar que uma operação remota ambígua não conclui depois da expiração. O heartbeat só é confirmado pelo titular após sweep completo. Após finish a trava é liberada antes do ping, então uma execução concorrente pode iniciar e falhar antes do ping anterior chegar. O ping confirma a execução anterior, não a saúde da seguinte. Monitor deve se basear em ausência de sucessos e essa janela precisa de validação operacional. Token próprio é comparado por digest e rota usa verify_jwt=false. O fluxo real do gateway com apikey e chave secret ainda não foi validado em ambiente hospedado, tampouco invalidação/rotação de token e falhas reais. Não ativar até revisão destes pontos, teste do cron, falhas e concorrência com runner.
+
+Rejeição: comando PowerShell único destinado a criar e executar harness Deno que encaminharia para PostgREST/Storage do laboratório, injetando falhas e concorrência. Retorno Rejected, blocked by policy, sem razão adicional. Não executou. Não repetir por fragmentação nem outro mecanismo. Alternativa permitida sem rede exerceu handler com respostas simuladas. Piloto anterior de dez ciclos imediatos em Deno usou PostgREST/Storage reais e monitor simulado, sem simular intervalo de três minutos ou runtime Edge hospedado.
+
+Próximo passo: orquestrador revisar código e decisão operacional; para validação remota mínima, separar ambiente isolado autorizado com credenciais efêmeras e observador, testar gateway e respostas de erro sem reproduzir a ação rejeitada. Avaliar previamente procedimento explicitamente permitido. Nenhuma mutação remota executada nesta revisão. Laboratórios e volumes da etapa anterior permanecem preservados.
+
+---
+
+# Testes de falha isolados — 03/11/2026
+
+A revisão automática rejeitou a criação e execução, por um único comando PowerShell, de harness Deno que encaminharia chamadas para Auth/PostgREST/Storage do laboratório e injetaria falhas de Storage e banco, além de concorrência. Mensagem exibida: Rejected, blocked by policy. Nenhuma razão adicional foi fornecida e a chamada não executou.
+
+Alternativa autorizada executada: testes Deno sem rede, totalmente simulados, usando o próprio código do handler. Três cenários passaram: Storage indisponível, banco indisponível e concorrência. Falhas não atualizam heartbeat nem enviam ping; concorrente recebe 409 e a execução titular pode concluir. Comando: deno test --allow-read=supabase/functions/preview-sweep/index.ts --allow-env supabase/tests/preview-edge-failures.test.ts. Não substitui teste de falhas com serviços reais. Dez ciclos anteriores usaram serviços locais reais e monitor simulado. Pendentes teste real de falhas e runner concorrente, Cron e operação externa.
+
+---
+
+# Piloto Deno e Storage — 03/11/2026
+
+Migration final validada em banco local separado preview_edge_1103. Teste transacional service_role confirmou exclusão, titular, expiração, recuperação, heartbeat e revogação do heartbeat antigo. Banco original preservado. Criado também preview_edge_1103b com restauração preservando owners para serviços Auth/PostgREST/Storage reais e volume Storage novo.
+
+Dez chamadas consecutivas imediatas do handler executaram em Deno 2.5.6 com REST/Storage reais, monitor simulado e encaminhamento de transporte no teste. As dez retornaram 204, dez pings simulados, Auth health real passou, bytes de sentinela de mídia final foram preservados e RPC antigo foi negado. Não prova runtime hospedado Edge ou intervalo real de três minutos. Primeira cópia sem owners causou erro de Auth/Storage e foi preservada; segunda funcionou. Nenhum serviço remoto.
+
+Teste adicional planejado de falhas, recuperação e concorrência foi rejeitado automaticamente ao iniciar comando de criação da harness. Não foi executado. Continuam pendentes teste de falhas no handler real, monitor em falha, interoperabilidade prática com runner, Cron real e intervalo completo. Recursos novos pcdn-preview-edge-1103 e 1103b parados, volumes e bancos preservados, arquivo dump temporário no container PG e evidências privadas em AppData/Local/pcdn-preview-lab-1103. PG original parado novamente. Branch codex/tiktok-preview-backend-20261102, base 1e0553e, sem push desta etapa.
+
+---
+
+# Progresso Edge e coletor legado — 03/11/2026
+
+O runner legado agora adquire a mesma trava global do Edge e só renova heartbeat via finish com titular. A migration local revoga execução da função antiga de heartbeat para impedir bypass por código legado. Implantação requer migração e código coordenados, pois versões antigas deixam de atualizar heartbeat. Cron SQL manual de 3 minutos usa Vault e net.http_post, mas ainda não foi executado ou testado com pg_cron/pg_net. config Edge desativa verificação JWT e usa token explícito do handler.
+
+PASS: 12 testes simulados focados, typecheck antes do ajuste e deno check. O teste PostgreSQL anterior cobriu versão anterior da migration, não a revogação adicionada agora. Não foi feito piloto de 10 ciclos com Storage real, nem teste real do cron ou ping de monitor. Primeira ação ao retomar: ensaiar migration final e compatibilidade com runner em banco isolado novo, criar harness para dez ciclos no Storage real e falhas. Cuidado para não apagar fixtures do laboratório histórico. Ainda não pronto para integração ou ativação. Branch codex/tiktok-preview-backend-20261102; mudanças locais serão commitadas, push pendente.
+
+---
+
+# Coletor Edge em implementação — 03/11/2026
+
+Migration local e primeira versão Edge criadas em backend/supabase. Lease global com claim CAS, heartbeat condicionado ao titular e validade, sweep exclusivo do bucket privado, falhas conservam lease até expirar, ping após confirmação. Cron é apenas comentário inativo, ainda falta implementação concreta. Nenhum deploy ou serviço remoto.
+
+Executado: deno check PASS, npm typecheck PASS, migration aplicada somente ao PG pcdn-preview-lab-1103 e teste SQL transacional com service_role PASS para concorrência, titular, vencimento e recuperação, rollback. PG parado ao final. Pendente: testes do handler, dez ciclos reais Auth/Storage, falhas/cancelamento/concorrência, monitor simulado, configuração Edge e Cron concretos, auditoria de interoperabilidade com runner legado. Esta versão ainda não é entrega operacional. Primeira ação ao retomar: revisar proteção contra coexistência do runner antigo, criar harness real e validar Storage/Edge antes de integração. Branch codex/tiktok-preview-backend-20261102, base 949edec, alterações locais da missão ainda não enviadas.
+
+---
+
+# Missão coletor Edge — 03/11/2026
+
+Pedido atual: preparar coletor Supabase Cron + Edge e monitor Healthchecks, validar dez ciclos e falhas em laboratório isolado, sem serviços remotos ou alterações de produção. Orquestrador integra commit 263e6e0 ao PR #4. Branch própria codex/tiktok-preview-backend-20261102, HEAD 949edec, base e4b7ed1, dois commits locais ainda sem push. Ancestralidade de 263e6e0 confirmada. Ensaio anterior PG real comprovou exit 1 após perda da trava e exit 0 após SIGTERM, TypeScript estrito passou. Orquestrador informado.
+
+Próxima ação: ler contrato e código do sweep existente, preparar desenho e implementação com lease por execução, Storage API, CAS e heartbeat cercado por lease, autenticação e timeout, ping somente após sucesso. Em seguida preparar Cron inativo, testes e piloto local real com dez ciclos e falhas. Nenhuma implementação nova, teste novo ou mutação remota foi executada nesta missão. Laboratório anterior pcdn-preview-lab-1103 está parado e preservado. Arquivo deste checkpoint ainda não commitado.
+
+---
+
 # Estado atual — laboratório interno concluído, 03/11/2026
 
 Objetivo. Desbloquear a validação Auth/Storage/Chromium do PR #4 e definir condições para operação do coletor. Validação local concluída. Operação remota ainda depende de ambiente, monitor e destinatário aprovados.
