@@ -1,3 +1,12 @@
+# Publicação PR5 concluída — 04/11/2026
+
+Correção0c60260 e consolidaçãoc74447276b2360060d78719e6d4bbf0ef4382871 enviadas por push normal exclusivamente à branch codex/tiktok-preview-edge-review-20261103. PR5 aberto/Draft/base main/mergeable confirmado. Main remota permanecef4389af34807c0f5f31a23d9e4b6c0649d19b1b5. CI Linux run41888999919 de c744472 PASS em todas as etapas (build/test/bootstrap/trace/MP4); Deno e ensaios reais fora desse workflow. Este commit subsequente só registra documentação; consultar checks do HEAD final do PR5 para sua confirmação correspondente. https://github.com/Lipe-meira/pcdNades/pull/5 e https://github.com/Lipe-meira/pcdNades/actions/runs/41888999919 .
+
+Vercel somente leitura antes/depois: frontend dpl_BDVC85iUQ8PNhmdNTFX9Ck5mCvg1 e API dpl_eJZ2uWTa1gXG6bCTr1JjVhU9FyCV iguais/READY; main única branch Production e Preview tracking off nos dois projetos. Nenhum deploy/flag/variável/Supabase/Cron/Healthchecks alterado. Revisão limitada de16 arquivos do diff não encontrou padrões de segredos ou env/vídeos/evidência privada; não equivale a auditoria exaustiva. Credencial Lab permanece fora Git e não foi lida nesta publicação.
+
+Relatórios entregues: PR5-OPERATIONAL-READINESS-20261104.md (matriz atual), PR5-TECHNICAL-CORRECTIONS-20261104.md, PR5-INSTALLER-LAB-PLAN-20261104.md e PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Descrição do PR atualizada para evidências reais sem alegar operação aprovada. GO revisão Draft, NO-GO merge/produção/ativação. Próxima ação ao retomar: conferir HEAD/CI final e obter procedimento expressamente permitido para falhas reais PG/Storage e operações tardias, depois Edge-runner e gate hospedado. Não repetir testes aprovados nem recriar harness bloqueada. Esforço de código limitado; prazo operacional depende de procedimento/autorizações/evidências ainda desconhecidos. Sem autorização de escrita remota, merge ou rollout produtivo.
+
+---
 # Publicação autorizada PR5 Draft — 04/11/2026
 
 Em andamento: usuário autorizou consolidar correções/evidências e push normal exclusivamente da branch do PR5, mantendo Draft e acompanhando CI. Branch codex/tiktok-preview-edge-review-20261103/worktree próprio, HEAD inicial0c60260; fetch remoto03b632f, divergência0/1, mainf4389af sem alterações concorrentes. Revisado diff completo de código e documentos; nada de front/downloader/dependências novo nesta entrega. Credencial privada do Lab está fora do Git e não será lida ou copiada nesta publicação.

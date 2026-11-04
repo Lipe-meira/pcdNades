@@ -50,3 +50,9 @@ Esforço restante concentra-se em validação operacional, não em reescrever pl
 Fechar procedimento e evidências críticas → revisão/CI do HEAD final → preflight produtivo/backup-restauração fresco → autorizações específicas de migration e parada/drenagem de runner legado → publicação coordenada → instalação Edge/segredos/monitor/job inicialmente inativo → teste controlado → autorização de flag. Reels/YouTube fora do escopo. Falha interrompe sem retry/rollback automático; preservar dados. Código revertido não desfaz banco: priorizar forward-fix autorizado ou coletores parados e flag desligada.
 
 Operações detalhadas: PR5-TECHNICAL-CORRECTIONS-20261104.md. Recusa: PR5-INSTALLER-LAB-PLAN-20261104.md. Gate: PR5-HEARTBEAT-GATE-TEST-PLAN-20261104.md. Continuidade: docs/continuity/backend.md.
+
+## Publicação para revisão confirmada
+
+Push normal03b632f→c74447276b2360060d78719e6d4bbf0ef4382871, contendo0c60260 e documentação consolidada. PR5 Draft confirmado, mainf4389af preservada. CI Linux de c744472 PASS: https://github.com/Lipe-meira/pcdNades/actions/runs/41888999919 . Todos os passos passaram, incluindo build/test/bootstrap/trace e fixture MP4. Esta anotação posterior é somente documental; conferir também o check do HEAD final do PR. Nenhuma alegação de testes reais adicionais.
+
+Depois do push, leituras Vercel mostraram os mesmos deployments produtivos READY de antes (frontend dpl_BDVC85iUQ8PNhmdNTFX9Ck5mCvg1, API dpl_eJZ2uWTa1gXG6bCTr1JjVhU9FyCV). Nenhuma alteração de configuração realizada. GO de revisão/CI, NO-GO operacional permanece pelas lacunas listadas. A descrição do PR contém os resultados e limites; o PR permanece Draft.
