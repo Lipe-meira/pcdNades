@@ -27,3 +27,12 @@ test('a competing collector cannot touch Storage or refresh the heartbeat',async
  await assert.rejects(runSourcePreviewMaintenance(db,'https://project.supabase.test',new AbortController().signal));
  assert.equal(storageTouched,false);assert.equal(finished,false);
 });
+
+test('global release failure can happen after heartbeat confirmation',async()=>{
+ const f=scenario(),rpc=f.db.rpc;
+ f.db.rpc=(name:string)=>name==='release_preview_sweep'
+  ?{abortSignal:async()=>({data:false,error:null})}:rpc(name);
+ await assert.rejects(runSourcePreviewMaintenance(f.db,'https://fixture.supabase.test',f.c.signal));
+ assert.equal(f.result().marked,1);
+ assert.equal(f.result().removed,1);
+});

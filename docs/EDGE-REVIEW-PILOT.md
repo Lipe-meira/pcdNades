@@ -1,14 +1,14 @@
 # Coletor Edge — revisão e piloto futuro
 
-Este PR é empilhado sobre a branch do PR #4 e existe para revisão. A prévia não está aprovada para ativação. Depois de integrar o PR #4, trocar a base deste PR para a branch que recebeu o PR #4 e conferir novamente diff, histórico e CI antes de qualquer merge.
+Atualizado em 04/11/2026: PR #4 integrado; PR #5 já baseado na main. Não repetir a troca de base. A prévia não está aprovada para ativação. Consultar `PR5-TECHNICAL-CORRECTIONS-20261104.md` para o instalador corrigido e os procedimentos atuais; mudanças desta revisão permanecem locais, sem push.
 
 ## Evidências e pendências
 
-O SQL da migration final foi validado em PostgreSQL local com rollback. Os testes Deno usam respostas simuladas; as dez chamadas com Storage real ocorreram imediatamente e utilizaram uma versão anterior da migration. Faltam dez ciclos com a migration final e Storage real, falhas e concorrência reais, operações em voo após timeout ou lease, interoperabilidade Edge/runner, Cron real de três minutos, gateway hospedado, alerta externo e recuperação. O ping é apenas observabilidade; a autorização da prévia depende do heartbeat no banco.
+O SQL da migration final foi validado em PostgreSQL local com rollback. Posteriormente, o laboratório hospedado comprovou gateway, limpeza sintética com Storage real, dez ciclos de três minutos com a migration final, alerta DOWN e recuperação HTTP204 com e-mail UP. Cron desativado e Healthchecks pausado ao final. Não repetir esses ensaios. Testes Deno permanecem simulados. Faltam falhas e concorrência reais, operações em voo após timeout ou lease, interoperabilidade Edge/runner e fechamento hospedado após oito minutos. O ping é apenas observabilidade; a autorização da prévia depende do heartbeat no banco.
 
 A migration revoga a RPC antiga de heartbeat e exige rollout coordenado do runner atualizado. Uma operação em voo pode concluir após cancelamento; conferir seus efeitos antes de liberar o piloto. A revisão automática rejeitou uma harness PowerShell/Deno para injeção de falhas e concorrência com PostgREST/Storage locais, sem motivo adicional. Não repetir a ação por fragmentação, comando equivalente ou troca de ferramenta. Obter procedimento expressamente permitido antes de executar esse ensaio.
 
-## Piloto remoto mínimo para aprovação futura
+## Escopo histórico do piloto (não executar novamente sem nova aprovação)
 
 1. **Ambiente:** identificar ambiente remoto de teste separado e confirmar quotas gratuitas, isolamento, ausência de dados reais e procedimento de descarte. Criar recursos somente com autorização específica; não assumir disponibilidade de um terceiro projeto Supabase.
 2. **Banco:** autorizar separadamente backup e aplicação da migration revisada nesse ambiente, com conferência de histórico, grants, RLS, lease/CAS e plano de reversão. Preservar RPC e compatibilidade do runner durante a sequência coordenada.

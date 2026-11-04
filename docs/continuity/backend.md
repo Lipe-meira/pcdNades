@@ -1,3 +1,27 @@
+# Entrega técnica local PR5 — 04/11/2026
+
+Estado: concluído localmente; NO-GO produção. Worktree C:/Users/felip/.codex/worktrees/pcdnades-edge-review-20261103/nadesCs2, branch codex/tiktok-preview-edge-review-20261103, base 03b632fa367feafcd4d55ecd20de12ded75dbbb7. Sem push autorizado; commit local desta entrega (ver git log). PR remoto permanece no HEAD anterior, CI remoto não cobre esta entrega.
+
+Feito: instalador Cron serializado com advisory_xact_lock762001141 em DO único, verificação de duplicidade/aliases/segredos, cron.alter_job para instalação inativa, sem FOR UPDATE em tabela gerenciada. Corrigido diagnóstico do comando manual: erro não implica heartbeat intacto. Teste de regressão confirma falha de release após heartbeat. Revisão Backend não encontrou defeito comprovado no CAS; migration preservada. Atualizados docs/EDGE-REVIEW-PILOT.md e docs/PR5-TECHNICAL-CORRECTIONS-20261104.md com rollout obrigatório, procedimentos, limites e próxima validação.
+
+Validação: Node13/13 (dependências simuladas), npm run typecheck PASS; Deno6/6 simulados e deno check PASS. Primeira chamada Deno sem permissão env falhou por configuração local; repetição com allow-env limitado e sem permissão de rede passou. Nenhuma revisão automática foi rejeitada nesta tarefa e a harness previamente rejeitada não foi repetida.
+
+SQL real: PostgreSQL17.11/pg_cron1.6.4 em container novo sem rede, scheduler off; Vault fixture SQL sintética, não valida criptografia/ACL hospedadas. Teste final do template passou em duas sessões concorrentes (uma instala, outra recusa), criação inativa, repetição sem alteração, alias recusado, segredo ausente e zero execuções. Bootstrap inicial precisou corrigir usuário/db, fixture Vault e grant local de alter_job; não transportar esses grants ao gerenciado. Containers criados pcdnades-cron-sql-review-20261104 e pcdnades-cron-sql-review-20261104-final estão parados, discos preservados; nenhum container preexistente alterado. npm ci --ignore-scripts somente neste worktree; sem lockfile alterado.
+
+Retomar: conferir git status/log, ler relatório técnico, revisar diff local e pedir autorização de push/CI e de ensaio do instalador no Lab, separadamente. Não reativar Cron/Healthchecks nem executar remotos por inferência. Faltam falhas reais PG/Storage, concorrência Edge/runner, requisições tardias e fechamento hospedado após8min. Obter procedimento expressamente permitido antes de ensaios de falha; não substituir a harness bloqueada por equivalente. Produção/flags/main/PR remoto intactos. Publicação operacional continua bloqueada.
+
+Arquivos desta entrega: backend/supabase/ops/preview-cron.sql; backend/scripts/source-preview-maintenance.ts; backend/scripts/test-preview-cron-local.mjs; backend/tests/preview-sweep-failures.test.ts; docs/EDGE-REVIEW-PILOT.md; docs/PR5-TECHNICAL-CORRECTIONS-20261104.md; este checkpoint. Antes do commit todos estavam locais; após commit conferir status. Nenhuma alteração de frontend, contratos ou migrations.
+
+---
+# Preparação técnica local PR5 — 04/11/2026
+
+Estado: em andamento. Pedido: corrigir instalação concorrente do Cron, procedimentos gerenciados e diagnósticos, sem publicar ou executar operações remotas. Worktree pcdnades-edge-review-20261103/nadesCs2; branch codex/tiktok-preview-edge-review-20261103; base 03b632fa367feafcd4d55ecd20de12ded75dbbb7; sem push autorizado.
+
+Primeira etapa: substituir check/schedule separado por instalação serializada e transacional, criada inativa; revisar recuperação via cron.alter_job. Preservar migration histórica. Conferir runner/CAS e registrar limites de cancelamento remoto. Não reproduzir a harness rejeitada. Lab Cron e Healthchecks permanecem parados; nenhuma consulta remota necessária.
+
+Validações pendentes: SQL local e testes afetados, TypeScript e diff/segredos. Relatório de referência lido no worktree do orquestrador: docs/PR5-OPERATIONAL-READINESS-20261104.md. Próxima ação: editar template e procedimentos no worktree PR5, depois validar antes de qualquer commit local.
+
+---
 # Revisão do Draft Edge empilhado — 03/11/2026
 
 Branch própria codex/tiktok-preview-backend-20261102, worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-backend-20261102/nadesCs2, HEAD inicial 042a50c limpo, nove commits à frente da origin própria. A base PR4 e80e2f1 existe e contém 949edec e 263e6e0, mas não é ancestral do HEAD backend. Merge-base 949edec. Diff de três pontos identifica sete commits exclusivos Edge, de 84fb82d a 042a50c, e nove arquivos de backend/checkpoint. Comparação direta mostra reversões de frontend e docs do PR4 porque os históricos divergiram. Não usar a branch atual diretamente como head de um PR empilhado. Orquestrador deve integrar os commits exclusivos numa branch nova baseada em e80e2f1, preservando alterações do PR4. Este checkpoint é commit local adicional.
