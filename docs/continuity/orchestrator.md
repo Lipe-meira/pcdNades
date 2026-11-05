@@ -1,3 +1,11 @@
+## Correção CORS de granadas — 05/11/2026 concluída para revisão
+
+Worktree C:/Users/felip/.codex/worktrees/pcdnades-cors-20261105/nadesCs2; branch codex/fix-cors-granadas; base main acea075. Preflightlocalantes:OPTIONS204 mas allow-methods GET,HEAD,POST, bloqueandoDELETE/PATCH no navegador. Configuraçãoagorapermite GET,HEAD,POST,PATCH,DELETE e preservaorigens. Testes: backend147/147, typecheck+buildPASS(yt-dlp não empacotado no build local padrão); frontend api14/14 e buildPASS. MockDBnão comprova RLS real; migraçãohistóricaprevê policyadminDELETE e grant; rota atual faz delete apenas granada, retorna204/404; frontend reconhece204. Nenhum outro defeito comprovado; sem DELETE emprodução/Supabase/Storage/Cron/flags. Vercel branch trackingPreview desligado nosdoisprojetos por leituraUI. Próximo: push normal branch e abrirPRpara main semmerge/deploy; acompanhar CI. Sem conteúdo de credenciais ou vídeos novos. PréviaTikTokpermanece fora do escopo, beta real aindapendente de teste supervisionado.
+
+## Correção CORS de granadas — 05/11/2026 em andamento
+
+Objetivo: reproduzir preflight DELETE/PATCH, corrigir métodos CORS após comprovação, testar autenticação/204/edição e preparar PR sem merge/deploy. Worktree C:/Users/felip/.codex/worktrees/pcdnades-cors-20261105/nadesCs2, branch codex/fix-cors-granadas, base acea075 origin/main; nenhuma operação de produção. Próximo: instalar dependências locais, reproduzir preflight e investigar rota/fetch. Não alterar outros worktrees, migrations, Cron, Storage ou flags.
+
 # Checkpoint — orquestrador / prévia visual TikTok
 
 ## Cron + Edge — 03/11/2026 em andamento

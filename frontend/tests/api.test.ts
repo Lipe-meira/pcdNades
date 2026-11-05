@@ -54,6 +54,14 @@ describe("seleção explícita de ambiente", () => {
 });
 
 describe("cliente API v1", () => {
+  it("aceita DELETE autenticado com resposta 204 sem corpo", async () => {
+    const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(null, { status: 204 }));
+    const client = new ApiClient("/api/v1", async () => "test-token", fetcher);
+    await expect(client.request("/grenades/id", { method: "DELETE", authenticated: true })).resolves.toBeUndefined();
+    const init = fetcher.mock.calls[0]?.[1] as RequestInit;
+    expect(init.method).toBe("DELETE");
+    expect(new Headers(init.headers).get("Authorization")).toBe("Bearer test-token");
+  });
   it.each([
     ["UNSUPPORTED_CODEC", "H.264"],
     ["INVALID_MEDIA", "MP4"],

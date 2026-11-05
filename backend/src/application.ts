@@ -27,7 +27,7 @@ export function configureApp(app:FastifyInstance,clients?:Clients,imports:Import
  const uploadEnabled=readUploadEnabled();
  const processingMode=readProcessorMode();
  const trimmingEnabled=readTrimmingEnabled();
- app.register(cors,{origin:(process.env.CORS_ORIGINS??'http://localhost:5173').split(',')});
+ app.register(cors,{origin:(process.env.CORS_ORIGINS??'http://localhost:5173').split(','),methods:['GET','HEAD','POST','PATCH','DELETE']});
  const url=process.env.SUPABASE_URL,key=process.env.SUPABASE_PUBLISHABLE_KEY;
  const opts={auth:{persistSession:false,autoRefreshToken:false}};
  const configured=!!(url&&key&&process.env.SUPABASE_SERVICE_ROLE_KEY);
