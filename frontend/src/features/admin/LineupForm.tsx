@@ -18,6 +18,7 @@ import { videoLabels } from "../../domain/types";
 import { isTarget } from "../../domain/lineups";
 import { PointCoordinates } from "./PointCoordinates";
 import { importSelectionError } from "../../domain/imports";
+import { localDraftKey, makeLocalDraft, parseLocalDraft } from "./localDraft";
 import { recognizeVideoSource } from "../../domain/videoSource";
 
 const importStages: Record<string, string> = {
@@ -28,6 +29,7 @@ const importStages: Record<string, string> = {
 
 export function LineupForm({
   maps,
+  accountId,
   existing,
   service,
   capabilities,
@@ -35,6 +37,7 @@ export function LineupForm({
   onSaved,
 }: {
   maps: GameMap[];
+  accountId?: string;
   existing?: Lineup;
   service: LineupService;
   capabilities: MediaCapabilities;
@@ -65,6 +68,15 @@ export function LineupForm({
           media: { kind: "file", file: null },
         },
   );
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const storageKey = accountId ? localDraftKey(accountId, existing?.id) : null;
+  const [storageIssue, setStorageIssue] = useState("");
+  const [stored, setStored] = useState(() => {
+    try { const raw = storageKey && localStorage.getItem(storageKey); return raw ? parseLocalDraft(raw, maps.map(m => m.id)) : null; }
+    catch { return null; }
+  });
+  const [savedSnapshot, setSavedSnapshot] = useState("");
+  const [notice, setNotice] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [destinationIndex, setDestinationIndex] = useState(0);
   const [marking, setMarking] = useState<"origin" | "target" | "idle">("origin");
@@ -97,8 +109,17 @@ export function LineupForm({
     setDraft((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: "" }));
   }
+  const snapshot = JSON.stringify(makeLocalDraft(draft, step, existing?.updatedAt ?? null, originTouched, mapChanged));
+  function saveLocal() {
+    if (!storageKey) { setStorageIssue("Conta não identificada. Não foi possível salvar neste navegador."); return; }
+    try { localStorage.setItem(storageKey, snapshot); setSavedSnapshot(snapshot); setStored(null); setStorageIssue(""); setNotice("Rascunho salvo neste navegador."); }
+    catch { setStorageIssue("Não foi possível salvar neste navegador. Seus dados continuam nesta janela."); setNotice(""); }
+  }
   function showErrors(next: Record<string, string>) {
     setErrors(next);
+    if (["title", "mapId", "type", "side", "instructions"].some(key => next[key])) setStep(0);
+    else if (["target", "origin", "destinations"].some(key => next[key])) setStep(1);
+    else setStep(2);
     requestAnimationFrame(() => errorRef.current?.focus());
   }
   return (
@@ -113,11 +134,20 @@ export function LineupForm({
       busy={busy}
       wide
     >
+      <nav className="editor-steps" aria-label="Etapas do editor">
+        {["Informações", "Posicionamento", "Vídeo e revisão"].map((label, index) => <button key={label} type="button" disabled={busy} aria-current={step === index ? "step" : undefined} onClick={() => setStep(index as 0 | 1 | 2)}><span>{index + 1}</span>{label}</button>)}
+      </nav>
+      {stored && <section className="inline-notice">
+        <h3>Rascunho encontrado</h3>
+        <p>{existing && stored.baseUpdatedAt !== existing.updatedAt ? "A granada publicada mudou desde este rascunho. Recuperar substituirá os campos desta janela; confira tudo antes de salvar." : "Retome o progresso salvo neste navegador ou descarte o rascunho."}</p>
+        <button type="button" className="button secondary" onClick={() => { setDraft(current => ({ ...current, ...stored.fields })); setStep(stored.step); setOriginTouched(stored.originTouched); setMapChanged(stored.mapChanged); setDestinationIndex(0); setMarking("idle"); setSavedSnapshot(JSON.stringify(stored)); setStored(null); setNotice("Rascunho recuperado. Selecione o MP4 novamente ou faça uma nova consulta do link. O vídeo publicado é mantido na edição."); }}>Recuperar rascunho</button>{" "}
+        <button type="button" className="text-button" onClick={() => { try { if (storageKey) localStorage.removeItem(storageKey); setStored(null); setNotice("Rascunho descartado."); } catch { setStorageIssue("Não foi possível descartar o rascunho neste navegador."); } }}>Descartar rascunho</button>
+      </section>}
       <form
         noValidate
         onSubmit={async (event) => {
           event.preventDefault();
-          if (submitLock.current) return;
+          if (step !== 2 || submitLock.current) return;
           const nextErrors = validateDraft(
             draft,
             maps.map((item) => item.id),
@@ -175,7 +205,10 @@ export function LineupForm({
             const item = existing
               ? await service.updateLineup(existing.id, savingDraft, options)
               : await service.createLineup(savingDraft, options);
-            if (!controller.signal.aborted) onSaved(item);
+            if (!controller.signal.aborted) {
+              try { if (storageKey) localStorage.removeItem(storageKey); } catch { /* Publication succeeded even if local cleanup is unavailable. */ }
+              onSaved(item);
+            }
           } catch (error) {
             if (
               error instanceof ApiError &&
@@ -234,8 +267,9 @@ export function LineupForm({
             )}
           </div>
         )}
-        <fieldset disabled={busy} className="form-grid">
-          <div className="form-fields">
+        <fieldset disabled={busy} className="form-grid editor-panels">
+          <div className="form-fields" hidden={step !== 0}>
+            <h3>Informações da granada</h3><p className="field-hint">Identifique a jogada e descreva como executá-la.</p>
             <label>
               Título
               <input
@@ -318,20 +352,8 @@ export function LineupForm({
                 placeholder="Descreva posicionamento, mira e execução."
               />
             </label>
-            <div>
-              <h3 className="field-title">Vídeo</h3>
-              <MediaInput
-                service={service}
-                capabilities={capabilities}
-                value={draft.media}
-                existing={existing?.video}
-                onChange={(media) => update("media", media)}
-                onFileReady={setFileReady}
-                error={errors.media}
-              />
-            </div>
           </div>
-          <div className="form-radar">
+          <div className="form-radar" hidden={step !== 1}>
             <h3 className="field-title">Origem e destino no radar</h3>
             <p className="field-hint">
               Marque onde o jogador lança e onde a granada cai. Ao trocar o mapa,
@@ -378,10 +400,12 @@ export function LineupForm({
             </p>}
             {existing && draft.origin && <button type="button" className="text-button"
               onClick={() => update("origin", null)}>Remover origem</button>}
+            <details className="editor-advanced" open={!!errors.origin}><summary>Ajustar coordenadas da origem</summary>
             <h4 className="point-heading">Origem do lançamento</h4>
             <PointCoordinates origin value={draft.origin ?? null} error={errors.origin}
               onChange={(origin) => update("origin", origin)} />
             {errors.origin && <p className="field-error">{errors.origin}</p>}
+            </details>
             {draft.type === "solo_exec" && <div className="solo-destinations">
               <h4>Granadas da execução</h4>
               {(draft.destinations ?? []).map((destination, index) => <div key={index}>
@@ -394,6 +418,7 @@ export function LineupForm({
               <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
               {errors.destinations && <p className="field-error">{errors.destinations}</p>}
             </div>}
+            <details className="editor-advanced" open={!!errors.target}><summary>Ajustar coordenadas do destino</summary>
             <h4 className="point-heading">Destino da granada</h4>
             <PointCoordinates value={draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target} error={errors.target}
               onChange={(target) => { if (draft.type !== "solo_exec" || !target) { update("target", target); return; } const destinations = [...(draft.destinations ?? [])]; destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" }; setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations })); }} />
@@ -402,6 +427,25 @@ export function LineupForm({
               (0%, 0%) fica no canto superior esquerdo da imagem.
             </p>
             {errors.target && <p className="field-error">{errors.target}</p>}
+            </details>
+          </div>
+          <div className="editor-media" hidden={step !== 2}>
+            <div>
+              <h3 className="field-title">Vídeo</h3>
+              <MediaInput
+                service={service}
+                capabilities={capabilities}
+                value={draft.media}
+                existing={existing?.video}
+                onChange={(media) => update("media", media)}
+                onFileReady={setFileReady}
+                error={errors.media}
+              />
+            </div>
+            <section className="editor-review"><h3>Confira antes de salvar</h3>
+              <dl><div><dt>Granada</dt><dd>{draft.title || "Título não preenchido"}</dd></div><div><dt>Mapa e tipo</dt><dd>{map.name} · {typeLabels[draft.type]} · {draft.side}</dd></div><div><dt>Posicionamento</dt><dd>{draft.origin ? "Origem marcada" : "Sem origem"} · {draft.target ? "Destino marcado" : "Sem destino"}{draft.type === "solo_exec" ? ` · ${draft.destinations?.length ?? 0} destinos` : ""}</dd></div><div><dt>Vídeo</dt><dd>{draft.media.kind === "keep" ? "Vídeo existente mantido" : draft.media.kind === "file" ? draft.media.file ? "MP4 selecionado; publicação após validação" : "Selecione um MP4" : "Link selecionado; consulte e revise o trecho"}</dd></div></dl>
+              <p>{draft.instructions || "Instruções não preenchidas"}</p>
+            </section>
           </div>
         </fieldset>
         {busy && !demo && (
@@ -449,7 +493,7 @@ export function LineupForm({
               : "O arquivo já foi enviado. Salvar novamente retoma a confirmação ou o acompanhamento, sem reenviar o vídeo."}
           </p>
         )}
-        {draft.media.kind === "link" && service.testImport && <div className="import-test">
+        {draft.media.kind === "link" && service.testImport && <div className="import-test" hidden={step !== 2}>
           <button type="button" className="button secondary" disabled={busy || !draft.media.inspection || !draft.media.clip} onClick={async () => {
             if (submitLock.current) return;
             submitLock.current = true; setBusy(true); setFailure(undefined); setTestPlayback(undefined);
@@ -465,6 +509,7 @@ export function LineupForm({
           <p className="field-hint">O teste armazena apenas o vídeo e não cadastra nem publica uma granada.</p>
           {testPlayback && <video controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
         </div>}
+        <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && snapshot !== savedSnapshot ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
         <div className="form-actions">
           <span>
             {demo
@@ -479,7 +524,10 @@ export function LineupForm({
           >
             Cancelar
           </button>
-          <button type="submit" className="button primary" disabled={busy}>
+          <button type="button" className="button secondary" disabled={busy} onClick={saveLocal}>Salvar rascunho</button>
+          {step > 0 && <button type="button" className="button secondary" disabled={busy} onClick={() => setStep((step - 1) as 0 | 1 | 2)}>Voltar</button>}
+          {step < 2 && <button type="button" className="button primary" disabled={busy} onClick={() => setStep((step + 1) as 0 | 1 | 2)}>Continuar</button>}
+          <button type="submit" className="button primary" disabled={busy} hidden={step !== 2}>
             {busy
               ? "Salvando…"
               : draft.media.kind === "link"

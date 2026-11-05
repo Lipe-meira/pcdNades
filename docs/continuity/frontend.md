@@ -1,3 +1,25 @@
+# Editor em etapas — 05/11/2026, implementação parcial
+
+Branch codex/redesign-form-granada-20261105, worktree pcdnades-grenade-editor-20261105/nadesCs2; base desta etapa 68bd3e4. Alterações: Admin.tsx passa identidade; LineupForm.tsx integra três painéis mantidos montados, etapas, rascunho local por conta/cadastro, recuperação/descarte explícitos, aviso de conflito updatedAt, revisão e limpeza após publicação; styles.css aplica direção Operate grafite/dourado e ajustes avançados; editor.spec.ts adiciona quatro execuções PC/mobile. Plano em docs/superpowers/plans/2026-11-05-editor.md.
+
+Persistência: localStorage guarda somente whitelist do módulo localDraft.ts, sem mídia/URLs/arquivos/sessões/segredos. Fecha/reabre conserva rascunho salvo, recuperação solicita nova seleção/consulta; edição mantém vídeo remoto. Falha de quota informa erro sem sucesso falso. Navegação apenas altera painel e não publica; Enter fora da última etapa não salva. Ainda pendente validar armazenamento corrompido/indisponível na leitura e diferenciar alterações apenas de mídia no estado pendente.
+
+Skills efetivamente consultadas/aplicadas: Impeccable contexto, Operate e craft floor orientaram agrupamento progressivo, escala tipográfica, contraste e radar protagonista; Superpowers writing-plans/executing-plans organizam implementação; TDD consultado e primeiro teste criado antes da UI, porém saída conclusiva RED não recuperada (não declarar ciclo RED/GREEN comprovado); verification-before-completion usado para limitar afirmações à evidência. React/webapp-testing/revisão independente ainda não executados.
+
+Verificações: build/typecheck PASS após corrigir import duplicado no teste; 61 unitários PASS; navegador isolado editor.spec.ts PC/mobile 4/4 PASS. Execução anterior 3/4 com falha ENOENT no fechamento do trace, não falha de assert; rerun isolado passou. Sem importação/upload real, backend ou serviços alterados. git diff --check PASS. Sem capturas finais ou auditoria visual ainda; detector pendente até acabamento.
+
+Próxima ação concreta: adaptar testes antigos à navegação/details e executar regressões de edição/legado/Solo/MP4/TikTok com fixtures; expandir rascunhos por etapa/reload/conta/conflito/quota/corrupção, produzir capturas reais e inspecioná-las; revisão independente antes da conclusão. Não considerar editor pronto. Commit de progresso conterá este checkpoint, obter SHA via Git; sem autorreferência. Push não executado nesta etapa; sem PR, merge ou deploy. Arquivos não commitados devem ser conferidos no Git; evidências de teste isolado não devem ser versionadas.
+
+---
+
+# Editor em etapas — retomada 05/11/2026
+
+Branch codex/redesign-form-granada-20261105, base 9187b72, HEAD 68bd3e4; arquivos locais preservados: este checkpoint, docs/superpowers/ e frontend/tests/browser/editor.spec.ts. Pedido autoriza push apenas nesta branch. Próximo: integrar localDraft à interface, preservar MediaInput montado, testar e capturar desktop/mobile. Sem backend ou produção.
+
+# Retomada do editor — 05/11/2026, em andamento
+
+Branch codex/redesign-form-granada-20261105, worktree pcdnades-grenade-editor-20261105/nadesCs2, HEAD inicial 68bd3e4, limpa. Pedido: implementar editor e aplicar skills pertinentes efetivamente. Impeccable contexto/Operate/craft floor e Superpowers writing-plans/TDD/executing-plans consultados. Próximo: teste navegador RED para navegação e rascunho, integração mantendo MediaInput montado, GREEN e regressões. Escopo frontend; sem operações reais de mídia, merge ou deploy. Pedido atual reafirma push exclusivo da branch; publicação será somente da branch de trabalho, após verificações. Histórico abaixo é anterior.
+
 # Editor de granadas — 05/11/2026, interrompido parcialmente
 
 Objetivo: redesign em três etapas e rascunhos locais seguros, preservando os fluxos existentes; autorizado somente trabalho e commits locais, sem push, PR, merge ou deploy.

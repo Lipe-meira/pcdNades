@@ -214,6 +214,7 @@ export function Admin({
       {editing && (
         <LineupForm
           maps={maps}
+          accountId={demo ? "demo" : identity?.id}
           existing={editing === "new" ? undefined : editing}
           capabilities={capabilities}
           service={service}
