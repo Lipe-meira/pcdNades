@@ -70,11 +70,15 @@ export function LineupForm({
   );
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const storageKey = accountId ? localDraftKey(accountId, existing?.id) : null;
-  const [storageIssue, setStorageIssue] = useState("");
-  const [stored, setStored] = useState(() => {
-    try { const raw = storageKey && localStorage.getItem(storageKey); return raw ? parseLocalDraft(raw, maps.map(m => m.id)) : null; }
-    catch { return null; }
+  const [loadedStorage] = useState(() => {
+    try {
+      const raw = storageKey && localStorage.getItem(storageKey);
+      const value = raw ? parseLocalDraft(raw, maps.map(m => m.id)) : null;
+      return { value, issue: raw && !value ? "O rascunho local está inválido e não pôde ser recuperado." : "" };
+    } catch { return { value: null, issue: "Não foi possível acessar os rascunhos neste navegador." }; }
   });
+  const [storageIssue, setStorageIssue] = useState(loadedStorage.issue);
+  const [stored, setStored] = useState(loadedStorage.value);
   const [savedSnapshot, setSavedSnapshot] = useState("");
   const savedMedia = useRef<LineupDraft["media"] | null>(null);
   const [notice, setNotice] = useState("");
@@ -111,6 +115,7 @@ export function LineupForm({
     setErrors((current) => ({ ...current, [key]: "" }));
   }
   const snapshot = JSON.stringify(makeLocalDraft(draft, step, existing?.updatedAt ?? null, originTouched, mapChanged));
+  const contentSnapshot = (value: string) => { const parsed = JSON.parse(value); delete parsed.step; return JSON.stringify(parsed); };
   function saveLocal() {
     if (!storageKey) { setStorageIssue("Conta não identificada. Não foi possível salvar neste navegador."); return; }
     try { localStorage.setItem(storageKey, snapshot); setSavedSnapshot(snapshot); savedMedia.current = draft.media; setStored(null); setStorageIssue(""); setNotice("Rascunho salvo neste navegador."); }
@@ -401,7 +406,7 @@ export function LineupForm({
             </p>}
             {existing && draft.origin && <button type="button" className="text-button"
               onClick={() => update("origin", null)}>Remover origem</button>}
-            <details className="editor-advanced" open={!!errors.origin}><summary>Ajustar coordenadas da origem</summary>
+            <details className="editor-advanced"><summary>Ajustar coordenadas da origem</summary>
             <h4 className="point-heading">Origem do lançamento</h4>
             <PointCoordinates origin value={draft.origin ?? null} error={errors.origin}
               onChange={(origin) => update("origin", origin)} />
@@ -419,7 +424,7 @@ export function LineupForm({
               <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
               {errors.destinations && <p className="field-error">{errors.destinations}</p>}
             </div>}
-            <details className="editor-advanced" open={!!errors.target}><summary>Ajustar coordenadas do destino</summary>
+            <details className="editor-advanced"><summary>Ajustar coordenadas do destino</summary>
             <h4 className="point-heading">Destino da granada</h4>
             <PointCoordinates value={draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target} error={errors.target}
               onChange={(target) => { if (draft.type !== "solo_exec" || !target) { update("target", target); return; } const destinations = [...(draft.destinations ?? [])]; destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" }; setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations })); }} />
@@ -510,7 +515,7 @@ export function LineupForm({
           <p className="field-hint">O teste armazena apenas o vídeo e não cadastra nem publica uma granada.</p>
           {testPlayback && <video controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
         </div>}
-        <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && (snapshot !== savedSnapshot || savedMedia.current !== draft.media) ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
+        <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && (contentSnapshot(snapshot) !== contentSnapshot(savedSnapshot) || savedMedia.current !== draft.media) ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
         <div className="form-actions">
           <span>
             {demo

@@ -68,3 +68,21 @@ test("cadastro e edição concluem com MP4 da demonstração", async ({ page }) 
   await page.getByRole("button", { name: "Salvar demonstração" }).click(); await expect(page.getByRole("heading", { name: "Smoke local editor", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Editar Smoke local editor" }).click(); await page.getByLabel("Título", { exact: true }).fill("Smoke local editada"); await page.getByRole("button", { name: "Vídeo e revisão" }).click(); await page.getByRole("button", { name: "Salvar demonstração" }).click(); await expect(page.getByRole("heading", { name: "Smoke local editada", exact: true })).toBeVisible();
 });
+
+test("navegação não marca dados como alterados, edição sim", async ({page}) => {
+ await page.goto('/'); await page.getByRole('link',{name:'Administração',exact:true}).click(); await page.getByRole('button',{name:'Entrar na demonstração'}).click(); await page.getByRole('button',{name:'Nova granada',exact:true}).click();
+ await page.getByRole('button',{name:'Salvar rascunho',exact:true}).click(); await page.getByRole('button',{name:'Continuar',exact:true}).click(); await expect(page.getByText('Rascunho salvo neste navegador.',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Voltar',exact:true}).click(); await page.getByLabel('Título',{exact:true}).fill('Mudou'); await expect(page.getByText('Alterações pendentes desde o último rascunho.')).toBeVisible();
+});
+
+test("rascunho corrompido é informado sem sobrescrever dados", async ({page}) => {
+ await page.addInitScript(() => localStorage.setItem('pcdnades:draft:v1:demo:new','{inválido'));
+ await page.goto('/'); await page.getByRole('link',{name:'Administração',exact:true}).click(); await page.getByRole('button',{name:'Entrar na demonstração'}).click(); await page.getByRole('button',{name:'Nova granada',exact:true}).click();
+ await expect(page.getByText('O rascunho local está inválido e não pôde ser recuperado.')).toBeVisible(); expect(await page.evaluate(() => localStorage.getItem('pcdnades:draft:v1:demo:new'))).toBe('{inválido');
+});
+
+test("falha de leitura do armazenamento é visível e não publica", async ({page}) => {
+ await page.addInitScript(() => { const original = Storage.prototype.getItem; Storage.prototype.getItem = function(key) { if (key.startsWith('pcdnades:draft:')) throw new DOMException('indisponível', 'SecurityError'); return original.call(this,key); }; });
+ await page.goto('/'); await page.getByRole('link',{name:'Administração',exact:true}).click(); await page.getByRole('button',{name:'Entrar na demonstração'}).click(); await page.getByRole('button',{name:'Nova granada',exact:true}).click();
+ await expect(page.getByText('Não foi possível acessar os rascunhos neste navegador.')).toBeVisible(); await expect(page.getByRole('dialog')).toBeVisible();
+});
