@@ -76,6 +76,7 @@ export function LineupForm({
     catch { return null; }
   });
   const [savedSnapshot, setSavedSnapshot] = useState("");
+  const savedMedia = useRef<LineupDraft["media"] | null>(null);
   const [notice, setNotice] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [destinationIndex, setDestinationIndex] = useState(0);
@@ -112,7 +113,7 @@ export function LineupForm({
   const snapshot = JSON.stringify(makeLocalDraft(draft, step, existing?.updatedAt ?? null, originTouched, mapChanged));
   function saveLocal() {
     if (!storageKey) { setStorageIssue("Conta não identificada. Não foi possível salvar neste navegador."); return; }
-    try { localStorage.setItem(storageKey, snapshot); setSavedSnapshot(snapshot); setStored(null); setStorageIssue(""); setNotice("Rascunho salvo neste navegador."); }
+    try { localStorage.setItem(storageKey, snapshot); setSavedSnapshot(snapshot); savedMedia.current = draft.media; setStored(null); setStorageIssue(""); setNotice("Rascunho salvo neste navegador."); }
     catch { setStorageIssue("Não foi possível salvar neste navegador. Seus dados continuam nesta janela."); setNotice(""); }
   }
   function showErrors(next: Record<string, string>) {
@@ -140,7 +141,7 @@ export function LineupForm({
       {stored && <section className="inline-notice">
         <h3>Rascunho encontrado</h3>
         <p>{existing && stored.baseUpdatedAt !== existing.updatedAt ? "A granada publicada mudou desde este rascunho. Recuperar substituirá os campos desta janela; confira tudo antes de salvar." : "Retome o progresso salvo neste navegador ou descarte o rascunho."}</p>
-        <button type="button" className="button secondary" onClick={() => { setDraft(current => ({ ...current, ...stored.fields })); setStep(stored.step); setOriginTouched(stored.originTouched); setMapChanged(stored.mapChanged); setDestinationIndex(0); setMarking("idle"); setSavedSnapshot(JSON.stringify(stored)); setStored(null); setNotice("Rascunho recuperado. Selecione o MP4 novamente ou faça uma nova consulta do link. O vídeo publicado é mantido na edição."); }}>Recuperar rascunho</button>{" "}
+        <button type="button" className="button secondary" onClick={() => { setDraft(current => ({ ...current, ...stored.fields })); setStep(stored.step); setOriginTouched(stored.originTouched); setMapChanged(stored.mapChanged); setDestinationIndex(0); setMarking("idle"); setSavedSnapshot(JSON.stringify(stored)); savedMedia.current = draft.media; setStored(null); setNotice("Rascunho recuperado. Selecione o MP4 novamente ou faça uma nova consulta do link. O vídeo publicado é mantido na edição."); }}>Recuperar rascunho</button>{" "}
         <button type="button" className="text-button" onClick={() => { try { if (storageKey) localStorage.removeItem(storageKey); setStored(null); setNotice("Rascunho descartado."); } catch { setStorageIssue("Não foi possível descartar o rascunho neste navegador."); } }}>Descartar rascunho</button>
       </section>}
       <form
@@ -509,7 +510,7 @@ export function LineupForm({
           <p className="field-hint">O teste armazena apenas o vídeo e não cadastra nem publica uma granada.</p>
           {testPlayback && <video controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
         </div>}
-        <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && snapshot !== savedSnapshot ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
+        <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && (snapshot !== savedSnapshot || savedMedia.current !== draft.media) ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
         <div className="form-actions">
           <span>
             {demo
