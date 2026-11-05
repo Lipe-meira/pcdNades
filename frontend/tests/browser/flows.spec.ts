@@ -12,10 +12,14 @@ async function fillDraft(page: Page, title: string) {
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções fictícias de teste da interface.");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByLabel("Origem X (%)", { exact: true }).fill("20");
   await page.getByLabel("Origem Y (%)", { exact: true }).fill("30");
   await page.getByLabel("Coordenada X (%)", { exact: true }).fill("25");
   await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("75");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -103,10 +107,13 @@ test("validação, seleção no radar e fechamento com restauração de foco", a
     exact: true,
   });
   await trigger.click();
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar demonstração" }).click();
   await expect(page.getByRole("alert").first()).toContainText(
     "Revise os campos",
   );
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByRole("button", { name: "Marcar destino", exact: true }).click();
   const image = page.getByAltText("Radar do mapa Mirage");
   const bounds = (await image.boundingBox())!;
@@ -119,7 +126,9 @@ test("validação, seleção no radar e fechamento com restauração de foco", a
   expect(
     Number(await page.getByLabel("Coordenada Y (%)").inputValue()),
   ).toBeCloseTo(50, 0);
+  await page.getByRole("button", { name: "Informações", exact: false }).click();
   await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByLabel("Coordenada X (%)")).toHaveValue("");
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -142,6 +151,7 @@ test("importação indisponível mantém formulário e não publica cadastro", a
   await expect(page.getByRole("alert").first()).toContainText(
     "PLATFORM_UNSUPPORTED",
   );
+  await page.getByRole("button", { name: "Informações", exact: false }).click();
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue(
     "Teste link indisponível",
   );
@@ -196,6 +206,7 @@ test("MP4 local: cadastro, player, edição, confirmação de exclusão e reload
     .getByRole("button", { name: "Editar Teste MP4 local", exact: true })
     .click();
   await page.getByLabel("Título", { exact: true }).fill("Teste MP4 editado");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar demonstração" }).click();
   await page
     .getByRole("button", { name: "Excluir Teste MP4 editado", exact: true })
@@ -362,6 +373,7 @@ test("origem e destino no formulário: modos, zeros, coordenadas da imagem e tro
   await fillDraft(page, "Origem e destino QA");
   await page.getByLabel("Arquivo MP4", { exact: true }).setInputFiles(fileURLToPath(new URL("../fixtures/test-pattern.mp4", import.meta.url)));
   await expect.poll(() => page.getByLabel("Prévia do MP4 selecionado").evaluate((node: HTMLVideoElement) => node.readyState)).toBeGreaterThanOrEqual(1);
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   const image = page.getByRole("dialog").getByAltText("Radar do mapa Mirage");
   await page.getByRole("button", { name: "Marcar origem", exact: true }).click();
   const bounds = (await image.boundingBox())!;
@@ -379,17 +391,23 @@ test("origem e destino no formulário: modos, zeros, coordenadas da imagem e tro
   expect((box.y + box.height / 2 - actual.y) / actual.height).toBeCloseTo(.35, 2);
   await expect(page.getByRole("dialog").locator(".origin-connections line")).toHaveCount(1);
   await page.screenshot({ path: testInfo.outputPath("origin-form.png"), fullPage: true });
+  await page.getByRole("button", { name: "Informações", exact: false }).click();
   await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   for (const label of ["Origem X (%)", "Origem Y (%)", "Coordenada X (%)", "Coordenada Y (%)"])
     await expect(page.getByLabel(label, { exact: true })).toHaveValue("");
+  await page.getByRole("button", { name: "Informações", exact: false }).click();
   await page.getByLabel("Mapa", { exact: true }).selectOption("mirage");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
   await page.getByLabel("Coordenada X (%)", { exact: true }).fill("70");
   await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar demonstração", exact: true }).click();
   await expect(page.getByRole("alert").first()).toContainText("Marque onde o jogador lança");
   await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
   await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar demonstração", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
@@ -401,6 +419,9 @@ test("origem e destino no formulário: modos, zeros, coordenadas da imagem e tro
 test("radar ampliado mantém coordenadas e orienta origem, destino e ajuste", async ({ page }, testInfo) => {
   await enterAdmin(page);
   await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   const form = page.locator(".dialog-wide");
   const image = form.getByAltText("Radar do mapa Mirage");
   let bounds = (await image.boundingBox())!;
