@@ -145,8 +145,8 @@ export function LineupForm({
       </nav>
       {stored && <section className="inline-notice">
         <h3>Rascunho encontrado</h3>
-        <p>{existing && stored.baseUpdatedAt !== existing.updatedAt ? "A granada publicada mudou desde este rascunho. Recuperar substituirá os campos desta janela; confira tudo antes de salvar." : "Retome o progresso salvo neste navegador ou descarte o rascunho."}</p>
-        <button type="button" className="button secondary" onClick={() => { setDraft(current => ({ ...current, ...stored.fields })); setStep(stored.step); setOriginTouched(stored.originTouched); setMapChanged(stored.mapChanged); setDestinationIndex(0); setMarking("idle"); setSavedSnapshot(JSON.stringify(stored)); savedMedia.current = draft.media; setStored(null); setNotice("Rascunho recuperado. Selecione o MP4 novamente ou faça uma nova consulta do link. O vídeo publicado é mantido na edição."); }}>Recuperar rascunho</button>{" "}
+        <p>{existing && stored.baseUpdatedAt !== existing.updatedAt ? "A granada publicada mudou desde este rascunho. Para evitar sobrescrever alterações, descarte este rascunho e abra novamente a edição atual." : "Retome o progresso salvo neste navegador ou descarte o rascunho."}</p>
+        <button type="button" className="button secondary" disabled={!!existing && stored.baseUpdatedAt !== existing.updatedAt} onClick={() => { setDraft(current => ({ ...current, ...stored.fields })); setStep(stored.step); setOriginTouched(stored.originTouched); setMapChanged(stored.mapChanged); setDestinationIndex(0); setMarking("idle"); setSavedSnapshot(JSON.stringify(stored)); savedMedia.current = draft.media; setStored(null); setNotice("Rascunho recuperado. Selecione o MP4 novamente ou faça uma nova consulta do link. O vídeo publicado é mantido na edição."); }}>Recuperar rascunho</button>{" "}
         <button type="button" className="text-button" onClick={() => { try { if (storageKey) localStorage.removeItem(storageKey); setStored(null); setNotice("Rascunho descartado."); } catch { setStorageIssue("Não foi possível descartar o rascunho neste navegador."); } }}>Descartar rascunho</button>
       </section>}
       <form

@@ -1542,6 +1542,6 @@ test("rascunho de edição divergente alerta e não altera cadastro", async ({ p
   const state = await setup(page, { initial: true }); await page.goto("/"); await signIn(page);
   await page.evaluate(({ id, account }) => localStorage.setItem(`pcdnades:draft:v1:${account}:edit:${id}`, JSON.stringify({ version:1, baseUpdatedAt:"2000-01-01T00:00:00Z", step:0, originTouched:false, mapChanged:false, fields:{ title:"Alteração local", mapId:"mirage", type:"smoke", side:"T", instructions:"Rascunho", target:{x:.4,y:.6}, origin:null, destinations:null } })), { id: grenade.id, account: "33333333-3333-4333-8333-333333333333" });
   await page.getByRole("button", { name:"Editar Granada de teste controlado", exact:true }).click(); await expect(page.getByText(/granada publicada mudou desde este rascunho/)).toBeVisible();
-  await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title); await page.getByRole("button", { name:"Recuperar rascunho" }).click(); await expect(page.getByLabel("Título", {exact:true})).toHaveValue("Alteração local");
+  await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title); await expect(page.getByRole("button", { name:"Recuperar rascunho" })).toBeDisabled(); await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title);
   expect(state.published[0].title).toBe(grenade.title); expect(state.calls.filter(call => call.startsWith("PATCH"))).toHaveLength(0);
 });
