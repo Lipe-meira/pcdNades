@@ -310,6 +310,7 @@ export function createApiService(
     id?: string,
     options: SaveOptions = {},
   ) {
+    if (id && (!Number.isInteger(options.expectedRevision) || options.expectedRevision! < 1)) throw new ApiError("REVISION_REQUIRED");
     const errors = validateDraft(draft, [draft.mapId], !!id);
     if (Object.keys(errors).length) throw new Error(Object.values(errors)[0]);
     const { media: _media, target, ...editable } = draft;
@@ -319,6 +320,7 @@ export function createApiService(
       title: draft.title.trim(),
       instructions: draft.instructions.trim(),
     };
+    if (id) body.expectedRevision = options.expectedRevision;
     if (draft.media.kind !== "keep")
       body.videoId = await resolveMedia(draft, options);
     options.onProgress?.({

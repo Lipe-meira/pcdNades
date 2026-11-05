@@ -22,6 +22,7 @@ export type Video = {
 };
 export type Lineup = {
   id: string;
+  revision?: number;
   title: string;
   mapId: string;
   type: GrenadeType;
@@ -56,7 +57,7 @@ export type MediaDraft =
   | { kind: "link"; sourceUrl: string; clip?: Clip; inspection?: ImportInspection; inspectedUrl?: string };
 export type LineupDraft = Omit<
   Lineup,
-  "id" | "video" | "target" | "createdAt" | "updatedAt"
+  "id" | "revision" | "video" | "target" | "createdAt" | "updatedAt"
 > & { target: Target | null; media: MediaDraft };
 export const typeLabels: Record<GrenadeType, string> = {
   smoke: "Smoke",

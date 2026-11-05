@@ -186,6 +186,7 @@ export function LineupForm({
           let importFailed = false;
           const options = {
             signal: controller.signal,
+            expectedRevision: existing?.revision,
             mediaId: resumeMediaId,
             onProgress: (value: Progress) => {
               if (draft.media.kind === "link" && value.status === "failed") importFailed = true;

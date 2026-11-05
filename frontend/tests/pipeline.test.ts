@@ -36,7 +36,7 @@ const remote = {
   media: undefined,
   video: remoteVideo,
   createdAt: "2026-10-29T00:00:00Z",
-  updatedAt: "2026-10-29T00:00:00Z",
+  revision: 1, updatedAt: "2026-10-29T00:00:00Z",
 };
 
 describe("pipeline remoto com respostas controladas (não é E2E real)", () => {
@@ -289,7 +289,7 @@ describe("pipeline remoto com respostas controladas (não é E2E real)", () => {
       createApiService(client, async () => {}).updateLineup(
         "grenade-id",
         draft,
-        { mediaId: "media-id" },
+        { mediaId: "media-id", expectedRevision: 1 },
       ),
     ).rejects.toThrow("Arquivo inválido");
     expect(patched).toBe(false);

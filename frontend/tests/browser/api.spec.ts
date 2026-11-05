@@ -51,7 +51,7 @@ const grenade = {
   origin: null as { x: number; y: number } | null,
   video: media,
   createdAt: "2026-10-29T12:00:00Z",
-  updatedAt: "2026-10-29T12:00:00Z",
+  revision: 1, updatedAt: "2026-10-29T12:00:00Z",
 };
 
 async function setup(
@@ -1544,4 +1544,13 @@ test("rascunho de edição divergente alerta e não altera cadastro", async ({ p
   await page.getByRole("button", { name:"Editar Granada de teste controlado", exact:true }).click(); await expect(page.getByText(/granada publicada mudou desde este rascunho/)).toBeVisible();
   await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title); await expect(page.getByRole("button", { name:"Recuperar rascunho" })).toBeDisabled(); await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title);
   expect(state.published[0].title).toBe(grenade.title); expect(state.calls.filter(call => call.startsWith("PATCH"))).toHaveLength(0);
+});
+
+test("conflito de revisão preserva formulário e não repete PATCH", async ({ page }) => {
+ const state = await setup(page,{initial:true}); let writes=0;
+ await page.route(`${api}/grenades/${grenade.id}`, async route => { if(route.request().method()==='PATCH'){writes++; expect(route.request().postDataJSON().expectedRevision).toBe(1);return reply(route,{status:409,json:{error:{code:'GRENADE_VERSION_CONFLICT'}}});} return route.fallback(); });
+ await page.goto('/'); await signIn(page); await page.getByRole('button',{name:'Editar Granada de teste controlado',exact:true}).click();
+ await page.getByLabel('Título',{exact:true}).fill('Minha edição'); await page.getByRole('button',{name:'Vídeo e revisão'}).click(); await page.getByRole('button',{name:'Salvar granada',exact:true}).click();
+ await expect(page.getByRole('alert').first()).toContainText('alterada por outra pessoa'); await page.getByRole('button',{name:'Informações'}).click(); await expect(page.getByLabel('Título',{exact:true})).toHaveValue('Minha edição');
+ expect(writes).toBe(1); expect(state.published[0].title).toBe(grenade.title); expect(state.published[0].video.id).toBe(mediaId);
 });
