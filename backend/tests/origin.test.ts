@@ -34,7 +34,7 @@ test('view exposes origin, preserving zeros and legacy nulls without deriving it
 
 // In-memory DB substitute verifies HTTP contract/authorization, not Supabase RLS.
 function setup(role:'admin'|'viewer'='admin'){
- const rows:any[]=[{id,title:'Legada',map_id:'mirage',type:'smoke',side:'T',instructions:'Original',target:{x:0.7,y:0.4},video_id:videoId,created_at:'2026-10-30T00:00:00Z',updated_at:'2026-10-30T00:00:00Z',origin_x:null,origin_y:null}];
+ const rows:any[]=[{id,revision:1,title:'Legada',map_id:'mirage',type:'smoke',side:'T',instructions:'Original',target:{x:0.7,y:0.4},video_id:videoId,created_at:'2026-10-30T00:00:00Z',updated_at:'2026-10-30T00:00:00Z',origin_x:null,origin_y:null}];
  let writes=0;
  const query=(table:string)=>{let change:any,operation='select';const predicates:Array<(r:any)=>boolean>=[];let single=false;
   const q:any={select:()=>q,eq:(k:string,v:any)=>{predicates.push(r=>r[k]===v);return q;},order:()=>q,range:()=>q,insert:(value:any)=>{operation='insert';change=value;return q;},update:(value:any)=>{operation='update';change=value;return q;},single:()=>{single=true;return q;},maybeSingle:()=>{single=true;return q;},then:(resolve:any)=>{
@@ -58,8 +58,8 @@ test('create distinct origins for the same destination and return public list/de
 });
 test('patch can set, preserve or explicitly clear origin without changing target/video',async()=>{
  const f=setup();try{
-  for(const [patch,expected]of [[{origin:{x:0,y:0}},{x:0,y:0}],[{title:'Novo título'},{x:0,y:0}],[{origin:null},null]] as const){const r=await f.app.inject({method:'PATCH',url:`/api/v1/grenades/${id}`,headers:adminHeaders,payload:patch});assert.equal(r.statusCode,200);assert.deepEqual(r.json().data.origin,expected);assert.deepEqual(r.json().data.target,draft.target);assert.equal(r.json().data.video.id,videoId);}
-  const before=f.writes();const invalid=await f.app.inject({method:'PATCH',url:`/api/v1/grenades/${id}`,headers:adminHeaders,payload:{origin:{x:0}}});assert.equal(invalid.statusCode,400);assert.equal(f.writes(),before);
+  for(const [patch,expected]of [[{origin:{x:0,y:0}},{x:0,y:0}],[{title:'Novo título'},{x:0,y:0}],[{origin:null},null]] as const){const r=await f.app.inject({method:'PATCH',url:`/api/v1/grenades/${id}`,headers:adminHeaders,payload:{...patch,expectedRevision:1}});assert.equal(r.statusCode,200);assert.deepEqual(r.json().data.origin,expected);assert.deepEqual(r.json().data.target,draft.target);assert.equal(r.json().data.video.id,videoId);}
+  const before=f.writes();const invalid=await f.app.inject({method:'PATCH',url:`/api/v1/grenades/${id}`,headers:adminHeaders,payload:{origin:{x:0},expectedRevision:1}});assert.equal(invalid.statusCode,400);assert.equal(f.writes(),before);
  }finally{await f.app.close();}
 });
 test('create without origin remains compatible and partial origin cannot be persisted',async()=>{
@@ -71,5 +71,5 @@ test('anonymous and non-admin writes stay denied before origin mutation',async()
 
 test('mapId-only patch does not infer or silently clear origin; caller must remark coordinates',async()=>{
  const f=setup();f.rows[0].origin_x=0;f.rows[0].origin_y=1;
- try{const r=await f.app.inject({method:'PATCH',url:`/api/v1/grenades/${id}`,headers:adminHeaders,payload:{mapId:'inferno'}});assert.equal(r.statusCode,200);assert.deepEqual(r.json().data.origin,{x:0,y:1});assert.deepEqual(r.json().data.target,draft.target);assert.equal(r.json().data.mapId,'inferno');assert.equal(r.json().data.video.id,videoId);}finally{await f.app.close();}
+ try{const r=await f.app.inject({method:'PATCH',url:`/api/v1/grenades/${id}`,headers:adminHeaders,payload:{mapId:'inferno',expectedRevision:1}});assert.equal(r.statusCode,200);assert.deepEqual(r.json().data.origin,{x:0,y:1});assert.deepEqual(r.json().data.target,draft.target);assert.equal(r.json().data.mapId,'inferno');assert.equal(r.json().data.video.id,videoId);}finally{await f.app.close();}
 });
