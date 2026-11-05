@@ -1,3 +1,7 @@
+# Correção de continuidade — 05/11/2026
+
+PR #8, branch codex/redesign-form-granada-20261105; base main 9187b72, HEAD anterior b99cbc9. Histórico da main restaurado integralmente, com checkpoints do editor preservados acima dele; limitação de concorrência permanece na revisão de integração. Alteração exclusivamente documental, sem testes de código, merge ou deploy. Próximo: revisão independente do PR atualizado.
+
 # Revisão de integração — 05/11/2026
 
 Branch codex/redesign-form-granada-20261105; main base 9187b72, HEAD anterior c1d567d. Bloqueada a recuperação de rascunho de edição quando updatedAt diverge da versão carregada; teste API simulado desktop/mobile 2/2 PASS, build e 61 unitários PASS. Limitação: PATCH do backend não é condicional; alteração concorrente após o carregamento ainda pode ser sobrescrita, inclusive porque a lista pode estar desatualizada. Exige controle de versão atômico antes de considerar proteção completa. Testes anteriores de c1d567d: 18 editor, 24 demo e 66 API simulada; não foram integralmente repetidos após ajuste pontual. Sem backend, produção, merge ou deploy. Próximo: abrir PR Draft com essa limitação explícita; preservar frontend/test-results-editor-isolated não versionado.
@@ -47,6 +51,22 @@ Feito: módulo isolado para formato versionado de rascunho com lista explícita 
 Pendente: implementar navegação e interface das três etapas, integração segura do armazenamento, tratamento de falhas e conflitos remotos, preservação do player, revisão, testes de comportamento e capturas desktop/mobile. Ao reabrir, arquivos e consultas de mídia precisarão ser selecionados novamente; essa mensagem ainda não foi implementada. A primeira tentativa automatizada de editar a interface falhou por leitura Python com codificação cp1252; não alterou os componentes. Primeira ação ao retomar: conferir Git, ler LineupForm.tsx e integrar a navegação com leitura/escrita UTF-8, preservando componentes montados e validações; depois integrar armazenamento usando identity.id e confirmar conflito por updatedAt.
 
 Validação real: npm ci local; typecheck PASS; dois testes direcionados PASS; build PASS. Nenhum teste de navegador, screenshot, integração real, upload ou importação executado. Impeccable instalada: instruções, contexto, Operate e craft floor lidos; nenhuma alteração visual ou auditoria visual executada. Sem PR/deploy, sem alteração de backend ou ambiente remoto.
+
+---
+
+---
+
+## Redesign local da biblioteca — 05/11/2026 concluído para revisão
+
+Direção aprovada: filtros/lista à esquerda, radar grande central, vídeo/detalhes à direita; responsivo. Worktree C:/Users/felip/.codex/worktrees/pcdnades-redesign-20261105/nadesCs2 branch codex/redesign-biblioteca, base 8bca018. Sem backend/produção/merge/deploy. Biblioteca reorganizada preservando filtros, radar e player; capturas antes/depois em C:/Users/felip/.codex/worktrees/pcdnades-redesign-20261105/screenshots. Build PASS, 59 testes unitários PASS, 88 testes Playwright PASS em desktop e mobile, incluindo troca de vídeo e Solo Exec; API simulada e modo demo, não produção. Impeccable detect sem achados. Arquivos: Library.tsx, styles.css e este checkpoint. Protótipo aprovado visualmente pelo usuário; base 8bca018, commit 491e8aa. Preparando push da branch e PR para main, sem merge ou deploy; revisão do diff sem arquivos privados. Próximo: acompanhar CI e entregar checklist para aprovação final; vídeos reais e produção não foram testados.
+
+# Em andamento — UX da prévia TikTok (02/11/2026)
+
+Worktree C:/Users/felip/.codex/worktrees/pcdnades-tiktok-preview-frontend-20261102/nadesCs2, branch codex/tiktok-preview-frontend-20261102, base 7443dc8; sem push/PR/merge/deploy. Ajustes pontuais em ImportSourcePreview e ImportLinkEditor: tempo atual acessível, aviso de prévia não publicada, SOURCE_EXPIRED encerra preview e pede nova consulta preservando dados. Testes browser alterados em frontend/tests/browser/api.spec.ts; relatório frontend/docs/TIKTOK-PREVIEW-20261102.md. Build/typecheck PASS, 58 unitários PASS, 16 browser controlados PC/celular PASS, 4 focados player/410 PASS e 2 para expiração durante GET PASS. Capturas fixture desktop/mobile em frontend/node_modules/.cache/tiktok-preview-evidence. Não são E2E real. Nenhuma alteração no backend/contrato/produção; nenhuma stack existente tocada, sem download externo. Entrega commitada localmente; aguardando orquestrador coordenar nova stack isolada/lease antes de E2E real. Coletor/heartbeat pendentes para futura ativação. Arquivos da entrega: este checkpoint, relatório e três arquivos frontend mencionados; conferir git status ao retomar.
+
+Follow-up sobre ad9cf6e: reprodução controlada confirmou que, após seek/erro/reload, output permanecia em 1,5s embora o novo vídeo estivesse em 0 (RED desktop/mobile). Corrigida sincronização em loadedmetadata e limpeza da retomada ao preparar nova prévia; renovação preserva posição. Teste direcionado `npm --prefix frontend run test:browser -- --grep 'recarregar após erro sincroniza|renovação preserva posição|expiração na renovação' --project=api-desktop --project=api-mobile --workers=1`: 6/6 PASS; build/typecheck e 58 unitários PASS. E2E real permanece aguardando stack isolada e coordenação de lease; sem push/deploy/produção.
+
+Bloqueio E2E local informado pelo orquestrador em 02/11: laboratório novo isolado responde HTTP 200 de cliente Docker dentro da própria rede, mas conexão do host Windows ao bind 127.0.0.1 na rede interna expira. Sem API/lease disponível para o ensaio do frontend; isolamento preservado. Não usar labs antigos nem substituir integração real por mock. Os commits ad9cf6e e aa27824 foram integrados localmente pelo orquestrador, que executa regressão própria; resultado dessa execução ainda não confirmado neste registro. Nenhum teste repetido ou código alterado nesta etapa. Próximo: aguardar solução isolada e autorização/lease antes de E2E Auth/Storage.
 
 ---
 
