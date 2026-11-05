@@ -8,7 +8,7 @@ function reply(route: Route, options: Parameters<Route["fulfill"]>[0]) {
   return route.fulfill({
     ...options,
     headers: {
-      "access-control-allow-origin": "http://127.0.0.1:5175",
+      "access-control-allow-origin": route.request().headers().origin ?? "http://127.0.0.1:5175",
       "access-control-allow-methods": "GET, POST, PATCH, DELETE, OPTIONS",
       "access-control-allow-headers":
         route.request().headers()["access-control-request-headers"] ?? "*",
@@ -1107,11 +1107,15 @@ async function openImportForm(page: Page, editing = false) {
     await page.getByRole("button", { name: "Nova granada", exact: true }).click();
     await page.getByLabel("Título", { exact: true }).fill("Trecho TikTok QA");
     await page.getByLabel("Instruções", { exact: true }).fill("Instruções preservadas da importação controlada.");
+    await page.getByRole("button", { name: "Posicionamento", exact: false }).click();
+    await page.getByText("Ajustar coordenadas da origem").click();
+    await page.getByText("Ajustar coordenadas do destino").click();
     await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
     await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
     await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
     await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
   }
+  await page.getByRole("button", { name: "Vídeo e revisão", exact: false }).click();
   await page.getByRole("button", { name: "Importar por link", exact: true }).click();
   await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", { exact: true }).fill("https://vt.tiktok.com/ZSgqvRtpM/");
 }
@@ -1355,6 +1359,13 @@ test("Prévia privada: player marca início e fim sem publicar", async ({ page }
   await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
   await expect(page.getByLabel("Ajustar início da importação")).toHaveValue("0.5");
   await expect(page.getByLabel("Ajustar fim da importação")).toHaveValue("1.5");
+  const originalPlayer = await video.elementHandle();
+  await page.getByRole("button", {name:"Salvar rascunho", exact:true}).click();
+  await page.getByRole("button", {name:"Voltar", exact:true}).click();
+  await page.getByRole("button", {name:"Continuar", exact:true}).click();
+  expect(await video.evaluate((element, original) => element === original, originalPlayer)).toBe(true);
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
   await page.locator(".import-source-preview").scrollIntoViewIfNeeded();
   await page.screenshot({ path: testInfo.outputPath("tiktok-preview.png") });
   expect(methods).toEqual(["POST"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(0);
