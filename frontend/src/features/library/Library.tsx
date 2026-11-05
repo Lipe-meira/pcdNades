@@ -88,46 +88,9 @@ export function Library({
       </div>
       <MapCarousel maps={maps} selectedId={map.id} onSelect={(mapId) => updateFilters({ mapId })} />
       <div className="library-layout library-with-panel">
-        <LibraryFilters filters={filters} lineups={lineups} onChange={updateFilters} />
-        <section className="radar-column" aria-label="Mapa e filtros">
-          <Radar
-            demo={demo}
-            map={map}
-            lineups={visible}
-            selectedId={selected?.id}
-            highlightedIds={destinationIds ?? []}
-            onSelect={(ids) => {
-              setExpanded(false);
-              if (ids.length > 1) {
-                setDestinationIds(ids);
-                setSelectedId(undefined);
-              } else {
-                setSelectedId(ids[0]);
-                setDestinationIds(null);
-              }
-            }}
-          />
-          <div className="radar-legend">
-            <span>
-              <i className="legend-dot smoke" />
-              Smoke
-            </span>
-            <span>
-              <i className="legend-dot flashbang" />
-              Flashbang
-            </span>
-            <span>
-              <i className="legend-dot molotov" />
-              Molotov
-            </span>
-            <span className="legend-hint">
-              Selecione um ponto ou use a lista ao lado.
-            </span>
-            <span><i className="origin-legend" />Origem (+)</span>
-            <span>Destino (círculo)</span>
-          </div>
-        </section>
         <aside className="lineup-rail" aria-label="Biblioteca de granadas">
+        <LibraryFilters filters={filters} lineups={lineups} onChange={updateFilters} />
+          <div className="lineup-rail-list">
           <div className="section-heading">
             <h2>
               {destinationIds ? "Neste destino" : "Granadas"}{" "}
@@ -185,6 +148,47 @@ export function Library({
               )}
             </div>
           )}
+          </div>
+        </aside>
+        <section className="radar-column" aria-label="Mapa e filtros">
+          <Radar
+            demo={demo}
+            map={map}
+            lineups={visible}
+            selectedId={selected?.id}
+            highlightedIds={destinationIds ?? []}
+            onSelect={(ids) => {
+              setExpanded(false);
+              if (ids.length > 1) {
+                setDestinationIds(ids);
+                setSelectedId(undefined);
+              } else {
+                setSelectedId(ids[0]);
+                setDestinationIds(null);
+              }
+            }}
+          />
+          <div className="radar-legend">
+            <span>
+              <i className="legend-dot smoke" />
+              Smoke
+            </span>
+            <span>
+              <i className="legend-dot flashbang" />
+              Flashbang
+            </span>
+            <span>
+              <i className="legend-dot molotov" />
+              Molotov
+            </span>
+            <span className="legend-hint">
+              Selecione um ponto ou use a lista ao lado.
+            </span>
+            <span><i className="origin-legend" />Origem (+)</span>
+            <span>Destino (círculo)</span>
+          </div>
+        </section>
+        <aside className="lineup-inspector" aria-label="Vídeo e detalhes">
           {selected ? (
             <section id="lineup-details" className="lineup-detail" aria-label="Detalhes da granada">
               <button ref={returnButton} className="button secondary detail-return" hidden={!wide}
@@ -245,7 +249,7 @@ export function Library({
               </div>
             </section>
           ) : (
-            listed.length > 0 && (
+            (
               <div className="selection-hint">
                 <Icon name="crosshair" size={30} />
                 <h3>

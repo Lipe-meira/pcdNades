@@ -1592,3 +1592,30 @@ label{font-size:14px;font-weight:400}
   .radar-shell-expanded { padding: 12px; }
   .radar-shell-expanded .radar-image { width: 100%; }
 }
+
+/* Biblioteca: filtros e lista acompanham o radar; detalhes ficam independentes. */
+.library-with-panel{display:grid;grid-template-columns:minmax(190px,20fr) minmax(0,50fr) minmax(250px,30fr);gap:22px;align-items:start}
+.library-with-panel .lineup-rail{grid-column:auto;border:0;padding:0;min-width:0}
+.library-with-panel .library-filters{display:block;padding:16px 12px;background:#1c2025;border:1px solid var(--border);border-radius:4px}
+.library-with-panel .library-filters .nade-types,.library-with-panel .library-filters .nade-sides{display:block;margin:0;flex:auto}
+.library-with-panel .library-filters .nade-types>[role=group]{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.library-with-panel .library-filters .nade-type{width:100%;min-width:0}
+.library-with-panel .library-filters .nade-sides{margin-top:22px}
+.library-with-panel .library-filters .filter-count-hint{margin:12px 6px 2px}
+.lineup-rail-list{margin-top:24px;min-width:0}
+.lineup-rail-list .section-heading h2{font-size:22px}
+.lineup-rail-list .lineup-list{max-height:420px;overflow:auto;overscroll-behavior:contain}
+.lineup-rail-list .lineup-row{padding:12px 8px}
+.lineup-rail-list .row-content strong{font-size:15px}
+.lineup-inspector{min-width:0;padding:18px;border:1px solid var(--border);border-radius:4px;background:#1c2025}
+.lineup-inspector .lineup-detail{margin:0;padding:0;border:0}
+.lineup-inspector .selection-hint{margin:0;padding:24px 4px;border:0}
+.lineup-inspector .selection-hint h3{font-size:20px}
+.lineup-inspector .detail-expand{margin-top:0}
+.library-view.is-wide .lineup-rail{display:none}
+.library-view.is-wide .lineup-inspector{padding:0;border:0;background:transparent}
+.library-view.is-wide .lineup-detail{display:block}
+.library-view.is-wide .detail-layout{display:grid}
+@media (min-width:1051px){.library-with-panel .radar-image{max-width:100%}}
+@media (min-width:761px) and (max-width:1100px){.library-with-panel{display:grid;grid-template-columns:minmax(190px,240px) minmax(0,1fr)}.library-with-panel .lineup-rail{grid-column:1;grid-row:1 / span 2}.library-with-panel .radar-column{grid-column:2;grid-row:1}.library-with-panel .lineup-inspector{grid-column:2;grid-row:2}}
+@media (max-width:760px){.library-with-panel{display:flex;flex-direction:column;gap:18px}.library-with-panel .lineup-rail{display:contents}.library-with-panel .library-filters{order:1;width:100%}.library-with-panel .radar-column{order:2;width:100%}.library-with-panel .lineup-rail-list{order:3;width:100%;margin:0}.library-with-panel .lineup-inspector{order:4;width:100%}.library-with-panel .library-filters .nade-types>[role=group]{grid-template-columns:repeat(2,minmax(0,1fr))}.library-with-panel .library-filters .nade-sides{display:flex;margin-top:14px}.lineup-rail-list .lineup-list{max-height:260px}.library-view.is-wide .lineup-rail{display:none}.library-view.is-wide .lineup-inspector{width:100%}}
