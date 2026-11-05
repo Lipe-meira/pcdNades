@@ -1,3 +1,61 @@
+# Correção de continuidade — 05/11/2026
+
+PR #8, branch codex/redesign-form-granada-20261105; base main 9187b72, HEAD anterior b99cbc9. Histórico da main restaurado integralmente, com checkpoints do editor preservados acima dele; limitação de concorrência permanece na revisão de integração. Alteração exclusivamente documental, sem testes de código, merge ou deploy. Próximo: revisão independente do PR atualizado.
+
+# Revisão de integração — 05/11/2026
+
+Branch codex/redesign-form-granada-20261105; main base 9187b72, HEAD anterior c1d567d. Bloqueada a recuperação de rascunho de edição quando updatedAt diverge da versão carregada; teste API simulado desktop/mobile 2/2 PASS, build e 61 unitários PASS. Limitação: PATCH do backend não é condicional; alteração concorrente após o carregamento ainda pode ser sobrescrita, inclusive porque a lista pode estar desatualizada. Exige controle de versão atômico antes de considerar proteção completa. Testes anteriores de c1d567d: 18 editor, 24 demo e 66 API simulada; não foram integralmente repetidos após ajuste pontual. Sem backend, produção, merge ou deploy. Próximo: abrir PR Draft com essa limitação explícita; preservar frontend/test-results-editor-isolated não versionado.
+
+# Estabilização concluída — 05/11/2026
+
+Branch codex/redesign-form-granada-20261105, base 9187b72. Corrigidos falso estado pendente ao navegar, tratamento visível de rascunho inválido/inacessível e fechamento involuntário de coordenadas avançadas. Testes antigos adaptados às etapas sem remover verificações; exemplos controlados de conflito de edição, quota, armazenamento corrompido e isolamento por conta. Verificações nesta etapa: build PASS, 61 unitários PASS, 18 testes editor PASS, 24 fluxos demo PASS, 66 testes API simulada PASS em desktop/mobile. Incluem MP4, recorte, retomada, Solo Exec, origens legadas, miniplayer e TikTok simulado; não são importações reais. Segredos e URLs de mídia não são persistidos no rascunho; arquivos/consulta exigem nova seleção após reload. Diff limitado ao frontend/testes/checkpoint; nenhuma operação em produção. Próximo: revisão de integração do usuário, sem PR, merge ou deploy. Evidência local não versionada frontend/test-results-editor-isolated preservada.
+
+# Estabilização do editor — 05/11/2026 em andamento
+
+Branch codex/redesign-form-granada-20261105, HEAD fd4dcf3, remoto sincronizado; evidência frontend/test-results-editor-isolated não versionada preservada. Usuário aprovou visual e autorizou push apenas nesta branch. Próximo: corrigir status de rascunho e leitura inválida, adaptar testes antigos e executar regressão; sem PR, merge, deploy ou produção.
+
+# Editor em etapas — 05/11/2026, revisão local
+
+Branch codex/redesign-form-granada-20261105, base 9187b72; commits 68bd3e4 e a565125. Editor em três etapas e rascunho local por conta/cadastro; serializa apenas campos, coordenadas, etapa e versão de edição, sem mídia, URLs, credenciais ou sessões. Após reabrir exige selecionar arquivo ou consultar link novamente; edição mantém vídeo existente. Player e MediaInput ficam montados entre etapas. Build e 61 unitários PASS; 12 testes de navegador desktop/mobile PASS: rascunho, quota, reload, Solo Exec, MP4 demo, edição e validação. TikTok com API simulada PASS em desktop/mobile: inspeção, seleção de trecho, publicação simulada, prévia e preservação do mesmo player/trecho entre etapas; nenhum vídeo externo real. Parte da suíte antiga ainda depende da estrutura anterior e precisa ser adaptada. Capturas em C:/Users/felip/.codex/worktrees/pcdnades-grenade-editor-20261105/screenshots. Próximo: revisar visualmente com o usuário e adaptar o restante dos testes de regressão anteriores antes de recomendar integração. Sem backend, Supabase, merge ou deploy. Diretório frontend/test-results-editor-isolated é evidência temporária local não versionada.
+
+# Editor em etapas — 05/11/2026, implementação parcial
+
+Branch codex/redesign-form-granada-20261105, worktree pcdnades-grenade-editor-20261105/nadesCs2; base desta etapa 68bd3e4. Alterações: Admin.tsx passa identidade; LineupForm.tsx integra três painéis mantidos montados, etapas, rascunho local por conta/cadastro, recuperação/descarte explícitos, aviso de conflito updatedAt, revisão e limpeza após publicação; styles.css aplica direção Operate grafite/dourado e ajustes avançados; editor.spec.ts adiciona quatro execuções PC/mobile. Plano em docs/superpowers/plans/2026-11-05-editor.md.
+
+Persistência: localStorage guarda somente whitelist do módulo localDraft.ts, sem mídia/URLs/arquivos/sessões/segredos. Fecha/reabre conserva rascunho salvo, recuperação solicita nova seleção/consulta; edição mantém vídeo remoto. Falha de quota informa erro sem sucesso falso. Navegação apenas altera painel e não publica; Enter fora da última etapa não salva. Ainda pendente validar armazenamento corrompido/indisponível na leitura e diferenciar alterações apenas de mídia no estado pendente.
+
+Skills efetivamente consultadas/aplicadas: Impeccable contexto, Operate e craft floor orientaram agrupamento progressivo, escala tipográfica, contraste e radar protagonista; Superpowers writing-plans/executing-plans organizam implementação; TDD consultado e primeiro teste criado antes da UI, porém saída conclusiva RED não recuperada (não declarar ciclo RED/GREEN comprovado); verification-before-completion usado para limitar afirmações à evidência. React/webapp-testing/revisão independente ainda não executados.
+
+Verificações: build/typecheck PASS após corrigir import duplicado no teste; 61 unitários PASS; navegador isolado editor.spec.ts PC/mobile 4/4 PASS. Execução anterior 3/4 com falha ENOENT no fechamento do trace, não falha de assert; rerun isolado passou. Sem importação/upload real, backend ou serviços alterados. git diff --check PASS. Sem capturas finais ou auditoria visual ainda; detector pendente até acabamento.
+
+Próxima ação concreta: adaptar testes antigos à navegação/details e executar regressões de edição/legado/Solo/MP4/TikTok com fixtures; expandir rascunhos por etapa/reload/conta/conflito/quota/corrupção, produzir capturas reais e inspecioná-las; revisão independente antes da conclusão. Não considerar editor pronto. Commit de progresso conterá este checkpoint, obter SHA via Git; sem autorreferência. Push não executado nesta etapa; sem PR, merge ou deploy. Arquivos não commitados devem ser conferidos no Git; evidências de teste isolado não devem ser versionadas.
+
+---
+
+# Editor em etapas — retomada 05/11/2026
+
+Branch codex/redesign-form-granada-20261105, base 9187b72, HEAD 68bd3e4; arquivos locais preservados: este checkpoint, docs/superpowers/ e frontend/tests/browser/editor.spec.ts. Pedido autoriza push apenas nesta branch. Próximo: integrar localDraft à interface, preservar MediaInput montado, testar e capturar desktop/mobile. Sem backend ou produção.
+
+# Retomada do editor — 05/11/2026, em andamento
+
+Branch codex/redesign-form-granada-20261105, worktree pcdnades-grenade-editor-20261105/nadesCs2, HEAD inicial 68bd3e4, limpa. Pedido: implementar editor e aplicar skills pertinentes efetivamente. Impeccable contexto/Operate/craft floor e Superpowers writing-plans/TDD/executing-plans consultados. Próximo: teste navegador RED para navegação e rascunho, integração mantendo MediaInput montado, GREEN e regressões. Escopo frontend; sem operações reais de mídia, merge ou deploy. Pedido atual reafirma push exclusivo da branch; publicação será somente da branch de trabalho, após verificações. Histórico abaixo é anterior.
+
+# Editor de granadas — 05/11/2026, interrompido parcialmente
+
+Objetivo: redesign em três etapas e rascunhos locais seguros, preservando os fluxos existentes; autorizado somente trabalho e commits locais, sem push, PR, merge ou deploy.
+
+Worktree: C:/Users/felip/.codex/worktrees/pcdnades-grenade-editor-20261105/nadesCs2; branch codex/redesign-form-granada-20261105; base 9187b72; HEAD anterior 9187b72; nenhum push nesta missão. Arquivos desta etapa: frontend/src/features/admin/localDraft.ts, frontend/tests/localDraft.test.ts e este checkpoint (consultar git status após o commit).
+
+Feito: módulo isolado para formato versionado de rascunho com lista explícita de título, mapa, tipo, lado, instruções, origem, destino, destinos, etapa e flags de alteração, além da versão remota de edição; chave separa conta e cadastro. Validação rejeita formato, mapa e coordenadas inválidos e reconstrói os campos permitidos. Não serializa mídia, URLs, arquivos, sessão ou credenciais. Dois testes unitários cobrem filtragem, isolamento e dados inválidos. Esse módulo ainda NÃO está conectado à interface ou ao localStorage; não existe recuperação, descarte ou limpeza operacional.
+
+Pendente: implementar navegação e interface das três etapas, integração segura do armazenamento, tratamento de falhas e conflitos remotos, preservação do player, revisão, testes de comportamento e capturas desktop/mobile. Ao reabrir, arquivos e consultas de mídia precisarão ser selecionados novamente; essa mensagem ainda não foi implementada. A primeira tentativa automatizada de editar a interface falhou por leitura Python com codificação cp1252; não alterou os componentes. Primeira ação ao retomar: conferir Git, ler LineupForm.tsx e integrar a navegação com leitura/escrita UTF-8, preservando componentes montados e validações; depois integrar armazenamento usando identity.id e confirmar conflito por updatedAt.
+
+Validação real: npm ci local; typecheck PASS; dois testes direcionados PASS; build PASS. Nenhum teste de navegador, screenshot, integração real, upload ou importação executado. Impeccable instalada: instruções, contexto, Operate e craft floor lidos; nenhuma alteração visual ou auditoria visual executada. Sem PR/deploy, sem alteração de backend ou ambiente remoto.
+
+---
+
+---
+
 ## Redesign local da biblioteca — 05/11/2026 concluído para revisão
 
 Direção aprovada: filtros/lista à esquerda, radar grande central, vídeo/detalhes à direita; responsivo. Worktree C:/Users/felip/.codex/worktrees/pcdnades-redesign-20261105/nadesCs2 branch codex/redesign-biblioteca, base 8bca018. Sem backend/produção/merge/deploy. Biblioteca reorganizada preservando filtros, radar e player; capturas antes/depois em C:/Users/felip/.codex/worktrees/pcdnades-redesign-20261105/screenshots. Build PASS, 59 testes unitários PASS, 88 testes Playwright PASS em desktop e mobile, incluindo troca de vídeo e Solo Exec; API simulada e modo demo, não produção. Impeccable detect sem achados. Arquivos: Library.tsx, styles.css e este checkpoint. Protótipo aprovado visualmente pelo usuário; base 8bca018, commit 491e8aa. Preparando push da branch e PR para main, sem merge ou deploy; revisão do diff sem arquivos privados. Próximo: acompanhar CI e entregar checklist para aprovação final; vídeos reais e produção não foram testados.

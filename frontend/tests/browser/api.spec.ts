@@ -8,7 +8,7 @@ function reply(route: Route, options: Parameters<Route["fulfill"]>[0]) {
   return route.fulfill({
     ...options,
     headers: {
-      "access-control-allow-origin": "http://127.0.0.1:5175",
+      "access-control-allow-origin": route.request().headers().origin ?? "http://127.0.0.1:5175",
       "access-control-allow-methods": "GET, POST, PATCH, DELETE, OPTIONS",
       "access-control-allow-headers":
         route.request().headers()["access-control-request-headers"] ?? "*",
@@ -259,7 +259,7 @@ async function setup(
       return reply(route, {
         json: {
           data: {
-            url: `http://127.0.0.1:5175/tests/fixtures/test-pattern.mp4?v=${state.playback}`,
+            url: `${new URL(page.url()).origin}/tests/fixtures/test-pattern.mp4?v=${state.playback}`,
             expiresAt: new Date(
               Date.now() + (state.allowLongLease ? 3_600_000 : 34_000),
             ).toISOString(),
@@ -455,6 +455,7 @@ test("login, capabilities e logout com respostas controladas", async ({
     }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await expect(page.getByLabel("Arquivo MP4", { exact: true })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("api-form.png") });
   await page
@@ -483,10 +484,14 @@ test("upload falho pode ser reenviado; acompanhamento retoma antes de publicar e
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Teste de cadastro com transporte controlado.");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByLabel("Origem X (%)").fill("20");
   await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page
     .getByLabel("Arquivo MP4", { exact: true })
     .setInputFiles(samplePath);
@@ -623,10 +628,14 @@ async function fillInlineForm(page: Page) {
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções de QA, sem execução real.");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByLabel("Origem X (%)").fill("20");
   await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await expect(
     page.getByText("Envie o MP4 original", { exact: false }),
   ).toContainText("H.264");
@@ -738,10 +747,14 @@ test("recorte: prévia delimitada, erro de intervalo e sessão imutável com sa�
   await page
     .getByLabel("Instruções", { exact: true })
     .fill("Instruções fictícias para QA.");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByLabel("Origem X (%)").fill("20");
   await page.getByLabel("Origem Y (%)").fill("30");
   await page.getByLabel("Coordenada X (%)").fill("40");
   await page.getByLabel("Coordenada Y (%)").fill("60");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page
     .getByLabel("Arquivo MP4", { exact: true })
     .setInputFiles(
@@ -1057,43 +1070,70 @@ test("edição de origem: PATCH omitido preserva, coordenadas zero adicionam e n
   await signIn(page);
   const edit = page.getByRole("button", { name: "Editar Granada de teste controlado", exact: true });
   await edit.click();
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await expect(page.getByText(/Origem não cadastrada\. Este cadastro antigo/)).toBeVisible();
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(Object.hasOwn(bodies[0], "origin")).toBe(false);
   await edit.click();
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
   await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(bodies[1].origin).toEqual({ x: 0, y: 1 });
   await edit.click();
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
+  await page.getByRole("button", { name: "Informações" }).click();
   await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
   await expect(page.getByLabel("Coordenada X (%)", { exact: true })).toHaveValue("");
   await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
   await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("alert").first()).toContainText("Marque onde o jogador lança");
   expect(bodies).toHaveLength(2);
+  await page.getByRole("button", { name: "Informações" }).click();
   await page.getByLabel("Mapa", { exact: true }).selectOption("mirage");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("");
   await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
   await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
   await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
   await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(bodies[2].origin).toEqual({ x: 0, y: 1 });
   await edit.click();
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
   await page.getByRole("button", { name: "Remover origem", exact: true }).click();
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(bodies[3].origin).toBeNull();
   await edit.click();
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
+  await page.getByRole("button", { name: "Informações" }).click();
   await page.getByLabel("Mapa", { exact: true }).selectOption("inferno");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await page.getByLabel("Coordenada X (%)", { exact: true }).fill("30");
   await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("40");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   expect(bodies[4].origin).toBeNull();
@@ -1107,11 +1147,15 @@ async function openImportForm(page: Page, editing = false) {
     await page.getByRole("button", { name: "Nova granada", exact: true }).click();
     await page.getByLabel("Título", { exact: true }).fill("Trecho TikTok QA");
     await page.getByLabel("Instruções", { exact: true }).fill("Instruções preservadas da importação controlada.");
+    await page.getByRole("button", { name: "Posicionamento", exact: false }).click();
+    await page.getByText("Ajustar coordenadas da origem").click();
+    await page.getByText("Ajustar coordenadas do destino").click();
     await page.getByLabel("Origem X (%)", { exact: true }).fill("0");
     await page.getByLabel("Origem Y (%)", { exact: true }).fill("100");
     await page.getByLabel("Coordenada X (%)", { exact: true }).fill("40");
     await page.getByLabel("Coordenada Y (%)", { exact: true }).fill("60");
   }
+  await page.getByRole("button", { name: "Vídeo e revisão", exact: false }).click();
   await page.getByRole("button", { name: "Importar por link", exact: true }).click();
   await page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", { exact: true }).fill("https://vt.tiktok.com/ZSgqvRtpM/");
 }
@@ -1208,8 +1252,11 @@ test("TikTok: troca do link aborta consulta antiga, limpa seleção e respeita e
   await page.getByLabel("Início do trecho", { exact: true }).fill("1:60:00");
   await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
   await expect(page.getByRole("alert").first()).toContainText("início e fim válidos");
+  await page.getByRole("button", { name: "Informações" }).click();
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Trecho TikTok QA");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByLabel("Origem X (%)", { exact: true })).toHaveValue("0");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await link.fill("https://www.youtube.com/shorts/abcdefghijk");
   await expect(page.getByRole("button", { name: "Consultar vídeo", exact: true })).toBeDisabled();
   await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
@@ -1223,7 +1270,9 @@ test("TikTok: falha final de tamanho preserva cadastro anterior e exige nova sel
   expect(state.published).toHaveLength(1); expect(state.published[0].video.id).toBe(mediaId);
   await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Retomar importação", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Informações" }).click();
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Granada de teste controlado");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Manter vídeo", exact: true }).click();
   await expect(page.getByLabel("Vídeo da granada", { exact: true })).toBeVisible();
 });
@@ -1260,6 +1309,7 @@ test("TikTok: acesso recusado orienta MP4 e preserva o vídeo e o cadastro anter
   await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Enviar MP4", exact: true }).click();
   await expect(page.getByLabel("Arquivo MP4", { exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: "Informações" }).click();
   await expect(page.getByLabel("Título", { exact: true })).toHaveValue("Granada de teste controlado");
   await expect(page.getByRole("textbox", { name: "Instruções", exact: true })).toHaveValue(grenade.instructions);
 });
@@ -1281,7 +1331,9 @@ test("TikTok: teste privado importa e reproduz sem publicar granada", async ({ p
 test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) => {
   const state = await setup(page, { inlineOriginal: true });
   await page.goto("/"); await signIn(page); await fillInlineForm(page);
+  await page.getByRole("button", { name: "Informações" }).click();
   await page.getByLabel("Tipo", { exact: true }).selectOption("solo_exec");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByRole("button", { name: "Destino 1", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Adicionar destino" }).click();
   await page.getByLabel("Tipo do destino 2").selectOption("molotov");
@@ -1291,6 +1343,7 @@ test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) 
   await expect(page.getByRole("button", { name: "Destino 1", exact: true })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Selecionar destino 2 para reposicionar" }).click();
   await expect(page.getByRole("button", { name: "Destino 2", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
   await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 15000 });
   expect(state.published).toHaveLength(1);
@@ -1313,9 +1366,13 @@ test("Solo Exec troca de mapa após selecionar segundo destino sem índice antig
   await setup(page, { inlineOriginal: true });
   await page.route(`${api}/maps`, route => reply(route, {json:{data:["mirage","inferno"].map(id=>({id,name:id === "mirage" ? "Mirage" : "Inferno",radar:{imageUrl:`/maps/${id}.svg`,width:1024,height:1024,coordinateVersion:`setpos-${id}-ba5f793`}}))}}));
   await page.goto("/"); await signIn(page); await fillInlineForm(page);
+  await page.getByRole("button", { name: "Informações" }).click();
   await page.getByLabel("Tipo", {exact:true}).selectOption("solo_exec");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   await page.getByRole("button", {name:"Adicionar destino"}).click();
+  await page.getByRole("button", { name: "Informações" }).click();
   await page.getByLabel("Mapa", {exact:true}).selectOption("inferno");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
   const radar=page.getByRole("img", {name:"Radar do mapa Inferno"});
   await radar.click({position:{x:50,y:50}});
   await page.getByRole("button", {name:"Marcar destino",exact:true}).click();
@@ -1355,6 +1412,13 @@ test("Prévia privada: player marca início e fim sem publicar", async ({ page }
   await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
   await expect(page.getByLabel("Ajustar início da importação")).toHaveValue("0.5");
   await expect(page.getByLabel("Ajustar fim da importação")).toHaveValue("1.5");
+  const originalPlayer = await video.elementHandle();
+  await page.getByRole("button", {name:"Salvar rascunho", exact:true}).click();
+  await page.getByRole("button", {name:"Voltar", exact:true}).click();
+  await page.getByRole("button", {name:"Continuar", exact:true}).click();
+  expect(await video.evaluate((element, original) => element === original, originalPlayer)).toBe(true);
+  await expect(page.getByLabel("Início do trecho",{exact:true})).toHaveValue("00:00.5");
+  await expect(page.getByLabel("Fim do trecho",{exact:true})).toHaveValue("00:01.5");
   await page.locator(".import-source-preview").scrollIntoViewIfNeeded();
   await page.screenshot({ path: testInfo.outputPath("tiktok-preview.png") });
   expect(methods).toEqual(["POST"]); expect(state.importCreates).toBe(0); expect(state.published).toHaveLength(0);
@@ -1472,4 +1536,12 @@ test("Prévia privada: recarregar após erro sincroniza posição do novo vídeo
   await expect(page.getByLabel("Posição atual do vídeo")).toHaveText("00:00");
   expect(await video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBe(0);
   expect(state.importCreates).toBe(0);
+});
+
+test("rascunho de edição divergente alerta e não altera cadastro", async ({ page }) => {
+  const state = await setup(page, { initial: true }); await page.goto("/"); await signIn(page);
+  await page.evaluate(({ id, account }) => localStorage.setItem(`pcdnades:draft:v1:${account}:edit:${id}`, JSON.stringify({ version:1, baseUpdatedAt:"2000-01-01T00:00:00Z", step:0, originTouched:false, mapChanged:false, fields:{ title:"Alteração local", mapId:"mirage", type:"smoke", side:"T", instructions:"Rascunho", target:{x:.4,y:.6}, origin:null, destinations:null } })), { id: grenade.id, account: "33333333-3333-4333-8333-333333333333" });
+  await page.getByRole("button", { name:"Editar Granada de teste controlado", exact:true }).click(); await expect(page.getByText(/granada publicada mudou desde este rascunho/)).toBeVisible();
+  await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title); await expect(page.getByRole("button", { name:"Recuperar rascunho" })).toBeDisabled(); await expect(page.getByLabel("Título", {exact:true})).toHaveValue(grenade.title);
+  expect(state.published[0].title).toBe(grenade.title); expect(state.calls.filter(call => call.startsWith("PATCH"))).toHaveLength(0);
 });
