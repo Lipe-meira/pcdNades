@@ -11,7 +11,7 @@ try{
  create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql as $$select null::uuid$$;
  create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
  alter default privileges in schema public grant all on tables to service_role;`);
- for(const name of ['001_initial.sql','002_maps.sql','003_media_import_sources_and_40_seconds.sql','004_grenade_origin.sql','20261030124528_tiktok_import_sessions.sql'])await db.exec(await readFile(new URL(`../migrations/${name}`,import.meta.url),'utf8'));
+ for(const name of ['001_initial.sql','002_maps.sql','003_media_import_sources_and_40_seconds.sql','004_grenade_origin.sql','20261030124528_tiktok_import_sessions.sql','20261105210000_import_source_individual_limit_20.sql'])await db.exec(await readFile(new URL(`../migrations/${name}`,import.meta.url),'utf8'));
  const owner='123e4567-e89b-42d3-a456-426614174000',other='123e4567-e89b-42d3-a456-426614174001';
  await db.query('insert into auth.users(id) values($1),($2)',[owner,other]);
  for(const role of ['anon','authenticated']){
@@ -48,7 +48,7 @@ try{
  await denied("insert into public.media_assets(owner_id,source_type,storage_key,clip) values($1,'upload','invalid-source.mp4',$2)",[owner,clip],/media_assets_clip_check/);
  const available=await one('select * from public.reserve_import_source($1)',[owner]);await db.query('update public.import_sources set metadata=$2 where id=$1',[available.id,metadata]);
  for(const bad of [{startSeconds:0,endSeconds:90.001},{startSeconds:3999,endSeconds:4001},{startSeconds:-1,endSeconds:10},{startSeconds:0.0001,endSeconds:1},null])await denied('select * from public.create_tiktok_import($1,$2,$3)',[available.id,owner,bad],/CLIP_OUT_OF_RANGE|media_assets_clip_check/);
- for(let i=3;i<10;i++)await db.query('select public.reserve_import_source($1)',[owner]);
+ for(let i=3;i<20;i++)await db.query('select public.reserve_import_source($1)',[owner]);
  await denied('select public.reserve_import_source($1)',[owner],/IMPORT_RATE_LIMIT/);
  check(Number((await one('select count(*) as total from public.media_assets')).total),1);
  // Real local PostgreSQL trigger checks; no Storage object is implied by SQL metadata.
@@ -63,5 +63,5 @@ try{
  await denied('update public.grenades set video_id=$2 where id=$1',[grenade.id,replacement.id],/Video must be ready/);
  check((await one('select video_id from public.grenades where id=$1',[grenade.id])).video_id,media.id);
  await denied("update public.media_assets set status='queued' where id=$1",[replacement.id],/Invalid media state transition/);
- console.log(JSON.stringify({engine:'PGlite PostgreSQL WASM 0.5.13',localOnly:true,assertions,appliedMigrations:5,rlsAndGrants:'PASS',atomicSelectionAndIdempotency:'PASS',expiryAndRecovery:'PASS',globalSlot:'PASS',rateLimit:'PASS',remoteSupabaseValidated:false}));
+ console.log(JSON.stringify({engine:'PGlite PostgreSQL WASM 0.5.13',localOnly:true,assertions,appliedMigrations:6,rlsAndGrants:'PASS',atomicSelectionAndIdempotency:'PASS',expiryAndRecovery:'PASS',globalSlot:'PASS',rateLimit:'PASS',remoteSupabaseValidated:false}));
 }finally{await db.close();}
