@@ -40,3 +40,11 @@ Falha antes do DDL: manter deployments antigos e janela; reparar histórico some
 ## Gates antes de produção
 
 Confirmação atual de disparos Vercel; backup/restore aprovado; CI final; validação real Auth/PostgREST/Storage em ambiente autorizado ou aceite explícito de sua ausência; simulação de cutover com cliente antigo; autorização separada de reparo do histórico,DDL,merge/deploy e escrita de smoke. Abertura de Draft não atende esses gates.
+
+## Bloqueio Git preparado localmente — 06/11/2026
+
+Adicionada a regra única git.deploymentEnabled["codex/integracao-editor-20261106"]=false em frontend/vercel.json e backend/vercel.json. Configurações preexistentes preservadas semanticamente; nenhuma regra true ou wildcard conflitante nesses arquivos. Isso não desabilita deployments da main. Alteração não publicada nem aplicada remotamente; hooks/CLI/automatizações externas não são neutralizados por essa regra de integração Git.
+
+Caminhos correspondem às roots frontend/backend registradas nos checkpoints do projeto. get_project/get_deployment oficiais confirmam IDs,frameworks,repo/main e deployments conhecidos,mas NÃO expõem rootDirectory nem eventual override de arquivo de configuração. Portanto os caminhos atuais efetivos precisam ser confirmados manualmente em Settings→Build and Deployment:pcdnades Root Directory=frontend e configuração frontend/vercel.json;pcdnades-api Root Directory=backend e configuração backend/vercel.json,sem override externo. Não tratar root histórico como confirmação remota atual.
+
+Antes de autorizar push/Draft:confirmar roots/config efetivos e Deploy Hooks/automações externos nos dois projetos. Nenhum hook deve publicar a integração em resposta a push/PR. Sem Computer Use,alteração remota,deploy,PR ou push nesta etapa. Validação limitada a parsing JSON,asserts de preservação e regra única,git diff --check;testes110/150/63 e PG previamente aprovados não repetidos por alteração de configuração não executada.

@@ -1,3 +1,25 @@
+## Bloqueio Git explícito — 06/11/2026, pronto localmente; publicação proibida
+
+Branch/worktree integração existentes preservados; HEAD inicial60ae269. Usuário autorizou somente edição local dos dois vercel.json e commit convencional,sem push/Draft. Checkpoint anterior modificado já existia e foi preservado neste registro/commit.
+
+Feito:frontend/vercel.json e backend/vercel.json recebem única regra git.deploymentEnabled para codex/integracao-editor-20261106=false;rewrites/framework/install/build anteriores preservados. Parsing/asserts confirmam JSON válido,preservação semântica e ausência de regra habilitadora conflitante. Runbook atualizado. git diff --check/staged conferidos antes do commit;nenhum teste de aplicação repetido. Evidências110/150/63 e PG isolado continuam válidas,nenhum código alterado.
+
+Caminhos conferidos contra roots históricas frontend/backend. Leitura oficial get_deployment confirma os dois projetos e main9187b72 READY,mas não retorna rootDirectory/config override. Efetividade remota atual não comprovada:usuário deve confirmar Settings→Build and Deployment roots frontend/backend e respectivos arquivos sem override. Deploy Hooks e automações externas permanecem pendentes. Nenhuma configuração remota alterada,sem Computer Use/deploy/main/migration/push/PR.
+
+Próximo:concluir conferência manual roots/arquivos/hooks/automações,obter autorização final e então publicar apenas branch/Draft. Commit desta etapa contém checkpoint,obter SHA via git log sem autorreferência. Arquivos da entrega:dois vercel.json,docs/EDITOR-RELEASE-20261106.md e este checkpoint. Branches/worktrees originais intactas.
+
+---
+
+## Disparos automáticos — 06/11/2026, bloqueio mantido após conferência manual
+
+Usuário confirmou visualmente nos dois projetos Production Branch Tracking=main,Preview Branch Tracking=Disabled e Custom Environments ausentes; advertiu que isso não comprova ausência de deploy automático por push/PR. Mesma worktree/branch integração,HEAD60ae269,limpa no início. Inspecionados os dois vercel.json:sem git.deploymentEnabled. Único workflow GitHub local backend-linux.yml roda somente build/teste/bootstrap/trace/probe,sem deploy e sem secrets; push limitado a main,PR aciona CI. Isso não comprova ausência de automações externas ou deploy hooks.
+
+get_project oficial reconfirma projetos,mas omite configuração Git completa/deploy hooks. Catálogo não oferece listagem dedicada de Deploy Hooks; get_webhooks lista webhooks de eventos da equipe e não é evidência equivalente. Sem CLI autenticada previamente disponível,sem Computer Use/contorno. Não comprovado push/PR sem deployment:nenhum push/PR realizado. Testes110/150/63 e PG isolado preservados,sem repetição.
+
+Proposta não aplicada:adicionar em frontend/vercel.json e backend/vercel.json git.deploymentEnabled com chave exata codex/integracao-editor-20261106=false,sem regra true sobreposta. Isso bloqueia integração Git para essa branch conforme documentação oficial,sem desabilitar main; requer autorização para alteração local e confirmação de configs efetivas/rootDirectory. Conferir manualmente Settings→Git→Deploy Hooks de ambos (sem compartilhar URLs secretas),ausência de hooks/automações externos acionados por push/PR ou correspondendo à integração. Apenas após prova de bloqueio efetivo e autorização publicar branch e Draft. Publicação produtiva continua exigindo sequência migration/backend/frontend do runbook. Atualização somente documental local,sem commit nesta conferência.
+
+---
+
 ## Restrição atual de publicação — 06/11/2026, aguardando conferência manual
 
 Usuário confirmou por conectores oficiais vínculo dos dois projetos e origem main dos últimos deployments Production, mas NÃO confirmou Production Branch/Preview Branch Tracking atuais. Há histórico de previews em branches não produtivas nos dois projetos. Instrução específica atual: NÃO fazer push nem abrir PR Draft até concluir conferência manual de ambos. Sem Computer Use, contorno, mudanças de configuração, main, deploy ou migrations remotas.

@@ -2,5 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "fastify",
   "installCommand": "npm ci --ignore-scripts",
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "git": {
+    "deploymentEnabled": {
+      "codex/integracao-editor-20261106": false
+    }
+  }
 }

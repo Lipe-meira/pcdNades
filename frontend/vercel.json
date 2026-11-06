@@ -4,5 +4,10 @@
       "source": "/((?!assets/|maps/|favicon\\.svg).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "codex/integracao-editor-20261106": false
+    }
+  }
 }
