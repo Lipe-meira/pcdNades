@@ -1,3 +1,19 @@
+## Gates de produção — 06/11/2026, revisão documental concluída; BLOQUEADO para rollout
+
+Branch codex/integracao-editor-20261106/worktree própria,base desta revisão0ab9095,main9187b72 e PR9Draft confirmados sem mudança. Atualizados runbook docs/EDITOR-RELEASE-20261106.md e este checkpoint;estado obsoleto push/Draft corrigido,confirmacões manuaisVercel e publicação preservadas. Procedimento de backup privado consistente/Storage/manifestSHA256/restore preparado;não executado,não houve exportação de dados reais. Checklist inclui freeze efetivo,backupfinal sem drift,reparo histórico20,revision,merge/publicação coordenada,smoke,reabertura e recuperação.
+
+Leituras produtivas atuais:histórico9versões até20261103120954,sem20/revision;função20/50,lock/janela/ACL/service_role preservados;revision ausente,RLSativo,grenade_ready existente,sem attacl de coluna/membership das roles consultadas. Nenhuma função em public/private cujo corpo textual referencie grenades foi encontrada (não exclui SQLdinâmico). Sem SQL de escrita/migration/configuração remota.
+
+Testes adicionais:nenhum teste de aplicação repetido por mudança exclusivamente documental;110browser/150backend/63frontend/builds/PGreal anteriormente aprovados preservados. Inspeção de scriptsE2E revelou dependência de labs de outras tarefas e fonteTikTokreal em um deles;NÃOexecutados. Não alegar Auth/PostgREST/StorageHTTP real validado:permanece gate pendente com stacknova sintética exclusiva,sem usar dados/volumes/segredos de labs preexistentes. Novas consultas somente leitura e git diff --check executadas. Sem layout/funcionalidade alterados.
+
+Conclusão:BLOQUEADO,por backup/restore real não autorizado/executado,HTTPAuth/REST/Storage/cutover não comprovado e ausência de mecanismo efetivo de freeze aprovado. Preparação documental concluída,não aptidão operacional. Próximo:autorizar/definir stacknova e ensaioHTTPsintético;separadamente autorizar backup privado e restore real e depois janela/mutações. Commit desta entrega contém este registro;consultar gitlog/lsremote paraSHA. Publicação somente nesta branch autorizada;sem merge/deploy/produção. Resultado CI final e checagemVercel serão informados na entrega,sem commits circulares.
+
+---
+
+## Gates de produção — 06/11/2026, revisão em andamento
+
+Mesma branch/worktree integração; HEAD inicial0ab90953957e94afb76015349455c36de20eaf56 limpo/sincronizado; main9187b72 e PR9Draft confirmados. Autorizados ajustes necessários e push branch,sem qualquer escrita/migration/backup real/cópia de dados de produção,merge ou deploy. Leituras remotas reconfirmam20/50,histórico9versões sem20/revision,coluna revision ausente,RLSativo,triggergrenade_ready e ausência attacl. Próximo:atualizar estado obsoleto do runbook,procedimento reproduzível de backup/restauração com gates,matriz integrada e riscos;validar docs sem repetir110/150/63. Labs existentes pertencem a outras tarefas; scripts antigos não serão executados contra eles ou TikTok real. Nenhum backup real realizado.
+
 ## Integração publicada para revisão — 06/11/2026, PR9 Draft
 
 Usuário confirmou manualmente roots frontend/backend,Production=main,Preview Tracking Disabled,sem Custom Environments/Deploy Hooks e workflow sem deploy; autorizou push normal e Draft. Branch codex/integracao-editor-20261106/worktree própria preservadas. Commit de configuração495c133ccfb8a6e73ace9cfff3c1b4c5edcd79fd confirmado limpo e enviado; branch remota recebeu SHA exato. Duas regras git.deploymentEnabled são somente false para esta branch,sem conflito. PR Draft https://github.com/Lipe-meira/pcdNades/pull/9 aberto para main9187b72,sem merge.
