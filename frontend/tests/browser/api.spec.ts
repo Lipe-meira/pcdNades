@@ -1032,10 +1032,18 @@ test("origens distintas no mesmo destino abrem a execução correta e legados n�
   await expect(second).toBeVisible();
   await expect(page.locator(".origin-connections line")).toHaveCount(2);
   const image = page.getByAltText("Radar do mapa Mirage");
-  const bounds = (await image.boundingBox())!;
-  const originBox = (await first.boundingBox())!;
-  expect((originBox.x + originBox.width / 2 - bounds.x) / bounds.width).toBeCloseTo(0, 3);
-  expect((originBox.y + originBox.height / 2 - bounds.y) / bounds.height).toBeCloseTo(1, 3);
+  // Markers can render before the radar's intrinsic image dimensions are ready.
+  await expect.poll(() => image.evaluate((node: HTMLImageElement) => node.complete && node.naturalWidth > 0)).toBe(true);
+  for (const [axis, expected] of [["x", 0], ["y", 1]] as const) {
+    await expect.poll(async () => {
+      const bounds = await image.boundingBox();
+      const originBox = await first.boundingBox();
+      if (!bounds || !originBox || bounds.width <= 0 || bounds.height <= 0) return NaN;
+      return axis === "x"
+        ? (originBox.x + originBox.width / 2 - bounds.x) / bounds.width
+        : (originBox.y + originBox.height / 2 - bounds.y) / bounds.height;
+    }).toBeCloseTo(expected, 3);
+  }
   await page.screenshot({ path: testInfo.outputPath("origin-group.png"), fullPage: true });
   await second.focus();
   await page.keyboard.press("Enter");
