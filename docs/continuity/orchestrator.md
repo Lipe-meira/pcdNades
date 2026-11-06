@@ -1,3 +1,15 @@
+## Integração publicada para revisão — 06/11/2026, PR9 Draft
+
+Usuário confirmou manualmente roots frontend/backend,Production=main,Preview Tracking Disabled,sem Custom Environments/Deploy Hooks e workflow sem deploy; autorizou push normal e Draft. Branch codex/integracao-editor-20261106/worktree própria preservadas. Commit de configuração495c133ccfb8a6e73ace9cfff3c1b4c5edcd79fd confirmado limpo e enviado; branch remota recebeu SHA exato. Duas regras git.deploymentEnabled são somente false para esta branch,sem conflito. PR Draft https://github.com/Lipe-meira/pcdNades/pull/9 aberto para main9187b72,sem merge.
+
+Vercel baseline/frontend dpl_CXveN8eKcbhPAs77gEo7PtEw7HgW e API dpl_GunuHiZjWUF55rNDU7hdEQYsYtbp READY/main9187b72. Listagem desde início da publicação retornou zero novos deployments em ambos após push e após Draft. Qualquer deployment inesperado posterior obriga parar,sem cancelar/modificar recursos por inferência. CI Linux42275755288 iniciado no SHA495c133; resultado ainda em andamento no momento deste registro. Commit documental desta atualização será enviado na mesma branch,obter SHA final via git log/ls-remote,sem autorreferência; conferir checks do HEAD final no relatório.
+
+Validações anteriores preservadas sem repetição:110browser,150backend,63frontend,builds/typecheck e PostgreSQLisoladoPASS. Auth/Storage schema sintético,sem E2EHTTP real/TikTok. Runbook docs/EDITOR-RELEASE-20261106.md permanece requisito de produção; restrições antigas abaixo foram substituídas SOMENTE quanto a push/Draft desta entrega. Permanecem proibidos merge/deploy/migrations/configurações remotas/main. Branches originais intactas.
+
+Próximo:revisão independente PR9,conferir CI do SHA final e gates de backup/restore,Auth/PostgREST/Storage,cutover e autorização separada para histórico20/revision/rollout. Não integrar PR8 ou componentes separadamente junto desta integração. Nenhuma operação produtiva realizada.
+
+---
+
 ## Bloqueio Git explícito — 06/11/2026, pronto localmente; publicação proibida
 
 Branch/worktree integração existentes preservados; HEAD inicial60ae269. Usuário autorizou somente edição local dos dois vercel.json e commit convencional,sem push/Draft. Checkpoint anterior modificado já existia e foi preservado neste registro/commit.
