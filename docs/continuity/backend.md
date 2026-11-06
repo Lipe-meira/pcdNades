@@ -1,3 +1,15 @@
+# Limite individual de reservas — 05/11/2026, concluído localmente; publicação em andamento
+
+Pedido:20 reservas/admin/hora, global50 e janela móvel60min. Branch codex/tiktok-limite-individual-20; worktree C:/Users/felip/.codex/worktrees/pcdnades-rate-limit-20261105/nadesCs2; base9187b72. Commit desta entrega contém este registro, consultar git log para SHA sem autorreferência. Autorizados commit/push normal só nesta branch, sem PR/merge/deploy/aplicação remota.
+
+Feito: migration incremental20261105210000_import_source_individual_limit_20.sql CREATE OR REPLACE altera somente>=10 para>=20 na função reserve_import_source; corpo comparado automaticamente. Preservadas migrations aplicadas, lock, permissões, expiração, janela, global50 e lógica de falhas. A função é compartilhada com Instagram. Arquivos: migration nova, scripts/import-rate-limit-smoke.mjs, tests/sql/import-source-rate-limit.sql, scripts/import-sql-smoke.mjs (teto/migration atualizados), backend/TIKTOK-IMPLEMENTATION.md e este checkpoint.
+
+Validação executada: node backend/scripts/import-rate-limit-smoke.mjs PASS em PostgreSQL17.11 real local, container exclusivo --network none/tmpfs descartado pelo próprio script. RED com função antiga, GREEN com migration:19/20/21 e49/50/51; janela móvel60min inclusive borda/±1s; expiradas continuam contando; anon/authenticated sem execute e service_role com execute; security invoker mantido. node --check dos dois scripts e git diff --check. Nenhum teste Supabase/Auth/Storage real ou concorrência multi-conexão; não alegar integração remota. Smoke histórico atualizado, mas sua execução PGlite não realizada nesta worktree sem dependência vendor; teste novo não requer dependências npm. Build/typecheck desnecessários: nenhuma alteração TypeScript.
+
+Skill Supabase aplicada para orientação incremental/validação; CLI ausente no PATH, migration criada manualmente sem instalar CLI. Nenhum recurso/configuração remoto alterado. Publicação prevista após revisão staged, confirmação remota via ls-remote será entregue no relatório; sem push main. Próxima ação: revisar branch e autorizar separadamente a aplicação; conferir histórico/definição atuais, grants/owner e aplicar só nova migration. Sem deploy necessário. Não apagar sessões nem ajustar flags. Alterações ficarão commitadas nesta entrega; consultar status ao retomar.
+
+---
+
 # Publicação PR5 concluída — 04/11/2026
 
 Correção0c60260 e consolidaçãoc74447276b2360060d78719e6d4bbf0ef4382871 enviadas por push normal exclusivamente à branch codex/tiktok-preview-edge-review-20261103. PR5 aberto/Draft/base main/mergeable confirmado. Main remota permanecef4389af34807c0f5f31a23d9e4b6c0649d19b1b5. CI Linux run41888999919 de c744472 PASS em todas as etapas (build/test/bootstrap/trace/MP4); Deno e ensaios reais fora desse workflow. Este commit subsequente só registra documentação; consultar checks do HEAD final do PR5 para sua confirmação correspondente. https://github.com/Lipe-meira/pcdNades/pull/5 e https://github.com/Lipe-meira/pcdNades/actions/runs/41888999919 .

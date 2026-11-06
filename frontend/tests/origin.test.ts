@@ -8,7 +8,7 @@ import type { LineupDraft } from "../src/domain/types";
 
 const draft: LineupDraft = { title: "Origem QA", mapId: "mirage", type: "smoke", side: "T",
   instructions: "Execução controlada.", target: { x: .4, y: .6 }, media: { kind: "keep" } };
-const record = { ...draft, target: { x: .4, y: .6 }, id: "qa", video: null, createdAt: "2026-10-30", updatedAt: "2026-10-30" };
+const record = { ...draft, target: { x: .4, y: .6 }, id: "qa", video: null, createdAt: "2026-10-30", revision: 1, updatedAt: "2026-10-30" };
 
 describe("origem nullable e coordenadas da imagem", () => {
   it("normaliza API antiga/nullable sem fabricar ponto e mantém zeros", () => {
@@ -31,9 +31,9 @@ describe("origem nullable e coordenadas da imagem", () => {
       return Response.json({ data: { ...record, ...body } });
     });
     const service = createApiService(client, async () => { throw new Error("Não enviar mídia em edição keep"); });
-    await service.updateLineup("qa", draft);
-    await service.updateLineup("qa", { ...draft, origin: null });
-    await service.updateLineup("qa", { ...draft, origin: { x: 0, y: 1 } });
+    await service.updateLineup("qa", draft, { expectedRevision: 1 });
+    await service.updateLineup("qa", { ...draft, origin: null }, { expectedRevision: 1 });
+    await service.updateLineup("qa", { ...draft, origin: { x: 0, y: 1 } }, { expectedRevision: 1 });
     expect(Object.hasOwn(bodies[0], "origin")).toBe(false);
     expect(bodies[1].origin).toBeNull();
     expect(bodies[2].origin).toEqual({ x: 0, y: 1 });

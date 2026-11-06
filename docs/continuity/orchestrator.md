@@ -1,3 +1,93 @@
+## Gates de produção — 06/11/2026, revisão documental concluída; BLOQUEADO para rollout
+
+Branch codex/integracao-editor-20261106/worktree própria,base desta revisão0ab9095,main9187b72 e PR9Draft confirmados sem mudança. Atualizados runbook docs/EDITOR-RELEASE-20261106.md e este checkpoint;estado obsoleto push/Draft corrigido,confirmacões manuaisVercel e publicação preservadas. Procedimento de backup privado consistente/Storage/manifestSHA256/restore preparado;não executado,não houve exportação de dados reais. Checklist inclui freeze efetivo,backupfinal sem drift,reparo histórico20,revision,merge/publicação coordenada,smoke,reabertura e recuperação.
+
+Leituras produtivas atuais:histórico9versões até20261103120954,sem20/revision;função20/50,lock/janela/ACL/service_role preservados;revision ausente,RLSativo,grenade_ready existente,sem attacl de coluna/membership das roles consultadas. Nenhuma função em public/private cujo corpo textual referencie grenades foi encontrada (não exclui SQLdinâmico). Sem SQL de escrita/migration/configuração remota.
+
+Testes adicionais:nenhum teste de aplicação repetido por mudança exclusivamente documental;110browser/150backend/63frontend/builds/PGreal anteriormente aprovados preservados. Inspeção de scriptsE2E revelou dependência de labs de outras tarefas e fonteTikTokreal em um deles;NÃOexecutados. Não alegar Auth/PostgREST/StorageHTTP real validado:permanece gate pendente com stacknova sintética exclusiva,sem usar dados/volumes/segredos de labs preexistentes. Novas consultas somente leitura e git diff --check executadas. Sem layout/funcionalidade alterados.
+
+Conclusão:BLOQUEADO,por backup/restore real não autorizado/executado,HTTPAuth/REST/Storage/cutover não comprovado e ausência de mecanismo efetivo de freeze aprovado. Preparação documental concluída,não aptidão operacional. Próximo:autorizar/definir stacknova e ensaioHTTPsintético;separadamente autorizar backup privado e restore real e depois janela/mutações. Commit desta entrega contém este registro;consultar gitlog/lsremote paraSHA. Publicação somente nesta branch autorizada;sem merge/deploy/produção. Resultado CI final e checagemVercel serão informados na entrega,sem commits circulares.
+
+---
+
+## Gates de produção — 06/11/2026, revisão em andamento
+
+Mesma branch/worktree integração; HEAD inicial0ab90953957e94afb76015349455c36de20eaf56 limpo/sincronizado; main9187b72 e PR9Draft confirmados. Autorizados ajustes necessários e push branch,sem qualquer escrita/migration/backup real/cópia de dados de produção,merge ou deploy. Leituras remotas reconfirmam20/50,histórico9versões sem20/revision,coluna revision ausente,RLSativo,triggergrenade_ready e ausência attacl. Próximo:atualizar estado obsoleto do runbook,procedimento reproduzível de backup/restauração com gates,matriz integrada e riscos;validar docs sem repetir110/150/63. Labs existentes pertencem a outras tarefas; scripts antigos não serão executados contra eles ou TikTok real. Nenhum backup real realizado.
+
+## Integração publicada para revisão — 06/11/2026, PR9 Draft
+
+Usuário confirmou manualmente roots frontend/backend,Production=main,Preview Tracking Disabled,sem Custom Environments/Deploy Hooks e workflow sem deploy; autorizou push normal e Draft. Branch codex/integracao-editor-20261106/worktree própria preservadas. Commit de configuração495c133ccfb8a6e73ace9cfff3c1b4c5edcd79fd confirmado limpo e enviado; branch remota recebeu SHA exato. Duas regras git.deploymentEnabled são somente false para esta branch,sem conflito. PR Draft https://github.com/Lipe-meira/pcdNades/pull/9 aberto para main9187b72,sem merge.
+
+Vercel baseline/frontend dpl_CXveN8eKcbhPAs77gEo7PtEw7HgW e API dpl_GunuHiZjWUF55rNDU7hdEQYsYtbp READY/main9187b72. Listagem desde início da publicação retornou zero novos deployments em ambos após push e após Draft. Qualquer deployment inesperado posterior obriga parar,sem cancelar/modificar recursos por inferência. CI Linux42275755288 iniciado no SHA495c133; resultado ainda em andamento no momento deste registro. Commit documental desta atualização será enviado na mesma branch,obter SHA final via git log/ls-remote,sem autorreferência; conferir checks do HEAD final no relatório.
+
+Validações anteriores preservadas sem repetição:110browser,150backend,63frontend,builds/typecheck e PostgreSQLisoladoPASS. Auth/Storage schema sintético,sem E2EHTTP real/TikTok. Runbook docs/EDITOR-RELEASE-20261106.md permanece requisito de produção; restrições antigas abaixo foram substituídas SOMENTE quanto a push/Draft desta entrega. Permanecem proibidos merge/deploy/migrations/configurações remotas/main. Branches originais intactas.
+
+Próximo:revisão independente PR9,conferir CI do SHA final e gates de backup/restore,Auth/PostgREST/Storage,cutover e autorização separada para histórico20/revision/rollout. Não integrar PR8 ou componentes separadamente junto desta integração. Nenhuma operação produtiva realizada.
+
+---
+
+## Bloqueio Git explícito — 06/11/2026, pronto localmente; publicação proibida
+
+Branch/worktree integração existentes preservados; HEAD inicial60ae269. Usuário autorizou somente edição local dos dois vercel.json e commit convencional,sem push/Draft. Checkpoint anterior modificado já existia e foi preservado neste registro/commit.
+
+Feito:frontend/vercel.json e backend/vercel.json recebem única regra git.deploymentEnabled para codex/integracao-editor-20261106=false;rewrites/framework/install/build anteriores preservados. Parsing/asserts confirmam JSON válido,preservação semântica e ausência de regra habilitadora conflitante. Runbook atualizado. git diff --check/staged conferidos antes do commit;nenhum teste de aplicação repetido. Evidências110/150/63 e PG isolado continuam válidas,nenhum código alterado.
+
+Caminhos conferidos contra roots históricas frontend/backend. Leitura oficial get_deployment confirma os dois projetos e main9187b72 READY,mas não retorna rootDirectory/config override. Efetividade remota atual não comprovada:usuário deve confirmar Settings→Build and Deployment roots frontend/backend e respectivos arquivos sem override. Deploy Hooks e automações externas permanecem pendentes. Nenhuma configuração remota alterada,sem Computer Use/deploy/main/migration/push/PR.
+
+Próximo:concluir conferência manual roots/arquivos/hooks/automações,obter autorização final e então publicar apenas branch/Draft. Commit desta etapa contém checkpoint,obter SHA via git log sem autorreferência. Arquivos da entrega:dois vercel.json,docs/EDITOR-RELEASE-20261106.md e este checkpoint. Branches/worktrees originais intactas.
+
+---
+
+## Disparos automáticos — 06/11/2026, bloqueio mantido após conferência manual
+
+Usuário confirmou visualmente nos dois projetos Production Branch Tracking=main,Preview Branch Tracking=Disabled e Custom Environments ausentes; advertiu que isso não comprova ausência de deploy automático por push/PR. Mesma worktree/branch integração,HEAD60ae269,limpa no início. Inspecionados os dois vercel.json:sem git.deploymentEnabled. Único workflow GitHub local backend-linux.yml roda somente build/teste/bootstrap/trace/probe,sem deploy e sem secrets; push limitado a main,PR aciona CI. Isso não comprova ausência de automações externas ou deploy hooks.
+
+get_project oficial reconfirma projetos,mas omite configuração Git completa/deploy hooks. Catálogo não oferece listagem dedicada de Deploy Hooks; get_webhooks lista webhooks de eventos da equipe e não é evidência equivalente. Sem CLI autenticada previamente disponível,sem Computer Use/contorno. Não comprovado push/PR sem deployment:nenhum push/PR realizado. Testes110/150/63 e PG isolado preservados,sem repetição.
+
+Proposta não aplicada:adicionar em frontend/vercel.json e backend/vercel.json git.deploymentEnabled com chave exata codex/integracao-editor-20261106=false,sem regra true sobreposta. Isso bloqueia integração Git para essa branch conforme documentação oficial,sem desabilitar main; requer autorização para alteração local e confirmação de configs efetivas/rootDirectory. Conferir manualmente Settings→Git→Deploy Hooks de ambos (sem compartilhar URLs secretas),ausência de hooks/automações externos acionados por push/PR ou correspondendo à integração. Apenas após prova de bloqueio efetivo e autorização publicar branch e Draft. Publicação produtiva continua exigindo sequência migration/backend/frontend do runbook. Atualização somente documental local,sem commit nesta conferência.
+
+---
+
+## Restrição atual de publicação — 06/11/2026, aguardando conferência manual
+
+Usuário confirmou por conectores oficiais vínculo dos dois projetos e origem main dos últimos deployments Production, mas NÃO confirmou Production Branch/Preview Branch Tracking atuais. Há histórico de previews em branches não produtivas nos dois projetos. Instrução específica atual: NÃO fazer push nem abrir PR Draft até concluir conferência manual de ambos. Sem Computer Use, contorno, mudanças de configuração, main, deploy ou migrations remotas.
+
+Integração preservada na branch codex/integracao-editor-20261106, worktree pcdnades-integration-20261106/nadesCs2, commit local de implementação de133ba33ab40eeac36ebcd3b281405dd5460838; árvore limpa no início desta atualização. Validações anteriores permanecem:110 browser/150 backend/63frontend e builds/PG isolado PASS, sem nova alteração de código. Atualizados apenas este checkpoint e docs/EDITOR-RELEASE-20261106.md; sem repetir testes da aplicação. git diff --check será conferido antes do commit documental local autorizado. Nenhum push ou PR criado.
+
+Próxima ação: aguardar usuário concluir conferência manual e liberar expressamente push/Draft com risco de disparo resolvido; então conferir Git/main/configuração, publicar apenas branch de integração e confirmar SHA. Não interpretar deployments anteriores vindos de main como prova de que preview está desativado. Histórico abaixo preservado; instruções anteriores de publicação ficam condicionadas a esta restrição.
+
+---
+
+## Integração final — 06/11/2026, validada localmente; publicação aguardando configuração
+
+Branch codex/integracao-editor-20261106; worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2; base9187b72, componentes05cbc5a/7bc2e6a/3936153 preservados. Merge local da branch limite será concluído no commit desta entrega (consultar git log, sem autorreferência). Autorizados commit/push branch e PR Draft, sem main/merge de PR/deploy/DDL remoto. Nenhum push ou PR de integração realizado ainda.
+
+Feito: consolidado editor/concorrência/limite; único ajuste adicional de comportamento foi no teste api.spec.ts de geometria: aguardava apenas marcadores, podia dividir por dimensão zero antes de imagem pronta e gerar NaN. Agora aguarda complete/naturalWidth e poll das mesmas coordenadas/precisão; layout/código de aplicação intactos. Adicionado scripts/integration-schema-smoke.mjs para11 migrations em PostgreSQL real descartável e docs/EDITOR-RELEASE-20261106.md com sequência/backup/rollback/compatibilidade/mídia409/histórico20. Registros anteriores preservados.
+
+Validação final nesta retomada: teste dirigido PC/mobile2/2PASS; suíte COMPLETA Playwright110/110PASS(3.8min); backend150/150PASS,frontend63/63PASS,typecheck/buildsPASS; concorrência PostgreSQL17 realPASS;11 migrations + RLS/grants/is_admin/mídia/rollback +20/50/janela60minPASS em PostgreSQL17.11real sem rede. Auth/storage schema são sintéticos, não GoTrue/PostgREST/Storage HTTP real. Build local sem yt-dlp. Nenhum TikTok real/teste produtivo. git diff --check/node --check PASS. Evidências fora do Git em C:/Users/felip/.codex/visualizations/2026/11/05/01a1abe2-408b-7c71-a9a6-d62fa7a3c353/integration-evidence-97t4d_zu, incluindo artefatos da falha anterior preservados.
+
+Leituras remotas: main/HEADs originais continuam iguais. Função produção>=20/50 já comprovadamente equivalente à migration via prosrc normalizado/signatura/retorno/volatilidade/security invoker/search_path/owner/ACL; histórico20 ausente,revision ausente. Sem grants explícitos de coluna ou memberships das roles consultadas. Não houve alteração remota. Vercel get_project/list_projects/context confirmam vínculo e projetos, mas omitem Production Branch/Preview Tracking. Credencial CLI padrão indisponível; não houve Computer Use nem contorno. Pergunta assíncrona ao usuário pede confirmação atual main/preview off em ambos. Push/Draft aguardam essa confirmação para evitar disparo de deploy não autorizado; publicação produtiva continua NO-GO até gates do runbook.
+
+Próxima ação: após conferir Git e este checkpoint, obter confirmação oficial/operador da configuração Vercel; então push normal exclusivo desta branch, confirmar SHA, abrir PR Draft e registrar URL/CI. Não repetir suíte já aprovada sem mudança relevante. Nenhuma falha local conhecida, mas E2E real Auth/PostgREST/Storage e backup/restore/cutover continuam gates de produção pendentes. Arquivos da entrega: merge inclui migration20/testes/docs/checkpoint backend; novos script/schema/runbook, ajuste api.spec.ts e este checkpoint. Não versionar logs/traces privados.
+
+---
+
+## Retomada integração — 06/11/2026, em andamento
+
+Mesma branch/worktree codex/integracao-editor-20261106/pcdnades-integration-20261106, HEAD7bc2e6a com merge local limite pendente preservado. Falha anterior identificada em api.spec.ts:1020 mobile, razão de coordenadas NaN; teste media boundingBox antes da imagem pronta. Ajustado somente teste para aguardar complete/naturalWidth e poll das coordenadas com precisão original. Layout intacto. Próximo: teste relacionado, suíte110 completa e builds/unitários; finalizar runbook e confirmar Vercel por conector/REST oficial sem Computer Use. Publicação produtiva segue bloqueada se configuração não puder ser verificada. Autorizado push branch e PR Draft; sem merge remoto/deploy/migrations remotas.
+
+## Integração final do editor — 06/11/2026, em andamento
+
+Worktree própria pcdnades-integration-20261106/nadesCs2, branch codex/integracao-editor-20261106, base main9187b72. Fetch confirmou PR8 HEAD05cbc5a Draft, concorrência7bc2e6a e limite3936153. Concorrência incorporada por FF (contém editor); merge local limite sem conflitos, ainda não commitado. Branches originais intactas. Autorizados commits/push exclusivos e PR Draft, proibidos merge de PR, deploy, alterações/migrations remotas e TikTok real. Próximo: validar conjunto/builds/browser/PG real, reconciliar histórico por evidência de equivalência somente leitura, preparar runbook. Vercel get_project confirma dois projetos/Production READY, mas omite productionBranch e previewDeploymentsDisabled; configuração de disparo ainda não reconfirmada. Dependências instaladas nesta worktree (backend ignore-scripts). Não há publicação desta branch ainda.
+
+## Concorrência de edição — 05/11/2026, implementação para revisão
+
+Branch codex/concorrencia-granadas, worktree C:/Users/felip/.codex/worktrees/pcdnades-concurrency-20261105/nadesCs2; base PR8 05cbc5a. Migration local aditiva cria revision monotônica e revoga UPDATE direto de public/anon/authenticated; PATCH exige expectedRevision e usa CAS pelo service_role após verificar JWT/is_admin (428 ausente, 400 inválido, 409 conflito). Frontend transmite revisão e preserva dados/sessão em conflito; contrato incompatível com cliente antigo e requer rollout coordenado. Testes: backend typecheck e 150 PASS, frontend build e 63 unitários PASS, 68 browser com API simulada PASS; PostgreSQL 17 isolado sem rede: disputa real, revisão na mesma transação, preservação de vídeo/origem/destinos e permissões PASS via backend/tests/sql/concurrency-real.ps1. Fixture SQL reduzida, não é E2E Auth/PostgREST/Storage. Container manual pcdnades-concurrency-lab-20261105 preservado; log backend/test-concurrency-output.log não versionado. Antes de produção: revisar grants por coluna/memberships/funções, backup, migration e ordem de implantação com aprovação específica; clientes antigos receberão 428, backend antigo perde UPDATE após migration. Nenhum serviço remoto alterado; sem PR/merge/deploy. Plano e comandos em docs/superpowers/plans/2026-11-05-concorrencia.md.
+
+## Concorrência de edição — 05/11/2026, em andamento
+
+Worktree C:/Users/felip/.codex/worktrees/pcdnades-concurrency-20261105/nadesCs2, branch codex/concorrencia-granadas, base PR8 05cbc5a. PATCH atual atualiza por ID sem versão; trigger usa now(), não garante versão monotônica para várias atualizações numa transação. Necessário contrato condicional e provável migration para contador monotônico, sem aplicar remoto. Próximo: testes RED, implementação, laboratório descartável isolado e checkpoint. Sem merge/deploy/PR/produção; push autorizado apenas nesta branch.
+
 ## Correção CORS de granadas — 05/11/2026 concluída para revisão
 
 Worktree C:/Users/felip/.codex/worktrees/pcdnades-cors-20261105/nadesCs2; branch codex/fix-cors-granadas; base main acea075. Preflightlocalantes:OPTIONS204 mas allow-methods GET,HEAD,POST, bloqueandoDELETE/PATCH no navegador. Configuraçãoagorapermite GET,HEAD,POST,PATCH,DELETE e preservaorigens. Testes: backend147/147, typecheck+buildPASS(yt-dlp não empacotado no build local padrão); frontend api14/14 e buildPASS. MockDBnão comprova RLS real; migraçãohistóricaprevê policyadminDELETE e grant; rota atual faz delete apenas granada, retorna204/404; frontend reconhece204. Nenhum outro defeito comprovado; sem DELETE emprodução/Supabase/Storage/Cron/flags. Vercel branch trackingPreview desligado nosdoisprojetos por leituraUI. Próximo: push normal branch e abrirPRpara main semmerge/deploy; acompanhar CI. Sem conteúdo de credenciais ou vídeos novos. PréviaTikTokpermanece fora do escopo, beta real aindapendente de teste supervisionado.

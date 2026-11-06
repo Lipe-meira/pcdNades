@@ -1,4 +1,6 @@
 const messages: Record<string, string> = {
+  GRENADE_VERSION_CONFLICT: "Esta granada foi alterada por outra pessoa. Seus dados nesta janela foram preservados; copie suas alterações e atualize a biblioteca antes de editar novamente.",
+  REVISION_REQUIRED: "Não foi possível confirmar a versão desta granada. Atualize a biblioteca antes de editar.",
   IMPORT_UNAVAILABLE: "A importação está indisponível no servidor. Tente mais tarde ou envie um MP4.",
   SOURCE_EXPIRED: "A consulta do vídeo expirou. Consulte o link novamente antes de iniciar outra importação.",
   SOURCE_NOT_FOUND: "A consulta não foi encontrada. Consulte o vídeo novamente.",

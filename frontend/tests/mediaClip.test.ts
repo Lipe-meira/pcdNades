@@ -89,7 +89,7 @@ describe("contrato de seleção imutável", () => {
               id: "id",
               video: ready,
               createdAt: "2026-10-29",
-              updatedAt: "2026-10-29",
+              revision: 1, updatedAt: "2026-10-29",
             },
           });
         throw new Error("Unexpected");
