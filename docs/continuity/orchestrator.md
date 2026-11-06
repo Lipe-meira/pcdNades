@@ -1,3 +1,13 @@
+## Restrição atual de publicação — 06/11/2026, aguardando conferência manual
+
+Usuário confirmou por conectores oficiais vínculo dos dois projetos e origem main dos últimos deployments Production, mas NÃO confirmou Production Branch/Preview Branch Tracking atuais. Há histórico de previews em branches não produtivas nos dois projetos. Instrução específica atual: NÃO fazer push nem abrir PR Draft até concluir conferência manual de ambos. Sem Computer Use, contorno, mudanças de configuração, main, deploy ou migrations remotas.
+
+Integração preservada na branch codex/integracao-editor-20261106, worktree pcdnades-integration-20261106/nadesCs2, commit local de implementação de133ba33ab40eeac36ebcd3b281405dd5460838; árvore limpa no início desta atualização. Validações anteriores permanecem:110 browser/150 backend/63frontend e builds/PG isolado PASS, sem nova alteração de código. Atualizados apenas este checkpoint e docs/EDITOR-RELEASE-20261106.md; sem repetir testes da aplicação. git diff --check será conferido antes do commit documental local autorizado. Nenhum push ou PR criado.
+
+Próxima ação: aguardar usuário concluir conferência manual e liberar expressamente push/Draft com risco de disparo resolvido; então conferir Git/main/configuração, publicar apenas branch de integração e confirmar SHA. Não interpretar deployments anteriores vindos de main como prova de que preview está desativado. Histórico abaixo preservado; instruções anteriores de publicação ficam condicionadas a esta restrição.
+
+---
+
 ## Integração final — 06/11/2026, validada localmente; publicação aguardando configuração
 
 Branch codex/integracao-editor-20261106; worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2; base9187b72, componentes05cbc5a/7bc2e6a/3936153 preservados. Merge local da branch limite será concluído no commit desta entrega (consultar git log, sem autorreferência). Autorizados commit/push branch e PR Draft, sem main/merge de PR/deploy/DDL remoto. Nenhum push ou PR de integração realizado ainda.

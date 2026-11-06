@@ -1,6 +1,6 @@
 # Integração do editor — plano de publicação (06/11/2026)
 
-Estado: preparação para revisão, não autorização de produção. Branch codex/integracao-editor-20261106, base main9187b72; incorpora PR8 05cbc5a, concorrência7bc2e6a e limite3936153. Branches originais preservadas. Nenhuma alteração de layout ou limite durante integração.
+Estado: validada localmente; push e PR Draft expressamente suspensos pelo usuário até conferência manual dos dois projetos Vercel. Não há autorização de produção. Branch codex/integracao-editor-20261106, base main9187b72; incorpora PR8 05cbc5a, concorrência7bc2e6a e limite3936153. Branches originais preservadas. Nenhuma alteração de layout ou limite durante integração.
 
 ## Correção de teste
 
@@ -14,7 +14,7 @@ Builds backend/frontend e typecheck;150 backend/63frontend unitários. Testes br
 
 Produção: histórico9 versões até20261103120954; revision ausente. reserve_import_source já tem>=20 por owner e>=50global,created_at>now()-1hour,advisory lock762001139,search_path vazio,security invoker,owner postgres,EXECUTE postgres/service_role. Migration20261105210000 ainda ausente. Nova comparação somente leitura retornou body_equivalent=true após normalizar whitespace, assinatura p_owner uuid,retorno import_sources,volatile=true,security_invoker=true,search_path vazio,owner postgres e ACL esperada. Isso comprova equivalência do efeito atual, mas não autoriza reparo do histórico; repetir na janela aprovada. Nenhum attacl explícito de coluna em grenades e nenhuma membership de anon/authenticated/service_role retornados; authenticated mantém UPDATE de tabela antes da migration. Revalidar no momento da aplicação. Leitura não prova ausência de toda RPC customizada: revisar funções security definer/rotas que escrevem grenades no preflight autorizado.
 
-Vercel: get_project/list_projects/get_git_deployment_context confirmam pcdnades e pcdnades-api ligados ao repo, Node24 e deployments Production READY. Não expõem Production Branch ou previewDeploymentsDisabled/Preview Branch Tracking; não inferir valores atuais de checkpoint antigo. Sem Computer Use ou extração de credenciais. Enquanto não houver confirmação oficial/operador, publicação produtiva bloqueada e push/PR devem aguardar confirmação de que não disparam deploy.
+Vercel: get_project/list_projects/get_git_deployment_context confirmam pcdnades e pcdnades-api ligados ao repo, Node24 e deployments Production READY. Não expõem Production Branch ou previewDeploymentsDisabled/Preview Branch Tracking; não inferir valores atuais de checkpoint antigo. Sem Computer Use ou extração de credenciais. Usuário reafirmou que os conectores não expõem os valores atuais e informou histórico de Preview Deployments em branches não produtivas nos dois projetos. Portanto, push e PR Draft estão explicitamente proibidos até a conferência manual de ambos e liberação do usuário. Últimos deployments vindos de main não comprovam Preview Branch Tracking desligado. Não tentar Computer Use ou contornar restrições para obter essa confirmação.
 
 ## Ordem exata após aprovações separadas
 
