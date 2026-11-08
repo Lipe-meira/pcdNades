@@ -19,6 +19,12 @@ const failure=(code:string,statusCode:number)=>Object.assign(new Error(code),{st
 type Clients={public:SupabaseClient;service:SupabaseClient;user:(token:string)=>SupabaseClient};
 export function buildApp(clients?:Clients,imports:ImportDependencies=importDependencies){return configureApp(Fastify({logger:true,bodyLimit:16384}),clients,imports);}
 export function configureApp(app:FastifyInstance,clients?:Clients,imports:ImportDependencies=importDependencies) {
+ // Opt-in admission control only; not a database/Storage/worker freeze.
+ const writePause=process.env.API_WRITES_PAUSED??'false';
+ if(!['true','false'].includes(writePause))throw new Error('API_WRITES_PAUSED deve ser true ou false.');
+ if(writePause==='true')app.addHook('onRequest',async(req,reply)=>{
+  if(!['GET','HEAD','OPTIONS'].includes(req.method))return reply.header('Retry-After','60').code(503).send({error:{code:'WRITES_PAUSED',message:'Cadastros e alterações temporariamente suspensos. Tente novamente mais tarde.'}});
+ });
  const requestStarts=new WeakMap<object,number>();
  app.addHook('onRequest',async req=>{requestStarts.set(req,performance.now());});
  const routeSignal=(req:object)=>remainingSignal(requestStarts.get(req)??performance.now(),90000);

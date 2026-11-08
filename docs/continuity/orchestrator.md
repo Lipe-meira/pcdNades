@@ -1,3 +1,19 @@
+## Fase isolada — 08/11/2026, parcial/BLOQUEADA
+
+Mesma branch/worktreeintegração,base9ff4641;semprodução/labsalheios/dadosreais/TikTok. ImplementadaAPI_WRITES_PAUSED opt-in defaultfalse,onRequest503 paraescrita,GET/HEAD/OPTIONSpermitidos,startupvalidaenum. TestesRED→GREEN,152backendPASS,typecheck/buildPASS;scriptPGdump/restorePASS ampliado. Não é freezeDB/Storage/workers/draindistribuído.
+
+StackNOVASupabaseCLI2.102.0 embackend/vendor/rollout-lab-20261108,portas58521/58522,project_idexclusivo. Redeinternalfalhou acessoPGhost;bridgenova iniciouGoTrue/PostgREST/Storage/PGreais. rollout-local-http.mjsPASSloginreal,401/403,upload/complete/playbackhash,HTTP200/409concorrente/428,UPDATEdiretonegado,legado/Solo. FrontendnãofoiE2Ereal. Histórico20/revision alterados SOMENTEnessebancosintético. Backupfullsintético dumpcustom:restorePostgresfalhouowner;restorecomsupabase_adminemDBnovoPASS;fingerprintsAuth/DB/Storagemetadata/grants/RLS/triggers ebytesnovobucketSHA256PASS. AplicaçãoHTTPsobreDBrestauradonãotestada. Arquivos/evidênciaschavesficamvendorignorado,nãoversionar.
+
+dockerportreveloubind0.0.0.0/[::]dosserviços;stackprópriaPARADAviastopsem--all/--no-backup,volumespreservados. Nenhumcontainerdoprojetoativoaofinal. Não aprovar isolamentoatébindloopback/egresscontrolados. Runbookincremental docs/ISOLATED-ROLLOUT-20261108.md lista reprodução,limitesefalhas. Próximaação:resolverbind,barreiraDBStorage/drain,ensaiofrontend/backendantigos/novoscompleto eHTTPapósrestore;então consideraraprovaçãoisolada e solicitarbackupreal/rolloutseparadamente. FaseBLOQUEADA,nãoalegarbackupprodutivo nemfreezeglobal.
+
+Arquivos:application.ts,env.example,testeWriteMaintenance,scriptintegration-schema-smoke ampliado,novosscriptsrollout-local-http/rollout-backup-check,runbooknovo/atualizado,checkpoint. Logsprivados/vendorignorados,nãocommitar. Commit/pushsomenteintegraçãoautorizados,PR9Draftpreservado;obterSHAfinalGitsemreferênciacircular. Testes110browser/63frontanteriorespreservados;nãorepetidossemUIalterada. CI final conferirapóspush. Semmerge/deploy/migrations/configremotas.
+
+---
+
+## Ensaio técnico isolado — 08/11/2026, em andamento
+
+Branch integração/worktree existentes,HEAD inicial9ff4641,limpa. Autorizado ambiente novo sintético e mecanismo opt-in/testes/pushPR9Draft;proibidos produção,dados reais,labs alheios,deploy/migrationsremotas. Dockerdaemon indisponível no início;usuário acionado para iniciar. Próximo:bloqueioAPI opt-in com testes e inventário dos caminhos não cobertos;stackreal/backup/rollout só serão aprovados após evidência. Não reutilizar credenciais/volumes de labs existentes. Checkpoints anteriores preservados.
+
 ## Gates de produção — 06/11/2026, revisão documental concluída; BLOQUEADO para rollout
 
 Branch codex/integracao-editor-20261106/worktree própria,base desta revisão0ab9095,main9187b72 e PR9Draft confirmados sem mudança. Atualizados runbook docs/EDITOR-RELEASE-20261106.md e este checkpoint;estado obsoleto push/Draft corrigido,confirmacões manuaisVercel e publicação preservadas. Procedimento de backup privado consistente/Storage/manifestSHA256/restore preparado;não executado,não houve exportação de dados reais. Checklist inclui freeze efetivo,backupfinal sem drift,reparo histórico20,revision,merge/publicação coordenada,smoke,reabertura e recuperação.

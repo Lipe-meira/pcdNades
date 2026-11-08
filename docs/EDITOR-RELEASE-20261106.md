@@ -96,3 +96,7 @@ Não usar --no-acl/--no-owner no backup-mestre. Um dump completo pode conter seg
 9.Monitorar5xx/409/428/Auth/upload/playback e locks durante janela acordada. Em falha:fechar escrita,preservar logs/mídias e decidir correção adiante/retorno com responsável. Restaurar backup completo sobre dados novos causa perda e exige aprovação específica;preferir schemaaditivo e recuperação seletiva. Reabrir apenas após smokePass.
 
 Conclusão atual:BLOQUEADO para rollout. Motivos:backup/restauração não executados;integraçãoHTTP realAuth/PostgREST/Storage e cutover/cliente antigo não comprovados;bloqueio efetivo de escrita e reparo/aplicação ainda não autorizados. PR9 é revisável,mas não autorização de produção.
+
+## Evidência incremental de08/11/2026
+
+Ver docs/ISOLATED-ROLLOUT-20261108.md:HTTPGoTrue/PostgREST/Storage comMP4,409/428 epermissões PASS emstacknova sintética;backup/restauraçãodeDB/AuthmetadataeStoragebytesPASSparcial. API_WRITES_PAUSED implementada defaultfalse,testada,masnãoéfreezeglobal. Faseisolada permaneceBLOQUEADA porbind0.0.0.0(stackprópriaparada),drain/barreiraDBStorage,sequênciacompleta eaplicaçãorestauradaHTTP/frontendpendentes. PendênciasanterioresHTTPparcialmente superadas por essa evidência,sem chamarfullE2Eaprovado.

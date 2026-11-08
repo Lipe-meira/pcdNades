@@ -25,5 +25,15 @@ try{
  // Isolate rate-limit fixture owners; FK remains real.
  exec(`insert into auth.users values('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002');`);
  console.log(exec(readFileSync(new URL('tests/sql/import-source-rate-limit.sql',base),'utf8')));
+ // Synthetic-only archive/restore in this run's disposable container.
+ docker(['exec',name,'pg_dump','-U','postgres','-Fc','-f','/tmp/synthetic.dump','postgres']);
+ docker(['exec',name,'pg_restore','--list','/tmp/synthetic.dump']);
+ docker(['exec',name,'createdb','-U','postgres','restored_synthetic']);
+ docker(['exec',name,'pg_restore','-U','postgres','--exit-on-error','--clean','--if-exists','-d','restored_synthetic','/tmp/synthetic.dump']);
+ const fingerprint=`select md5(coalesce((select string_agg(row_to_json(g)::text,',' order by id) from public.grenades g),'')),md5(coalesce((select string_agg(row_to_json(m)::text,',' order by id) from public.media_assets m),'')),(select relrowsecurity from pg_class where oid='public.grenades'::regclass),has_table_privilege('authenticated','public.grenades','UPDATE'),(select count(*) from pg_trigger where tgrelid='public.grenades'::regclass and not tgisinternal)`;
+ const a=docker(['exec',name,'psql','-U','postgres','-d','postgres','-Atc',fingerprint]);
+ const b=docker(['exec',name,'psql','-U','postgres','-d','restored_synthetic','-Atc',fingerprint]);
+ assert.equal(a,b,'restored rows/RLS/grants/triggers match');
+ console.log('PASS synthetic pg_dump custom archive + pg_restore, row fingerprints/RLS/grants/triggers identical; not a Storage-byte or production backup.');
  console.log(`PASS ${paths.length} migrations complete application schema, real PostgreSQL17.11; RLS/grants/admin RPC/media/rollback. Auth identity and Storage schema are synthetic, no GoTrue/PostgREST/Storage HTTP.`);
 }finally{spawnSync('docker',['stop',name],{encoding:'utf8'});}
