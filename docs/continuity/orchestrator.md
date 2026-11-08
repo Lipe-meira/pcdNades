@@ -1,3 +1,21 @@
+## Gates isolados — 08/11/2026, APROVADOS COM RISCOS RESIDUAIS
+
+Mesma integração/worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2, base75a2061, PR9Draft/main9187b72 preservados. Passagem final rollout-loopback-full.mjs exit0/PASS:8containers127.0.0.1 antes dos testes;backend9187/schemaantigo;freeze/drain/DBlocks;backupprérevision;20/50+histolocal;revision;backendnovo/409/428/permissões/MP4/legado/Solo;GoTrue/REST/Storage sobre DB/objetos restaurados e frontendChromium real login/edição/salvar. Grants/RLS/triggers iguais,TOC/SHAs no relatório. Semmocks nesseensaio;inline-original apenas,semworkerexterno/TikTok. Corrigidos procedimentos:ownerpostgres,GNUtar--xattrs,PUBLISHABLE_KEY eFRONTEND_URL. Layout/aplicação intactos.
+
+8containers próprios PARADOS;volumes/bancos/tentativas/evidências preservados em backend/vendor/rollout-loopback-20261108 ignorado. Scripts não idempotentes,não reiniciar cegamente. HelperCompose inspeciona só8serviços/volumes exclusivos e gera arquivoprivado,sem iniciar/parar;somente sintaxe verificada,não sobrescrita configexistente. Entrega:2scripts,relatórioisolado,runbook,checkpoint. nodecheck/diffcheck executados;110browser/152backend/63front anteriores preservados sem repetição extensa.
+
+Próximo:responsável escolher e comprovar barreira hospedadaAPIantiga/diretoDB/StorageURLs/jobs/dreno;autorizar backuprealprivado+restore;depois histórico20/revision/merge/deploycoordenado/smoke/reabertura separadamente. Não executados produção/backupreal/configremota/migrationremota/merge/deploy. Commit/push somente integração autorizados;SHA via gitlog/PR sem circularidade;conferir CI exato eVercelpós-push no relatório final. Faseisolada aprovada com risco residual;rollout produtivo ainda não autorizado.
+
+---
+
+## Gates isolados — 08/11/2026, ensaio em andamento
+
+Mesma integração/PR9Draft, base75a2061. Nova stack rollout-loopback-20261108 com portas58621/58622/58624/58627 explicitamente127.0.0.1, verificadas via inspect ANTES de testes. Volumes/evidências anteriores preservados. Ensaios comprovaram backend antigo, drenagem, bloqueio REST/URL assinada, lockDB, backup prérevision, cutover20/revision,409/428 e recuperação Auth/DB. Falha encontrada: tar BusyBox perde xattrs do Storage e reprodução restaurada retorna500/ENODATA; correção em ensaio com GNUtar --xattrs. Banco recuperado deve preservar ownerpostgres (createdb -O postgres). Tentativas preservadas em bancos/volumes próprios; nenhuma alteração produtiva. Aguardar drenagem de conexões encerrando antes de afirmar zero escritores. Próximo:concluir round3, frontend real sobre restore, documentação/manutenção hospedada, commit/push exclusivo eCI. Alterações locais:script rollout-loopback-full.mjs e este checkpoint; testes anteriores preservados.
+
+## Conclusão dos gates isolados — 08/11/2026, em andamento
+
+HEAD75a2061 limpo/sincronizado;mesma branch/worktree PR9Draft,main9187b72 intacta. Pedido:bindloopback comprovado,freezeoperacional,backuppréDDL/rollout eHTTPsobrebackuprestaurado. Docker29.7.2 disponível. Próximo:redebridge nova com defaultbindingloopback suportado,stackfresh exclusiva;nenhum testeantesdeverificar bindings. Stack/evidênciasanteriorespreservadas. Semprodução/dadosreais/TikTok/labsalheios.
+
 ## Fase isolada — 08/11/2026, parcial/BLOQUEADA
 
 Mesma branch/worktreeintegração,base9ff4641;semprodução/labsalheios/dadosreais/TikTok. ImplementadaAPI_WRITES_PAUSED opt-in defaultfalse,onRequest503 paraescrita,GET/HEAD/OPTIONSpermitidos,startupvalidaenum. TestesRED→GREEN,152backendPASS,typecheck/buildPASS;scriptPGdump/restorePASS ampliado. Não é freezeDB/Storage/workers/draindistribuído.
