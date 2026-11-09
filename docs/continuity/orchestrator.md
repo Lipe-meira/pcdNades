@@ -1,3 +1,50 @@
+## Preflight operacional hospedado — 09/11/2026
+
+Estado: concluído documentalmente; **BLOQUEADO** para solicitar execução conjunta de manutenção/backup até confirmação dos escritores externos e cobertura dos controles hospedados.
+
+### Objetivo e localização
+
+- Pedido: inventário somente leitura e procedimento de manutenção/backup real, sem repetir ensaios ou iniciar desenvolvimento.
+- Branch: codex/integracao-editor-20261106. Worktree: C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2.
+- Base/HEAD inicial:30e691157b2878da309845820928d1bd3947678e, limpo e publicado. Main9187b72 e PR9Draft confirmados. O commit desta entrega contém o registro; consultar Git/PR para SHA final sem autorreferência.
+- Entrega documental: docs/EDITOR-RELEASE-20261106.md e este checkpoint. Push normal autorizado exclusivamente à branch do PR9; sem alteração funcional, layout ou vercel.json.
+
+### Feito e evidências
+
+Inventário hospedado e documentação oficial concluídos. Vercel: frontend/API atuais READY/main9187b72;83/80 deployments listados,54/63READY,10/14aliases,sem próxima página. WAF active retornou404 em ambos, não interpretado como ausência. SSOpreview não prova cobertura dos antigos. Nenhum sharelink foi criado; leitorHTTP não acessou health/capabilities, sem tentativa de contorno.
+
+Supabase Free/saudável:revision ausente,histórico9versões,função20/50/1h invoker;authenticated mantémI/U/Dgrenades viaRLSadmin,service_role escreve/RPCs. Sem ACL explícita de coluna ou membership dasroles consultadas. Storage:2bucketsprivados,12objetos,zero policies;11granadascommídia semStorageausente. Job1preview-sweep ativo*/3,Edgev1 comtokenpróprio eclaimRESTantesStorage. Filas/leases zeradas no snapshot não são freeze. Logs agregados15min:5Edge204;StorageGET/listagensPOST;sem dados pessoais/tokens/URLs. Vercelruntime sem grupos não prova ausência deatividade. Sessão postgres era pg_networkeridle. Nenhum workerexterno confirmado ou descartado por inferência.
+
+Runbook agora tem parecer atual, inventário, matriz controle/verificação/retorno, consultasSELECTmínimas, backupprivado/restore e checklistúnico9passos. Histórico06–08preservado e marcado como histórico;ensaiosisolados continuam aprovados comriscoresidual. Estratégia:WAF todoshosts/ambientes+DataAPIoff+Cron/produtoresparados+drain+espera2h desdeúltimaemissãopossível;URLSigningKeysrotate/revoke éalternativa oficial separada deAuth,pendente de disponibilidade/autorização. Nenhuma improvisação deACL/read-onlysoftfreeze/pausaSupabase. Ao reativarDataAPI a barreiraREST termina explicitamente.
+
+Backup viável por CLI lógica e SDKStorage.download separado;Free sem PITR/backupdiário presumido. CLI2.102.0 --version/dbdump--help consultados localmente,sem conexão. VaultusadopeloCron exige estratégia segura de recuperação em outro projeto. Destino privado criptografado,credenciais por canal seguro e cópia real para ambiente novo exigem autorização;nenhum artefato produtivo exportado.
+
+### Verificações e limites
+
+Skills Supabase, VercelDeployments e verification-before-completion lidas/aplicadas a inventário, controles e conferência de evidências. Skill-routing ausente nesta worktree;Impeccable não aplicável a preparação operacional. Sem testes de aplicação repetidos;110browser/152backend/63frontend/PGreal e ensaioHTTPreal anteriores preservados. gitdiffcheck e revisão do diff documental realizados;CI do SHA final e Vercelpós-push serão conferidos e informados no relatório final. Não houve SQL de escrita/locks/migrations,backup/cópia de dados reais,pausa/configremota,merge/deploy ou alteração em outrasworktrees.
+
+### Retomar daqui
+
+1. Conferir respostas do responsável às perguntas sobre worker/agendador externo e controles EnableDataAPI/StorageURLSigningKeys;completar inventário SQL/S3 e alcanceWAF antes deagendar janela.
+2. Confirmar destino/operador/credencial segura/ambiente separado;solicitar autorização limitada para manutenção reversível,probes negativos,dreno ebackup/restore,com abortarantesdecopiar se barreirafalhar. Espera2h evita necessidade derotação se todos emissores estiverem contidos.
+3. Só após recuperação real comprovada,solicitar separadamente repair20,migrationrevision,merge/deploycoordenado,smoke/reabertura. Nada disso autorizado agora.
+
+PR: https://github.com/Lipe-meira/pcdNades/pull/9. Registros anteriores preservados abaixo.
+
+---
+
+## Preflight hospedado — 09/11/2026, inventário concluído; preparação documental em andamento
+
+Somente leitura: Vercel permanece main9187b72 com frontend dpl_CXveN8eKcbhPAs77gEo7PtEw7HgW/API dpl_GunuHiZjWUF55rNDU7hdEQYsYtbp READY;83/80 deployments listados,54/63READY e10/14aliases,sem paginação restante. URLs antigas são candidatos de ingresso,não prova de acessibilidade. ConfigWAFactive retorna404 nos dois;sem afirmar ausência. Nenhum sharelink criado. Supabaseprod saudável/Free,revisionausente/histórico9versões,função20/50/1h. Adminauthenticated mantémI/U/Dgrenades;service_role mantémRPCsDML;Storageprivado2buckets/12objetos/0policies. Cronpreview-sweepjob1ativo*/3,Edgev1JWTgatewayfalse comtokenpróprio eclaimRESTantesStorage. Snapshotfila/leases/jobs0,14ready/2failed,11granadascommídia semStorageausente;pg_networkeridle não é workerexterno. CronSQLsucceeded prova despacho,não conclusãoEdge. Semsegredos/dadosAuth/bytesStorage consultados.
+
+Documentação oficial:DataAPIoff bloqueiaREST/RPC,masnãoStorage/SQL;NetworkRestrictions sóDB/pooler;default_transaction_read_only ésoftfreeze;Vercelpause sóproduçãoativa não cobreURLsantigas. URLSigningKeysStorage permite rotate+revokeseparadoAuth,mas disponibilidade no projeto não exposta. Alternativa semrotacionarchaves:pararTODOSemissores,esperar2h desdeúltimaemissão possível+drain. Inventárioexterno/S3/SQL precisa confirmaçãoresponsável. Perguntasassíncronas sobreworker externo econtrolespainelpendentes. BackupCLIviávelFree;helpCLI2.102.0verificadooffline(--db-url);sembackupreal/copiadados. Vault éusadopeloCron:recuperaçãoemoutroprojetorequerprocedimentosegurochaveraiz/reprovisionamentoprivado,semativarjob/SMTP/monitorreais.
+
+Próximo:consolidarmatrizdecontroles/verificação/retorno ebackup/checklistno runbook;classificar conforme evidência/retorno das perguntas;diffcheck,commit/pushdocsomentePR9 eCI exato. Nenhumensaio/aplicação alterados,nemaproduçãomutada.
+
+## Preflight operacional hospedado — 09/11/2026, em andamento
+
+Pedido atual: inventário hospedado somente leitura, manutenção efetiva e backup recuperável; sem repetir ensaios ou desenvolver funcionalidades. Mesma integração/worktree,HEAD30e6911 limpo na retomada. Autorizados apenas leituras,documentação,commit/push exclusivo da branchPR9 preservando bloqueios. Proibidos produçãoSQLescrita/locks/configs/backup/cópia/pausa/deploy/merge. Próximo:inventárioVercel/Supabase/documentação oficial,matriz de bloqueio/dreno/retorno,procedimento backup e decisão objetiva. Ensaio isolado anterior preservado,sem repetição. SkillsSupabase/VercelDeployments selecionadas,lidas;guia docs/ai/skill-routing.md ausente nesta worktree. Semsegredos no checkpoint.
+
 ## Gates isolados — 08/11/2026, APROVADOS COM RISCOS RESIDUAIS
 
 Mesma integração/worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2, base75a2061, PR9Draft/main9187b72 preservados. Passagem final rollout-loopback-full.mjs exit0/PASS:8containers127.0.0.1 antes dos testes;backend9187/schemaantigo;freeze/drain/DBlocks;backupprérevision;20/50+histolocal;revision;backendnovo/409/428/permissões/MP4/legado/Solo;GoTrue/REST/Storage sobre DB/objetos restaurados e frontendChromium real login/edição/salvar. Grants/RLS/triggers iguais,TOC/SHAs no relatório. Semmocks nesseensaio;inline-original apenas,semworkerexterno/TikTok. Corrigidos procedimentos:ownerpostgres,GNUtar--xattrs,PUBLISHABLE_KEY eFRONTEND_URL. Layout/aplicação intactos.

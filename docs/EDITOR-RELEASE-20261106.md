@@ -1,3 +1,132 @@
+# Editor: preflight operacional hospedado — 09/11/2026
+
+**Parecer: BLOQUEADO para solicitar execução conjunta de manutenção/backup.** A estratégia suportada e verificável está preparada, mas ainda faltam a confirmação dos escritores externos e a cobertura efetiva dos controles no projeto. A fase técnica isolada permanece **APROVADA COM RISCOS RESIDUAIS**. Seus ensaios não foram repetidos.
+
+Primeira ação pendente: o responsável confirmar os executores com acesso SQL, Storage, service_role ou S3 e os controles WAF/Data API disponíveis no painel. A página URL Signing Keys é opcional para a alternativa de espera de2h. A autorização seguinte poderá limitar-se à manutenção, sua verificação e ao backup/restauro, com interrupção antes da exportação se qualquer escritor continuar ativo. Não se propõe alterar permissões ou desenvolver funcionalidades.
+
+## Inventário hospedado somente leitura
+
+Leituras de 09/11 são observações independentes, não um snapshot transacional único. Revalidar na janela. Referência PR9: `30e691157b2878da309845820928d1bd3947678e`; main remota: `9187b72bf15906b0112a736503b35b68f3d4b297`. PR continua Draft.
+
+| Recurso | Evidência | Consequência |
+| --- | --- | --- |
+| Frontend pcdnades | Deployment dpl_CXveN8eKcbhPAs77gEo7PtEw7HgW READY/main9187b72; 83 deployments listados, 54 READY (45 production e 9 outros), 10 aliases | Incluir URLs individuais e aliases antigos na barreira. READY não comprova acesso público nem função em execução |
+| Backend pcdnades-api | Deployment dpl_GunuHiZjWUF55rNDU7hdEQYsYtbp READY/main9187b72; 80 listados, 63 READY (43 production e 20 outros), 14 aliases | Bloquear só o domínio principal ou publicar uma flag nova deixa versões antigas fora do controle |
+| Proteções Vercel | Listagens sem próxima página. SSO informado para preview; leitura de WAF active retornou 404 nos dois projetos | Não concluir ausência de WAF nem cobertura de todos os deployments. Roots/tracking/hooks continuam sendo confirmações manuais anteriores |
+| Supabase | pcdNades, ref kdyzxxgzvgiffluyjjxu, ACTIVE_HEALTHY, PostgreSQL17.11.0.003, organização Free | Não presumir PITR ou backup diário pago disponível. Preparar exportação lógica privada |
+| Migrations/limite | 9 versões até20261103120954; revision ausente; função20/50, janela1h e security invoker confirmados | Revalidar equivalência completa antes de reparar somente o histórico20; depois aplicar revision |
+| Acesso direto | authenticated mantém INSERT/UPDATE/DELETE em grenades, com RLS is_admin; anon sem DML público; service_role tem DML e RPCs mutáveis | Pausar API não contém administrador direto nem escritor privilegiado |
+| ACLs e triggers | Sem ACL explícita de coluna ou membership das três roles consultadas. RPCs mutáveis de importação/preview acessíveis a service_role; is_admin é leitura. Triggers grenade_ready, media_state e immutable_import_source presentes | Não remover grants, policies ou RPCs como atalho. Inventário estrutural não prova ausência de SQL dinâmico |
+| Storage | Dois buckets privados, videos-staging e import-previews, até50MB/video/mp4;12objetos em videos-staging; zero policies Storage | Grants SQL não equivalem a autorização RLS. Clientes comuns não têm escrita normal por policy; service_role e URLs assinadas são exceções |
+| Cron/Edge | Job1 pcdnades-preview-sweep ativo, */3min; Edge preview-sweep ACTIVE/v1, verify_jwt=false, com token próprio | Fonte hospedada exige claim REST antes de modificar Storage. Cron inativo não cancela invocação aceita nem chamada externa |
+| Repouso observado | Filas net/Cron, leases de mídia/importação/sweep e preview jobs vazios;14 mídias ready/2failed;11 granadas com mídia, sem objeto publicado ausente | Isso é um snapshot, não drenagem garantida. Sucesso do Cron SQL comprova despacho HTTP, não conclusão Edge |
+| Logs agregados, últimos15min | 5 invocações Edge concluídas com204; Storage mostrou GET e POST de listagem, sem payloads consultados. Vercel não retornou grupos de logs runtime nesse intervalo | Cron está efetivamente executando mesmo com fila vazia. POST de listagem Storage é leitura; ausência de log Vercel não comprova ausência de requisição |
+| Outros executores | pg_cron/pg_net instalados, pgmq ausente; sem FDW ou trigger customizado de Auth observado. Sessão postgres observada era pg_net worker idle | Worker batch do repo usa SQL direto e Storage; os conectores não inventariam Docker, VPS, agendadores e credenciais S3 externos |
+| Git/configuração | Workflow backend-linux apenas compila/testa; sem deploy. Dois vercel.json mantêm false exclusivamente para esta branch; sem crons nesses arquivos | Não comprova ausência de automações externas ou settings não expostos |
+
+Rotas mutáveis do backend publicado (main9187b72), também presentes na integração, sob `/api/v1`:
+
+- POST `/grenades`; PATCH e DELETE `/grenades/:id`.
+- POST `/media/uploads` e `/media/:id/complete`.
+- POST `/media/imports/inspect`, `/media/imports` e `/media/imports/:sourceId/preview`.
+
+Upload assinado escreve diretamente no Storage. Complete, importação e worker podem continuar após suspender a admissão. GET de playback emite URL de leitura. Não revalidei capabilities por HTTP: o leitor web não acessou os endpoints. O fetch Vercel que cria sharelink temporário não foi usado nesta tarefa de leitura.
+
+## Manutenção proposta: controles, verificação e retorno
+
+Preferir indisponibilidade total temporária, usando controles existentes. A barreira cobre dados da aplicação e objetos; não se deve chamá-la de suspensão de toda escrita interna de Auth ou telemetria. Atualizações de sessão Auth podem continuar e entrarão no snapshot do dump de dados. Não foi observado trigger customizado de Auth escrevendo na aplicação. Operações administrativas em contas, schema e dados ficam suspensas por coordenação do responsável.
+
+| Caminho | Controle futuro | Verificação antes do backup/DDL | Retorno |
+| --- | --- | --- | --- |
+| APIs e frontends, antigos e novos | Regra WAF Deny temporária e prioritária nos dois projetos, sem filtro de host/ambiente e sem bypass anterior. Para janela total, negar todos os métodos | Registrar configuração/versão anterior. Confirmar Deny nos domínios, aliases e URLs individuais relevantes, em Production e Preview, antes da função. GET/HEAD podem verificar uma regra que nega todos os métodos; probes de escrita exigem autorização específica. Conferir métricas, sem sharelinks/bypasses | Remover só a regra criada e restaurar ordem/estado anterior, mantendo proteções existentes. Não é necessário alterar API_WRITES_PAUSED |
+| REST/RPC direto Supabase | Desativar temporariamente Enable Data API pelo painel oficial, sem revogar grants | Confirmar setting e indisponibilidade de REST/RPC, inclusive acesso privilegiado; conferir GraphQL se exposto. Isso não desativa Storage, Auth ou SQL direto | Repor o valor anterior. Reativação reabre acesso direto autorizado: inicia a reabertura controlada, não acesso exclusivo de um operador |
+| Cron | Alternar somente job1 para Inactive, preservando job, comando e schedule | cron.job.active=false, nenhuma execução/HTTP pendente e confirmação de conclusão Edge por logs/leases. Não interpretar queue vazia como cancelamento de chamada já despachada | Repor active=true somente porque esse era o estado original; manter id/schedule/comando. Não recriar job nem ler Vault decrypted |
+| Edge preview-sweep | Cron inativo e Data API desligado impedem novo claim REST na fonte hospedada inspecionada | Drenar chamadas existentes. Há deadline60s e lease2min, mas expiração isolada não prova término. Confirmar logs/execuções; se não houver visibilidade, aguardar o responsável | Reativar Data API/Cron após par compatível; não alterar código ou token |
+| URLs de upload anteriores | Preferência sem mudar chaves: cessar TODOS os emissores, registrar T0 da última emissão possível e esperar T0+2h, além dos uploads em andamento | Incluir versões antigas e processos privilegiados. Confirmar expiração e término de uploads; conferir ausência de drift. Ausência de awaiting_upload no banco não reduz esse prazo. S3 presign/TUS ou outros emissores precisam de inventário próprio | A espera não muda chaves ou policies. Emissores só retornam na reabertura |
+| Alternativa para URLs | Storage URL Signing Keys: rotate e revoke das chaves que ainda validam URLs anteriores; rotação de Auth não resolve | Confirmar recurso disponível neste projeto, registrar apenas IDs/estados, testar negação de URL anterior sob autorização. Revogação não cancela upload já aceito; download em cache pode persistir | Repor estados via standby/rotate conforme documentação só depois da manutenção, ou aprovar permanência da nova chave. Sem capturar valores. Opção não autorizada nem comprovada no projeto |
+| Worker, SQL e S3 externos | Responsável identifica produtores/agendadores, suspende novas execuções e aguarda término | Identificar hosts/serviços e conferir execuções, filas, leases, sessões e Storage. Restrição de rede só protege DB/pooler. Revogar URL Storage não contém credencial S3 direta | Restaurar apenas estados anteriores identificados. Não matar processos nem resetar leases silenciosamente |
+
+A composição não foi ativada ou testada no projeto hospedado. As bases oficiais são: [Data API](https://supabase.com/docs/guides/api/securing-your-api), [Network Restrictions](https://supabase.com/docs/guides/platform/network-restrictions), [WAF Deny/Bypass e ambientes](https://vercel.com/docs/vercel-firewall/vercel-waf/rule-configuration), [Cron Active/Inactive](https://supabase.com/docs/guides/cron/quickstart), [upload assinado de2h](https://supabase.com/docs/reference/javascript/storage-from-createsigneduploadurl), [URL Signing Keys](https://supabase.com/docs/guides/storage/security/signing-keys) e [service keys do Storage](https://supabase.com/docs/guides/storage/security/access-control).
+
+A [pausa de projeto Vercel](https://vercel.com/docs/projects/managing-projects) bloqueia a produção ativa, não comprova bloqueio de versões antigas. A [orientação Supabase](https://supabase.com/kb/troubleshooting/putting-a-project-in-read-only-mode-or-freezing-writes-during-a-migration-b5a2c7) classifica default_transaction_read_only como soft freeze: conexões existentes mantêm estado e Data API pode sobrescrever a configuração. Ambos foram rejeitados como barreira única. Não propor Dockerstop no hospedado nem pausar Supabase para tentar executar DDL enquanto indisponível.
+
+**Critério de drenagem:** depois de cessar admissão, observar repetidamente Cron/net, leases, mídia queued/processing, atividade SQL relevante e execuções/logs de Vercel/Storage. Exigir término ou parada comprovada dos executores. Nem pg_stat_activity sozinho, nem lease expirada, contagem estável ou sucesso do Cron SQL bastam. Se alguma escrita relevante retornar, invalidar o backup. Sem cobertura demonstrada, parar antes da cópia/DDL e seguir o plano de retorno acordado.
+
+Alternativa operacional viável: inventário manual completo, janela total e espera T0+2h. Se não for possível conter emissores ou comprovar dreno do Storage, solicitar ao Supabase uma barreira de ingresso suportada antes de agendar a execução. Não improvisar revogações de permissões.
+
+### Leituras mínimas para verificar a janela autorizada
+
+Acompanhamento por operador, sem polling automático nesta tarefa. Consultas agregadas não mostram tokens, URLs assinadas, conteúdo de jobs ou dados pessoais:
+
+```sql
+SELECT jobid,jobname,schedule,active FROM cron.job;
+SELECT count(*) AS cron_running FROM cron.job_run_details WHERE end_time IS NULL;
+SELECT count(*) AS dispatch_pending FROM net.http_request_queue;
+SELECT status,count(*) FROM public.media_assets GROUP BY status;
+SELECT count(*) AS live_media_leases FROM public.media_assets WHERE locked_until>now();
+SELECT count(*) AS live_import_lease FROM private.import_slot WHERE locked_until>now();
+SELECT count(*) AS live_sweep_lease FROM private.preview_sweep_lease WHERE locked_until>now();
+SELECT state,count(*) FROM public.import_preview_jobs GROUP BY state;
+SELECT usename,backend_type,state,wait_event_type,count(*)
+FROM pg_stat_activity
+WHERE datname=current_database() AND pid<>pg_backend_pid()
+GROUP BY usename,backend_type,state,wait_event_type;
+```
+
+Correlacionar esses resultados com duração/conclusão das execuções Edge, Vercel e Storage. Não consultar corpo de Cron, headers de pg_net, Vault decrypted ou linhas completas de logs para obter essa prova. O job deve permanecer inativo durante a observação; fila momentaneamente vazia com Cron ativo não é barreira.
+
+## Backup real: procedimento preparado, não executado
+
+O plano Free permite exportação lógica privada. Não contamos com PITR ou backup diário confirmado. [Backups de banco](https://supabase.com/docs/guides/platform/backups) não incluem os arquivos do Storage. Nenhum backup, credencial ou destino real foi criado nesta tarefa.
+
+**Destino a aprovar:** diretório fora do Git, OneDrive e pastas públicas, em volume criptografado, com acesso restrito ao operador. Acordar caminho, capacidade, retenção, chave de recuperação guardada separadamente e ambiente de restauração. Segunda cópia privada criptografada se aprovada. Não guardar dados produtivos em vendor nem anexar artefatos ao PR/chat.
+
+**Banco:** CLI2.102.0 já instalada; `--version` e `db dump --help` consultados localmente, sem conexão remota. Preparar PostgreSQL17 compatível e conexão TLS direta ou Session Pooler5432, não Transaction Pooler6543. Credencial fornecida por canal seguro e mecanismo suportado validado, sem senha no histórico, argumentos expostos ou logs. Não redefinir senha automaticamente se faltar acesso. Os comandos abaixo são modelos, não comandos executados:
+
+```text
+supabase db dump --db-url <conexao-protegida> --role-only -f <destino-privado>/roles.sql
+supabase db dump --db-url <conexao-protegida> -f <destino-privado>/schema.sql
+supabase db dump --db-url <conexao-protegida> --data-only --use-copy -f <destino-privado>/data.sql
+supabase db dump --db-url <conexao-protegida> --schema supabase_migrations -f <destino-privado>/history_schema.sql
+supabase db dump --db-url <conexao-protegida> --schema supabase_migrations --data-only --use-copy -f <destino-privado>/history_data.sql
+```
+
+Revisar as exclusões efetivas da CLI antes da exportação. Conferir explicitamente dados Auth/public/private/Storage, customizações de Auth/Storage, owners, grants, RLS e triggers. O histórico exige exportação separada. Não recriar cegamente schemas gerenciados num destino Supabase. Os arquivos são snapshots distintos; a barreira mantém aplicação/objetos estáveis e impede DDL, enquanto sessões Auth podem variar e são capturadas juntas no dump de dados. Não afirmar snapshot global idêntico de todos os serviços.
+
+**Objetos:** copiar todos os arquivos dos dois buckets por SDK Storage.download existente, somente leitura na origem, preservando bucket/key no arquivo privado de recuperação. O levantamento contém12 objetos e deve ser revalidado. Evitar criar credencial/configuração S3; se necessária, solicitar autorização adicional. Manifesto privado: bucket/key, tamanho, SHA256, metadados necessários e configurações dos buckets, sem URLs assinadas. Comparar inventários antes/depois e relacionar grenades.video_id → media_assets.storage_key → objeto. [Download oficial](https://supabase.com/docs/guides/storage/management/download-objects) separa arquivos e metadados. GNUtar/xattrs foi uma exigência do Storage local; não há acesso ao volume físico hospedado para transplantar essa receita Docker.
+
+**Integridade:** comandos com exit0, arquivos não vazios, SHA256 por arquivo e manifesto, leitura/descriptografia privada do arquivo protegido, contagens e referências relevantes, ACLs/RLS/triggers/owners/histórico e objetos com bytes/hash correspondentes. Não resetar contadores ou sessões. Backup deve preservar20/50 sem reexecutar a função. Se aparecer drift, não aprovar o conjunto como consistente.
+
+**Restauração:** autorizar ambiente NOVO separado e cópia de dados reais, compatível com Supabase/PG17. Desativar egress SMTP/OAuth/webhooks/Cron/monitor; nunca apontar frontend produtivo ao destino. Seguir o [procedimento lógico oficial](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore), com ON_ERROR_STOP=1 e transação quando apropriado. Revisar diferenças de roles gerenciadas, sem remover owners/policies indiscriminadamente. Não usar supabase_admin do laboratório como credencial produtiva. Repor objetos via Storage API nos mesmos buckets/keys, conservando os metadados originais como evidência; IDs/versionamentos internos podem mudar, mas referências da aplicação precisam funcionar. Não inserir metadados apontando para bytes inexistentes.
+
+Provar no destino: leitura HTTP, login permitido, restrições RLS, permissões, criação/edição de fixture exclusivamente ali e reprodução MP4 restaurado. Fingerprints privados e contagens verificam preservação dos dados Auth; não pedir senha de usuário pelo chat. Não repetir os ensaios sintéticos como substituto desta recuperação do backup real.
+
+**Auth/Vault/configuração:** o Cron usa Vault. Ciphertext no dump não comprova uso dos segredos em outro projeto: recuperação demanda procedimento suportado para chave raiz ou reprovisionamento privado aprovado. Nunca reativar no teste o Cron com URLs/tokens reais, SMTP ou Healthcheck original. Inventariar configurações/flags/versões/Auth/Edge e credenciais por responsável, sem imprimir valores. JWT, chaves S3 e configurações gerenciadas não equivalem a SQL exportado. Não copiar chave raiz nesta tarefa.
+
+**Falha parcial:** se exportação, integridade, download ou restore falhar antes do DDL, não reparar histórico nem migrar. Preservar cópias incompletas identificadas; repetir sob barreira comprovada ou abortar e restaurar configurações. Após revision, preferir correção adiante com schema aditivo: backend antigo perde UPDATE e cliente novo exige revision. Não restaurar backup antigo sobre novas escritas, mudar aliases ou devolver grants sem autorização específica. Restaurar SQL não recupera objetos Storage perdidos; usar o manifesto aprovado.
+
+## Checklist único de execução futura
+
+Cada mutação depende de autorização. Este checklist é preparação, não execução.
+
+1. **Manutenção:** confirmar escritores, controles, destino e operador; registrar estado anterior; ativar WAF nos dois projetos e Data API off, desativar Cron/produtores; provar cobertura de ingressos antigos, diretos e privilegiados. Sem prova, interromper antes do backup.
+2. **Dreno:** aguardar operações aceitas, Edge, jobs e leases. Cessar emissão e esperar T0+2h mais uploads, ou usar revogação Storage expressamente aprovada e verificada. Não redefinir contadores/sessões.
+3. **Backup/restore:** exportar privadamente banco/Auth/ACL/RLS/triggers/histórico/configurações necessárias e objetos sob a barreira; conferir manifesto, hashes e ausência de drift; restaurar e validar por HTTP no destino aprovado. Sem recuperação comprovada, não prosseguir.
+4. **Histórico20:** revalidar equivalência completa, assinatura/owner/ACL/search_path e20/50/1h; reparar apenas20261105210000 como applied por comando oficial. Não reexecutar função, migrations antigas ou sessões.
+5. **Revision:** aplicar somente20261105170000 por procedimento transacional aprovado que registre a versão; verificar default1, trigger, grenade_ready, grants/RLS e ausência de UPDATEauthenticated em tabela/colunas/atalhos. Backup permanece pré-DDL.
+6. **Integração:** autorizar merge único do PR9 em main, preservando branches originais. O bloqueio Git desta branch não bloqueia main. Este item não está autorizado.
+7. **Publicação coordenada:** manter barreiras durante builds; backend compatível antes do frontend novo, ambos READY e aliases no mesmo SHA. Git automático não é atômico. Nenhum deploy manual extra sem pedido.
+8. **Smoke autorizado:** com schema e par compatível prontos, reativar Data API e permitir o acesso necessário. A barreira REST termina nesse ponto; outros administradores/produtores permanecem avisados/suspensos. Verificar login,401/403,criação/edição,409/428,MP4 legado/novo,Solo/rascunhos. Sem TikTok real.
+9. **Reabertura:** se PASS, repor regras/configurações/Cron/hosts exatamente conforme aprovado; orientar reload. Monitorar5xx/409/428/Auth/Storage/filas/locks. Em falha, fechar admissão e preservar evidências, sem recuperação automática de ACL/dados.
+
+**Escopo da primeira autorização futura proposta:** janela de indisponibilidade; alterações reversíveis WAF/Data API/Cron; parada e dreno dos hosts identificados; espera de URLs; probes negativos explicitamente permitidos; backup privado real e cópia para restauração isolada sem integrações externas. Autorizar abortar/retornar antes de exportar se a barreira falhar. Não incluir migration, repair, merge, deploy ou smoke de escrita produtiva. Rotação/revogação Storage requer autorização adicional se escolhida.
+
+## Histórico preservado — preparação de06 a08/11
+
+Os estados abaixo são registros datados. As pendências locais de HTTP, restauração e bindings foram superadas no ensaio de08/11. Para o ambiente hospedado, vale o parecer e checklist de09/11 acima. Não repetir ensaios nem executar comandos históricos sem revalidar escopo e autorização.
+
+---
+
 # Integração do editor — plano de publicação (06/11/2026)
 
 Estado atual: PR #9 aberto em Draft e publicado para revisão. Push exclusivo da integração autorizado; rollout BLOQUEADO pelos gates abaixo. Não há autorização de produção. Branch codex/integracao-editor-20261106, base main9187b72; incorpora PR8 05cbc5a, concorrência7bc2e6a e limite3936153. Branches originais preservadas. Nenhuma alteração de layout ou limite durante integração.
@@ -101,8 +230,8 @@ Não usar --no-acl/--no-owner no backup-mestre. Um dump completo pode conter seg
 8.Conferir integridade e erros,reabrir escritores de forma coordenada;orientar reload/recuperação de rascunho e manter edição suspensa se clientes antigos persistirem sem controle.
 9.Monitorar5xx/409/428/Auth/upload/playback e locks durante janela acordada. Em falha:fechar escrita,preservar logs/mídias e decidir correção adiante/retorno com responsável. Restaurar backup completo sobre dados novos causa perda e exige aprovação específica;preferir schemaaditivo e recuperação seletiva. Reabrir apenas após smokePass.
 
-Conclusão atual:BLOQUEADO para rollout. Motivos:backup/restauração não executados;integraçãoHTTP realAuth/PostgREST/Storage e cutover/cliente antigo não comprovados;bloqueio efetivo de escrita e reparo/aplicação ainda não autorizados. PR9 é revisável,mas não autorização de produção.
+Conclusão histórica de06/11:BLOQUEADO para rollout. Motivos:backup/restauração não executados;integraçãoHTTP realAuth/PostgREST/Storage e cutover/cliente antigo não comprovados;bloqueio efetivo de escrita e reparo/aplicação ainda não autorizados. PR9 é revisável,mas não autorização de produção.
 
-## Evidência incremental de08/11/2026
+## Evidência incremental de08/11/2026 — primeira rodada histórica, superada pela continuação
 
 Ver docs/ISOLATED-ROLLOUT-20261108.md:HTTPGoTrue/PostgREST/Storage comMP4,409/428 epermissões PASS emstacknova sintética;backup/restauraçãodeDB/AuthmetadataeStoragebytesPASSparcial. API_WRITES_PAUSED implementada defaultfalse,testada,masnãoéfreezeglobal. Faseisolada permaneceBLOQUEADA porbind0.0.0.0(stackprópriaparada),drain/barreiraDBStorage,sequênciacompleta eaplicaçãorestauradaHTTP/frontendpendentes. PendênciasanterioresHTTPparcialmente superadas por essa evidência,sem chamarfullE2Eaprovado.
