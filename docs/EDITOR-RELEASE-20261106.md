@@ -6,6 +6,96 @@ Isso não comprova uma barreira já ativa nem autoriza execução. A primeira co
 
 Solicitar autorização limitada à manutenção reversível, sua verificação e ao backup/restauro em destino privado e ambiente separado acordados com o responsável. Preferir a espera de2h após a última emissão possível, mais uploads em andamento, sem rotação de chaves. A alternativa rotate/revoke do Storage exige autorização explícita adicional. Nenhuma alteração de permissões, código ou produção foi realizada com estas confirmações.
 
+## Primeira janela supervisionada — proposta não autorizada
+
+Referência desta preparação:2de63a56862779e0f6cadb870496ad28f91ee23d. Escopo exclusivo: manutenção reversível, backup e teste de recuperação, SEM alterar o schema produtivo ou publicar o editor. Ao terminar, a aplicação antiga deve voltar ao estado anterior. Se o site voltar a receber escritas, o backup será uma fotografia histórica; um rollout posterior exigirá novo backup consistente ou atualização/delta validado sob nova barreira. Não manter o site parado esperando autorização de migration.
+
+### Viabilidade WAF: plano confirmado; eficácia será verificada na janela
+
+O responsável conferiu manualmente, sem salvar alterações: equipe **Hobby**; pcdnades com0 Custom Rules, limite3, Add Rule e Deny disponíveis; pcdnades-api com0 Custom Rules e Deny disponível. Não encontrou seletor explícito Production/Preview. Essa é a evidência de disponibilidade da conta; get_team/list_teams omitiram plano e get_firewall_config(active) continua404. Não foram instaladas ferramentas ou criadas regras para suprir essa limitação de leitura.
+
+A [documentação WAF](https://vercel.com/docs/vercel-firewall/vercel-waf) confirma até3 regras por projeto Hobby; a proposta usa uma vaga em cada projeto, sem upgrade nem rate limit pago. [Regras](https://vercel.com/docs/vercel-firewall/vercel-waf/custom-rules) são aplicadas sem redeploy. A disponibilidade de Deny não prova que uma regra já esteja publicada ou que o agente tenha permissão de escrita: publicação e retorno serão manuais, sob supervisão do responsável com acesso ao painel.
+
+**Production/Preview:** [Environment é uma condição opcional da regra](https://vercel.com/docs/vercel-firewall/vercel-waf/rule-configuration), não um seletor de deploy obrigatório. O [WAF é configurado por projeto](https://vercel.com/docs/vercel-firewall/firewall-concepts) e a [CDN inspeciona cada requisição a um deployment antes da aplicação](https://vercel.com/docs/how-vercel-cdn-works). Assim, a regra proposta é Request Path começa com `/`, ação Deny, primeira prioridade e sem condição Host, Environment, Method ou deployment. **Inferência desses contratos:** o alcance é todo tráfego do projeto, inclusive Production, Preview, aliases e URLs antigas, não apenas a versão atual. Isso explica por que a ausência de seletor não impede a proposta; não é comprovação empírica da barreira.
+
+Preparar essa especificação somente localmente; nenhuma configuração foi salva. Na janela, confirmar condições realmente publicadas e negar todos os caminhos, inclusive leituras. Validar status e atribuição da regra para cada ingresso relevante do inventário, sem assumir que ausência de filtro significa aplicação eficaz nesta conta. Se aparecer escopo oculto, bypass, limitação ou URL ainda passando, abortar antes da exportação e resolver com suporte oficial. Não remover proteção existente ou contratar upgrade automaticamente.
+
+Publicação WAF será manual e supervisionada: Log sem filtro; teste Deny limitado a um **host Preview antigo já existente**; nova observação Log em Production; por fim Deny sem condição de host/ambiente. O filtro Host permite o estágio Preview mesmo sem seletor Environment, sem criar deployment. Editar a mesma regra entre estágios e conferir cada diferença antes de publicar. Se não for possível testar esse host com os controles disponíveis, não improvisar: resolver antes de assumir a barreira. Nada de AI wizard, vercel.json novo, deploy, sharelink, bypass ou Challenge/rate limit usado como negação.
+
+Se Deployment Protection/SSO interceptar uma URL antiga, receber401 ou uma tela de login NÃO comprova Deny da regra. O responsável poderá conferir em sua sessão Vercel normalmente autenticada, sem segredo de bypass, e correlacionar o resultado com os eventos WAF. Sem essa evidência ou demonstração equivalente suportada, o ingresso não está verificado. O agente não utilizará Computer Use nem extrairá cookies para isso.
+
+### Janela estimada e limites
+
+**Reservar5h contínuas**, data/hora ainda a aprovar em America/Sao_Paulo, com responsável disponível e acesso de retorno testado antes. Não é uma medição de desempenho nem promessa de duração. Para o volume atual, expectativa de3h30–4h30, com5h como limite operacional da proposta:
+
+| Intervalo desde início aprovado | Ação e decisão supervisionada |
+| --- | --- |
+| 00:00–00:30 | Conferir baselines; estágios WAF/publicação nos dois projetos; Cron inativo e Data API off; verificar ingressos e drenar requisições já aceitas. Registrar T0 somente quando não houver emissor ainda em execução. Se não provar cobertura/dreno até00:30, abortar antes de exportar |
+| T0 atéT0+02:00 | Esperar validade das URLs de upload anteriores, sem rotacionar chaves. Se T0=00:30, termina02:30. A espera não cancela upload iniciado antes da expiração: verificar também seu término. Novo emissor ou operação sem limite observável invalida T0 e exige abortar/replanejar; não estender a janela automaticamente |
+| Até03:00, após expiração/dreno | Dump lógico e exportação do histórico; download dos objetos; manifesto e hashes; confirmar ausência de drift. Orçamento30min, ajustável somente por nova decisão do responsável |
+| 03:00–04:00 | Restaurar o backup real no destino isolado já preparado, conferir schema/ACL/RLS/triggers/Auth/Storage e comprovar login/permissões/reprodução HTTP. Não aplicar revision ou migration20 nem usar frontend novo contra schema antigo |
+| 04:00–04:15 | Se houver recuperação comprovada, encerrar esta etapa e restaurar Data API, regras WAF e Cron aos estados registrados. Validar apenas leituras no site antigo; sem smoke de escrita produtiva |
+| 04:15–05:00 | Reserva para diagnóstico/retorno. Em04:30, se sem conclusão, iniciar abortar/retornar; não iniciar operação nova longa. Falha do retorno requer comunicar incidente imediatamente;5h é orçamento, não garantia física de recuperação |
+
+WAF pode gerar403/negação de acesso e Data API off interrompe também leituras da biblioteca. Abas abertas podem tentar novamente; avisar administradores previamente para guardar seus rascunhos. Não rotacionar chaves para encurtar a espera nesta proposta. Se validação do backup terminar depois da reabertura, seu resultado vale apenas para o snapshot capturado e não libera DDL posterior.
+
+### Checklist da ativação e pontos de parada
+
+- [ ] **Antes de qualquer indisponibilidade:** usuário aprovou início/fim, destino, retenção, operador e ambiente isolado; plano/vaga/Deny confirmados e acesso manual de publicação/retorno pronto; credencial segura disponível; ferramentas preparadas; nenhum escritor externo, confirmado pelo responsável. Sem esses requisitos, não começar.
+- [ ] Capturar estado anterior WAF por projeto (configuração completa/versão/ordem/estado), IDs dos deployments e aliases, Data API atual e job1 (active/schedule/hash do comando, sem corpo/segredos). Combinar ausência de mudanças administrativas concorrentes. Baseline ausente ou retorno não disponível: não ativar.
+- [ ] Publicar e verificar WAF nos dois projetos, incluindo todos os aliases e URLs individuais READY relevantes inventariados por paginação. GET/HEAD devem ser negados pelo edge antes da função, sem sharelink/bypass; guardar status/regra/horário sem headers privados. Um endereço ainda passando: desfazer e abortar antes do backup.
+- [ ] Desativar o job1 pcdnades-preview-sweep preservando schedule/comando; aguardar despachos/execuções em andamento. Desativar Enable Data API pelo painel; confirmar setting e negação REST/RPC inclusive acesso privilegiado e GraphQL se exposto. Não invocar RPC mutável nem gerar upload para ensaiar a barreira. Auth/Storage não são automaticamente desligados.
+- [ ] Correlacionar SELECTs agregados desta página com logs de duração/conclusão Vercel/Edge/Storage; nenhuma mídia queued/processing ou lease ativa sem resolução, Cron inativo e net queue vazia. Falta de visibilidade não equivale a sucesso. Não matar jobs, limpar fila ou alterar sessões.
+- [ ] Registrar T0 depois de cessarem todos os emissores e aguardar2h, mais uploads em andamento. Clientes comuns sem policy Storage não ganham escrita por isso; acesso privilegiado continua sujeito à confirmação de ausência de processos externos e suspensão de ações administrativas.
+- [ ] Produzir backup somente após os gates, em destino criptografado; validar integridade, manifesto, contagens/referências e inventário antes/depois. Drift ou erro: marcar artefatos incompletos e abortar, sem migration/repair.
+- [ ] Restaurar e comprovar recuperação isolada; realizar retorno exato e leituras finais da produção antiga. Registrar evidências e a hora da reabertura, identificando quando o backup deixa de ser corrente. Nenhum passo inclui publicação do editor.
+
+### Destino privado: especificação para aprovação
+
+Proposta de caminho: `F:\BackupsPrivados\pcdnades\<data-da-janela>` em volume criptografado verificado. O caminho ainda não foi criado nem aprovado. F: tem cerca de414GiB livres nesta leitura; tentativa de consultar BitLocker via manage-bde foi negada por falta de acesso administrativo. **Não considerar F: criptografado**. O responsável deve confirmar proteção ativa e chave de recuperação guardada fora do próprio backup, ou escolher outro volume/contêiner criptografado. Nenhuma criptografia ou ACL foi alterada.
+
+Capacidade medida só por metadados: banco14.571.187bytes (~13,9MiB),12 objetos com64.895.376bytes (~61,9MiB), todos com tamanho declarado. Não é tamanho de dump medido; pode crescer. Reservar ao menos `max(20GiB, 6×D + 4×S + 10GiB)` onde D é o tamanho do banco e S dos objetos, incluindo margens para dump, cópia protegida, restauração, volumes e imagens. Revalidar D/S e espaço dos discos do backup E do Docker antes da janela. Se separar máquinas/volumes, aplicar margens em cada destino, sem supor que o espaço em F: resolve o armazenamento Docker em C:.
+
+Requisitos: acesso somente ao operador nominal e contas de serviço estritamente necessárias, sem links públicos, sincronização OneDrive/Git ou herança de acesso ampla. Proposta de retenção30dias após a captura, a aprovar; sem exclusão automática de artefatos/evidências. Arquivos temporários com dados reais devem ficar no volume criptografado desde a primeira gravação; Docker Desktop/volumes de restauração também precisam de armazenamento protegido. ACL e criptografia de cada destino devem ser confirmadas pelo operador. Uma segunda cópia criptografada privada pode ser aprovada separadamente; não enviar para nuvem por inferência.
+
+Ferramentas observadas: Node24.21.0, Docker29.7.2 com daemon ativo, SupabaseCLI2.102.0 em cache e imagem PostgreSQL17 local; dependências SDK/Playwright existentes. psql/pg_dump e age/gpg/7z não foram encontrados no PATH: usar ferramentas PG17 em container suportado e armazenamento criptografado do sistema confirmado, ou preparar alternativa antes da janela. Nada foi instalado. Preparar a stack NOVA vazia e loopback com Auth/REST/Storage reais antes da indisponibilidade; não reutilizar volumes de evidência e não carregar dados de produção nessa preparação antecipada.
+
+Credenciais: operador fornece acesso existente por canal seguro/gerenciador, não por mensagem no chat; não resetar senha produtiva, gerar credenciais S3 ou copiar env de produção automaticamente. Validar previamente como a ferramenta receberá a credencial sem senha em argumentos, console, histórico, screenshot ou logs de debug. Guardar material de recuperação necessário separadamente e protegido. Chave raiz Vault/JWT/secrets não será extraída como parte implícita desta primeira autorização; se indispensável ao destino escolhido, tratar separadamente antes da janela.
+
+### Recuperação real a comprovar nesta etapa
+
+Restaurar cópia em stack NOVA dedicada, só loopback, com disco protegido, sem egress para SMTP,OAuth,Cron,webhooks,Healthcheck ou TikTok. Banco e bytes Storage são restaurados juntos; recuperar buckets/keys/ACLs/RLS/triggers e conferir o histórico como estava, sem aplicar as duas migrations pendentes. Usar artefatos do par antigo main9187b72, extraídos na área isolada, sem trocar checkout de outra branch. Frontend/backend novos exigem revision e não são o par correto para testar backup pré-DDL.
+
+Provas obrigatórias: comparar contagens/fingerprints privados de Auth/dados, grants/RLS/triggers e referências; baixar cada objeto restaurado e comparar tamanho/hash; login GoTrue real com conta permitida no destino, is_admin e negações de usuário comum/anon; leitura REST/API e reprodução HTTP do MP4 restaurado (status, bytes/hash e player). Sessões do destino usam chaves próprias; não reutilizar tokens produtivos. Se for necessário criar contas sintéticas para verificar permissões, isso deve constar da autorização exclusivamente no destino isolado. Sem escrita de smoke em produção nem repetição da suíte sintética completa.
+
+Vault: preservar seu dado cifrado/configuração como parte do backup revisado, mantendo Cron desativado no destino. Recuperação funcional de Vault depende de mecanismo suportado de chave/reprovisionamento do destino. Se não demonstrada, registrar limitação e não declarar recuperação integral de segredos/scheduler; não improvisar alteração de owner, grants ou chave para fazer o restore passar. Essa primeira etapa não libera o rollout por si só.
+
+### Abortar e retornar exatamente ao estado anterior
+
+1. Supervisor interrompe admissão de novas operações de backup. Aguardar/cancelar com segurança processos de exportação em leitura; manter artefatos incompletos identificados e protegidos, sem apagá-los. Sem tocar no banco produtivo.
+2. Verificar baselines e ausência de mudanças concorrentes. Repor Enable Data API ao valor original; confirmar leituras REST. Não conceder permissões ou executar reparo/migration para restaurar acesso.
+3. Restaurar configuração WAF registrada: retirar apenas a regra temporária de cada projeto e repor a ordem/estado anterior. Não desativar o firewall inteiro nem substituir configuração de terceiro. Se houve alteração concorrente, revisar diferença com o responsável antes de restaurar snapshot inteiro. Manter usuário com acesso manual ao painel para retorno independente do conector404. O baseline confirmado é zero Custom Rules: retirar a regra temporária deve devolver essa contagem e o comportamento anterior, preservando as demais proteções. Histórico de auditoria e versões gerados pela operação poderão permanecer no provedor; não serão apagados para simular ausência de mudança.
+4. Confirmar leituras GET/HEAD na API e site antigos, mesmos deployments/aliases/SHA; não fazer cadastro/edição/upload em produção. Repor job1 ao active original por último, com mesmo id/schedule/hash do comando. Confirmar Cron/Edge retomando por logs agregados; não invocar função manualmente.
+5. Registrar reabertura, resultado do backup (completo/incompleto/restore falhou), divergências e pendências. Se um controle não puder ser restaurado, comunicar imediatamente e seguir sob supervisão; não fazer reset, rollback de banco, deploy ou exclusão como atalho. Falha de backup não justifica deixar produção indefinidamente bloqueada.
+
+### Quem faz cada ação após autorização
+
+| Ação | Responsável/método disponível | Limite atual |
+| --- | --- | --- |
+| Confirmar plano, vaga, escopo WAF e publicar estágios/retorno | Usuário no painel Vercel; agente acompanha inventário/leitura | Plano Hobby/zero regras/Deny confirmados pelo responsável; conectores omitem plano e WAFactive404. Mutador oficial update_firewall_config existe, mas o método escolhido será publicação manual para garantir baseline e retorno; não usar PUT de configuração inteira |
+| Toggle Enable Data API e reposição | Usuário no painel Supabase | Conector atual não expõe configuração/toggle; disponibilidade foi confirmada manualmente |
+| Cron Inactive/Active | Usuário no painel; alternativamente conector execute_sql, SOMENTE com autorização explícita para cron.alter_job no id1 | Não executado. Evitar unschedule/recriação; revalidar id/baseline antes de qualquer alteração |
+| Inventários, SELECTs agregados, logs e CI | Conectores Vercel/Supabase/GitHub autorizados para leitura | Não imprimir payloads privados/segredos nem interpretar ausência de log como drain |
+| Criptografia, ACL, destino, segredo e recuperação de chave | Operador local nominal | Precisa confirmar manualmente antes de aprovar destino; agente não pede senha no chat |
+| Dump, download, hashes e restore | CLI/SDK/ferramentas locais no destino aprovado, sob supervisão | MCP execute_sql não é exportador de backup. Só após autorização de dados reais e barreira aprovada; nenhum acesso de teste deve alcançar produção |
+| Rotação/revogação URL Signing Keys | Fora da proposta padrão; painel manual se autorizada separadamente | Não rotacionar Auth ou Storage nesta etapa |
+
+### Texto proposto de autorização — preencher, não executar agora
+
+> Autorizo exclusivamente a janela de manutenção e backup de [data], [início–fim], America/Sao_Paulo, por até5h, com [operador] acompanhando. Aprovo o destino [caminho/volume criptografado verificado], a área de restauração [ambiente separado protegido] e retenção proposta de30dias, sem exclusão automática. Após confirmação do plano/vaga/escopo WAF nos dois projetos e dos demais pré-requisitos, autorizo os estágios e a regra temporária WAF, Data API off/on, job1 Inactive/Active, verificação negativa por leitura, drenagem e espera de URLs por2h, dump/download privado de dados reais e restauração isolada com validação Auth/permissões/vídeos. [Se necessário, autorizo contas sintéticas apenas no destino isolado.] Exijo abortar antes da cópia se a barreira falhar e retornar às configurações originais ao terminar ou atingir o limite; não prolongar a janela sem nova decisão. Não autorizo migration, reparo de histórico, merge, deploy, rotação de chaves ou smoke de escrita em produção.
+
+**Proposta pronta para aprovação da janela/destino, ainda sem autorização de execução:** plano/vaga/Deny foram confirmados manualmente; alcance geral fundamentado no contrato oficial, com eficácia e ausência de bypass a comprovar na ativação antes da cópia. Faltam data/hora, operador, acesso de retorno, criptografia, destino e retenção aprovados. Nenhuma ação produtiva foi realizada nesta preparação.
+
 ## Inventário hospedado somente leitura
 
 Leituras de 09/11 são observações independentes, não um snapshot transacional único. Revalidar na janela. Referência técnica PR9: `30e691157b2878da309845820928d1bd3947678e`; preflight documental anterior: `731fea90c9cc0cec7695e73087a5234a1ef2aa38`; main remota: `9187b72bf15906b0112a736503b35b68f3d4b297`. PR continua Draft.

@@ -1,3 +1,43 @@
+## Primeira etapa produtiva — proposta supervisionada pronta, 09/11/2026
+
+Estado: preparação concluída; aguarda aprovação de janela, destino protegido e operador. **Nenhuma execução produtiva autorizada ou realizada.**
+
+### Pedido e localização
+
+- Preparar somente manutenção/backup e recuperação, sem repetir testes isolados, desenvolver código, alterar produção ou publicar o editor.
+- Branch codex/integracao-editor-20261106, worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2. HEAD inicial2de63a56862779e0f6cadb870496ad28f91ee23d limpo/publicado; branches originais preservadas.
+- Mudanças desta entrega: apenas docs/EDITOR-RELEASE-20261106.md e este checkpoint. Commit/push documental exclusivo da branch conforme autorização vigente; SHA final via Git/PR, sem autorreferência.
+
+### Feito e decisões
+
+Runbook ganhou proposta de5h com esperaT0+2h, ativação/dreno até00:30, backup/restore, retorno e reserva; sem extensão automática. Datas/horários não agendados. Etapa termina reabrindo aplicação antiga, sem migration/repair/merge/deploy/smoke produtivo; nova escrita torna o backup histórico e rollout posterior exige backup atualizado. Restauração deve usar par antigo9187b72 contra schema pré-DDL, nunca frontend novo exigindo revision.
+
+Responsável confirmou manualmente Hobby, zero Custom Rules nos dois projetos e Deny disponível; frontend mostra limite3/AddRule. Sem seletor explícito Production/Preview. Documentação oficial:Environment é condição opcional,WAF por projeto eCDN inspeciona requisição de qualquer deployment. Inferência de alcance geral comPathprefixo/semHost/Environment/Method está explicitamente separada de eficácia a comprovar na janela. Conectores omitem plano eWAFactive404; publicação/retorno escolhidos manuais, supervisionados. Uma regra temporária por projeto; estágiosLog/hostPreviewexistenteDeny/LogProduction/Denygeral. Sem bypass/sharelink/ComputerUse/extração de cookies. SSO401 não comprova Deny; responsável pode verificar em sessão normalmente autenticada e eventos WAF.
+
+Só metadados para dimensionamento:DB14.571.187bytes,Storage64.895.376bytes/12objetos. F:~414GiB livres;BitLocker não confirmado porque manage-bde negou acesso administrativo. Destino proposto foraGit F:/BackupsPrivados/pcdnades/<data>,não criado;exigir criptografia/ACL eproteção também dos volumesDocker,temp ecredenciais. Capacidade proposta max20GiB,6D+4S+10GiB;retenção30dias a aprovar,sem exclusão automática. Node24.21.0/Docker29.7.2/CLI2.102.0/PG17imagem existem;psql/pg_dump/age/gpg/7z ausentesPATH. Nada instalado,nenhum lab iniciado/dado copiado.
+
+Manual/conectores/local separados no runbook. Abortar inclui interromper exportação,guardar incompletos,DataAPI original,WAF sóregra temporária/Cron original porúltimo eGETs do siteantigo. Sem sobrescrever mudanças concorrentes ou apagar auditoria. Vault cifrado preservado;sem extração implícita de raiz,limitação de recuperação de segredos deve ser registrada e não apresentada como DR integral.
+
+### Verificações e próximos passos
+
+Leituras oficiais e checks locais de disponibilidade/capacidade apenas;sem consultas Auth pessoais,segredos ou bytesStorage. Skills Supabase,VercelDeployments eVercelFirewall aplicadas a controles,etapas/prioridade,retorno e preservação deconfiguração. gitdiffcheck/revisão documental;histórico e vercel.json preservados. Não repetir110browser/152backend/63frontend/PG/HTTPisolado. ConferirCI exato e deployments após push no relatório final.
+
+Primeira ação ao retomar:conferir Git/este registro e obter aprovação explícita de data/início-fim America/Sao_Paulo,operador,volume criptografado verificado,retenção eambiente separado protegido. Validarbaseline/permissão depublicação/retorno WAF antes de indisponibilidade. Somente então solicitar/seguir autorização específica de manutenção,negativas porleitura,dreno,backup real/restore;qualquerfalha debarreira aborta antes deexportar. Permanecem proibidos repair20,revision,merge,deploy,rotação e smoke deescrita produtivo nesta etapa.
+
+PR: https://github.com/Lipe-meira/pcdNades/pull/9 (Draft). Histórico abaixo preservado.
+
+---
+
+## Janela supervisionada — 09/11/2026, proposta em finalização
+
+Responsável confirmou por leitura manual: VercelHobby,frontend0regras/limite3/AddRule/Deny;backend0regras/Deny;nenhumseletorexplícitoProduction/Preview;nenhumaconfigalterada. Documentaçãooficial defineEnvironmentcomocondiçãoopcional,WAFporprojeto eCDNpara tododeployment. Inferência:regraPathprefixo/semHost/Environment/Methodabrangeambosambientes/URLsantigas;eficáciaprecisaserverificadanafuturajanela. EtapasWAFsupervisionadasmanualLog→hostPreviewexistenteDeny→LogProduction→Denygeral,uma regraporprojeto. SSO401nãoprovaDeny;responsávelpodeconferirsessãonormalsembypass;agentesemComputerUse/cookies.
+
+Leituras:APIWAF404persiste,planomitidopelosconectores;nãotratadocomoausência. CLI Vercel ausente,nãoinstalada. CapacidadeprodutivaporSELECTagregado:DB14.571.187bytes/Storage64.895.376bytes/12objetos,sembaixarbytes. F:~414GiBlivres,criptografianãoconfirmadaporacessonegadomanage-bde. Node24.21.0,Docker29.7.2ativo,CLI2.102.0ePG17imagemdisponíveis;psql/pg_dump/age/gpg/7zforaPATH. Plano5h,esperaT0+2h,dump/restoreparantigo9187,retornosemDDL. Destino,data,operador,retenção/proteçãoaaprovar;nenhumvolume/pastabackupcriado,dadocopiadoouserviçomodificado. Próximo:finalizardocumentos,diffcheck/commitpushsomentePR9 eCI,entregartextodeautorizaçãoespecífico.
+
+## Primeira etapa produtiva supervisionada — 09/11/2026, preparação
+
+Pedido: preparar janela e destino de manutenção/backup sem executar alterações. Branch/worktree de integração existentes, HEAD2de63a56862779e0f6cadb870496ad28f91ee23d limpo. Ler runbook/checkpoints concluído; próximos passos: verificar plano/entitlements WAF por leitura oficial, elaborar cronograma com espera2h+dreno+backup/restore e retorno exato, requisitos de destino e divisão manual/conectores. Sem testes isolados repetidos, sem produção/config/backup/cópia/migration/repair/merge/deploy. Documentação e checkpoint serão preservados nesta branch; antes da entrega, registrar limitações e verificações efetivas.
+
 ## Preflight confirmado pelo responsável — 09/11/2026
 
 Estado: **APTO PARA SOLICITAR AUTORIZAÇÃO DE MANUTENÇÃO/BACKUP**. Usuário respondeu às duas perguntas pendentes: não existe escritor externo; Enable Data API e Storage → URL Signing Keys com rotate/revoke estão disponíveis. São confirmações do responsável, não controles ativados pelo agente.
