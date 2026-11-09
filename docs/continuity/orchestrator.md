@@ -1,3 +1,15 @@
+## Preflight confirmado pelo responsável — 09/11/2026
+
+Estado: **APTO PARA SOLICITAR AUTORIZAÇÃO DE MANUTENÇÃO/BACKUP**. Usuário respondeu às duas perguntas pendentes: não existe escritor externo; Enable Data API e Storage → URL Signing Keys com rotate/revoke estão disponíveis. São confirmações do responsável, não controles ativados pelo agente.
+
+Mesma branch/worktree de integração; HEAD inicial731fea90c9cc0cec7695e73087a5234a1ef2aa38 limpo e publicado. Atualizados somente runbook e este checkpoint, preservando histórico abaixo. Sem novos inventários extensos, testes de aplicação ou ensaios. Bloqueios vercel.json preservados; commit/push documental exclusivamente na branchPR9 conforme autorização vigente. SHA final via Git/PR, sem autorreferência; conferir CI e deployments após push.
+
+Decisão: encerradas pendências de informação. Cobertura efetiva WAF, REST/RPC, Cron/Edge/Storage e dreno ainda precisam ser demonstrados como primeiro gate da futura janela autorizada. WAF404 não é prova de cobertura. Falha de qualquer controle obriga interromper antes da exportação/DDL e seguir retorno acordado. Preferir espera2h após última emissão possível, mais uploads em andamento; rotate/revoke exige autorização adicional. Aprovação significa poder solicitar a etapa limitada, não aprovação de rollout.
+
+Próximo passo: obter autorização explícita para janela, controles reversíveis, probes negativos, dreno, destino privado/operador e backup real com restauração em ambiente separado. Não solicitar senha pelo chat. Não incluir repair20,revision,merge,deploy ou smoke produtivo nessa primeira autorização. Nenhuma operação de produção autorizada ou executada pelas respostas atuais. Relatório final informa commit/CI; registros anteriores de BLOQUEADO são históricos e superados apenas quanto às duas confirmações.
+
+---
+
 ## Preflight operacional hospedado — 09/11/2026
 
 Estado: concluído documentalmente; **BLOQUEADO** para solicitar execução conjunta de manutenção/backup até confirmação dos escritores externos e cobertura dos controles hospedados.

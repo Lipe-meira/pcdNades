@@ -1,12 +1,14 @@
 # Editor: preflight operacional hospedado — 09/11/2026
 
-**Parecer: BLOQUEADO para solicitar execução conjunta de manutenção/backup.** A estratégia suportada e verificável está preparada, mas ainda faltam a confirmação dos escritores externos e a cobertura efetiva dos controles no projeto. A fase técnica isolada permanece **APROVADA COM RISCOS RESIDUAIS**. Seus ensaios não foram repetidos.
+**Parecer: APTO PARA SOLICITAR AUTORIZAÇÃO DE MANUTENÇÃO/BACKUP.** Em09/11, o responsável confirmou que não existe escritor externo e que Enable Data API e Storage → URL Signing Keys, com rotação/revogação, estão disponíveis no painel. Essas confirmações encerram as pendências de informação do parecer anterior. A fase técnica isolada permanece **APROVADA COM RISCOS RESIDUAIS**, sem novos ensaios.
 
-Primeira ação pendente: o responsável confirmar os executores com acesso SQL, Storage, service_role ou S3 e os controles WAF/Data API disponíveis no painel. A página URL Signing Keys é opcional para a alternativa de espera de2h. A autorização seguinte poderá limitar-se à manutenção, sua verificação e ao backup/restauro, com interrupção antes da exportação se qualquer escritor continuar ativo. Não se propõe alterar permissões ou desenvolver funcionalidades.
+Isso não comprova uma barreira já ativa nem autoriza execução. A primeira condição da futura janela será ativar os controles aprovados e demonstrar a cobertura WAF dos deployments/aliases antigos, o bloqueio REST/RPC e a drenagem de Cron, Edge e Storage. A leitura WAF404 permanece uma limitação de inspeção, não prova de bloqueio. Se qualquer caminho continuar ativo ou não puder ser verificado, interromper antes de exportar dados ou aplicar DDL e seguir o retorno acordado.
+
+Solicitar autorização limitada à manutenção reversível, sua verificação e ao backup/restauro em destino privado e ambiente separado acordados com o responsável. Preferir a espera de2h após a última emissão possível, mais uploads em andamento, sem rotação de chaves. A alternativa rotate/revoke do Storage exige autorização explícita adicional. Nenhuma alteração de permissões, código ou produção foi realizada com estas confirmações.
 
 ## Inventário hospedado somente leitura
 
-Leituras de 09/11 são observações independentes, não um snapshot transacional único. Revalidar na janela. Referência PR9: `30e691157b2878da309845820928d1bd3947678e`; main remota: `9187b72bf15906b0112a736503b35b68f3d4b297`. PR continua Draft.
+Leituras de 09/11 são observações independentes, não um snapshot transacional único. Revalidar na janela. Referência técnica PR9: `30e691157b2878da309845820928d1bd3947678e`; preflight documental anterior: `731fea90c9cc0cec7695e73087a5234a1ef2aa38`; main remota: `9187b72bf15906b0112a736503b35b68f3d4b297`. PR continua Draft.
 
 | Recurso | Evidência | Consequência |
 | --- | --- | --- |
@@ -21,7 +23,7 @@ Leituras de 09/11 são observações independentes, não um snapshot transaciona
 | Cron/Edge | Job1 pcdnades-preview-sweep ativo, */3min; Edge preview-sweep ACTIVE/v1, verify_jwt=false, com token próprio | Fonte hospedada exige claim REST antes de modificar Storage. Cron inativo não cancela invocação aceita nem chamada externa |
 | Repouso observado | Filas net/Cron, leases de mídia/importação/sweep e preview jobs vazios;14 mídias ready/2failed;11 granadas com mídia, sem objeto publicado ausente | Isso é um snapshot, não drenagem garantida. Sucesso do Cron SQL comprova despacho HTTP, não conclusão Edge |
 | Logs agregados, últimos15min | 5 invocações Edge concluídas com204; Storage mostrou GET e POST de listagem, sem payloads consultados. Vercel não retornou grupos de logs runtime nesse intervalo | Cron está efetivamente executando mesmo com fila vazia. POST de listagem Storage é leitura; ausência de log Vercel não comprova ausência de requisição |
-| Outros executores | pg_cron/pg_net instalados, pgmq ausente; sem FDW ou trigger customizado de Auth observado. Sessão postgres observada era pg_net worker idle | Worker batch do repo usa SQL direto e Storage; os conectores não inventariam Docker, VPS, agendadores e credenciais S3 externos |
+| Outros executores | pg_cron/pg_net instalados, pgmq ausente; sem FDW ou trigger customizado de Auth observado. Sessão postgres observada era pg_net worker idle | Worker batch do repo usa SQL direto e Storage; os conectores não inventariam Docker, VPS, agendadores e credenciais S3 externos; o responsável confirmou em09/11 que não existe escritor externo |
 | Git/configuração | Workflow backend-linux apenas compila/testa; sem deploy. Dois vercel.json mantêm false exclusivamente para esta branch; sem crons nesses arquivos | Não comprova ausência de automações externas ou settings não expostos |
 
 Rotas mutáveis do backend publicado (main9187b72), também presentes na integração, sob `/api/v1`:
@@ -52,7 +54,7 @@ A [pausa de projeto Vercel](https://vercel.com/docs/projects/managing-projects) 
 
 **Critério de drenagem:** depois de cessar admissão, observar repetidamente Cron/net, leases, mídia queued/processing, atividade SQL relevante e execuções/logs de Vercel/Storage. Exigir término ou parada comprovada dos executores. Nem pg_stat_activity sozinho, nem lease expirada, contagem estável ou sucesso do Cron SQL bastam. Se alguma escrita relevante retornar, invalidar o backup. Sem cobertura demonstrada, parar antes da cópia/DDL e seguir o plano de retorno acordado.
 
-Alternativa operacional viável: inventário manual completo, janela total e espera T0+2h. Se não for possível conter emissores ou comprovar dreno do Storage, solicitar ao Supabase uma barreira de ingresso suportada antes de agendar a execução. Não improvisar revogações de permissões.
+Alternativa operacional selecionável: ausência de escritores externos confirmada pelo responsável, janela total e espera T0+2h. Reconfirmar essa condição ao iniciar a janela. Se não for possível conter emissores ou comprovar dreno do Storage, solicitar ao Supabase uma barreira de ingresso suportada antes de agendar a execução. Não improvisar revogações de permissões.
 
 ### Leituras mínimas para verificar a janela autorizada
 
