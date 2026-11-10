@@ -1,3 +1,109 @@
+## Investigação de 2 mídias ready sem objeto — 10/11/2026 (somente leitura)
+
+Escopo: consultas de leitura em produção; nada alterado, excluído ou enviado. Casos: (1) media 4efc2acb…, source_type upload, criada 29/10, storage_key `<id>/source.mp4` (formato antigo do primeiro fluxo de upload; as demais ready usam `<id>/import-1.mp4`), sem granada, sem import_source, attempts=1, sem erro; (2) media a7c77cfa…, TikTok, criada 01/11, clip 0–5s, key `<id>/import-1.mp4`, ligada ao import_source 43908028… (expirou em 01/11 15:35). Nenhuma das duas é referenciada por granada. Todas as 11 granadas têm video_id apontando para media ready COM objeto; 0 referências pendentes/inválidas; 0 keys duplicadas; 0 objetos órfãos; os 20 import_sources estão expirados (esperado). Classificação: registros antigos de teste/staging cujo arquivo staging não existe mais; causa exata da remoção NÃO comprovada (hipótese: limpeza/expurgo manual de staging). Impacto atual: nenhum nas granadas; a API só enriquece granadas por video_id (application.ts) e o editor não lista mídia solta. A migration revision só altera public.grenades (coluna revision, trigger, revoke UPDATE) e não toca media_assets/Storage, logo não agrava; novo editor só anexa videoId informado pelo próprio fluxo de upload/import. Parecer: NÃO é bloqueio para publicar; aceitar como pendência preexistente e tratar depois (marcar/limpar as duas linhas só com autorização, sem apagar agora). Roles: db/roles.sql existe (370 bytes, só ALTER ROLE statement_timeout de anon/authenticated/authenticator e um GRANT; sem senhas) — roles gerenciados; senhas de roles não recuperáveis daqui. Limitações registradas: restauração completa NÃO testada; valores do Vault (preview_sweep_url/apikey/token) NÃO exportados; Edge Functions/config Auth do painel fora do backup. Cron job 1 ativo.
+
+---
+
+## Backup mínimo executado — 10/11/2026 (Claude Code assumiu do Codex)
+
+Branch codex/integracao-editor-20261106, worktree de integração, HEAD 1f85265 (= remoto); alterações locais do Codex preservadas e não commitadas; `supabase/` (link da CLI) é local e não deve ser commitado. Autorização: só backup privado + pausa do Cron job 1. Executado: Cron job 1 pausado às 19:17 UTC após drenagem limpa e REATIVADO após o backup (confirmado active=true por leitura). Backup manual pelo responsável em F:/BackupsPrivados/pcdnades/release-20261109: db/full-custom.dump (pg_dump 17 -Fc de public/auth/storage/supabase_migrations; pg_restore --list OK; 44 entradas de dados), SQLs de apoio, 12 MP4 (64.895.376 bytes; MD5=ETag e SHA256=manifesto, 12/12). import-previews estava vazio. Notas em BACKUP-NOTES.md no destino. Estado: backup GERADO e verificado por inventário; restauração NÃO testada; roles.sql ainda pendente (CLI db dump --role-only, feito pelo responsável). Achado: 2 media_assets ready sem objeto no Storage (4efc2acb…, a7c77cfa…), pré-existente, não investigado. Nenhuma migration, repair 20/50, merge ou deploy. Senha apenas em variável de sessão do responsável (limpar). Próximo: roles.sql, limpar variáveis, decidir teste de restauração, depois autorização separada para repair 20/50 + revision + merge PR9 + deploy coordenado.
+
+---
+
+## Backup mínimo autorizado — 09/11/2026, preparação
+
+Atualização: responsável confirmou pausa das atividades administrativas e prefere executar o backup manualmente com orientação, sem compartilhar credenciais. Nova consulta: job 1 continua ativo; execuções Cron, fila HTTP e leases de mídia/prévia estavam vazios no instante da consulta. CLI permite storage cp recursivo e db dump, mas acesso do operador e escopo Auth/Storage/histórico ainda precisam ser demonstrados. Cron ainda não foi pausado: aguardar operador com ferramentas e acesso prontos; então pausar, revalidar drenagem e orientar a cópia. Se houver falha, restaurar job 1 ao estado ativo. Não houve backup nem alteração produtiva.
+
+Usuário autorizou pausa administrativa, suspensão temporária apenas do Cron e backup privado de banco/Storage em F:/BackupsPrivados/pcdnades/release-20261109; aceita F: sem BitLocker. Não autorizou migration, repair, merge, deploy ou smoke de escrita. Worktree de integração, branch codex/integracao-editor-20261106, HEAD local 1f85265; alterações documentais anteriores preservadas, sem commit/push.
+
+Consulta somente leitura: job 1 pcdnades-preview-sweep ativo, agendamento */3 minutos; 12 objetos em dois buckets privados, nenhuma escrita SQL ativa, fila HTTP/Cron e leases de mídia/prévia vazios nos instantes consultados; mídia 14 ready/2 failed. Isso não comprova ausência de uploads ou operações Edge em andamento. Nenhum controle alterado ou backup iniciado. Supabase CLI 2.102.0, Docker e imagem PostgreSQL 17 disponíveis; credenciais produtivas para exportação e Storage não foram encontradas nas variáveis verificadas. Destino criado vazio, com herança de ACL bloqueada e acesso à conta atual e SYSTEM. Aguardar confirmação de pausa administrativa e preparar acesso privado às credenciais antes de pausar Cron.
+
+Próximo: confirmar pausa com responsável, meio seguro de credenciais de banco e leitura completa do Storage, e verificar novamente drenagem; somente com capacidade comprovada de backup, suspender job 1, exportar e validar. Se backup ou drenagem falhar, restaurar job ao estado ativo original. Não registrar credenciais, objetos ou dados pessoais no checkpoint.
+
+---
+
+## Release mínimo — 09/11/2026, proposta para aprovação
+
+Pedido atual substitui exigências de criptografia/VM/restore empresarial e janela de horas por backup privado simples, breve pausa de edições/processamento, reconciliação20/50, revision, merge/deploy e verificação. Aceita riscos residuais razoáveis. Nesta tarefa apenas plano; proibidos backup real, SQL de escrita, migration, merge e deploy sem autorização explícita. Worktree integração/branch codex/integracao-editor-20261106, HEAD1f85265; alterações locais anteriores preservadas, sem commit/push.
+
+Proposta: avisar administradores, interromper uploads/edições e pausar Cron preview-sweep; consultar estados de mídia/leases/Cron antes de prosseguir. Copiar DB e arquivos Storage para destino privado fora do Git e verificar arquivos gerados, tamanhos e hashes; banco e objetos são separados. Comparar função20/50 e ACLs com migration; reparar somente histórico, sem reexecutar a função. Aplicar revision, conferir dados/grants e integrar PR9; manter pausa enquanto deploys API/frontend ficam prontos no mesmo SHA. Smoke autorizado de login/listagem/cadastro/edição/vídeos; reabrir Cron e edição. Se falhar, manter pausa e preservar dados, preferir correção adiante; rollback de backend antigo não é seguro após revogar UPDATE. Não restaurar backup sobre dados novos automaticamente.
+
+URLs de upload assinadas duram2h; se não houver upload/edição/processamento conhecido e administradores forem avisados, usuário aceita publicar sem aguardar2h. Isso não revoga URLs anteriores nem prova que ninguém as use; backup DB/Storage pode divergir se upload tardio ocorrer, risco aceito e registrado. Não rotacionar chaves nem apagar objetos. Estimativa 20–45min otimista; falha de backup/deploy ou autorização pode estender, sem garantia. Sem dados reais copiados e sem testes extensos repetidos nesta tarefa. Documentos anteriores sobre SSD/LUKS e janela de6h permanecem como histórico, não requisitos atuais.
+
+Próximo: obter autorização explícita para ações produtivas, inclusive backup, pausa Cron, repair/migration, merge/deploy e smoke com escrita; confirmar destino privado e operadores. Não interpretar aprovação do plano como execução até autorização explícita.
+
+---
+
+## Linux externo criptografado — 09/11/2026, plano para revisão
+
+Pedido: avaliar SSD externo com Linux/LUKS e Docker Engine independente; sem modificar discos/boot, instalar software, criar VHDX, usar dados reais, alterar produção ou PR, commit ou push. Branch integração existente; alterações locais anteriores de runbook/checkpoint preservadas. Isolamento sintético HTTP/egress anterior aceito pelo usuário; evidências/volumes preservados.
+
+Leituras locais: Gigabyte B760M D2H DDR4, i5-12400F 6 núcleos/12 threads, ~32 GiB RAM, Ethernet1Gbps ativa, UEFI. Get-Disk listou apenas SATA/NVMe internos, nenhum SSD USB identificado. Secure Boot não pôde ser lido por falta de privilégios; HypervisorPresent não comprova configuração de boot externo. Nenhuma alteração de hardware/configuração. Documentação oficial Docker: rede internal gateway isolated sem gateway de host; tmpfs pode usar swap. Docker Engine e suporte USB/UEFI/Secure Boot no Linux externo ainda precisam de verificação sintética.
+
+Plano candidato: SSD externo dedicado, LUKS com sistema/data-root Docker/volumes/logs/tmp e swap cifrado ou desativado; instalar bootloader/ESP apenas no SSD externo após aprovação, com discos internos fisicamente desconectados se possível; inicialização temporária via menu UEFI, sem configurar ordem persistente por inferência. Confirmar SSD/serial/capacidade por operador antes de qualquer formatação. Usar mídia instaladora separada e dispositivo seguro de recuperação da chave. Não montar C:/F:/demais internos por padrão. Host Linux efetua backup somente após autorização; serviços restaurados ficam em rede Docker internal + gateway isolated, IPv6/portas/DNS/rotas verificados e cliente HTTP interno. Para Windows/F:, transferir apenas arquivos já cifrados; nenhum texto claro em C:/F:. Cofre off-line independente com chave de recuperação, cópia protegida do cabeçalho LUKS e chave da criptografia portátil; testar recuperação com dados sintéticos, sem restaurar header em dispositivo errado.
+
+Comparação: VM Hyper-V em VHDX protegido em F: é mais cômoda, mas riscos persistem em C:/pagefile.sys, hibernação/dumps, arquivos de estado/checkpoints/logs e no Docker Desktop compartilhado. Linux inicializado fora do Windows evita pagefile Windows durante a operação; ainda requer controle de memória/swap/dumps, boot/firmware e não é garantia contra host comprometido. SSD externo não verificado nem instalado; proteção completa BLOQUEADA até implementar e validar os controles. Manter disponibilidade humana e autorizações separadas para backup, manutenção, migration, merge/deploy e smoke.
+
+Próximo: usuário confirma disponibilidade e capacidade/modelo do SSD externo e mídia instaladora, possibilidade de desconectar discos internos, backup da chave fora do SSD, e aceita plano antes de qualquer alteração. Em seguida autorização explícita identificando alvo pelo modelo/serial e limites de formatação/boot; instalar/configurar somente após isso, verificar montagens, isolamento, recuperação e ausência de arquivos em discos internos usando apenas fixtures sintéticas. Sem backup real ou alterações produtivas nesta tarefa.
+
+---
+
+## Rede isolada e arquitetura de armazenamento — 09/11/2026
+
+Branch/worktree integração, HEAD1f85265; alterações documentais anteriores preservadas, somente locais, sem push. Usuário confirmou C: e F: FullyDecrypted, Windows10Pro/TPM; não autorizou criar VHDX, BitLocker, configurar host, dados reais ou produção.
+
+PASS no ensaio sintético: rede exclusiva pcdnades-restore-gateway-isolated-20261109, bridge internal=true e gateway_mode_ipv4=isolated, IPv6 desativado, sem portas publicadas, somente uma rede por cada dos oito serviços; Docker inspect sem gateway. Cliente Node próprio na rede fez login GoTrue real, GET PostgREST de tabela sintética, upload/download Storage de MP4 e SHA256 igual. TCP/IPs externos de teste e DNS example.com não responderam; host.docker.internal/gateway.docker.internal não resolveram. Oito namespaces inspecionados com clientes temporários: sem rota IPv4 padrão ou IPv6 não loopback; containers não privilegiados, sem CapAdd e sem docker.sock. Canário próprio em outra rede: respondeu dentro da sua rede e foi bloqueado a partir da stack. Conclusão sob o modelo Docker/host íntegros: isolamento nativo e comunicação HTTP interna PASS; não é prova contra daemon/host comprometido ou exfiltração por operações manuais posteriores. Nenhuma API de produção chamada. Playback no navegador/decodificação MP4 não repetidos: hash dos bytes por HTTP apenas.
+
+Rede interna anterior falhou HTTP do host porque não havia rota acessível via port forwarding no Docker Desktop; diagnóstico observado, causa de implementação específica não comprovada. Modo isolado remove endereço do gateway na bridge conforme documentação Docker; não usar porta do host, cliente executa na rede. Oito containers próprios e canário próprio parados; volumes/redes/evidências preservados em backend/vendor/restore-ready-20261109. A stack agora tem conta, tabela, bucket e MP4 sintéticos de teste: NÃO está vazia. Para restauração futura, criar volumes/banco novos próprios sem sobrescrever evidências.
+
+Armazenamento: VHDX de dados em F: com BitLocker é opção suportada, mas não protege automaticamente camadas/logs/tmp/swap do Docker Desktop em C:. Hyper-V/VM separada com todos os VHDs/config/checkpoints/logs dentro do volume protegido e Docker Engine próprio pode reduzir rastros, mas host Windows continua com C:/pagefile.sys e potencial hibernação/crash dumps; proteção total em C: NÃO demonstrada. Hyper-V Manager New-VM e serviço vmms não encontrados; disponibilidade de VM separada não confirmada. Recomendação para requisito estrito: ambiente Linux físico separado ou boot externo independente, com armazenamento integralmente criptografado, swap desabilitado ou criptografado, sem montar C:, e backup transmitido/armazenado somente cifrado em F:; não executar sem autorização de infraestrutura. Se preferir Hyper-V no mesmo Windows, requer avaliação/controle dos arquivos de paginação, dumps, hibernação, caches, caminhos VM e aceitação de risco/autorização específica, pois envolve potencial configuração global. Não afirmar proteção completa com bind mount.
+
+Próximo: usuário decidir arquitetura e autorizar separadamente criação de ambiente criptografado e eventual instalação/configuração; validar com dados sintéticos caminhos de escrita e recuperação de chave antes de dados reais. Resultado global BLOQUEADO por proteção de armazenamento não comprovada, não por HTTP interno. Nenhum VHDX criado, BitLocker ativado, Docker global modificado, backup real, migração remota, merge, deploy ou push.
+
+---
+
+## Isolamento de saída — 09/11/2026, BLOQUEADO
+
+Stack própria restore-ready-20261109, mesma branch e HEAD1f85265; modificações documentais anteriores preservadas, sem commit/push. Criada rede exclusiva pcdnades-restore-internal-20261109 --internal; oito containers próprios movidos da bridge anterior, sem alterar outras redes/volumes. Docker inspect confirmou rede única por container, internal=true, IPv6 desativado e bindings publicados exclusivamente127.0.0.1. Containers próprios parados e volumes/evidências preservados em backend/vendor/restore-ready-20261109/egress-result.private.json.
+
+Resultado: entrada FAIL: HTTP host 127.0.0.1:58821 expirou em5s na rede interna. Comunicação interna PARCIAL: PostgreSQL alcançou portas TCP de Auth/PostgREST/Storage e SELECT1 passou; HTTP completo através do host não passou. Saída NÃO COMPROVADA integralmente: PostgreSQL não conectou em 1.1.1.1:443,192.0.2.1:443,172.31.0.1:5432,172.17.0.1:443 nem gateway192.168.0.1:443; DNS externo example.com expirou. Há gateway na rede interna, e DNS Docker127.0.0.11 usa encaminhamento configurado. Não provamos todos os destinos/portas nem todos os serviços: imagem PostgREST não tem sh para checagem interna de rotas. Não afirmar bloqueio completo de APIs produtivas ou todos os serviços externos com base nas amostras. Nenhuma chamada a APIs produtivas feita.
+
+Próxima ação: identificar solução oficialmente suportada para HTTP loopback sem abrir caminhos de saída; somente com revisão e autorização pertinente caso envolva mais do que recursos próprios. Usuário pediu bloqueio, não improvisação, caso HTTP falhe. Criptografia C:/F:/VHDX continua pendente de confirmação pelo usuário; sem dados reais, backup, alteração produtiva, migrations remotas, merge, deploy ou push.
+
+---
+
+## Stack vazia de restauração — 09/11/2026
+
+Criada stack exclusiva restore-ready-20261109 em backend/vendor/restore-ready-20261109 (ignorado), na branch de integração, HEAD1f85265. Preservadas alterações documentais locais anteriores, sem commit/push. Configuração deriva da stack sintética própria anterior; chaves são sintéticas, nunca produtivas. Volumes novos supabase_db_restore-ready-20261109 e supabase_storage_restore-ready-20261109, rede bridge exclusiva pcdnades-restore-ready-20261109; oito containers próprios parados após ensaio, volumes e evidências preservados.
+
+Antes dos testes, docker inspect confirmou todos os bindings publicados 127.0.0.1, sem IPv6 wildcard; rede contém apenas os oito serviços próprios. Auth precisou de restart após inicialização do banco. PASS: endpoint health Auth, listagem administrativa Auth com zero usuários, raiz PostgREST, listagem Storage com zero buckets e consultas PostgreSQL reais; banco com zero tabelas públicas, zero usuários e zero buckets. Nenhuma conta/dado real importado e nenhum ensaio completo de rollout repetido. Rede bridge permite egress: bloquear egress e observar serviços antes de futura restauração real; não executar com dados reais enquanto C:/F:/Docker não tiverem proteção confirmada.
+
+Próximo: usuário confirma BitLocker C:/F: sem compartilhar chaves; selecionar destino e validar criptografia de VHDX Docker e temporários, confirmar isolamento de egress, credenciais seguras e autorizações específicas antes da janela. Sem backup real, migration remota, produção, merge, deploy ou push.
+
+---
+
+## Preparação local da janela única — 09/11/2026
+
+Branch codex/integracao-editor-20261106, worktree de integração, HEAD1f85265d460504dc44674743b95844dc200a3e6f. Preservadas alterações documentais pré-existentes em docs/EDITOR-RELEASE-20261106.md e este checkpoint; somente locais, sem push. Pedido: preparar restauração sintética e verificar criptografia/armazenamento, sem tocar produção.
+
+C: e F: com 1404,6 e 413,9 GiB livres, respectivamente. manage-bde -status C:/F: e Get-BitLockerVolume retornaram acesso negado; proteção de ambos não comprovada. Docker Desktop WSL2 usa C:/Users/felip/AppData/Local/Docker/wsl/disk/docker_data.vhdx e main/ext4.vhdx; volume próprio em /var/lib/docker/volumes/pcdnades-restore-empty-20261109-pg/_data dentro da VM; temporários Windows em C:/Users/felip/AppData/Local/Temp. Nenhuma proteção presumida: não copiar dados reais para F:, C: ou Docker até confirmação. F: criptografado não protege VHDX em C:.
+
+Criado exclusivamente o container pcdnades-restore-empty-20261109 e seu volume homônimo; PostgreSQL17.11 com banco vazio (zero tabelas public), rede none, sem portas. pg_isready/psql e pg_dump/pg_restore list passaram com dados sintéticos de sistema; container parado, volume preservado. Node24.21.0, Docker29.7.2 e CLI Supabase2.102.0 disponíveis. O ambiente ainda NÃO inclui GoTrue/PostgREST/Storage e não foi testado com dados reais; não chamá-lo pronto para restauração operacional completa. Nenhum recurso de outros agentes modificado, nenhum teste extenso repetido.
+
+Próximo: responsável consultar proteção BitLocker de C: e F: em PowerShell como administrador, sem fornecer chaves; escolher armazenamento protegido para backup, VHDX/volumes e temp. Se não houver criptografia ativa, propor BitLocker no volume pertinente ou destino criptografado aprovado; não ativar/mover automaticamente. Completar stack isolada Auth/PostgREST/Storage vazia, validar bindings/egress e integração sintética; confirmar acesso seguro às credenciais e destino antes de escolher a janela. Checklist: autorização para manutenção/backup; gate de backup/restore; autorização separada para repair20/revision; autorização separada para merge/deploy; autorização separada para smoke/reabertura. Sem manutenção, backup real, migration, merge, deploy, alteração remota ou push nesta tarefa.
+
+---
+
+## Janela única — 09/11/2026, proposta documental
+
+Pedido: comparar backup-base com site ativo e uma janela coordenada, sem manutenção, backup real, cópia, alteração remota, migration, repair, merge ou deploy. Branch codex/integracao-editor-20261106, worktree integração, HEAD inicial1f85265d460504dc44674743b95844dc200a3e6f. Atualizados localmente somente runbook e checkpoint; sem push porque alterações remotas não foram autorizadas. Preservar histórico e trabalho local.
+
+Feito: proposta de backup-base separado e não consistente como substituto, preparações sem dados, janela única com barreiras/dreno/2h/backup final/restore, paradas de autorização separadas e retorno. Docker info mostra desktop-linux e /var/lib/docker dentro da VM; WSL registra docker-desktop em C:/Users/felip/AppData/Local/Docker/wsl/main. Local do VHDX de dados/volumes e criptografia efetiva não comprovados; confirmar painel e proteção de C/F, temporários e Docker antes de dados reais. Documentação oficial consultada. Nenhum teste de aplicação repetido.
+
+Próxima ação ao retomar: conferir git status e aprovar separadamente destino protegido e eventual backup-base; depois aprovar janela de manutenção. Em janela, exigir autorização específica após restore para repair/revision e novamente para merge/publicação, além de smoke; sem resposta, abortar/retornar. Nenhuma ação produtiva foi executada nesta tarefa.
+
+---
+
 ## Primeira etapa produtiva — proposta supervisionada pronta, 09/11/2026
 
 Estado: preparação concluída; aguarda aprovação de janela, destino protegido e operador. **Nenhuma execução produtiva autorizada ou realizada.**
