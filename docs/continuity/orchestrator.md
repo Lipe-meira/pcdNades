@@ -1,3 +1,332 @@
+## Investigação de 2 mídias ready sem objeto — 10/11/2026 (somente leitura)
+
+Escopo: consultas de leitura em produção; nada alterado, excluído ou enviado. Casos: (1) media 4efc2acb…, source_type upload, criada 29/10, storage_key `<id>/source.mp4` (formato antigo do primeiro fluxo de upload; as demais ready usam `<id>/import-1.mp4`), sem granada, sem import_source, attempts=1, sem erro; (2) media a7c77cfa…, TikTok, criada 01/11, clip 0–5s, key `<id>/import-1.mp4`, ligada ao import_source 43908028… (expirou em 01/11 15:35). Nenhuma das duas é referenciada por granada. Todas as 11 granadas têm video_id apontando para media ready COM objeto; 0 referências pendentes/inválidas; 0 keys duplicadas; 0 objetos órfãos; os 20 import_sources estão expirados (esperado). Classificação: registros antigos de teste/staging cujo arquivo staging não existe mais; causa exata da remoção NÃO comprovada (hipótese: limpeza/expurgo manual de staging). Impacto atual: nenhum nas granadas; a API só enriquece granadas por video_id (application.ts) e o editor não lista mídia solta. A migration revision só altera public.grenades (coluna revision, trigger, revoke UPDATE) e não toca media_assets/Storage, logo não agrava; novo editor só anexa videoId informado pelo próprio fluxo de upload/import. Parecer: NÃO é bloqueio para publicar; aceitar como pendência preexistente e tratar depois (marcar/limpar as duas linhas só com autorização, sem apagar agora). Roles: db/roles.sql existe (370 bytes, só ALTER ROLE statement_timeout de anon/authenticated/authenticator e um GRANT; sem senhas) — roles gerenciados; senhas de roles não recuperáveis daqui. Limitações registradas: restauração completa NÃO testada; valores do Vault (preview_sweep_url/apikey/token) NÃO exportados; Edge Functions/config Auth do painel fora do backup. Cron job 1 ativo.
+
+---
+
+## Backup mínimo executado — 10/11/2026 (Claude Code assumiu do Codex)
+
+Branch codex/integracao-editor-20261106, worktree de integração, HEAD 1f85265 (= remoto); alterações locais do Codex preservadas e não commitadas; `supabase/` (link da CLI) é local e não deve ser commitado. Autorização: só backup privado + pausa do Cron job 1. Executado: Cron job 1 pausado às 19:17 UTC após drenagem limpa e REATIVADO após o backup (confirmado active=true por leitura). Backup manual pelo responsável em F:/BackupsPrivados/pcdnades/release-20261109: db/full-custom.dump (pg_dump 17 -Fc de public/auth/storage/supabase_migrations; pg_restore --list OK; 44 entradas de dados), SQLs de apoio, 12 MP4 (64.895.376 bytes; MD5=ETag e SHA256=manifesto, 12/12). import-previews estava vazio. Notas em BACKUP-NOTES.md no destino. Estado: backup GERADO e verificado por inventário; restauração NÃO testada; roles.sql ainda pendente (CLI db dump --role-only, feito pelo responsável). Achado: 2 media_assets ready sem objeto no Storage (4efc2acb…, a7c77cfa…), pré-existente, não investigado. Nenhuma migration, repair 20/50, merge ou deploy. Senha apenas em variável de sessão do responsável (limpar). Próximo: roles.sql, limpar variáveis, decidir teste de restauração, depois autorização separada para repair 20/50 + revision + merge PR9 + deploy coordenado.
+
+---
+
+## Backup mínimo autorizado — 09/11/2026, preparação
+
+Atualização: responsável confirmou pausa das atividades administrativas e prefere executar o backup manualmente com orientação, sem compartilhar credenciais. Nova consulta: job 1 continua ativo; execuções Cron, fila HTTP e leases de mídia/prévia estavam vazios no instante da consulta. CLI permite storage cp recursivo e db dump, mas acesso do operador e escopo Auth/Storage/histórico ainda precisam ser demonstrados. Cron ainda não foi pausado: aguardar operador com ferramentas e acesso prontos; então pausar, revalidar drenagem e orientar a cópia. Se houver falha, restaurar job 1 ao estado ativo. Não houve backup nem alteração produtiva.
+
+Usuário autorizou pausa administrativa, suspensão temporária apenas do Cron e backup privado de banco/Storage em F:/BackupsPrivados/pcdnades/release-20261109; aceita F: sem BitLocker. Não autorizou migration, repair, merge, deploy ou smoke de escrita. Worktree de integração, branch codex/integracao-editor-20261106, HEAD local 1f85265; alterações documentais anteriores preservadas, sem commit/push.
+
+Consulta somente leitura: job 1 pcdnades-preview-sweep ativo, agendamento */3 minutos; 12 objetos em dois buckets privados, nenhuma escrita SQL ativa, fila HTTP/Cron e leases de mídia/prévia vazios nos instantes consultados; mídia 14 ready/2 failed. Isso não comprova ausência de uploads ou operações Edge em andamento. Nenhum controle alterado ou backup iniciado. Supabase CLI 2.102.0, Docker e imagem PostgreSQL 17 disponíveis; credenciais produtivas para exportação e Storage não foram encontradas nas variáveis verificadas. Destino criado vazio, com herança de ACL bloqueada e acesso à conta atual e SYSTEM. Aguardar confirmação de pausa administrativa e preparar acesso privado às credenciais antes de pausar Cron.
+
+Próximo: confirmar pausa com responsável, meio seguro de credenciais de banco e leitura completa do Storage, e verificar novamente drenagem; somente com capacidade comprovada de backup, suspender job 1, exportar e validar. Se backup ou drenagem falhar, restaurar job ao estado ativo original. Não registrar credenciais, objetos ou dados pessoais no checkpoint.
+
+---
+
+## Release mínimo — 09/11/2026, proposta para aprovação
+
+Pedido atual substitui exigências de criptografia/VM/restore empresarial e janela de horas por backup privado simples, breve pausa de edições/processamento, reconciliação20/50, revision, merge/deploy e verificação. Aceita riscos residuais razoáveis. Nesta tarefa apenas plano; proibidos backup real, SQL de escrita, migration, merge e deploy sem autorização explícita. Worktree integração/branch codex/integracao-editor-20261106, HEAD1f85265; alterações locais anteriores preservadas, sem commit/push.
+
+Proposta: avisar administradores, interromper uploads/edições e pausar Cron preview-sweep; consultar estados de mídia/leases/Cron antes de prosseguir. Copiar DB e arquivos Storage para destino privado fora do Git e verificar arquivos gerados, tamanhos e hashes; banco e objetos são separados. Comparar função20/50 e ACLs com migration; reparar somente histórico, sem reexecutar a função. Aplicar revision, conferir dados/grants e integrar PR9; manter pausa enquanto deploys API/frontend ficam prontos no mesmo SHA. Smoke autorizado de login/listagem/cadastro/edição/vídeos; reabrir Cron e edição. Se falhar, manter pausa e preservar dados, preferir correção adiante; rollback de backend antigo não é seguro após revogar UPDATE. Não restaurar backup sobre dados novos automaticamente.
+
+URLs de upload assinadas duram2h; se não houver upload/edição/processamento conhecido e administradores forem avisados, usuário aceita publicar sem aguardar2h. Isso não revoga URLs anteriores nem prova que ninguém as use; backup DB/Storage pode divergir se upload tardio ocorrer, risco aceito e registrado. Não rotacionar chaves nem apagar objetos. Estimativa 20–45min otimista; falha de backup/deploy ou autorização pode estender, sem garantia. Sem dados reais copiados e sem testes extensos repetidos nesta tarefa. Documentos anteriores sobre SSD/LUKS e janela de6h permanecem como histórico, não requisitos atuais.
+
+Próximo: obter autorização explícita para ações produtivas, inclusive backup, pausa Cron, repair/migration, merge/deploy e smoke com escrita; confirmar destino privado e operadores. Não interpretar aprovação do plano como execução até autorização explícita.
+
+---
+
+## Linux externo criptografado — 09/11/2026, plano para revisão
+
+Pedido: avaliar SSD externo com Linux/LUKS e Docker Engine independente; sem modificar discos/boot, instalar software, criar VHDX, usar dados reais, alterar produção ou PR, commit ou push. Branch integração existente; alterações locais anteriores de runbook/checkpoint preservadas. Isolamento sintético HTTP/egress anterior aceito pelo usuário; evidências/volumes preservados.
+
+Leituras locais: Gigabyte B760M D2H DDR4, i5-12400F 6 núcleos/12 threads, ~32 GiB RAM, Ethernet1Gbps ativa, UEFI. Get-Disk listou apenas SATA/NVMe internos, nenhum SSD USB identificado. Secure Boot não pôde ser lido por falta de privilégios; HypervisorPresent não comprova configuração de boot externo. Nenhuma alteração de hardware/configuração. Documentação oficial Docker: rede internal gateway isolated sem gateway de host; tmpfs pode usar swap. Docker Engine e suporte USB/UEFI/Secure Boot no Linux externo ainda precisam de verificação sintética.
+
+Plano candidato: SSD externo dedicado, LUKS com sistema/data-root Docker/volumes/logs/tmp e swap cifrado ou desativado; instalar bootloader/ESP apenas no SSD externo após aprovação, com discos internos fisicamente desconectados se possível; inicialização temporária via menu UEFI, sem configurar ordem persistente por inferência. Confirmar SSD/serial/capacidade por operador antes de qualquer formatação. Usar mídia instaladora separada e dispositivo seguro de recuperação da chave. Não montar C:/F:/demais internos por padrão. Host Linux efetua backup somente após autorização; serviços restaurados ficam em rede Docker internal + gateway isolated, IPv6/portas/DNS/rotas verificados e cliente HTTP interno. Para Windows/F:, transferir apenas arquivos já cifrados; nenhum texto claro em C:/F:. Cofre off-line independente com chave de recuperação, cópia protegida do cabeçalho LUKS e chave da criptografia portátil; testar recuperação com dados sintéticos, sem restaurar header em dispositivo errado.
+
+Comparação: VM Hyper-V em VHDX protegido em F: é mais cômoda, mas riscos persistem em C:/pagefile.sys, hibernação/dumps, arquivos de estado/checkpoints/logs e no Docker Desktop compartilhado. Linux inicializado fora do Windows evita pagefile Windows durante a operação; ainda requer controle de memória/swap/dumps, boot/firmware e não é garantia contra host comprometido. SSD externo não verificado nem instalado; proteção completa BLOQUEADA até implementar e validar os controles. Manter disponibilidade humana e autorizações separadas para backup, manutenção, migration, merge/deploy e smoke.
+
+Próximo: usuário confirma disponibilidade e capacidade/modelo do SSD externo e mídia instaladora, possibilidade de desconectar discos internos, backup da chave fora do SSD, e aceita plano antes de qualquer alteração. Em seguida autorização explícita identificando alvo pelo modelo/serial e limites de formatação/boot; instalar/configurar somente após isso, verificar montagens, isolamento, recuperação e ausência de arquivos em discos internos usando apenas fixtures sintéticas. Sem backup real ou alterações produtivas nesta tarefa.
+
+---
+
+## Rede isolada e arquitetura de armazenamento — 09/11/2026
+
+Branch/worktree integração, HEAD1f85265; alterações documentais anteriores preservadas, somente locais, sem push. Usuário confirmou C: e F: FullyDecrypted, Windows10Pro/TPM; não autorizou criar VHDX, BitLocker, configurar host, dados reais ou produção.
+
+PASS no ensaio sintético: rede exclusiva pcdnades-restore-gateway-isolated-20261109, bridge internal=true e gateway_mode_ipv4=isolated, IPv6 desativado, sem portas publicadas, somente uma rede por cada dos oito serviços; Docker inspect sem gateway. Cliente Node próprio na rede fez login GoTrue real, GET PostgREST de tabela sintética, upload/download Storage de MP4 e SHA256 igual. TCP/IPs externos de teste e DNS example.com não responderam; host.docker.internal/gateway.docker.internal não resolveram. Oito namespaces inspecionados com clientes temporários: sem rota IPv4 padrão ou IPv6 não loopback; containers não privilegiados, sem CapAdd e sem docker.sock. Canário próprio em outra rede: respondeu dentro da sua rede e foi bloqueado a partir da stack. Conclusão sob o modelo Docker/host íntegros: isolamento nativo e comunicação HTTP interna PASS; não é prova contra daemon/host comprometido ou exfiltração por operações manuais posteriores. Nenhuma API de produção chamada. Playback no navegador/decodificação MP4 não repetidos: hash dos bytes por HTTP apenas.
+
+Rede interna anterior falhou HTTP do host porque não havia rota acessível via port forwarding no Docker Desktop; diagnóstico observado, causa de implementação específica não comprovada. Modo isolado remove endereço do gateway na bridge conforme documentação Docker; não usar porta do host, cliente executa na rede. Oito containers próprios e canário próprio parados; volumes/redes/evidências preservados em backend/vendor/restore-ready-20261109. A stack agora tem conta, tabela, bucket e MP4 sintéticos de teste: NÃO está vazia. Para restauração futura, criar volumes/banco novos próprios sem sobrescrever evidências.
+
+Armazenamento: VHDX de dados em F: com BitLocker é opção suportada, mas não protege automaticamente camadas/logs/tmp/swap do Docker Desktop em C:. Hyper-V/VM separada com todos os VHDs/config/checkpoints/logs dentro do volume protegido e Docker Engine próprio pode reduzir rastros, mas host Windows continua com C:/pagefile.sys e potencial hibernação/crash dumps; proteção total em C: NÃO demonstrada. Hyper-V Manager New-VM e serviço vmms não encontrados; disponibilidade de VM separada não confirmada. Recomendação para requisito estrito: ambiente Linux físico separado ou boot externo independente, com armazenamento integralmente criptografado, swap desabilitado ou criptografado, sem montar C:, e backup transmitido/armazenado somente cifrado em F:; não executar sem autorização de infraestrutura. Se preferir Hyper-V no mesmo Windows, requer avaliação/controle dos arquivos de paginação, dumps, hibernação, caches, caminhos VM e aceitação de risco/autorização específica, pois envolve potencial configuração global. Não afirmar proteção completa com bind mount.
+
+Próximo: usuário decidir arquitetura e autorizar separadamente criação de ambiente criptografado e eventual instalação/configuração; validar com dados sintéticos caminhos de escrita e recuperação de chave antes de dados reais. Resultado global BLOQUEADO por proteção de armazenamento não comprovada, não por HTTP interno. Nenhum VHDX criado, BitLocker ativado, Docker global modificado, backup real, migração remota, merge, deploy ou push.
+
+---
+
+## Isolamento de saída — 09/11/2026, BLOQUEADO
+
+Stack própria restore-ready-20261109, mesma branch e HEAD1f85265; modificações documentais anteriores preservadas, sem commit/push. Criada rede exclusiva pcdnades-restore-internal-20261109 --internal; oito containers próprios movidos da bridge anterior, sem alterar outras redes/volumes. Docker inspect confirmou rede única por container, internal=true, IPv6 desativado e bindings publicados exclusivamente127.0.0.1. Containers próprios parados e volumes/evidências preservados em backend/vendor/restore-ready-20261109/egress-result.private.json.
+
+Resultado: entrada FAIL: HTTP host 127.0.0.1:58821 expirou em5s na rede interna. Comunicação interna PARCIAL: PostgreSQL alcançou portas TCP de Auth/PostgREST/Storage e SELECT1 passou; HTTP completo através do host não passou. Saída NÃO COMPROVADA integralmente: PostgreSQL não conectou em 1.1.1.1:443,192.0.2.1:443,172.31.0.1:5432,172.17.0.1:443 nem gateway192.168.0.1:443; DNS externo example.com expirou. Há gateway na rede interna, e DNS Docker127.0.0.11 usa encaminhamento configurado. Não provamos todos os destinos/portas nem todos os serviços: imagem PostgREST não tem sh para checagem interna de rotas. Não afirmar bloqueio completo de APIs produtivas ou todos os serviços externos com base nas amostras. Nenhuma chamada a APIs produtivas feita.
+
+Próxima ação: identificar solução oficialmente suportada para HTTP loopback sem abrir caminhos de saída; somente com revisão e autorização pertinente caso envolva mais do que recursos próprios. Usuário pediu bloqueio, não improvisação, caso HTTP falhe. Criptografia C:/F:/VHDX continua pendente de confirmação pelo usuário; sem dados reais, backup, alteração produtiva, migrations remotas, merge, deploy ou push.
+
+---
+
+## Stack vazia de restauração — 09/11/2026
+
+Criada stack exclusiva restore-ready-20261109 em backend/vendor/restore-ready-20261109 (ignorado), na branch de integração, HEAD1f85265. Preservadas alterações documentais locais anteriores, sem commit/push. Configuração deriva da stack sintética própria anterior; chaves são sintéticas, nunca produtivas. Volumes novos supabase_db_restore-ready-20261109 e supabase_storage_restore-ready-20261109, rede bridge exclusiva pcdnades-restore-ready-20261109; oito containers próprios parados após ensaio, volumes e evidências preservados.
+
+Antes dos testes, docker inspect confirmou todos os bindings publicados 127.0.0.1, sem IPv6 wildcard; rede contém apenas os oito serviços próprios. Auth precisou de restart após inicialização do banco. PASS: endpoint health Auth, listagem administrativa Auth com zero usuários, raiz PostgREST, listagem Storage com zero buckets e consultas PostgreSQL reais; banco com zero tabelas públicas, zero usuários e zero buckets. Nenhuma conta/dado real importado e nenhum ensaio completo de rollout repetido. Rede bridge permite egress: bloquear egress e observar serviços antes de futura restauração real; não executar com dados reais enquanto C:/F:/Docker não tiverem proteção confirmada.
+
+Próximo: usuário confirma BitLocker C:/F: sem compartilhar chaves; selecionar destino e validar criptografia de VHDX Docker e temporários, confirmar isolamento de egress, credenciais seguras e autorizações específicas antes da janela. Sem backup real, migration remota, produção, merge, deploy ou push.
+
+---
+
+## Preparação local da janela única — 09/11/2026
+
+Branch codex/integracao-editor-20261106, worktree de integração, HEAD1f85265d460504dc44674743b95844dc200a3e6f. Preservadas alterações documentais pré-existentes em docs/EDITOR-RELEASE-20261106.md e este checkpoint; somente locais, sem push. Pedido: preparar restauração sintética e verificar criptografia/armazenamento, sem tocar produção.
+
+C: e F: com 1404,6 e 413,9 GiB livres, respectivamente. manage-bde -status C:/F: e Get-BitLockerVolume retornaram acesso negado; proteção de ambos não comprovada. Docker Desktop WSL2 usa C:/Users/felip/AppData/Local/Docker/wsl/disk/docker_data.vhdx e main/ext4.vhdx; volume próprio em /var/lib/docker/volumes/pcdnades-restore-empty-20261109-pg/_data dentro da VM; temporários Windows em C:/Users/felip/AppData/Local/Temp. Nenhuma proteção presumida: não copiar dados reais para F:, C: ou Docker até confirmação. F: criptografado não protege VHDX em C:.
+
+Criado exclusivamente o container pcdnades-restore-empty-20261109 e seu volume homônimo; PostgreSQL17.11 com banco vazio (zero tabelas public), rede none, sem portas. pg_isready/psql e pg_dump/pg_restore list passaram com dados sintéticos de sistema; container parado, volume preservado. Node24.21.0, Docker29.7.2 e CLI Supabase2.102.0 disponíveis. O ambiente ainda NÃO inclui GoTrue/PostgREST/Storage e não foi testado com dados reais; não chamá-lo pronto para restauração operacional completa. Nenhum recurso de outros agentes modificado, nenhum teste extenso repetido.
+
+Próximo: responsável consultar proteção BitLocker de C: e F: em PowerShell como administrador, sem fornecer chaves; escolher armazenamento protegido para backup, VHDX/volumes e temp. Se não houver criptografia ativa, propor BitLocker no volume pertinente ou destino criptografado aprovado; não ativar/mover automaticamente. Completar stack isolada Auth/PostgREST/Storage vazia, validar bindings/egress e integração sintética; confirmar acesso seguro às credenciais e destino antes de escolher a janela. Checklist: autorização para manutenção/backup; gate de backup/restore; autorização separada para repair20/revision; autorização separada para merge/deploy; autorização separada para smoke/reabertura. Sem manutenção, backup real, migration, merge, deploy, alteração remota ou push nesta tarefa.
+
+---
+
+## Janela única — 09/11/2026, proposta documental
+
+Pedido: comparar backup-base com site ativo e uma janela coordenada, sem manutenção, backup real, cópia, alteração remota, migration, repair, merge ou deploy. Branch codex/integracao-editor-20261106, worktree integração, HEAD inicial1f85265d460504dc44674743b95844dc200a3e6f. Atualizados localmente somente runbook e checkpoint; sem push porque alterações remotas não foram autorizadas. Preservar histórico e trabalho local.
+
+Feito: proposta de backup-base separado e não consistente como substituto, preparações sem dados, janela única com barreiras/dreno/2h/backup final/restore, paradas de autorização separadas e retorno. Docker info mostra desktop-linux e /var/lib/docker dentro da VM; WSL registra docker-desktop em C:/Users/felip/AppData/Local/Docker/wsl/main. Local do VHDX de dados/volumes e criptografia efetiva não comprovados; confirmar painel e proteção de C/F, temporários e Docker antes de dados reais. Documentação oficial consultada. Nenhum teste de aplicação repetido.
+
+Próxima ação ao retomar: conferir git status e aprovar separadamente destino protegido e eventual backup-base; depois aprovar janela de manutenção. Em janela, exigir autorização específica após restore para repair/revision e novamente para merge/publicação, além de smoke; sem resposta, abortar/retornar. Nenhuma ação produtiva foi executada nesta tarefa.
+
+---
+
+## Primeira etapa produtiva — proposta supervisionada pronta, 09/11/2026
+
+Estado: preparação concluída; aguarda aprovação de janela, destino protegido e operador. **Nenhuma execução produtiva autorizada ou realizada.**
+
+### Pedido e localização
+
+- Preparar somente manutenção/backup e recuperação, sem repetir testes isolados, desenvolver código, alterar produção ou publicar o editor.
+- Branch codex/integracao-editor-20261106, worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2. HEAD inicial2de63a56862779e0f6cadb870496ad28f91ee23d limpo/publicado; branches originais preservadas.
+- Mudanças desta entrega: apenas docs/EDITOR-RELEASE-20261106.md e este checkpoint. Commit/push documental exclusivo da branch conforme autorização vigente; SHA final via Git/PR, sem autorreferência.
+
+### Feito e decisões
+
+Runbook ganhou proposta de5h com esperaT0+2h, ativação/dreno até00:30, backup/restore, retorno e reserva; sem extensão automática. Datas/horários não agendados. Etapa termina reabrindo aplicação antiga, sem migration/repair/merge/deploy/smoke produtivo; nova escrita torna o backup histórico e rollout posterior exige backup atualizado. Restauração deve usar par antigo9187b72 contra schema pré-DDL, nunca frontend novo exigindo revision.
+
+Responsável confirmou manualmente Hobby, zero Custom Rules nos dois projetos e Deny disponível; frontend mostra limite3/AddRule. Sem seletor explícito Production/Preview. Documentação oficial:Environment é condição opcional,WAF por projeto eCDN inspeciona requisição de qualquer deployment. Inferência de alcance geral comPathprefixo/semHost/Environment/Method está explicitamente separada de eficácia a comprovar na janela. Conectores omitem plano eWAFactive404; publicação/retorno escolhidos manuais, supervisionados. Uma regra temporária por projeto; estágiosLog/hostPreviewexistenteDeny/LogProduction/Denygeral. Sem bypass/sharelink/ComputerUse/extração de cookies. SSO401 não comprova Deny; responsável pode verificar em sessão normalmente autenticada e eventos WAF.
+
+Só metadados para dimensionamento:DB14.571.187bytes,Storage64.895.376bytes/12objetos. F:~414GiB livres;BitLocker não confirmado porque manage-bde negou acesso administrativo. Destino proposto foraGit F:/BackupsPrivados/pcdnades/<data>,não criado;exigir criptografia/ACL eproteção também dos volumesDocker,temp ecredenciais. Capacidade proposta max20GiB,6D+4S+10GiB;retenção30dias a aprovar,sem exclusão automática. Node24.21.0/Docker29.7.2/CLI2.102.0/PG17imagem existem;psql/pg_dump/age/gpg/7z ausentesPATH. Nada instalado,nenhum lab iniciado/dado copiado.
+
+Manual/conectores/local separados no runbook. Abortar inclui interromper exportação,guardar incompletos,DataAPI original,WAF sóregra temporária/Cron original porúltimo eGETs do siteantigo. Sem sobrescrever mudanças concorrentes ou apagar auditoria. Vault cifrado preservado;sem extração implícita de raiz,limitação de recuperação de segredos deve ser registrada e não apresentada como DR integral.
+
+### Verificações e próximos passos
+
+Leituras oficiais e checks locais de disponibilidade/capacidade apenas;sem consultas Auth pessoais,segredos ou bytesStorage. Skills Supabase,VercelDeployments eVercelFirewall aplicadas a controles,etapas/prioridade,retorno e preservação deconfiguração. gitdiffcheck/revisão documental;histórico e vercel.json preservados. Não repetir110browser/152backend/63frontend/PG/HTTPisolado. ConferirCI exato e deployments após push no relatório final.
+
+Primeira ação ao retomar:conferir Git/este registro e obter aprovação explícita de data/início-fim America/Sao_Paulo,operador,volume criptografado verificado,retenção eambiente separado protegido. Validarbaseline/permissão depublicação/retorno WAF antes de indisponibilidade. Somente então solicitar/seguir autorização específica de manutenção,negativas porleitura,dreno,backup real/restore;qualquerfalha debarreira aborta antes deexportar. Permanecem proibidos repair20,revision,merge,deploy,rotação e smoke deescrita produtivo nesta etapa.
+
+PR: https://github.com/Lipe-meira/pcdNades/pull/9 (Draft). Histórico abaixo preservado.
+
+---
+
+## Janela supervisionada — 09/11/2026, proposta em finalização
+
+Responsável confirmou por leitura manual: VercelHobby,frontend0regras/limite3/AddRule/Deny;backend0regras/Deny;nenhumseletorexplícitoProduction/Preview;nenhumaconfigalterada. Documentaçãooficial defineEnvironmentcomocondiçãoopcional,WAFporprojeto eCDNpara tododeployment. Inferência:regraPathprefixo/semHost/Environment/Methodabrangeambosambientes/URLsantigas;eficáciaprecisaserverificadanafuturajanela. EtapasWAFsupervisionadasmanualLog→hostPreviewexistenteDeny→LogProduction→Denygeral,uma regraporprojeto. SSO401nãoprovaDeny;responsávelpodeconferirsessãonormalsembypass;agentesemComputerUse/cookies.
+
+Leituras:APIWAF404persiste,planomitidopelosconectores;nãotratadocomoausência. CLI Vercel ausente,nãoinstalada. CapacidadeprodutivaporSELECTagregado:DB14.571.187bytes/Storage64.895.376bytes/12objetos,sembaixarbytes. F:~414GiBlivres,criptografianãoconfirmadaporacessonegadomanage-bde. Node24.21.0,Docker29.7.2ativo,CLI2.102.0ePG17imagemdisponíveis;psql/pg_dump/age/gpg/7zforaPATH. Plano5h,esperaT0+2h,dump/restoreparantigo9187,retornosemDDL. Destino,data,operador,retenção/proteçãoaaprovar;nenhumvolume/pastabackupcriado,dadocopiadoouserviçomodificado. Próximo:finalizardocumentos,diffcheck/commitpushsomentePR9 eCI,entregartextodeautorizaçãoespecífico.
+
+## Primeira etapa produtiva supervisionada — 09/11/2026, preparação
+
+Pedido: preparar janela e destino de manutenção/backup sem executar alterações. Branch/worktree de integração existentes, HEAD2de63a56862779e0f6cadb870496ad28f91ee23d limpo. Ler runbook/checkpoints concluído; próximos passos: verificar plano/entitlements WAF por leitura oficial, elaborar cronograma com espera2h+dreno+backup/restore e retorno exato, requisitos de destino e divisão manual/conectores. Sem testes isolados repetidos, sem produção/config/backup/cópia/migration/repair/merge/deploy. Documentação e checkpoint serão preservados nesta branch; antes da entrega, registrar limitações e verificações efetivas.
+
+## Preflight confirmado pelo responsável — 09/11/2026
+
+Estado: **APTO PARA SOLICITAR AUTORIZAÇÃO DE MANUTENÇÃO/BACKUP**. Usuário respondeu às duas perguntas pendentes: não existe escritor externo; Enable Data API e Storage → URL Signing Keys com rotate/revoke estão disponíveis. São confirmações do responsável, não controles ativados pelo agente.
+
+Mesma branch/worktree de integração; HEAD inicial731fea90c9cc0cec7695e73087a5234a1ef2aa38 limpo e publicado. Atualizados somente runbook e este checkpoint, preservando histórico abaixo. Sem novos inventários extensos, testes de aplicação ou ensaios. Bloqueios vercel.json preservados; commit/push documental exclusivamente na branchPR9 conforme autorização vigente. SHA final via Git/PR, sem autorreferência; conferir CI e deployments após push.
+
+Decisão: encerradas pendências de informação. Cobertura efetiva WAF, REST/RPC, Cron/Edge/Storage e dreno ainda precisam ser demonstrados como primeiro gate da futura janela autorizada. WAF404 não é prova de cobertura. Falha de qualquer controle obriga interromper antes da exportação/DDL e seguir retorno acordado. Preferir espera2h após última emissão possível, mais uploads em andamento; rotate/revoke exige autorização adicional. Aprovação significa poder solicitar a etapa limitada, não aprovação de rollout.
+
+Próximo passo: obter autorização explícita para janela, controles reversíveis, probes negativos, dreno, destino privado/operador e backup real com restauração em ambiente separado. Não solicitar senha pelo chat. Não incluir repair20,revision,merge,deploy ou smoke produtivo nessa primeira autorização. Nenhuma operação de produção autorizada ou executada pelas respostas atuais. Relatório final informa commit/CI; registros anteriores de BLOQUEADO são históricos e superados apenas quanto às duas confirmações.
+
+---
+
+## Preflight operacional hospedado — 09/11/2026
+
+Estado: concluído documentalmente; **BLOQUEADO** para solicitar execução conjunta de manutenção/backup até confirmação dos escritores externos e cobertura dos controles hospedados.
+
+### Objetivo e localização
+
+- Pedido: inventário somente leitura e procedimento de manutenção/backup real, sem repetir ensaios ou iniciar desenvolvimento.
+- Branch: codex/integracao-editor-20261106. Worktree: C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2.
+- Base/HEAD inicial:30e691157b2878da309845820928d1bd3947678e, limpo e publicado. Main9187b72 e PR9Draft confirmados. O commit desta entrega contém o registro; consultar Git/PR para SHA final sem autorreferência.
+- Entrega documental: docs/EDITOR-RELEASE-20261106.md e este checkpoint. Push normal autorizado exclusivamente à branch do PR9; sem alteração funcional, layout ou vercel.json.
+
+### Feito e evidências
+
+Inventário hospedado e documentação oficial concluídos. Vercel: frontend/API atuais READY/main9187b72;83/80 deployments listados,54/63READY,10/14aliases,sem próxima página. WAF active retornou404 em ambos, não interpretado como ausência. SSOpreview não prova cobertura dos antigos. Nenhum sharelink foi criado; leitorHTTP não acessou health/capabilities, sem tentativa de contorno.
+
+Supabase Free/saudável:revision ausente,histórico9versões,função20/50/1h invoker;authenticated mantémI/U/Dgrenades viaRLSadmin,service_role escreve/RPCs. Sem ACL explícita de coluna ou membership dasroles consultadas. Storage:2bucketsprivados,12objetos,zero policies;11granadascommídia semStorageausente. Job1preview-sweep ativo*/3,Edgev1 comtokenpróprio eclaimRESTantesStorage. Filas/leases zeradas no snapshot não são freeze. Logs agregados15min:5Edge204;StorageGET/listagensPOST;sem dados pessoais/tokens/URLs. Vercelruntime sem grupos não prova ausência deatividade. Sessão postgres era pg_networkeridle. Nenhum workerexterno confirmado ou descartado por inferência.
+
+Runbook agora tem parecer atual, inventário, matriz controle/verificação/retorno, consultasSELECTmínimas, backupprivado/restore e checklistúnico9passos. Histórico06–08preservado e marcado como histórico;ensaiosisolados continuam aprovados comriscoresidual. Estratégia:WAF todoshosts/ambientes+DataAPIoff+Cron/produtoresparados+drain+espera2h desdeúltimaemissãopossível;URLSigningKeysrotate/revoke éalternativa oficial separada deAuth,pendente de disponibilidade/autorização. Nenhuma improvisação deACL/read-onlysoftfreeze/pausaSupabase. Ao reativarDataAPI a barreiraREST termina explicitamente.
+
+Backup viável por CLI lógica e SDKStorage.download separado;Free sem PITR/backupdiário presumido. CLI2.102.0 --version/dbdump--help consultados localmente,sem conexão. VaultusadopeloCron exige estratégia segura de recuperação em outro projeto. Destino privado criptografado,credenciais por canal seguro e cópia real para ambiente novo exigem autorização;nenhum artefato produtivo exportado.
+
+### Verificações e limites
+
+Skills Supabase, VercelDeployments e verification-before-completion lidas/aplicadas a inventário, controles e conferência de evidências. Skill-routing ausente nesta worktree;Impeccable não aplicável a preparação operacional. Sem testes de aplicação repetidos;110browser/152backend/63frontend/PGreal e ensaioHTTPreal anteriores preservados. gitdiffcheck e revisão do diff documental realizados;CI do SHA final e Vercelpós-push serão conferidos e informados no relatório final. Não houve SQL de escrita/locks/migrations,backup/cópia de dados reais,pausa/configremota,merge/deploy ou alteração em outrasworktrees.
+
+### Retomar daqui
+
+1. Conferir respostas do responsável às perguntas sobre worker/agendador externo e controles EnableDataAPI/StorageURLSigningKeys;completar inventário SQL/S3 e alcanceWAF antes deagendar janela.
+2. Confirmar destino/operador/credencial segura/ambiente separado;solicitar autorização limitada para manutenção reversível,probes negativos,dreno ebackup/restore,com abortarantesdecopiar se barreirafalhar. Espera2h evita necessidade derotação se todos emissores estiverem contidos.
+3. Só após recuperação real comprovada,solicitar separadamente repair20,migrationrevision,merge/deploycoordenado,smoke/reabertura. Nada disso autorizado agora.
+
+PR: https://github.com/Lipe-meira/pcdNades/pull/9. Registros anteriores preservados abaixo.
+
+---
+
+## Preflight hospedado — 09/11/2026, inventário concluído; preparação documental em andamento
+
+Somente leitura: Vercel permanece main9187b72 com frontend dpl_CXveN8eKcbhPAs77gEo7PtEw7HgW/API dpl_GunuHiZjWUF55rNDU7hdEQYsYtbp READY;83/80 deployments listados,54/63READY e10/14aliases,sem paginação restante. URLs antigas são candidatos de ingresso,não prova de acessibilidade. ConfigWAFactive retorna404 nos dois;sem afirmar ausência. Nenhum sharelink criado. Supabaseprod saudável/Free,revisionausente/histórico9versões,função20/50/1h. Adminauthenticated mantémI/U/Dgrenades;service_role mantémRPCsDML;Storageprivado2buckets/12objetos/0policies. Cronpreview-sweepjob1ativo*/3,Edgev1JWTgatewayfalse comtokenpróprio eclaimRESTantesStorage. Snapshotfila/leases/jobs0,14ready/2failed,11granadascommídia semStorageausente;pg_networkeridle não é workerexterno. CronSQLsucceeded prova despacho,não conclusãoEdge. Semsegredos/dadosAuth/bytesStorage consultados.
+
+Documentação oficial:DataAPIoff bloqueiaREST/RPC,masnãoStorage/SQL;NetworkRestrictions sóDB/pooler;default_transaction_read_only ésoftfreeze;Vercelpause sóproduçãoativa não cobreURLsantigas. URLSigningKeysStorage permite rotate+revokeseparadoAuth,mas disponibilidade no projeto não exposta. Alternativa semrotacionarchaves:pararTODOSemissores,esperar2h desdeúltimaemissão possível+drain. Inventárioexterno/S3/SQL precisa confirmaçãoresponsável. Perguntasassíncronas sobreworker externo econtrolespainelpendentes. BackupCLIviávelFree;helpCLI2.102.0verificadooffline(--db-url);sembackupreal/copiadados. Vault éusadopeloCron:recuperaçãoemoutroprojetorequerprocedimentosegurochaveraiz/reprovisionamentoprivado,semativarjob/SMTP/monitorreais.
+
+Próximo:consolidarmatrizdecontroles/verificação/retorno ebackup/checklistno runbook;classificar conforme evidência/retorno das perguntas;diffcheck,commit/pushdocsomentePR9 eCI exato. Nenhumensaio/aplicação alterados,nemaproduçãomutada.
+
+## Preflight operacional hospedado — 09/11/2026, em andamento
+
+Pedido atual: inventário hospedado somente leitura, manutenção efetiva e backup recuperável; sem repetir ensaios ou desenvolver funcionalidades. Mesma integração/worktree,HEAD30e6911 limpo na retomada. Autorizados apenas leituras,documentação,commit/push exclusivo da branchPR9 preservando bloqueios. Proibidos produçãoSQLescrita/locks/configs/backup/cópia/pausa/deploy/merge. Próximo:inventárioVercel/Supabase/documentação oficial,matriz de bloqueio/dreno/retorno,procedimento backup e decisão objetiva. Ensaio isolado anterior preservado,sem repetição. SkillsSupabase/VercelDeployments selecionadas,lidas;guia docs/ai/skill-routing.md ausente nesta worktree. Semsegredos no checkpoint.
+
+## Gates isolados — 08/11/2026, APROVADOS COM RISCOS RESIDUAIS
+
+Mesma integração/worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2, base75a2061, PR9Draft/main9187b72 preservados. Passagem final rollout-loopback-full.mjs exit0/PASS:8containers127.0.0.1 antes dos testes;backend9187/schemaantigo;freeze/drain/DBlocks;backupprérevision;20/50+histolocal;revision;backendnovo/409/428/permissões/MP4/legado/Solo;GoTrue/REST/Storage sobre DB/objetos restaurados e frontendChromium real login/edição/salvar. Grants/RLS/triggers iguais,TOC/SHAs no relatório. Semmocks nesseensaio;inline-original apenas,semworkerexterno/TikTok. Corrigidos procedimentos:ownerpostgres,GNUtar--xattrs,PUBLISHABLE_KEY eFRONTEND_URL. Layout/aplicação intactos.
+
+8containers próprios PARADOS;volumes/bancos/tentativas/evidências preservados em backend/vendor/rollout-loopback-20261108 ignorado. Scripts não idempotentes,não reiniciar cegamente. HelperCompose inspeciona só8serviços/volumes exclusivos e gera arquivoprivado,sem iniciar/parar;somente sintaxe verificada,não sobrescrita configexistente. Entrega:2scripts,relatórioisolado,runbook,checkpoint. nodecheck/diffcheck executados;110browser/152backend/63front anteriores preservados sem repetição extensa.
+
+Próximo:responsável escolher e comprovar barreira hospedadaAPIantiga/diretoDB/StorageURLs/jobs/dreno;autorizar backuprealprivado+restore;depois histórico20/revision/merge/deploycoordenado/smoke/reabertura separadamente. Não executados produção/backupreal/configremota/migrationremota/merge/deploy. Commit/push somente integração autorizados;SHA via gitlog/PR sem circularidade;conferir CI exato eVercelpós-push no relatório final. Faseisolada aprovada com risco residual;rollout produtivo ainda não autorizado.
+
+---
+
+## Gates isolados — 08/11/2026, ensaio em andamento
+
+Mesma integração/PR9Draft, base75a2061. Nova stack rollout-loopback-20261108 com portas58621/58622/58624/58627 explicitamente127.0.0.1, verificadas via inspect ANTES de testes. Volumes/evidências anteriores preservados. Ensaios comprovaram backend antigo, drenagem, bloqueio REST/URL assinada, lockDB, backup prérevision, cutover20/revision,409/428 e recuperação Auth/DB. Falha encontrada: tar BusyBox perde xattrs do Storage e reprodução restaurada retorna500/ENODATA; correção em ensaio com GNUtar --xattrs. Banco recuperado deve preservar ownerpostgres (createdb -O postgres). Tentativas preservadas em bancos/volumes próprios; nenhuma alteração produtiva. Aguardar drenagem de conexões encerrando antes de afirmar zero escritores. Próximo:concluir round3, frontend real sobre restore, documentação/manutenção hospedada, commit/push exclusivo eCI. Alterações locais:script rollout-loopback-full.mjs e este checkpoint; testes anteriores preservados.
+
+## Conclusão dos gates isolados — 08/11/2026, em andamento
+
+HEAD75a2061 limpo/sincronizado;mesma branch/worktree PR9Draft,main9187b72 intacta. Pedido:bindloopback comprovado,freezeoperacional,backuppréDDL/rollout eHTTPsobrebackuprestaurado. Docker29.7.2 disponível. Próximo:redebridge nova com defaultbindingloopback suportado,stackfresh exclusiva;nenhum testeantesdeverificar bindings. Stack/evidênciasanteriorespreservadas. Semprodução/dadosreais/TikTok/labsalheios.
+
+## Fase isolada — 08/11/2026, parcial/BLOQUEADA
+
+Mesma branch/worktreeintegração,base9ff4641;semprodução/labsalheios/dadosreais/TikTok. ImplementadaAPI_WRITES_PAUSED opt-in defaultfalse,onRequest503 paraescrita,GET/HEAD/OPTIONSpermitidos,startupvalidaenum. TestesRED→GREEN,152backendPASS,typecheck/buildPASS;scriptPGdump/restorePASS ampliado. Não é freezeDB/Storage/workers/draindistribuído.
+
+StackNOVASupabaseCLI2.102.0 embackend/vendor/rollout-lab-20261108,portas58521/58522,project_idexclusivo. Redeinternalfalhou acessoPGhost;bridgenova iniciouGoTrue/PostgREST/Storage/PGreais. rollout-local-http.mjsPASSloginreal,401/403,upload/complete/playbackhash,HTTP200/409concorrente/428,UPDATEdiretonegado,legado/Solo. FrontendnãofoiE2Ereal. Histórico20/revision alterados SOMENTEnessebancosintético. Backupfullsintético dumpcustom:restorePostgresfalhouowner;restorecomsupabase_adminemDBnovoPASS;fingerprintsAuth/DB/Storagemetadata/grants/RLS/triggers ebytesnovobucketSHA256PASS. AplicaçãoHTTPsobreDBrestauradonãotestada. Arquivos/evidênciaschavesficamvendorignorado,nãoversionar.
+
+dockerportreveloubind0.0.0.0/[::]dosserviços;stackprópriaPARADAviastopsem--all/--no-backup,volumespreservados. Nenhumcontainerdoprojetoativoaofinal. Não aprovar isolamentoatébindloopback/egresscontrolados. Runbookincremental docs/ISOLATED-ROLLOUT-20261108.md lista reprodução,limitesefalhas. Próximaação:resolverbind,barreiraDBStorage/drain,ensaiofrontend/backendantigos/novoscompleto eHTTPapósrestore;então consideraraprovaçãoisolada e solicitarbackupreal/rolloutseparadamente. FaseBLOQUEADA,nãoalegarbackupprodutivo nemfreezeglobal.
+
+Arquivos:application.ts,env.example,testeWriteMaintenance,scriptintegration-schema-smoke ampliado,novosscriptsrollout-local-http/rollout-backup-check,runbooknovo/atualizado,checkpoint. Logsprivados/vendorignorados,nãocommitar. Commit/pushsomenteintegraçãoautorizados,PR9Draftpreservado;obterSHAfinalGitsemreferênciacircular. Testes110browser/63frontanteriorespreservados;nãorepetidossemUIalterada. CI final conferirapóspush. Semmerge/deploy/migrations/configremotas.
+
+---
+
+## Ensaio técnico isolado — 08/11/2026, em andamento
+
+Branch integração/worktree existentes,HEAD inicial9ff4641,limpa. Autorizado ambiente novo sintético e mecanismo opt-in/testes/pushPR9Draft;proibidos produção,dados reais,labs alheios,deploy/migrationsremotas. Dockerdaemon indisponível no início;usuário acionado para iniciar. Próximo:bloqueioAPI opt-in com testes e inventário dos caminhos não cobertos;stackreal/backup/rollout só serão aprovados após evidência. Não reutilizar credenciais/volumes de labs existentes. Checkpoints anteriores preservados.
+
+## Gates de produção — 06/11/2026, revisão documental concluída; BLOQUEADO para rollout
+
+Branch codex/integracao-editor-20261106/worktree própria,base desta revisão0ab9095,main9187b72 e PR9Draft confirmados sem mudança. Atualizados runbook docs/EDITOR-RELEASE-20261106.md e este checkpoint;estado obsoleto push/Draft corrigido,confirmacões manuaisVercel e publicação preservadas. Procedimento de backup privado consistente/Storage/manifestSHA256/restore preparado;não executado,não houve exportação de dados reais. Checklist inclui freeze efetivo,backupfinal sem drift,reparo histórico20,revision,merge/publicação coordenada,smoke,reabertura e recuperação.
+
+Leituras produtivas atuais:histórico9versões até20261103120954,sem20/revision;função20/50,lock/janela/ACL/service_role preservados;revision ausente,RLSativo,grenade_ready existente,sem attacl de coluna/membership das roles consultadas. Nenhuma função em public/private cujo corpo textual referencie grenades foi encontrada (não exclui SQLdinâmico). Sem SQL de escrita/migration/configuração remota.
+
+Testes adicionais:nenhum teste de aplicação repetido por mudança exclusivamente documental;110browser/150backend/63frontend/builds/PGreal anteriormente aprovados preservados. Inspeção de scriptsE2E revelou dependência de labs de outras tarefas e fonteTikTokreal em um deles;NÃOexecutados. Não alegar Auth/PostgREST/StorageHTTP real validado:permanece gate pendente com stacknova sintética exclusiva,sem usar dados/volumes/segredos de labs preexistentes. Novas consultas somente leitura e git diff --check executadas. Sem layout/funcionalidade alterados.
+
+Conclusão:BLOQUEADO,por backup/restore real não autorizado/executado,HTTPAuth/REST/Storage/cutover não comprovado e ausência de mecanismo efetivo de freeze aprovado. Preparação documental concluída,não aptidão operacional. Próximo:autorizar/definir stacknova e ensaioHTTPsintético;separadamente autorizar backup privado e restore real e depois janela/mutações. Commit desta entrega contém este registro;consultar gitlog/lsremote paraSHA. Publicação somente nesta branch autorizada;sem merge/deploy/produção. Resultado CI final e checagemVercel serão informados na entrega,sem commits circulares.
+
+---
+
+## Gates de produção — 06/11/2026, revisão em andamento
+
+Mesma branch/worktree integração; HEAD inicial0ab90953957e94afb76015349455c36de20eaf56 limpo/sincronizado; main9187b72 e PR9Draft confirmados. Autorizados ajustes necessários e push branch,sem qualquer escrita/migration/backup real/cópia de dados de produção,merge ou deploy. Leituras remotas reconfirmam20/50,histórico9versões sem20/revision,coluna revision ausente,RLSativo,triggergrenade_ready e ausência attacl. Próximo:atualizar estado obsoleto do runbook,procedimento reproduzível de backup/restauração com gates,matriz integrada e riscos;validar docs sem repetir110/150/63. Labs existentes pertencem a outras tarefas; scripts antigos não serão executados contra eles ou TikTok real. Nenhum backup real realizado.
+
+## Integração publicada para revisão — 06/11/2026, PR9 Draft
+
+Usuário confirmou manualmente roots frontend/backend,Production=main,Preview Tracking Disabled,sem Custom Environments/Deploy Hooks e workflow sem deploy; autorizou push normal e Draft. Branch codex/integracao-editor-20261106/worktree própria preservadas. Commit de configuração495c133ccfb8a6e73ace9cfff3c1b4c5edcd79fd confirmado limpo e enviado; branch remota recebeu SHA exato. Duas regras git.deploymentEnabled são somente false para esta branch,sem conflito. PR Draft https://github.com/Lipe-meira/pcdNades/pull/9 aberto para main9187b72,sem merge.
+
+Vercel baseline/frontend dpl_CXveN8eKcbhPAs77gEo7PtEw7HgW e API dpl_GunuHiZjWUF55rNDU7hdEQYsYtbp READY/main9187b72. Listagem desde início da publicação retornou zero novos deployments em ambos após push e após Draft. Qualquer deployment inesperado posterior obriga parar,sem cancelar/modificar recursos por inferência. CI Linux42275755288 iniciado no SHA495c133; resultado ainda em andamento no momento deste registro. Commit documental desta atualização será enviado na mesma branch,obter SHA final via git log/ls-remote,sem autorreferência; conferir checks do HEAD final no relatório.
+
+Validações anteriores preservadas sem repetição:110browser,150backend,63frontend,builds/typecheck e PostgreSQLisoladoPASS. Auth/Storage schema sintético,sem E2EHTTP real/TikTok. Runbook docs/EDITOR-RELEASE-20261106.md permanece requisito de produção; restrições antigas abaixo foram substituídas SOMENTE quanto a push/Draft desta entrega. Permanecem proibidos merge/deploy/migrations/configurações remotas/main. Branches originais intactas.
+
+Próximo:revisão independente PR9,conferir CI do SHA final e gates de backup/restore,Auth/PostgREST/Storage,cutover e autorização separada para histórico20/revision/rollout. Não integrar PR8 ou componentes separadamente junto desta integração. Nenhuma operação produtiva realizada.
+
+---
+
+## Bloqueio Git explícito — 06/11/2026, pronto localmente; publicação proibida
+
+Branch/worktree integração existentes preservados; HEAD inicial60ae269. Usuário autorizou somente edição local dos dois vercel.json e commit convencional,sem push/Draft. Checkpoint anterior modificado já existia e foi preservado neste registro/commit.
+
+Feito:frontend/vercel.json e backend/vercel.json recebem única regra git.deploymentEnabled para codex/integracao-editor-20261106=false;rewrites/framework/install/build anteriores preservados. Parsing/asserts confirmam JSON válido,preservação semântica e ausência de regra habilitadora conflitante. Runbook atualizado. git diff --check/staged conferidos antes do commit;nenhum teste de aplicação repetido. Evidências110/150/63 e PG isolado continuam válidas,nenhum código alterado.
+
+Caminhos conferidos contra roots históricas frontend/backend. Leitura oficial get_deployment confirma os dois projetos e main9187b72 READY,mas não retorna rootDirectory/config override. Efetividade remota atual não comprovada:usuário deve confirmar Settings→Build and Deployment roots frontend/backend e respectivos arquivos sem override. Deploy Hooks e automações externas permanecem pendentes. Nenhuma configuração remota alterada,sem Computer Use/deploy/main/migration/push/PR.
+
+Próximo:concluir conferência manual roots/arquivos/hooks/automações,obter autorização final e então publicar apenas branch/Draft. Commit desta etapa contém checkpoint,obter SHA via git log sem autorreferência. Arquivos da entrega:dois vercel.json,docs/EDITOR-RELEASE-20261106.md e este checkpoint. Branches/worktrees originais intactas.
+
+---
+
+## Disparos automáticos — 06/11/2026, bloqueio mantido após conferência manual
+
+Usuário confirmou visualmente nos dois projetos Production Branch Tracking=main,Preview Branch Tracking=Disabled e Custom Environments ausentes; advertiu que isso não comprova ausência de deploy automático por push/PR. Mesma worktree/branch integração,HEAD60ae269,limpa no início. Inspecionados os dois vercel.json:sem git.deploymentEnabled. Único workflow GitHub local backend-linux.yml roda somente build/teste/bootstrap/trace/probe,sem deploy e sem secrets; push limitado a main,PR aciona CI. Isso não comprova ausência de automações externas ou deploy hooks.
+
+get_project oficial reconfirma projetos,mas omite configuração Git completa/deploy hooks. Catálogo não oferece listagem dedicada de Deploy Hooks; get_webhooks lista webhooks de eventos da equipe e não é evidência equivalente. Sem CLI autenticada previamente disponível,sem Computer Use/contorno. Não comprovado push/PR sem deployment:nenhum push/PR realizado. Testes110/150/63 e PG isolado preservados,sem repetição.
+
+Proposta não aplicada:adicionar em frontend/vercel.json e backend/vercel.json git.deploymentEnabled com chave exata codex/integracao-editor-20261106=false,sem regra true sobreposta. Isso bloqueia integração Git para essa branch conforme documentação oficial,sem desabilitar main; requer autorização para alteração local e confirmação de configs efetivas/rootDirectory. Conferir manualmente Settings→Git→Deploy Hooks de ambos (sem compartilhar URLs secretas),ausência de hooks/automações externos acionados por push/PR ou correspondendo à integração. Apenas após prova de bloqueio efetivo e autorização publicar branch e Draft. Publicação produtiva continua exigindo sequência migration/backend/frontend do runbook. Atualização somente documental local,sem commit nesta conferência.
+
+---
+
+## Restrição atual de publicação — 06/11/2026, aguardando conferência manual
+
+Usuário confirmou por conectores oficiais vínculo dos dois projetos e origem main dos últimos deployments Production, mas NÃO confirmou Production Branch/Preview Branch Tracking atuais. Há histórico de previews em branches não produtivas nos dois projetos. Instrução específica atual: NÃO fazer push nem abrir PR Draft até concluir conferência manual de ambos. Sem Computer Use, contorno, mudanças de configuração, main, deploy ou migrations remotas.
+
+Integração preservada na branch codex/integracao-editor-20261106, worktree pcdnades-integration-20261106/nadesCs2, commit local de implementação de133ba33ab40eeac36ebcd3b281405dd5460838; árvore limpa no início desta atualização. Validações anteriores permanecem:110 browser/150 backend/63frontend e builds/PG isolado PASS, sem nova alteração de código. Atualizados apenas este checkpoint e docs/EDITOR-RELEASE-20261106.md; sem repetir testes da aplicação. git diff --check será conferido antes do commit documental local autorizado. Nenhum push ou PR criado.
+
+Próxima ação: aguardar usuário concluir conferência manual e liberar expressamente push/Draft com risco de disparo resolvido; então conferir Git/main/configuração, publicar apenas branch de integração e confirmar SHA. Não interpretar deployments anteriores vindos de main como prova de que preview está desativado. Histórico abaixo preservado; instruções anteriores de publicação ficam condicionadas a esta restrição.
+
+---
+
+## Integração final — 06/11/2026, validada localmente; publicação aguardando configuração
+
+Branch codex/integracao-editor-20261106; worktree C:/Users/felip/.codex/worktrees/pcdnades-integration-20261106/nadesCs2; base9187b72, componentes05cbc5a/7bc2e6a/3936153 preservados. Merge local da branch limite será concluído no commit desta entrega (consultar git log, sem autorreferência). Autorizados commit/push branch e PR Draft, sem main/merge de PR/deploy/DDL remoto. Nenhum push ou PR de integração realizado ainda.
+
+Feito: consolidado editor/concorrência/limite; único ajuste adicional de comportamento foi no teste api.spec.ts de geometria: aguardava apenas marcadores, podia dividir por dimensão zero antes de imagem pronta e gerar NaN. Agora aguarda complete/naturalWidth e poll das mesmas coordenadas/precisão; layout/código de aplicação intactos. Adicionado scripts/integration-schema-smoke.mjs para11 migrations em PostgreSQL real descartável e docs/EDITOR-RELEASE-20261106.md com sequência/backup/rollback/compatibilidade/mídia409/histórico20. Registros anteriores preservados.
+
+Validação final nesta retomada: teste dirigido PC/mobile2/2PASS; suíte COMPLETA Playwright110/110PASS(3.8min); backend150/150PASS,frontend63/63PASS,typecheck/buildsPASS; concorrência PostgreSQL17 realPASS;11 migrations + RLS/grants/is_admin/mídia/rollback +20/50/janela60minPASS em PostgreSQL17.11real sem rede. Auth/storage schema são sintéticos, não GoTrue/PostgREST/Storage HTTP real. Build local sem yt-dlp. Nenhum TikTok real/teste produtivo. git diff --check/node --check PASS. Evidências fora do Git em C:/Users/felip/.codex/visualizations/2026/11/05/01a1abe2-408b-7c71-a9a6-d62fa7a3c353/integration-evidence-97t4d_zu, incluindo artefatos da falha anterior preservados.
+
+Leituras remotas: main/HEADs originais continuam iguais. Função produção>=20/50 já comprovadamente equivalente à migration via prosrc normalizado/signatura/retorno/volatilidade/security invoker/search_path/owner/ACL; histórico20 ausente,revision ausente. Sem grants explícitos de coluna ou memberships das roles consultadas. Não houve alteração remota. Vercel get_project/list_projects/context confirmam vínculo e projetos, mas omitem Production Branch/Preview Tracking. Credencial CLI padrão indisponível; não houve Computer Use nem contorno. Pergunta assíncrona ao usuário pede confirmação atual main/preview off em ambos. Push/Draft aguardam essa confirmação para evitar disparo de deploy não autorizado; publicação produtiva continua NO-GO até gates do runbook.
+
+Próxima ação: após conferir Git e este checkpoint, obter confirmação oficial/operador da configuração Vercel; então push normal exclusivo desta branch, confirmar SHA, abrir PR Draft e registrar URL/CI. Não repetir suíte já aprovada sem mudança relevante. Nenhuma falha local conhecida, mas E2E real Auth/PostgREST/Storage e backup/restore/cutover continuam gates de produção pendentes. Arquivos da entrega: merge inclui migration20/testes/docs/checkpoint backend; novos script/schema/runbook, ajuste api.spec.ts e este checkpoint. Não versionar logs/traces privados.
+
+---
+
+## Retomada integração — 06/11/2026, em andamento
+
+Mesma branch/worktree codex/integracao-editor-20261106/pcdnades-integration-20261106, HEAD7bc2e6a com merge local limite pendente preservado. Falha anterior identificada em api.spec.ts:1020 mobile, razão de coordenadas NaN; teste media boundingBox antes da imagem pronta. Ajustado somente teste para aguardar complete/naturalWidth e poll das coordenadas com precisão original. Layout intacto. Próximo: teste relacionado, suíte110 completa e builds/unitários; finalizar runbook e confirmar Vercel por conector/REST oficial sem Computer Use. Publicação produtiva segue bloqueada se configuração não puder ser verificada. Autorizado push branch e PR Draft; sem merge remoto/deploy/migrations remotas.
+
+## Integração final do editor — 06/11/2026, em andamento
+
+Worktree própria pcdnades-integration-20261106/nadesCs2, branch codex/integracao-editor-20261106, base main9187b72. Fetch confirmou PR8 HEAD05cbc5a Draft, concorrência7bc2e6a e limite3936153. Concorrência incorporada por FF (contém editor); merge local limite sem conflitos, ainda não commitado. Branches originais intactas. Autorizados commits/push exclusivos e PR Draft, proibidos merge de PR, deploy, alterações/migrations remotas e TikTok real. Próximo: validar conjunto/builds/browser/PG real, reconciliar histórico por evidência de equivalência somente leitura, preparar runbook. Vercel get_project confirma dois projetos/Production READY, mas omite productionBranch e previewDeploymentsDisabled; configuração de disparo ainda não reconfirmada. Dependências instaladas nesta worktree (backend ignore-scripts). Não há publicação desta branch ainda.
+
+## Concorrência de edição — 05/11/2026, implementação para revisão
+
+Branch codex/concorrencia-granadas, worktree C:/Users/felip/.codex/worktrees/pcdnades-concurrency-20261105/nadesCs2; base PR8 05cbc5a. Migration local aditiva cria revision monotônica e revoga UPDATE direto de public/anon/authenticated; PATCH exige expectedRevision e usa CAS pelo service_role após verificar JWT/is_admin (428 ausente, 400 inválido, 409 conflito). Frontend transmite revisão e preserva dados/sessão em conflito; contrato incompatível com cliente antigo e requer rollout coordenado. Testes: backend typecheck e 150 PASS, frontend build e 63 unitários PASS, 68 browser com API simulada PASS; PostgreSQL 17 isolado sem rede: disputa real, revisão na mesma transação, preservação de vídeo/origem/destinos e permissões PASS via backend/tests/sql/concurrency-real.ps1. Fixture SQL reduzida, não é E2E Auth/PostgREST/Storage. Container manual pcdnades-concurrency-lab-20261105 preservado; log backend/test-concurrency-output.log não versionado. Antes de produção: revisar grants por coluna/memberships/funções, backup, migration e ordem de implantação com aprovação específica; clientes antigos receberão 428, backend antigo perde UPDATE após migration. Nenhum serviço remoto alterado; sem PR/merge/deploy. Plano e comandos em docs/superpowers/plans/2026-11-05-concorrencia.md.
+
+## Concorrência de edição — 05/11/2026, em andamento
+
+Worktree C:/Users/felip/.codex/worktrees/pcdnades-concurrency-20261105/nadesCs2, branch codex/concorrencia-granadas, base PR8 05cbc5a. PATCH atual atualiza por ID sem versão; trigger usa now(), não garante versão monotônica para várias atualizações numa transação. Necessário contrato condicional e provável migration para contador monotônico, sem aplicar remoto. Próximo: testes RED, implementação, laboratório descartável isolado e checkpoint. Sem merge/deploy/PR/produção; push autorizado apenas nesta branch.
+
 ## Correção CORS de granadas — 05/11/2026 concluída para revisão
 
 Worktree C:/Users/felip/.codex/worktrees/pcdnades-cors-20261105/nadesCs2; branch codex/fix-cors-granadas; base main acea075. Preflightlocalantes:OPTIONS204 mas allow-methods GET,HEAD,POST, bloqueandoDELETE/PATCH no navegador. Configuraçãoagorapermite GET,HEAD,POST,PATCH,DELETE e preservaorigens. Testes: backend147/147, typecheck+buildPASS(yt-dlp não empacotado no build local padrão); frontend api14/14 e buildPASS. MockDBnão comprova RLS real; migraçãohistóricaprevê policyadminDELETE e grant; rota atual faz delete apenas granada, retorna204/404; frontend reconhece204. Nenhum outro defeito comprovado; sem DELETE emprodução/Supabase/Storage/Cron/flags. Vercel branch trackingPreview desligado nosdoisprojetos por leituraUI. Próximo: push normal branch e abrirPRpara main semmerge/deploy; acompanhar CI. Sem conteúdo de credenciais ou vídeos novos. PréviaTikTokpermanece fora do escopo, beta real aindapendente de teste supervisionado.

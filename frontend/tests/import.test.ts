@@ -31,7 +31,7 @@ function harness() {
         error: state.failed ? { code: "IMPORT_NETWORK_LIMIT", message: "Limite de obtenção" } : null } });
     }
     if (path.endsWith("/media/media-id")) return Response.json({ data: { ...media, sourceId: state.mismatch ? "another-source" : media.sourceId } });
-    if (path.endsWith("/grenades")) { state.publishes++; return Response.json({ data: { ...body, id: "grenade-id", video: { ...media, status: "ready" } } }); }
+    if (path.endsWith("/grenades")) { state.publishes++; return Response.json({ data: { ...body, id: "grenade-id", revision: 1, video: { ...media, status: "ready" } } }); }
     throw new Error(`Unexpected ${path}`);
   });
   const service = createApiService(client, async () => { throw new Error("Importação não faz upload no navegador"); });

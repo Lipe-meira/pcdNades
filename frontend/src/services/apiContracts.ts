@@ -111,6 +111,7 @@ export type Progress = {
   stage?: string | null;
 };
 export type SaveOptions = {
+  expectedRevision?: number;
   signal?: AbortSignal;
   onProgress?: (progress: Progress) => void;
   mediaId?: string;
@@ -184,6 +185,7 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
   if (
     !item ||
     !text(item.id) ||
+    !Number.isInteger(item.revision) || item.revision! < 1 ||
     !text(item.title) ||
     !text(item.mapId) ||
     !["smoke", "flashbang", "molotov", "solo_exec"].includes(item.type) ||
