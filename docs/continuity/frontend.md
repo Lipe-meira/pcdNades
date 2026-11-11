@@ -32,6 +32,8 @@ editor, Solo Exec e as coordenadas gravadas. Sem alterar banco, migrations, Supa
   ambos os andares e radar ampliado; regressão dos sete mapas).
 - Capturas antes/depois (fora do repositório): pasta `C:/Users/felip/AppData/Local/Temp/claude/af9c3bf5e0d969f0/3180eb7a-cf75-4f93-9815-c917054abceb/scratchpad/shots/`
   (`antes_*` e `depois_*`, andares 1 e 2, desktop e 390 px).
+- Rodada final (CI=1, sem reutilizar servidores): Playwright desktop+mobile 72/72 PASS; typecheck sem erros; vitest 83/83 PASS; build PASS.
+- Dados (somente leitura, projeto kdyzxxgzvgiffluyjjxu): `select ... from public.grenades where map_id = 'nuke'` retornou zero linhas. Nenhuma coordenada histórica da Nuke precisa de conversão.
 - Não executado: revisão visual humana no celular real e teste de cadastro/edição em ambiente API com Supabase. O Playwright
   rodou em modo demo. Não foram tocados Supabase nem Storage.
 
