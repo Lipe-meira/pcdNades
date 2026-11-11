@@ -435,6 +435,44 @@ test("painel não mostra contagens durante loading nem sem mapas", async ({ page
   await expect(page.getByRole("complementary", { name: "Filtros da biblioteca" })).toHaveCount(0);
 });
 
+test("carregamento lento avisa o usuário e oferece tentar novamente", async ({ page }) => {
+  await setup(page);
+  let calls = 0;
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  await page.route(`${api}/maps`, async (route) => {
+    calls++;
+    await gate;
+    await reply(route, { json: { data: [] } });
+  });
+  await page.goto("/");
+  await expect(page.getByRole("status")).toContainText("Carregando biblioteca");
+  await expect(page.getByRole("button", { name: "Tentar novamente" })).toHaveCount(0);
+  await expect(page.getByText("demorando mais que o normal")).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Tentar novamente" }).click();
+  await expect.poll(() => calls).toBe(2);
+  release();
+  await expect(page.getByRole("heading", { name: "Nenhum mapa cadastrado" })).toBeVisible();
+});
+
+test("atualizar biblioteca fica indisponível durante a consulta", async ({ page }) => {
+  await setup(page);
+  await page.route(`${api}/maps`, (route) => reply(route, { json: { data: [] } }));
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Nenhum mapa cadastrado" })).toBeVisible();
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  await page.route(`${api}/maps`, async (route) => {
+    await gate;
+    await reply(route, { json: { data: [] } });
+  });
+  const refresh = page.getByRole("button", { name: "Atualizar biblioteca" });
+  await refresh.click();
+  await expect(page.getByRole("button", { name: "Atualizando…" })).toBeDisabled();
+  release();
+  await expect(page.getByRole("button", { name: "Atualizar biblioteca" })).toBeEnabled();
+});
+
 test("login, capabilities e logout com respostas controladas", async ({
   page,
 }, testInfo) => {
