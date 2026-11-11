@@ -24,6 +24,11 @@ jobs:
     name: Typecheck, build, testes unitários e navegador
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    # Imagem oficial do Playwright: navegador e bibliotecas do sistema já instalados, sem apt no job.
+    # A tag deve coincidir com a versão de @playwright/test fixada em frontend/package-lock.json (ver passo de guarda).
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host
     defaults:
       run:
         working-directory: frontend
@@ -46,8 +51,11 @@ jobs:
         run: npm run build
       - name: Executar testes unitários
         run: npm test
-      - name: Instalar Chromium do Playwright
-        run: npx playwright install --with-deps chromium
+      - name: Conferir versão do Playwright e da imagem
+        run: |
+          versao=$(node -p "require('./node_modules/@playwright/test/package.json').version")
+          echo "Playwright fixado: $versao"
+          test "$versao" = "1.64.1" || { echo "Atualize a tag da imagem em .github/workflows/frontend.yml para v$versao-noble"; exit 1; }
       - name: Executar testes de navegador com servidores isolados
         run: npm run test:browser
         env:
