@@ -133,7 +133,7 @@ export class ApiClient {
         "INVALID_RESPONSE",
         response.status,
         undefined,
-        "A API retornou uma resposta inválida.",
+        "O servidor respondeu de forma inesperada. Tente novamente mais tarde.",
       );
     }
     if (!response.ok) {
@@ -157,7 +157,7 @@ export class ApiClient {
         "INVALID_RESPONSE",
         response.status,
         undefined,
-        "A API retornou uma resposta inválida.",
+        "O servidor respondeu de forma inesperada. Tente novamente mais tarde.",
       );
     return payload as T;
   }
