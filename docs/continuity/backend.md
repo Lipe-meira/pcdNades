@@ -1,3 +1,7 @@
+# HE Grenade e vídeos mutados — 10/11/2026
+
+Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261110120000_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration NÃO aplicada em Supabase; sem merge nem deploy.
+
 # Limite individual de reservas — 05/11/2026, concluído localmente; publicação em andamento
 
 Pedido:20 reservas/admin/hora, global50 e janela móvel60min. Branch codex/tiktok-limite-individual-20; worktree C:/Users/felip/.codex/worktrees/pcdnades-rate-limit-20261105/nadesCs2; base9187b72. Commit desta entrega contém este registro, consultar git log para SHA sem autorreferência. Autorizados commit/push normal só nesta branch, sem PR/merge/deploy/aplicação remota.
