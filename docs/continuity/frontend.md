@@ -1,6 +1,6 @@
 # Radares da Nuke substituídos pelas imagens fornecidas — 11/11/2026
 
-Estado: concluído localmente e validado; commit e PR pendentes no momento deste registro.
+Estado: concluído e validado; commit `1c615b9` enviado à branch `feat/nuke-radares-novos`. PR ainda não aberto (GitHub CLI indisponível nesta máquina); link de comparação: https://github.com/Lipe-meira/pcdNades/compare/main...feat/nuke-radares-novos
 
 ## Objetivo e pedido atual
 
@@ -12,9 +12,9 @@ editor, Solo Exec e as coordenadas gravadas. Sem alterar banco, migrations, Supa
 
 - Branch: `feat/nuke-radares-novos`, worktree `F:/projetos/nadesCs2-nuke-radares`.
 - Base: `origin/main` em `07cc294` (PR #14 já integrado).
-- Push: pendente. Nada enviado ao remoto neste registro.
-- Arquivos alterados (sem commit ainda): `frontend/public/maps/valve/nuke.png`, `frontend/public/maps/valve/nuke_lower.png`,
-  `frontend/public/maps/valve/ATTRIBUTION.md`, `docs/continuity/frontend.md`.
+- Push: enviado para `origin/feat/nuke-radares-novos` (commit `1c615b9`). Sem merge e sem deploy.
+- Arquivos da entrega (commit `1c615b9`): `frontend/public/maps/valve/nuke.png`, `frontend/public/maps/valve/nuke_lower.png`,
+  `frontend/public/maps/valve/ATTRIBUTION.md`, `docs/continuity/frontend.md`. Nada pendente localmente.
 
 ## Decisões
 
@@ -38,7 +38,7 @@ editor, Solo Exec e as coordenadas gravadas. Sem alterar banco, migrations, Supa
 ## Retomar daqui
 
 1. `git -C F:/projetos/nadesCs2-nuke-radares status` e confirmar a branch `feat/nuke-radares-novos`.
-2. Se ainda não commitado: commitar os quatro arquivos listados, dar push com `-u` e abrir o PR contra `main`.
+2. Abrir o PR `feat/nuke-radares-novos` → `main` (título: feat(radar): substitui radares da Nuke pelas imagens dos dois andares), usando o resumo deste checkpoint.
 
 ---
 
