@@ -43,6 +43,38 @@ editor, Solo Exec e as coordenadas gravadas. Sem alterar banco, migrations, Supa
 2. Abrir o PR `feat/nuke-radares-novos` → `main` (título: feat(radar): substitui radares da Nuke pelas imagens dos dois andares), usando o resumo deste checkpoint.
 
 ---
+# CI automático do frontend — 11/11/2026 (implementado; PR aberto, sem merge)
+
+Estado: concluído na branch; aguarda revisão e merge do responsável. Pedido: workflow do GitHub Actions para alterações do frontend (npm ci, typecheck, build, testes unitários e Playwright com servidores isolados), sem deploy, sem dependências novas, preservando `.github/workflows/backend-linux.yml` e sem tocar importação, mídia, editor ou banco (o Sonnet trabalha nisso).
+
+- Branch e worktree: `codex/ci-frontend-20261111` em `C:/Users/felip/.codex/worktrees/pcdnades-ci-frontend-20261111/nadesCs2`, a partir de `origin/main` = `07cc294`.
+- Arquivos entregues: `.github/workflows/frontend.yml` (novo) e este checkpoint. Nenhum arquivo de código alterado.
+- Gatilhos: `push` em `main`, `pull_request` e `workflow_dispatch`, filtrados por `frontend/**` e pelo próprio workflow. Permissões `contents: read`, concurrency por ref, timeout de 25 min, Node 24 (igual ao backend e ao Node local de validação).
+- Passos: `npm ci`, `npm run typecheck`, `npm run build`, `npm test`, `npx playwright install --with-deps chromium`, `npm run test:browser` com `CI=true`. Relatório do Playwright enviado como artefato só em falha, retenção de 7 dias.
+- Ações com SHA fixado, como no backend: checkout `11d5960a` (v4.4.0), setup-node `49933ea5` (v4.4.0) e upload-artifact `ea165f8d` (v4.6.2). Cache: `actions/setup-node` com `cache: npm` apontando para `frontend/package-lock.json`.
+- Não configurado: deploy, previews, segredos, acesso ao Supabase ou a produção.
+
+## Validação executada localmente (Windows, Node v24.21.0, npm 11.19.0)
+
+- `npm ci`: ok, 0 vulnerabilidades.
+- `npm run typecheck`: ok.
+- `npm run build`: ok.
+- `npm test` (vitest): 15 arquivos, 83 testes, todos passando.
+- `npx playwright test` (sem `CI`): 148 testes passando em cerca de 2,4 min, 2 workers.
+- `CI=true npm run test:browser`: 148 testes passando em cerca de 3,2 min. Este é o modo que o runner vai usar.
+- YAML de `frontend.yml` validado com o pacote `yaml` (zero erros de parse), instalado só em pasta de scratchpad fora do projeto.
+
+## Não validado
+
+- Execução real do workflow no GitHub Actions. Ainda não há run; a primeira execução vai ocorrer quando o PR for aberto.
+- Teste de falha proposital para confirmar que o workflow fica vermelho. Não executei; a propagação de erro é o comportamento padrão de `run` no runner, mas ainda não foi demonstrada neste repositório.
+- `actionlint` não foi rodado (ferramenta não instalada, e não instalei por pedido).
+
+## Custo e limitações estimados
+
+- Runner `ubuntu-24.04`, 2 vCPU. Uma execução típica deve levar cerca de 6 a 9 min (npm ci e apt do Chromium, mais 3 min de Playwright). Se o repositório for público, o uso é gratuito em runners Linux padrão; se for privado, o custo estimado fica perto de US$ 0,05 a US$ 0,08 por execução, conforme a tarifa do plano.
+- Não há cache do navegador do Playwright; o `--with-deps` roda apt a cada execução. Pode ser otimizado depois.
+- Os testes de API do Playwright usam respostas controladas, não o backend real. Eles não validam importação, mídia nem Storage.
 
 # Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
 
