@@ -41,4 +41,4 @@ layout e identidade continuam os do pcdNades. **A migration deste PR não foi ap
 ## Limitações
 - Radares: ver `frontend/public/maps/valve/ATTRIBUTION.md` (origem e licença não registradas; setpos.gg não tem andar inferior).
 - O andar inferior mostra a silhueta do superior esmaecida, como no arquivo original.
-- O PR #11 (UX mobile) altera estilos próprios (`mobile-ux.css`); não há arquivo em comum além do checkpoint do frontend.
+- O PR #11 (UX mobile, `mobile-ux.css`) já está na main e foi integrado a esta branch; só afeta o seletor de mapa (`.map-select`), sem relação com os botões de andar.
