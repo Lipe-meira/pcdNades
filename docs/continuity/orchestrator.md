@@ -1,3 +1,7 @@
+# Nuke com dois andares — 11/11/2026
+
+Branch feat/nuke-two-floors, worktree pcdnades-nuke-levels/nadesCs2, base main b661dd0 (contém o PR #10). Implementado: catálogo de andares (frontend/src/domain/mapLevels.ts), botões 1/2 no Radar, andares em biblioteca e editor (incluindo Solo Exec), migration aditiva backend/migrations/20261111120000_map_levels.sql com rollback e smoke PGlite. Detalhes, rollout e limitações: docs/NUKE-FLOORS-20261111.md; radares: frontend/public/maps/valve/ATTRIBUTION.md. Migration NÃO aplicada em Supabase; sem merge nem deploy. PR #11 (UX mobile) preservado, branch não tocada. Produção não tem granadas na Nuke (consulta de leitura 11/11).
+
 # HE Grenade e vídeos mutados — 10/11/2026
 
 Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261111015949_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration APLICADA em produção em 11/11/2026 02:00 UTC via apply_migration (versão registrada 20261111015949); backup prévio em F:/BackupsPrivados/pcdnades/release-20261110-delta (restauração testada). 16 granadas, 21 mídias e 17 objetos preservados. Merge e deploy pendentes de autorização.
