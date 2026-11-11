@@ -4,6 +4,17 @@ import { createApiService } from "./apiService";
 import type { AuthIdentity, AuthService } from "./auth";
 import type { RuntimeConfig } from "./runtimeConfig";
 
+/** Falha de rede ou do servidor de login não é erro de credencial. */
+export function loginFailureMessage(error: { name?: string; status?: number }) {
+  const unreachable =
+    error.name === "AuthRetryableFetchError" ||
+    error.status === 0 ||
+    (error.status ?? 0) >= 500;
+  return unreachable
+    ? "Não foi possível conectar ao servidor de login. Verifique a conexão e tente novamente."
+    : "Não foi possível entrar. Confira e-mail e senha ou tente novamente mais tarde.";
+}
+
 export function createSupabaseRuntime(
   config: Extract<RuntimeConfig, { mode: "api" }>,
 ) {
@@ -64,10 +75,7 @@ export function createSupabaseRuntime(
         email: email.trim(),
         password,
       });
-      if (error)
-        throw new Error(
-          "Não foi possível entrar. Confira e-mail e senha ou tente novamente mais tarde.",
-        );
+      if (error) throw new Error(loginFailureMessage(error));
     },
     async signOut() {
       const { error } = await supabase.auth.signOut({ scope: "local" });
