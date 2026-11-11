@@ -2,7 +2,7 @@
 
 Imagens originais enviadas e autorizadas pelo usuário para o menu de seleção em30/10/2026. Copiadas byte a byte, sem gerar substituto, recortar, recolorir ou editar. Não declaramos autoria própria, licença MIT/CC ou outra licença pública para estas imagens; a origem registrada é o material fornecido pelo usuário.
 
-Sete imagens são usadas como decoração dos botões Todas/Smoke/Molotov/Flashbang e Ambos/CT/T. Os nomes, contagens e estados acessíveis continuam em texto. HE fica reservado como arquivo, sem botão, tipo, filtro ou funcionalidade nova.
+Oito imagens são usadas como decoração dos botões Todas/Smoke/Molotov/Flashbang/HE Grenade e Ambos/CT/T. Os nomes, contagens e estados acessíveis continuam em texto.
 
 As duas imagens fornecidas para Ambos têm SHA256 idêntico1ccc226836186e89bf5d039307a553a6997a7ecd949a67c19b3ed35b7c87856e. Apenas a primeira cópia foi mantida como both.png. Não há download externo em runtime.
 

@@ -1,4 +1,5 @@
 import type { LineupDraft, Target, SoloDestination } from "../../domain/types";
+import { isGrenadeType, isSingleGrenadeType } from "../../domain/types";
 import { isTarget } from "../../domain/lineups";
 
 /** Only non-media form fields are persisted. Never serialize the full draft. */
@@ -39,10 +40,10 @@ export function parseLocalDraft(raw: string, mapIds: string[]): LocalDraft | nul
     const f = value.fields as Record<string, unknown>;
     const validPoint = (p: unknown): p is Target => !!p && typeof p === "object" && isTarget(p as Target);
     if (typeof f.title !== "string" || f.title.length > 120 || typeof f.instructions !== "string" || f.instructions.length > 6000 ||
-      typeof f.mapId !== "string" || !mapIds.includes(f.mapId) || !["smoke", "flashbang", "molotov", "solo_exec"].includes(f.type as string) ||
+      typeof f.mapId !== "string" || !mapIds.includes(f.mapId) || !isGrenadeType(f.type) ||
       !["T", "CT"].includes(f.side as string) || !(f.target === null || validPoint(f.target)) ||
       !(f.origin === null || validPoint(f.origin)) ||
-      !(f.destinations === null || Array.isArray(f.destinations) && f.destinations.length <= 12 && f.destinations.every((d: unknown) => validPoint(d) && ["smoke", "flashbang", "molotov"].includes((d as SoloDestination).type)))) return null;
+      !(f.destinations === null || Array.isArray(f.destinations) && f.destinations.length <= 12 && f.destinations.every((d: unknown) => validPoint(d) && isSingleGrenadeType((d as SoloDestination).type)))) return null;
     // Reconstruct rather than trust unknown properties from storage.
     const point = (p: unknown): Target | null => p === null ? null : { x: (p as Target).x, y: (p as Target).y };
     return { version: 1, step: value.step as 0 | 1 | 2, baseUpdatedAt: value.baseUpdatedAt as string | null,
