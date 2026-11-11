@@ -2,13 +2,13 @@
 // Valida a migration de andares em banco descartável: nada é aplicado em ambiente remoto.
 import {PGlite} from '../vendor/sql-test/node_modules/@electric-sql/pglite/dist/index.js';import {readFile,readdir} from 'node:fs/promises';import assert from 'node:assert/strict';
 const dir=new URL('../migrations',import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1');
-const rollbackFile=new URL('../rollbacks/20261111120000_map_levels_rollback.sql',import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1');
+const rollbackFile=new URL('../rollbacks/20261111031252_map_levels_rollback.sql',import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1');
 const db=new PGlite();let checks=0;const ok=()=>checks++;
 const pre="create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql as $$select null::uuid$$;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);alter default privileges in schema public grant all on tables to service_role;";
 try{
  await db.exec(pre);
  const files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
- const name='20261111120000_map_levels.sql';assert.equal(files.at(-1),name,'a migration de andares deve ser a última');
+ const name='20261111031252_map_levels.sql';assert.equal(files.at(-1),name,'a migration de andares deve ser a última');
  for(const f of files.slice(0,-1))await db.exec(await readFile(`${dir}/${f}`,'utf8'));
  // Produção tem a Nuke cadastrada em public.maps (as migrations locais só semeiam 3 mapas).
  await db.query("insert into public.maps(id,name,radar) values('nuke','Nuke','{\"imageUrl\":\"/maps/valve/nuke.png\",\"width\":1024,\"height\":1024,\"coordinateVersion\":\"valve-nuke-v1\"}')");

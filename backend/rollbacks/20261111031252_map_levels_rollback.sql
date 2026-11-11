@@ -1,4 +1,4 @@
--- ROLLBACK da migration 20261111120000_map_levels.sql. Só use se nenhuma granada de mapa com andares (Nuke) foi
+-- ROLLBACK da migration 20261111031252_map_levels.sql. Só use se nenhuma granada de mapa com andares (Nuke) foi
 -- cadastrada, ou depois de remover/exportar esses registros: as colunas com os andares são descartadas.
 begin;
 alter table public.grenades drop constraint grenades_levels_check;
