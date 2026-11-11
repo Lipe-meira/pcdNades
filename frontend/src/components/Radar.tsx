@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { GameMap, Lineup, Target, GrenadeType } from "../domain/types";
 import { typeLabels, isSingleGrenadeType } from "../domain/types";
 import { isTarget, pointFromImage } from "../domain/lineups";
+import { levelFor, levelInfo, levelsOf } from "../domain/mapLevels";
+import type { MapLevelId } from "../domain/mapLevels";
 import { Icon } from "./Icon";
 
 type Props = {
@@ -10,7 +12,7 @@ type Props = {
   selectedId?: string;
   onSelect?: (ids: string[]) => void;
   target?: Target | null;
-  extraTargets?: Target[] | null;
+  extraTargets?: (Target & { level?: MapLevelId | null })[] | null;
   origin?: Target | null;
   marking?: "origin" | "target" | "idle";
   selectedTargetIndex?: number;
@@ -20,6 +22,14 @@ type Props = {
   highlightedIds?: string[];
   onTargetChange?: (point: Target) => void;
   demo?: boolean;
+  /** Andar exibido (mapas com andares). Controlado por quem usa o radar; sem ele os botões não aparecem. */
+  level?: MapLevelId;
+  onLevelChange?: (level: MapLevelId) => void;
+  /** Andar dos pontos do rascunho no editor. */
+  originLevel?: MapLevelId | null;
+  targetLevel?: MapLevelId | null;
+  /** Texto acessível do grupo de botões de andar (ex.: "Andar da origem" no editor). */
+  levelGroupLabel?: string;
 };
 
 export function Radar({
@@ -38,6 +48,11 @@ export function Radar({
   highlightedIds = [],
   onTargetChange,
   demo = true,
+  level,
+  onLevelChange,
+  originLevel,
+  targetLevel,
+  levelGroupLabel = "Andar do radar",
 }: Props) {
   const [broken, setBroken] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -60,14 +75,42 @@ export function Radar({
     return () => window.removeEventListener("keydown", close, true);
   }, [expanded]);
   const editing = Boolean(onOriginChange || onTargetChange);
+  const leveled = levelsOf(map.id);
+  const activeLevel = leveled && level !== undefined ? levelFor(map.id, level) : leveled ? leveled.defaultLevel : undefined;
+  const activeInfo = leveled ? levelInfo(map.id, activeLevel) : undefined;
+  const radarUrl = activeInfo?.radarUrl ?? map.radarUrl;
+  // Em mapas sem andares todo ponto é exibido; nos demais, só os do andar em exibição.
+  const onLevel = (pointLevel?: MapLevelId | null) => !leveled || levelFor(map.id, pointLevel) === activeLevel;
+  const destinationLevel = (item: Lineup, point: Target) => ("level" in point && (point as { level?: MapLevelId | null }).level) || item.targetLevel;
+  const levelOfPoints = (item: Lineup) => [
+    ...(item.origin ? [item.originLevel] : []),
+    ...(item.destinations?.length ? item.destinations.map(point => point.level ?? item.targetLevel) : [item.targetLevel]),
+  ];
   const changePoint = marking === "origin" ? onOriginChange : marking === "target" ? onTargetChange : undefined;
-  const origins = lineups.filter((item) => item.origin && isTarget(item.origin) &&
-    (selectedId ? item.id === selectedId : highlightedIds.includes(item.id)));
+  const focused = lineups.filter((item) => (selectedId ? item.id === selectedId : highlightedIds.includes(item.id)));
+  const origins = focused.filter((item) => item.origin && isTarget(item.origin) && onLevel(item.originLevel));
+  // Andares dos pontos de granadas em foco que não estão na tela agora (ex.: origem em um andar, destino em outro).
+  const otherLevels = leveled && !editing
+    ? [...new Set(focused.flatMap(levelOfPoints).map(value => levelFor(map.id, value)))].filter(value => value !== activeLevel) as MapLevelId[]
+    : [];
+  const draftExtras = extraTargets?.filter(point => isTarget(point)) ?? [];
+  const draftOtherLevels = leveled && editing
+    ? [...new Set([
+        ...(origin && isTarget(origin) ? [levelFor(map.id, originLevel)] : []),
+        ...(draftExtras.length ? draftExtras.map(point => levelFor(map.id, point.level)) : target ? [levelFor(map.id, targetLevel)] : []),
+      ])].filter(value => value !== activeLevel) as MapLevelId[]
+    : [];
+  const hiddenLevels = editing ? draftOtherLevels : otherLevels;
   const connections = editing
-    ? origin && isTarget(origin) ? (extraTargets?.length ? extraTargets : target ? [target] : []).filter(isTarget).map((point, i) => ({ id: `draft-${i}`, origin, target: point })) : []
-    : origins.flatMap(item => (item.destinations?.length ? item.destinations : [item.target]).map((point,i) => ({ id: `${item.id}-${i}`, origin: item.origin!, target: point })));
+    ? origin && isTarget(origin) && onLevel(originLevel)
+      ? (extraTargets?.length ? extraTargets : target ? [{ ...target, level: targetLevel }] : []).filter(isTarget).filter(point => onLevel((point as { level?: MapLevelId | null }).level)).map((point, i) => ({ id: `draft-${i}`, origin, target: point }))
+      : []
+    : origins.flatMap(item => (item.destinations?.length ? item.destinations : [item.target])
+        .filter(point => onLevel(destinationLevel(item, point)))
+        .map((point,i) => ({ id: `${item.id}-${i}`, origin: item.origin!, target: point })));
   const groups = new Map<string, { item: Lineup; target: Target; markerType: GrenadeType; targetIndex: number }[]>();
   lineups.forEach(item => (item.destinations?.length ? item.destinations : [item.target]).forEach((target, targetIndex) => {
+    if (!onLevel(destinationLevel(item, target))) return;
     const key = `${target.x}:${target.y}`;
     const markerType = "type" in target && isSingleGrenadeType(target.type) ? target.type : item.type;
     groups.set(key, [...(groups.get(key) ?? []), { item, target, markerType, targetIndex }]);
@@ -78,12 +121,12 @@ export function Radar({
         role={expanded ? "dialog" : undefined} aria-modal={expanded ? true : undefined}
         aria-label={expanded ? `Radar ampliado: ${map.name}` : undefined}>
       <div className="radar-toolbar">
-        <span>{map.name} <span className="radar-toolbar-label">· radar</span></span>
+        <span>{map.name} <span className="radar-toolbar-label">· radar{activeInfo ? ` · andar ${activeInfo.label} (${activeInfo.name.toLowerCase()})` : ""}</span></span>
         <button ref={toggle} type="button" className="button secondary radar-expand" aria-expanded={expanded}
           onClick={() => setExpanded(value => !value)}>{expanded ? "Reduzir radar" : "Ampliar radar"}</button>
       </div>
       <div className={`radar-frame ${editing ? "radar-edit" : ""}`}>
-        {broken === map.radarUrl ? (
+        {broken === radarUrl ? (
           <div className="empty-state" role="alert">
             <Icon name="info" />
             <h3>Radar indisponível</h3>
@@ -93,14 +136,21 @@ export function Radar({
             </p>
           </div>
         ) : (
-          <div className="radar-image">
+          <div className={`radar-image ${leveled ? "is-cropped" : ""}`}
+            style={leveled ? { aspectRatio: `${leveled.viewport.width} / ${leveled.viewport.height}` } : undefined}>
+            <div className={leveled ? "radar-canvas" : "radar-plain"}
+              style={leveled ? {
+                width: `${100 / leveled.viewport.width}%`,
+                left: `${-(leveled.viewport.x / leveled.viewport.width) * 100}%`,
+                top: `${-(leveled.viewport.y / leveled.viewport.height) * 100}%`,
+              } : undefined}>
             <img
-              src={map.radarUrl}
+              src={radarUrl}
               width={map.width}
               height={map.height}
-              alt={`Radar ${map.illustrative ? "ilustrativo" : "do mapa"} ${map.name}`}
+              alt={`Radar ${map.illustrative ? "ilustrativo" : "do mapa"} ${map.name}${activeInfo ? `, andar ${activeInfo.label} (${activeInfo.name.toLowerCase()})` : ""}`}
               draggable={false}
-              onError={() => setBroken(map.radarUrl)}
+              onError={() => setBroken(radarUrl)}
               onClick={
                 changePoint
                   ? (event) => {
@@ -127,7 +177,7 @@ export function Radar({
               onClick={() => { onSelect?.([item.id]); setExpanded(false); }}>
               <Icon name="plus" size={17} />
             </button>)}
-            {editing && origin && isTarget(origin) && <button type="button" className="origin-marker origin-draft"
+            {editing && origin && isTarget(origin) && onLevel(originLevel) && <button type="button" className="origin-marker origin-draft"
               aria-label="Selecionar origem para reposicionar" aria-pressed={marking === "origin"} onClick={onEditOrigin}
               style={{ left: `${origin.x * 100}%`, top: `${origin.y * 100}%` }}>
               <Icon name="plus" size={17} />
@@ -160,8 +210,8 @@ export function Radar({
                 </span>
               </button>
             ))}
-            {extraTargets?.map((point,index) => isTarget(point) && <button type="button" key={`extra-${index}`} className={`target-marker draft-target ${index === selectedTargetIndex ? "selected" : ""}`} style={{left:`${point.x * 100}%`,top:`${point.y * 100}%`}} aria-label={`Selecionar destino ${index + 1} para reposicionar`} aria-pressed={marking === "target" && index === selectedTargetIndex} onClick={() => onEditTarget?.(index)}><Icon name={"type" in point ? (point.type as "smoke" | "flashbang" | "molotov") : "crosshair"} size={17} /><span className="draft-number">{index + 1}</span></button>)}
-            {target && !extraTargets?.length && (
+            {extraTargets?.map((point,index) => isTarget(point) && onLevel(point.level) && <button type="button" key={`extra-${index}`} className={`target-marker draft-target ${index === selectedTargetIndex ? "selected" : ""}`} style={{left:`${point.x * 100}%`,top:`${point.y * 100}%`}} aria-label={`Selecionar destino ${index + 1} para reposicionar`} aria-pressed={marking === "target" && index === selectedTargetIndex} onClick={() => onEditTarget?.(index)}><Icon name={"type" in point ? (point.type as "smoke" | "flashbang" | "molotov") : "crosshair"} size={17} /><span className="draft-number">{index + 1}</span></button>)}
+            {target && !extraTargets?.length && onLevel(targetLevel) && (
               <button type="button"
                 className="target-marker draft-target selected"
                 style={{
@@ -175,9 +225,24 @@ export function Radar({
                 <Icon name="crosshair" size={20} />
               </button>
             )}
+            </div>
+            {leveled && onLevelChange && <div className="radar-levels" role="group" aria-label={levelGroupLabel}>
+              {leveled.levels.map((item) => <button key={item.id} type="button" className="radar-level"
+                aria-label={`Andar ${item.label}, ${item.name.toLowerCase()}`} title={`${item.name}: ${item.areas}`}
+                aria-pressed={item.id === activeLevel} onClick={() => onLevelChange(item.id)}>{item.label}</button>)}
+            </div>}
           </div>
         )}
       </div>
+      {leveled && <p className="radar-level-note" role="status">
+        <span><strong>Andar {activeInfo?.label} · {activeInfo?.name}:</strong> {activeInfo?.areas}.</span>
+        {onLevelChange && hiddenLevels.map((id) => {
+          const other = leveled.levels.find((item) => item.id === id)!;
+          return <button key={id} type="button" className="text-button" onClick={() => onLevelChange(id)}>
+            {editing ? `Há pontos no andar ${other.label}` : `Também usa o andar ${other.label}`} · ver
+          </button>;
+        })}
+      </p>}
       </div>
       <p className="radar-caption">
         <Icon name="info" size={16} />

@@ -6,8 +6,8 @@ const pre="create role anon;create role authenticated;create role service_role b
 try{
  await db.exec(pre);
  const files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
- const heName='20261111015949_he_grenade_type.sql';assert.ok(files.at(-1)===heName,'HE deve ser a última migration');
- for(const f of files.slice(0,-1))await db.exec(await readFile(`${dir}/${f}`,'utf8'));
+ const heName='20261111015949_he_grenade_type.sql';const heIndex=files.indexOf(heName);assert.ok(heIndex>0,'migration HE não encontrada');
+ for(const f of files.slice(0,heIndex))await db.exec(await readFile(`${dir}/${f}`,'utf8'));
  const owner='123e4567-e89b-42d3-a456-426614174000';await db.query('insert into auth.users values($1)',[owner]);
  const media=(await db.query("insert into public.media_assets(owner_id,source_type,storage_key) values($1,'upload','a.mp4') returning id",[owner])).rows[0].id;
  await db.query("update public.media_assets set status='queued' where id=$1",[media]);await db.query("update public.media_assets set status='processing',locked_until=now()+interval '2 minutes' where id=$1",[media]);await db.query("update public.media_assets set status='ready',locked_until=null,metadata=$2 where id=$1",[media,{durationSeconds:2,bytes:100,mimeType:'video/mp4'}]);

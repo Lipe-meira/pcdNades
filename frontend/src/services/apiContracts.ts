@@ -1,5 +1,6 @@
 import type { GameMap, Lineup, VideoStatus } from "../domain/types";
 import { isGrenadeType, isSingleGrenadeType } from "../domain/types";
+import { isMapLevelId } from "../domain/mapLevels";
 import { isTarget } from "../domain/lineups";
 import { ApiError } from "./apiClient";
 import { safeHttpUrl } from "./runtimeConfig";
@@ -198,10 +199,14 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
     contractError();
   if (item.origin != null && !isTarget(item.origin)) contractError();
   if (item.type === "solo_exec" && (!item.origin || !Array.isArray(item.destinations) || !item.destinations.length || item.destinations.some(d => !isTarget(d) || !isSingleGrenadeType(d.type)))) contractError();
+  if (!(item.originLevel == null || isMapLevelId(item.originLevel)) || !(item.targetLevel == null || isMapLevelId(item.targetLevel)) ||
+    item.destinations?.some(d => !(d.level == null || isMapLevelId(d.level)))) contractError();
   const media = item.video && checkMedia(item.video);
   return {
     ...item,
     origin: item.origin ?? null,
+    originLevel: item.originLevel ?? null,
+    targetLevel: item.targetLevel ?? null,
     video: media
       ? {
           id: media.id,

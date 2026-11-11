@@ -1,3 +1,11 @@
+# Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
+
+Autorizada pelo responsável e aplicada uma única vez com apply_migration no projeto kdyzxxgzvgiffluyjjxu; registrada pelo Supabase como 20261111031252 map_levels (arquivos da migration e do rollback renomeados no repositório, conteúdo idêntico). Pré e pós-checagens aprovadas: 15 granadas, 21 mídias, 17 objetos, hash das linhas de grenades, policies, grants, triggers e RLS iguais ao backup release-20261111-nuke-premigration; colunas origin_level/target_level criadas e vazias; checks validados. Sem alterar dados nem limpar Storage. PR #14 segue aberto, SEM merge e SEM deploy (frontend/backend publicados ainda ignoram as colunas novas). Próximo: autorização para o merge do PR #14, conferência dos deployments pcdnades e pcdnades-api e smoke na Nuke.
+
+# Nuke com dois andares — 11/11/2026
+
+Branch feat/nuke-two-floors, worktree pcdnades-nuke-levels/nadesCs2, base main b661dd0 (contém o PR #10). Implementado: catálogo de andares (frontend/src/domain/mapLevels.ts), botões 1/2 no Radar, andares em biblioteca e editor (incluindo Solo Exec), migration aditiva backend/migrations/20261111031252_map_levels.sql com rollback e smoke PGlite. Detalhes, rollout e limitações: docs/NUKE-FLOORS-20261111.md; radares: frontend/public/maps/valve/ATTRIBUTION.md. Migration NÃO aplicada em Supabase (a da HE já está aplicada em produção); ensaio da migration e do rollback sobre restauração do dump real de produção: PASS (docs/NUKE-FLOORS-20261111.md). Main e99fedd (PRs #11, #12 e #13) integrada por merge 005013e sem conflitos; checkpoints e testes dos PRs #12/#13 preservados. Verificação pós-merge: typecheck, build, 83 unitários, 155 do backend e 148 de navegador (Playwright em portas isoladas 5274/5275, contra esta worktree). Pronta para abrir o PR; sem merge, deploy nem migration em produção. PR #11 (UX mobile) foi mergeado na main (3566387) durante o trabalho e integrado a esta branch por merge (sem conflitos, branch do PR #11 não alterada); testes rodados sobre o resultado. Produção não tem granadas na Nuke (consulta de leitura 11/11).
+
 # HE Grenade e vídeos mutados — 10/11/2026
 
 # Experiência de carregamento — 11/11/2026 (PR #13 aberto, sem merge)

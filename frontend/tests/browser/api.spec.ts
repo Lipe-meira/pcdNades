@@ -1436,6 +1436,8 @@ test("Solo Exec cadastra um vídeo com dois destinos tipados", async ({ page }) 
   expect(state.published).toHaveLength(1);
   expect((state.published[0] as any).type).toBe("solo_exec");
   expect((state.published[0] as any).destinations).toEqual([{x:.4,y:.6,type:"smoke"},{x:.65,y:.75,type:"molotov"}]);
+  expect(state.published[0]).not.toHaveProperty("originLevel"); // mapas sem andares não recebem campos de andar
+  expect(state.published[0]).not.toHaveProperty("targetLevel");
   await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
   await expect(page.getByRole("button", { name: /Validação inline controlada, Solo Exec/ })).toHaveCount(2);
   const first = page.getByRole("button", { name: "Validação inline controlada, Solo Exec, destino 1, Smoke, lado T", exact: true });
@@ -1640,4 +1642,34 @@ test("conflito de revisão preserva formulário e não repete PATCH", async ({ p
  await page.getByLabel('Título',{exact:true}).fill('Minha edição'); await page.getByRole('button',{name:'Vídeo e revisão'}).click(); await page.getByRole('button',{name:'Salvar granada',exact:true}).click();
  await expect(page.getByRole('alert').first()).toContainText('alterada por outra pessoa'); await page.getByRole('button',{name:'Informações'}).click(); await expect(page.getByLabel('Título',{exact:true})).toHaveValue('Minha edição');
  expect(writes).toBe(1); expect(state.published[0].title).toBe(grenade.title); expect(state.published[0].video.id).toBe(mediaId);
+});
+
+test("Nuke: cadastro envia origem no andar 1 e destino no andar 2 e a biblioteca mostra cada andar", async ({ page }) => {
+  const state = await setup(page, { inlineOriginal: true });
+  const nukeMap = { id: "nuke", name: "Nuke", radar: { imageUrl: "/maps/valve/nuke.png", width: 1024, height: 1024, coordinateVersion: "valve-nuke-v1" } };
+  await page.route(`${api}/maps`, (route) => reply(route, { json: { data: [nukeMap] } }));
+  await page.goto("/"); await signIn(page);
+  await page.getByRole("button", { name: "Nova granada", exact: true }).click();
+  await page.getByLabel("Título", { exact: true }).fill("Nuke entre andares");
+  await page.getByLabel("Instruções", { exact: true }).fill("Instruções de QA, sem execução real.");
+  await page.getByRole("button", { name: "Posicionamento" }).click();
+  await page.getByText("Ajustar coordenadas da origem").click();
+  await page.getByText("Ajustar coordenadas do destino").click();
+  await page.getByLabel("Origem X (%)").fill("57");
+  await page.getByLabel("Origem Y (%)").fill("46");
+  await page.getByLabel("Coordenada X (%)").fill("58");
+  await page.getByLabel("Coordenada Y (%)").fill("50");
+  await page.getByRole("radio", { name: "1 · Superior" }).first().check();
+  await page.getByRole("radio", { name: "2 · Inferior" }).nth(1).check();
+  await page.getByRole("button", { name: "Vídeo e revisão" }).click();
+  await page.getByLabel("Arquivo MP4", { exact: true }).setInputFiles(samplePath);
+  await expect.poll(() => page.getByLabel("Prévia do MP4 selecionado").evaluate((video: HTMLVideoElement) => video.readyState)).toBeGreaterThanOrEqual(1);
+  await page.getByRole("button", { name: "Salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 15000 });
+  const saved = state.published[0] as any;
+  expect(saved).toMatchObject({ mapId: "nuke", originLevel: "upper", targetLevel: "lower", origin: { x: 0.57, y: 0.46 }, target: { x: 0.58, y: 0.5 } });
+  await page.getByRole("link", { name: "Biblioteca", exact: true }).click();
+  await page.locator(".lineup-row").filter({ hasText: "Nuke entre andares" }).click();
+  await expect(page.getByRole("button", { name: /^Andar 2,/ })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText(/Origem no radar: .*andar 1 \(superior\)\./)).toBeVisible();
 });

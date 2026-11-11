@@ -2,6 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Filters, GameMap, Lineup } from "../../domain/types";
 import { typeLabels } from "../../domain/types";
 import { filterLineups } from "../../domain/lineups";
+import { levelFor, levelText, levelsOf, primaryLevel } from "../../domain/mapLevels";
+import type { MapLevelId } from "../../domain/mapLevels";
 import { Radar } from "../../components/Radar";
 import { Icon } from "../../components/Icon";
 import { MapCarousel } from "../../components/MapCarousel";
@@ -25,6 +27,7 @@ export function Library({
     side: "all",
   });
   const [selectedId, setSelectedId] = useState<string>();
+  const [level, setLevel] = useState<MapLevelId>();
   const [destinationIds, setDestinationIds] = useState<string[] | null>(null);
   const [expanded, setExpanded] = useState(false);
   const expandButton = useRef<HTMLButtonElement>(null);
@@ -33,13 +36,20 @@ export function Library({
   const wasWide = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const map = maps.find((item) => item.id === filters.mapId) ?? maps[0];
+  const leveled = levelsOf(map.id);
+  const activeLevel = leveled ? levelFor(map.id, level) : undefined;
   const visible = filterLineups(lineups, filters);
   const selected = visible.find((item) => item.id === selectedId);
   const wide = expanded && Boolean(selected);
   const listed = destinationIds
     ? visible.filter((item) => destinationIds.includes(item.id))
     : visible;
+  // Ao abrir uma granada, mostra o andar onde ela cai; mudar filtros preserva o andar escolhido.
+  function focusLevel(item?: Lineup) {
+    if (item && levelsOf(item.mapId)) setLevel(primaryLevel(item));
+  }
   function updateFilters(change: Partial<Filters>) {
+    if (change.mapId !== undefined && change.mapId !== filters.mapId) setLevel(undefined);
     setExpanded(false);
     setFilters((current) => ({ ...current, ...change }));
     setDestinationIds(null);
@@ -111,7 +121,7 @@ export function Library({
                 key={item.id}
                 className={`lineup-row ${selected?.id === item.id ? "selected" : ""}`}
                 aria-pressed={selected?.id === item.id}
-                onClick={() => { setExpanded(false); setSelectedId(item.id); }}
+                onClick={() => { setExpanded(false); setSelectedId(item.id); focusLevel(item); }}
               >
                 <span className={`type-icon ${item.type}`}>
                   <Icon name={item.type} />
@@ -157,6 +167,8 @@ export function Library({
             lineups={visible}
             selectedId={selected?.id}
             highlightedIds={destinationIds ?? []}
+            level={activeLevel}
+            onLevelChange={leveled ? setLevel : undefined}
             onSelect={(ids) => {
               setExpanded(false);
               if (ids.length > 1) {
@@ -165,6 +177,7 @@ export function Library({
               } else {
                 setSelectedId(ids[0]);
                 setDestinationIds(null);
+                focusLevel(visible.find((item) => item.id === ids[0]));
               }
             }}
           />
@@ -231,11 +244,11 @@ export function Library({
                 </div>
                 <div className="detail-information">
                   <p className="detail-origin">{selected.origin
-                    ? `Origem no radar: ${(selected.origin.x * 100).toLocaleString("pt-BR")}%, ${(selected.origin.y * 100).toLocaleString("pt-BR")}%.`
+                    ? `Origem no radar: ${(selected.origin.x * 100).toLocaleString("pt-BR")}%, ${(selected.origin.y * 100).toLocaleString("pt-BR")}%${leveled ? `, ${levelText(map.id, selected.originLevel)}` : ""}.`
                     : "Origem não cadastrada."}</p>
               {selected.type === "solo_exec" && selected.destinations?.length ? <div className="solo-destination-summary">
                 <h3>Granadas da execução</h3>
-                <ol>{selected.destinations.map((destination, index) => <li key={index}>{typeLabels[destination.type]} · {(destination.x * 100).toLocaleString("pt-BR")}%, {(destination.y * 100).toLocaleString("pt-BR")}%</li>)}</ol>
+                <ol>{selected.destinations.map((destination, index) => <li key={index}>{typeLabels[destination.type]} · {(destination.x * 100).toLocaleString("pt-BR")}%, {(destination.y * 100).toLocaleString("pt-BR")}%{leveled ? `, ${levelText(map.id, destination.level ?? selected.targetLevel)}` : ""}</li>)}</ol>
               </div> : null}
               <div className="detail-meta">
                 <span className={`type-text ${selected.type}`}>

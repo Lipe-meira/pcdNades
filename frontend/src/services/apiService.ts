@@ -320,6 +320,13 @@ export function createApiService(
       title: draft.title.trim(),
       instructions: draft.instructions.trim(),
     };
+    // Andares só trafegam quando existem: nada de campos extras para os demais mapas.
+    if (!id) {
+      if (body.originLevel == null) delete body.originLevel;
+      if (body.targetLevel == null) delete body.targetLevel;
+    }
+    if (Array.isArray(body.destinations))
+      body.destinations = body.destinations.map(({ level, ...rest }: { level?: string | null }) => (level ? { ...rest, level } : rest));
     if (id) body.expectedRevision = options.expectedRevision;
     if (draft.media.kind !== "keep")
       body.videoId = await resolveMedia(draft, options);
