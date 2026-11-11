@@ -58,7 +58,7 @@ Os itens desta seção detalham a proposta para o MVP; a política de acesso e a
 
 1. Selecionar um mapa.
 2. Visualizar seu radar e os destinos das granadas cadastradas.
-3. Filtrar por smoke, flashbang ou molotov; filtro por lado T/CT também proposto.
+3. Filtrar por smoke, flashbang, molotov ou HE; filtro por lado T/CT também proposto.
 4. Clicar ou tocar em um destino para abrir vídeo e instruções.
 5. Consultar uma lista de granadas como alternativa aos pontos, inclusive quando houver destinos sobrepostos.
 
@@ -147,7 +147,7 @@ Modelo de discussão, sujeito ao contrato final:
 | `id` | Identificador gerado pelo servidor. |
 | `title` | Nome reconhecível, como “Smoke janela — Mirage”. |
 | `mapId` | Mapa ao qual pertence. |
-| `type` | `smoke`, `flashbang` ou `molotov`. |
+| `type` | `smoke`, `flashbang`, `molotov` ou `he` (HE Grenade; `solo_exec` também aceito pelo cadastro). |
 | `side` | `T` ou `CT`, conforme proposta inicial. |
 | `instructions` | Orientações para executar a granada. |
 | `video` | Referência ao arquivo armazenado, estado de processamento e metadados; formato a definir no contrato. |
