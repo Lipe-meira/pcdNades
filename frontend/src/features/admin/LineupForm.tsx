@@ -272,7 +272,7 @@ export function LineupForm({
               setResumeMediaId(undefined);
             if (importFailed || error instanceof ApiError && ["IMPORT_ACCESS_DENIED", "IMPORT_HTTP_ERROR", "IMPORT_NETWORK_LIMIT", "IMPORT_TIMEOUT", "IMPORT_FAILED", "INVALID_MEDIA", "FILE_TOO_LARGE",
               "SOURCE_CHANGED", "SOURCE_EXPIRED", "SOURCE_NOT_FOUND", "IMPORT_SELECTION_CONFLICT", "MEDIA_SELECTION_CHANGED"].includes(error.code))
-              setDraft(current => current.media.kind === "link" ? { ...current, media: { kind: "link", sourceUrl: current.media.sourceUrl } } : current);
+              setDraft(current => current.media.kind === "link" ? { ...current, media: { kind: "link", sourceUrl: current.media.sourceUrl, ...(current.media.reedit ? { reedit: current.media.reedit } : {}) } } : current);
             setFailure(
               controller.signal.aborted
                 ? "Acompanhamento pausado. O processamento pode continuar no servidor; use Salvar para retomar. Nenhuma publicação adicional será solicitada por esta janela."

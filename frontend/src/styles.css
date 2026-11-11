@@ -1547,6 +1547,13 @@ label{font-size:14px;font-weight:400}
 .import-link-editor > .button { width: 100%; margin: 4px 0 10px; }
 .import-metadata { margin: 16px 0; padding: 14px; border-left: 2px solid var(--blue); background: #222c37; overflow-wrap: anywhere; }
 .import-metadata strong { font-size: 16px; }.import-metadata p { font-size: 14px; margin: 8px 0 0; }
+.imported-source { margin: 16px 0; padding: 14px; border-left: 2px solid var(--blue); background: #222c37; overflow-wrap: anywhere; }
+.imported-source h4 { font-size: 16px; font-weight: 600; margin: 0 0 10px; }
+.imported-source-url { font-size: 14px; margin: 0 0 10px; }
+.imported-source-url code { overflow-wrap: anywhere; word-break: break-all; }
+.imported-source-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.imported-source-actions .button, .imported-source > .button { text-align: center; text-decoration: none; }
+@media (max-width: 520px) { .imported-source-actions .button, .imported-source > .button { flex: 1 1 100%; width: 100%; } }
 .import-clip { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 2px; }
 .import-clip .clip-times input[type=range] { width: 100%; }
 

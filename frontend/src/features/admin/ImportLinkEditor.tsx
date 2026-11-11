@@ -6,6 +6,7 @@ import { recognizeVideoSource } from "../../domain/videoSource";
 import { formatTimecode } from "../../domain/timecode";
 import { ImportSourcePreview } from "./ImportSourcePreview";
 import { ImportClipSelector } from "./ImportClipSelector";
+import { initialClipFor } from "../../domain/reedit";
 import { ApiError } from "../../services/apiClient";
 
 type Link = Extract<MediaDraft, { kind: "link" }>;
@@ -16,6 +17,7 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
   const [issue, setIssue] = useState<string>();
   const [expired, setExpired] = useState(false);
   const [markRevision, setMarkRevision] = useState(0);
+  const [reusedPrevious, setReusedPrevious] = useState<boolean>();
   const request = useRef<AbortController | null>(null);
   const sequence = useRef(0);
   const source = recognizeVideoSource(value.sourceUrl);
@@ -30,8 +32,11 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
     const timer = setTimeout(() => setExpired(true), remaining);
     return () => clearTimeout(timer);
   }, [value.inspection]);
+  const previous = value.reedit?.previousClip;
   return <div className="import-link-editor">
     <h4>1. Consulte o vídeo</h4>
+    {value.reedit && <p className="inline-notice" role="status">Reedição do corte: o vídeo e a granada atuais só são substituídos depois que o novo trecho for importado e validado.
+      {previous ? ` Corte anterior: ${formatTimecode(previous.startSeconds)} – ${formatTimecode(previous.endSeconds)}.` : " O corte anterior não foi registrado; selecione o intervalo novamente."}</p>}
     <label>Link do YouTube Shorts, TikTok ou Instagram Reels
       <input type="url" value={value.sourceUrl} placeholder="Cole o link do vídeo"
         onChange={(event) => {
@@ -54,19 +59,22 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
         const current = ++sequence.current;
         request.current?.abort();
         const controller = new AbortController(); request.current = controller;
-        setIssue(undefined); setBusy(true);
+        setIssue(undefined); setBusy(true); setReusedPrevious(undefined);
         const url = value.sourceUrl.trim();
-        onChange({ kind: "link", sourceUrl: value.sourceUrl });
+        onChange({ kind: "link", sourceUrl: value.sourceUrl, ...(value.reedit ? { reedit: value.reedit } : {}) });
         try {
           const inspection = await service.inspectImport!(url, controller.signal);
           if (controller.signal.aborted || current !== sequence.current) return;
-          onChange({ kind: "link", sourceUrl: value.sourceUrl, inspectedUrl: url, inspection,
-            clip: { startSeconds: 0, endSeconds: Math.min(inspection.durationSeconds, inspection.limits.maxDurationSeconds) } });
+          const initial = initialClipFor(inspection, previous);
+          if (previous) setReusedPrevious(initial.reused);
+          onChange({ kind: "link", sourceUrl: value.sourceUrl, inspectedUrl: url, inspection, clip: initial.clip,
+            ...(value.reedit ? { reedit: value.reedit } : {}) });
         } catch (error) {
           if (!controller.signal.aborted && current === sequence.current)
             setIssue(error instanceof ApiError && error.code === "PROCESSOR_BUSY"
               ? "Há outra importação em processamento. Aguarde e consulte o vídeo novamente."
-              : error instanceof Error ? error.message : "Não foi possível consultar o vídeo.");
+              : `${error instanceof Error ? error.message : "Não foi possível consultar o vídeo."}${value.reedit
+                ? " Se o vídeo foi removido da plataforma ou o link deixou de funcionar, não é possível reeditar o corte. A granada e o vídeo atuais continuam preservados; escolha Manter vídeo ou envie um MP4." : ""}`);
         } finally { if (current === sequence.current) setBusy(false); }
       }}>{value.inspection || issue ? "Consultar novamente" : "Consultar vídeo"}</button>
     {busy && <>
@@ -90,6 +98,9 @@ export function ImportLinkEditor({ value, service, capabilities, onChange }: {
           setMarkRevision(current => current + 1);
         }} /> : <p className="inline-notice">Prévia visual indisponível para este link. Use a duração e os horários para selecionar o trecho. A consulta ainda não importou nem publicou o vídeo.</p>}
       {expired && <p className="field-error" role="alert">A consulta expirou. Consulte novamente para iniciar outra importação. Uma importação já criada pode ser retomada.</p>}
+      {previous && reusedPrevious !== undefined && <p className="field-hint" role="status">{reusedPrevious
+        ? "O corte anterior foi carregado como ponto de partida. Ajuste o início ou o fim."
+        : "O corte anterior não cabe nesta fonte ou nos limites atuais; selecione o intervalo novamente."}</p>}
       {value.clip && <ImportClipSelector key={`selector-${value.inspection.sourceId}`} inspection={value.inspection}
         clip={value.clip} disabled={expired} markRevision={markRevision} onChange={(clip) => onChange({ ...value, clip })} />}
     </>}

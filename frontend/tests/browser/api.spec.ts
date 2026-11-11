@@ -73,11 +73,14 @@ async function setup(
     importFailure?: string;
     loseImportComplete?: boolean;
     busyImportSecond?: boolean;
+    /** Granada publicada com vídeo importado por link (URL e corte anterior registrados, ou sem URL). */
+    importedVideo?: "ok" | "no-url";
   } = {},
 ) {
   const state = {
     unavailable: false,
-    published: options.initial ? [structuredClone(grenade)] : ([] as (typeof grenade)[]),
+    published: options.initial || options.importedVideo ? [structuredClone(options.importedVideo ? { ...grenade, video: { ...media, sourceType: "tiktok", sourceId: importInspection(0).sourceId,
+      sourceUrl: options.importedVideo === "ok" ? importInspection(0).sourceUrl : null, clip: { startSeconds: 10, endSeconds: 20 } } } : grenade)] : ([] as (typeof grenade)[]),
     calls: [] as string[],
     playback: 0,
     polls: 0,
@@ -449,8 +452,11 @@ test("carregamento lento avisa o usuário e oferece tentar novamente", async ({ 
   await expect(page.getByRole("status")).toContainText("Carregando biblioteca");
   await expect(page.getByRole("button", { name: "Tentar novamente" })).toHaveCount(0);
   await expect(page.getByText("demorando mais que o normal")).toBeVisible({ timeout: 15_000 });
+  // StrictMode (dev) executa o efeito de carga duas vezes e a primeira requisição abortada nem sempre
+  // chega ao handler, então o total inicial varia: o que importa é que "Tentar novamente" faz uma nova.
+  const before = calls;
   await page.getByRole("button", { name: "Tentar novamente" }).click();
-  await expect.poll(() => calls).toBe(2);
+  await expect.poll(() => calls).toBeGreaterThan(before);
   release();
   await expect(page.getByRole("heading", { name: "Nenhum mapa cadastrado" })).toBeVisible();
 });
@@ -1672,4 +1678,144 @@ test("Nuke: cadastro envia origem no andar 1 e destino no andar 2 e a biblioteca
   await page.locator(".lineup-row").filter({ hasText: "Nuke entre andares" }).click();
   await expect(page.getByRole("button", { name: /^Andar 2,/ })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText(/Origem no radar: .*andar 1 \(superior\)\./)).toBeVisible();
+});
+
+async function openReedit(page: Page) {
+  await page.goto("/"); await signIn(page);
+  await page.getByRole("button", { name: "Editar Granada de teste controlado", exact: true }).click();
+  await page.getByRole("button", { name: "Vídeo e revisão", exact: false }).click();
+}
+async function patchRoute(page: Page, state: Awaited<ReturnType<typeof setup>>, options: { conflict?: boolean } = {}) {
+  const writes: Record<string, any>[] = [];
+  await page.route(`${api}/grenades/${grenade.id}`, async route => {
+    if (route.request().method() !== "PATCH") return route.fallback();
+    const body = route.request().postDataJSON(); writes.push(body);
+    if (options.conflict) return reply(route, { status: 409, json: { error: { code: "GRENADE_VERSION_CONFLICT" } } });
+    state.published[0] = { ...state.published[0], ...body, revision: 2, video: { ...media, id: importId, sourceType: "tiktok", sourceUrl: state.inspection.sourceUrl, clip: state.clip } };
+    return reply(route, { json: { data: state.published[0] } });
+  });
+  return writes;
+}
+
+test("reeditar corte: mostra URL original e corte anterior; copia e abre a URL", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]).catch(() => undefined);
+  await setup(page, { importedVideo: "ok", imports: true });
+  await openReedit(page);
+  const url = importInspection(0).sourceUrl;
+  await expect(page.getByText("Vídeo importado por link", { exact: false })).toBeVisible();
+  await expect(page.locator(".imported-source-url")).toContainText(url);
+  await expect(page.getByText("Corte usado: 00:10 – 00:20 (10s).", { exact: true })).toBeVisible();
+  const open = page.getByRole("link", { name: "Abrir URL original", exact: true });
+  await expect(open).toHaveAttribute("href", url);
+  await expect(open).toHaveAttribute("target", "_blank");
+  await expect(open).toHaveAttribute("rel", /noopener/);
+  await page.getByRole("button", { name: "Copiar URL original", exact: true }).click();
+  await expect(page.getByText(/URL copiada\.|Não foi possível copiar automaticamente/)).toBeVisible();
+});
+
+test("reeditar corte: preenche o editor, reaproveita o corte e publica o novo intervalo com a revisão aberta", async ({ page }) => {
+  const state = await setup(page, { importedVideo: "ok", imports: true });
+  const writes = await patchRoute(page, state);
+  const requests: string[] = [];
+  page.on("request", request => requests.push(`${request.method()} ${new URL(request.url()).pathname}`));
+  await openReedit(page);
+  await page.getByRole("button", { name: "Reeditar corte", exact: true }).click();
+  await expect(page.getByLabel("Link do YouTube Shorts, TikTok ou Instagram Reels", { exact: true })).toHaveValue(importInspection(0).sourceUrl);
+  await expect(page.getByText("Corte anterior: 00:10 – 00:20.", { exact: false })).toBeVisible();
+  expect(state.inspections).toBe(0);
+  await consultImport(page);
+  await expect(page.getByLabel("Início do trecho", { exact: true })).toHaveValue("00:10");
+  await expect(page.getByLabel("Fim do trecho", { exact: true })).toHaveValue("00:20");
+  await expect(page.getByText("O corte anterior foi carregado como ponto de partida", { exact: false })).toBeVisible();
+  await page.getByLabel("Início do trecho", { exact: true }).fill("00:12.5");
+  await page.getByLabel("Fim do trecho", { exact: true }).fill("00:25");
+  expect(state.published[0].video.id).toBe(mediaId);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0, { timeout: 10_000 });
+  expect(state.clip).toEqual({ startSeconds: 12.5, endSeconds: 25 });
+  expect(writes).toHaveLength(1);
+  expect(writes[0]).toMatchObject({ videoId: importId, expectedRevision: 1 });
+  expect(requests.some(request => request.startsWith("DELETE"))).toBe(false);
+  expect(state.published[0].video.id).toBe(importId);
+});
+
+test("reeditar corte: falha da importação preserva a granada e o vídeo anteriores", async ({ page }) => {
+  const state = await setup(page, { importedVideo: "ok", imports: true, importFailure: "IMPORT_ACCESS_DENIED" });
+  const writes = await patchRoute(page, state);
+  await openReedit(page);
+  await page.getByRole("button", { name: "Reeditar corte", exact: true }).click();
+  await consultImport(page);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("preservados");
+  expect(writes).toHaveLength(0);
+  expect(state.published[0].video.id).toBe(mediaId);
+  expect(state.published[0].title).toBe(grenade.title);
+  await page.getByRole("button", { name: "Manter vídeo", exact: true }).click();
+  await expect(page.getByText("Corte usado: 00:10 – 00:20", { exact: false })).toBeVisible();
+});
+
+test("reeditar corte: consulta que falha explica vídeo removido e mantém o cadastro", async ({ page }) => {
+  const state = await setup(page, { importedVideo: "ok", imports: true });
+  await page.route(`${api}/media/imports/inspect`, route => reply(route, { status: 422, json: { error: { code: "SOURCE_UNSUPPORTED" } } }));
+  await openReedit(page);
+  await page.getByRole("button", { name: "Reeditar corte", exact: true }).click();
+  await page.getByRole("button", { name: "Consultar vídeo", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("removido da plataforma");
+  await expect(page.getByRole("alert").first()).toContainText("continuam preservados");
+  expect(state.published[0].video.id).toBe(mediaId);
+  await page.getByRole("button", { name: "Manter vídeo", exact: true }).click();
+  await expect(page.getByLabel("Vídeo da granada", { exact: true })).toBeVisible();
+});
+
+test("reeditar corte: vídeo importado sem URL registrada mostra mensagem clara e não oferece reedição", async ({ page }) => {
+  await setup(page, { importedVideo: "no-url", imports: true });
+  await openReedit(page);
+  await expect(page.getByText("A URL original deste vídeo não foi registrada", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Reeditar corte", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Copiar URL original", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Importar por link", exact: true })).toBeVisible();
+});
+
+test("reeditar corte: upload MP4 e vídeo antigo não mostram painel de origem", async ({ page }) => {
+  await setup(page, { initial: true, imports: true });
+  await openReedit(page);
+  await expect(page.getByLabel("Vídeo da granada", { exact: true })).toBeVisible();
+  await expect(page.getByText("Vídeo importado por link", { exact: false })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Reeditar corte", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Enviar MP4", exact: true })).toBeVisible();
+});
+
+test("reeditar corte: importação desabilitada no servidor desativa o botão com explicação", async ({ page }) => {
+  await setup(page, { importedVideo: "ok" });
+  await openReedit(page);
+  await expect(page.getByRole("button", { name: "Reeditar corte", exact: true })).toBeDisabled();
+  await expect(page.getByText("indisponível no servidor agora", { exact: false })).toBeVisible();
+});
+
+test("reeditar corte: atualização concorrente respeita revision e preserva o vídeo anterior", async ({ page }) => {
+  const state = await setup(page, { importedVideo: "ok", imports: true });
+  const writes = await patchRoute(page, state, { conflict: true });
+  await openReedit(page);
+  await page.getByRole("button", { name: "Reeditar corte", exact: true }).click();
+  await consultImport(page);
+  await page.getByRole("button", { name: "Importar trecho e salvar granada", exact: true }).click();
+  await expect(page.getByRole("alert").first()).toContainText("alterada por outra pessoa");
+  expect(writes).toHaveLength(1);
+  expect(writes[0].expectedRevision).toBe(1);
+  expect(state.published[0].video.id).toBe(mediaId);
+});
+
+test("reeditar corte: layout estreito (320px) sem rolagem horizontal e com ações acessíveis", async ({ page }) => {
+  await setup(page, { importedVideo: "ok", imports: true });
+  await page.setViewportSize({ width: 320, height: 700 });
+  await openReedit(page);
+  const panel = page.locator(".imported-source");
+  await panel.scrollIntoViewIfNeeded();
+  await expect(panel).toBeVisible();
+  for (const name of ["Copiar URL original", "Reeditar corte"]) {
+    const box = await page.getByRole("button", { name, exact: true }).boundingBox();
+    expect(box!.width).toBeGreaterThan(120); expect(box!.height).toBeGreaterThanOrEqual(40);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await page.getByRole("dialog").evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
 });

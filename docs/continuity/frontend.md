@@ -1,3 +1,19 @@
+# Reedição de corte de vídeos importados por link — 11/11/2026 (PR aberto, sem merge)
+
+Atualização (11/11/2026, pós PR #15): main b093701 incorporada por merge f76919d (único conflito: este arquivo, preservados os dois blocos). Instabilidade de "carregamento lento avisa…": causa concreta = StrictMode em dev executa o efeito de carga duas vezes e a 1ª requisição abortada nem sempre chega ao handler do Playwright, então `calls` ficava em 2 ou 3 e o teste exigia exatamente 2 (reproduzido: 3 falhas em 16 com --repeat-each=8 --workers=8). Corrigido só o teste (compara com a contagem antes do clique); 0 falhas em 16 depois. Sem mudança de comportamento da aplicação. Pós-merge: build PASS, vitest 93/93, Playwright completo 166/166 (portas isoladas 5374/5375).
+
+Pedido: mostrar a URL original e o corte anterior de granadas importadas por link e permitir "Reeditar corte" (nova consulta + novo intervalo), sem migration e sem mexer em backend.
+Branch feat/reeditar-corte-importacao, worktree F:/projetos/nadesCs2-reedit-corte, base main 07cc294. Sem merge, deploy, migration ou alteração em produção.
+
+O que já existia (confirmado no código): `media_assets` guarda source_url, clip e import_source_id; `mediaView` (backend/src/model.ts) devolve sourceUrl, clip e sourceId e `grenadeView` embute isso em `video` na listagem. O frontend descartava `clip` e `sourceType` ao mapear (apiContracts.ts). A troca de vídeo na edição já só faz PATCH com o novo videoId depois do `ready`, e falha de importação já preserva granada e vídeo; expectedRevision já vai no PATCH. Nenhum arquivo do Storage é apagado por esse fluxo. Backend NÃO foi alterado.
+
+Implementado (frontend): `Video.sourceType/clip` e `MediaDraft.link.reedit` (types.ts); `domain/reedit.ts` (importedSource, reeditDraft, initialClipFor); mapeamento de sourceType/clip validado em apiContracts.ts; painel `ImportedSourcePanel` em MediaInput (URL, Copiar, Abrir com noopener, corte usado, Reeditar corte, mensagens de URL ausente/importação indisponível); ImportLinkEditor mostra o corte anterior, reaproveita-o se couber na fonte/limites e acrescenta aviso de vídeo removido quando a consulta falha na reedição; LineupForm preserva `reedit` após falha; CSS responsivo.
+
+Verificações executadas (portas isoladas 5374/5375, config local descartada): tsc/build PASS; vitest 16 arquivos/93 testes PASS (10 novos em tests/reedit.test.ts); backend typecheck PASS e 155/155 testes PASS; Playwright completo 165/166 — 18 novos de "reeditar corte" PASS em desktop e mobile (inclui 320px); a única falha foi "carregamento lento avisa…" (api-mobile, teste do PR #13 dependente de 8s de relógio, não tocado), que passou isolado em desktop e mobile.
+
+Limitações: testes usam API/Auth controladas; NÃO provam nova consulta real ao TikTok nem importação em produção (importação TikTok em produção segue limitada por HTTP 403 da CDN, ver import-flow.md). Corte anterior só aparece para vídeos cujo clip foi registrado; source_url inválido/ausente mostra mensagem e não oferece reedição. O vídeo antigo permanece no Storage (sem limpeza automática). Instagram usa o mesmo caminho, só validado com mocks.
+
+Próxima ação: revisão do PR; se a main mudar, sincronizar por merge (sem force push) e repetir build e testes isolados.
 # Radares da Nuke substituídos pelas imagens fornecidas — 11/11/2026
 
 Estado: concluído e validado; commit `1c615b9` enviado à branch `feat/nuke-radares-novos`. PR ainda não aberto (GitHub CLI indisponível nesta máquina); link de comparação: https://github.com/Lipe-meira/pcdNades/compare/main...feat/nuke-radares-novos
