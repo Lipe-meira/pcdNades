@@ -331,19 +331,18 @@ test("PNGs dos filtros carregam e falhas preservam texto e teclado", async ({ pa
   const panel = page.getByRole("complementary", { name: "Filtros da biblioteca" });
   const types = page.getByRole("group", { name: "Tipo de granada" });
   const sides = page.getByRole("group", { name: "Lado do time" });
-  await expect(types.getByRole("button")).toHaveCount(5);
+  await expect(types.getByRole("button")).toHaveCount(6);
   await expect(sides.getByRole("button")).toHaveCount(3);
-  await expect(panel.locator("img")).toHaveCount(8);
+  await expect(panel.locator("img")).toHaveCount(9);
   for (const [name, file, width] of [
     ["Todas", "all", 200], ["Smoke", "smoke", 200], ["Molotov", "molotov", 200],
-    ["Flashbang", "flashbang", 200], ["Solo Exec", "all", 200], ["Ambos", "both", 128], ["CT", "ct", 128], ["T", "t", 128],
+    ["Flashbang", "flashbang", 200], ["HE Grenade", "he", 200], ["Solo Exec", "all", 200], ["Ambos", "both", 128], ["CT", "ct", 128], ["T", "t", 128],
   ] as const) {
     const image = panel.getByRole("button", { name, exact: true }).locator("img");
     await expect(image).toHaveAttribute("src", `/filter-icons/${file}.png`);
     await expect(image).toHaveAttribute("alt", "");
     await expect.poll(() => image.evaluate((node: HTMLImageElement) => node.naturalWidth)).toBe(width);
   }
-  await expect(panel.locator("img[src$='/he.png']")).toHaveCount(0);
   await page.setViewportSize({ width: 320, height: 900 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.evaluate(() => document.fonts.ready);

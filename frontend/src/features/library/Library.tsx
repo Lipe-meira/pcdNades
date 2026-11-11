@@ -181,6 +181,10 @@ export function Library({
               <i className="legend-dot molotov" />
               Molotov
             </span>
+            <span>
+              <i className="legend-dot he" />
+              HE Grenade
+            </span>
             <span className="legend-hint">
               Selecione um ponto ou use a lista ao lado.
             </span>

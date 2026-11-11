@@ -1,4 +1,5 @@
 import type { GameMap, Lineup, VideoStatus } from "../domain/types";
+import { isGrenadeType, isSingleGrenadeType } from "../domain/types";
 import { isTarget } from "../domain/lineups";
 import { ApiError } from "./apiClient";
 import { safeHttpUrl } from "./runtimeConfig";
@@ -188,7 +189,7 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
     !Number.isInteger(item.revision) || item.revision! < 1 ||
     !text(item.title) ||
     !text(item.mapId) ||
-    !["smoke", "flashbang", "molotov", "solo_exec"].includes(item.type) ||
+    !isGrenadeType(item.type) ||
     !["T", "CT"].includes(item.side) ||
     typeof item.instructions !== "string" ||
     !item.target ||
@@ -196,7 +197,7 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
   )
     contractError();
   if (item.origin != null && !isTarget(item.origin)) contractError();
-  if (item.type === "solo_exec" && (!item.origin || !Array.isArray(item.destinations) || !item.destinations.length || item.destinations.some(d => !isTarget(d) || !["smoke", "flashbang", "molotov"].includes(d.type)))) contractError();
+  if (item.type === "solo_exec" && (!item.origin || !Array.isArray(item.destinations) || !item.destinations.length || item.destinations.some(d => !isTarget(d) || !isSingleGrenadeType(d.type)))) contractError();
   const media = item.video && checkMedia(item.video);
   return {
     ...item,

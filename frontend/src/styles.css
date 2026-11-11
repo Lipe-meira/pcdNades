@@ -324,6 +324,9 @@ select {
 .molotov {
   color: var(--fire);
 }
+.he {
+  color: #b8d98a;
+}
 .radar-caption {
   display: flex;
   align-items: flex-start;
@@ -1453,6 +1456,7 @@ label{font-size:14px;font-weight:400}
 .nade-type-icon { display: grid; place-items: center; flex: 0 0 22px; color: var(--blue); }
 .nade-type-icon.molotov { color: #e7aa83; }
 .nade-type-icon.flashbang { color: #e7d487; }
+.nade-type-icon.he { color: #b8d98a; }
 .nade-type-icon.all { color: #c7cbd0; }
 .nade-type-count { margin-left: auto; padding-left: 4px; font-size: 13px; font-variant-numeric: tabular-nums; color: #bac7d4; }
 .nade-type[aria-pressed=true] .nade-type-count { color: var(--accent); }

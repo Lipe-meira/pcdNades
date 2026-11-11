@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type {
   GameMap,
   GrenadeType,
+  SingleGrenadeType,
   Lineup,
   LineupDraft,
   Side,
@@ -418,8 +419,8 @@ export function LineupForm({
               {(draft.destinations ?? []).map((destination, index) => <div key={index}>
                 <button type="button" aria-pressed={destinationIndex === index} onClick={() => { setDestinationIndex(index); setMarking("target"); }}>Destino {index + 1}</button>
                 <select aria-label={`Tipo do destino ${index + 1}`} value={destination.type} onChange={event => {
-                  const destinations = [...(draft.destinations ?? [])]; destinations[index] = { ...destination, type: event.target.value as "smoke" | "flashbang" | "molotov" }; update("destinations", destinations);
-                }}><option value="smoke">Smoke</option><option value="flashbang">Flashbang</option><option value="molotov">Molotov</option></select>
+                  const destinations = [...(draft.destinations ?? [])]; destinations[index] = { ...destination, type: event.target.value as SingleGrenadeType }; update("destinations", destinations);
+                }}><option value="smoke">Smoke</option><option value="flashbang">Flashbang</option><option value="molotov">Molotov</option><option value="he">HE Grenade</option></select>
                 <button type="button" onClick={() => { const destinations = (draft.destinations ?? []).filter((_, i) => i !== index); setDestinationIndex(0); setDraft(current => ({ ...current, destinations, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null })); }}>Remover</button>
               </div>)}
               <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
