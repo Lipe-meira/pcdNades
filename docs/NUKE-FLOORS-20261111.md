@@ -51,4 +51,4 @@ Pré-condições: PR aprovado, CI verde, branch sincronizada com a `main` (inclu
 ## Limitações
 - Radares: ver `frontend/public/maps/valve/ATTRIBUTION.md` (origem e licença não registradas; setpos.gg não tem andar inferior).
 - O andar inferior mostra a silhueta do superior esmaecida, como no arquivo original.
-- O PR #11 (UX mobile, `mobile-ux.css`) já está na main e foi integrado a esta branch; só afeta o seletor de mapa (`.map-select`), sem relação com os botões de andar.
+- Os PRs #11 (UX mobile), #12 (mensagens de feedback) e #13 (experiência de carregamento) já estão na main e foram integrados a esta branch (merge 005013e); nenhum arquivo deles foi alterado por esta funcionalidade e os testes deles continuam passando.
