@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type {
   GameMap,
   GrenadeType,
+  SingleGrenadeType,
   Lineup,
   LineupDraft,
   Side,
@@ -15,6 +16,7 @@ import { MediaInput } from "./MediaInput";
 import type { MediaCapabilities, Progress } from "../../services/apiContracts";
 import { ApiError } from "../../services/apiClient";
 import { videoLabels } from "../../domain/types";
+import { MutedVideo } from "../../components/MutedVideo";
 import { isTarget } from "../../domain/lineups";
 import { PointCoordinates } from "./PointCoordinates";
 import { importSelectionError } from "../../domain/imports";
@@ -418,8 +420,8 @@ export function LineupForm({
               {(draft.destinations ?? []).map((destination, index) => <div key={index}>
                 <button type="button" aria-pressed={destinationIndex === index} onClick={() => { setDestinationIndex(index); setMarking("target"); }}>Destino {index + 1}</button>
                 <select aria-label={`Tipo do destino ${index + 1}`} value={destination.type} onChange={event => {
-                  const destinations = [...(draft.destinations ?? [])]; destinations[index] = { ...destination, type: event.target.value as "smoke" | "flashbang" | "molotov" }; update("destinations", destinations);
-                }}><option value="smoke">Smoke</option><option value="flashbang">Flashbang</option><option value="molotov">Molotov</option></select>
+                  const destinations = [...(draft.destinations ?? [])]; destinations[index] = { ...destination, type: event.target.value as SingleGrenadeType }; update("destinations", destinations);
+                }}><option value="smoke">Smoke</option><option value="flashbang">Flashbang</option><option value="molotov">Molotov</option><option value="he">HE Grenade</option></select>
                 <button type="button" onClick={() => { const destinations = (draft.destinations ?? []).filter((_, i) => i !== index); setDestinationIndex(0); setDraft(current => ({ ...current, destinations, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null })); }}>Remover</button>
               </div>)}
               <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
@@ -514,7 +516,7 @@ export function LineupForm({
             finally { submitLock.current = false; setBusy(false); setProgress(undefined); request.current = null; }
           }}>Importar e testar em privado</button>
           <p className="field-hint">O teste armazena apenas o vídeo e não cadastra nem publica uma granada.</p>
-          {testPlayback && <video controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
+          {testPlayback && <MutedVideo sourceKey={testPlayback} controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
         </div>}
         <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && (contentSnapshot(snapshot) !== contentSnapshot(savedSnapshot) || savedMedia.current !== draft.media) ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
         <div className="form-actions">

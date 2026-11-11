@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { GameMap, Lineup, Target, GrenadeType } from "../domain/types";
-import { typeLabels } from "../domain/types";
+import { typeLabels, isSingleGrenadeType } from "../domain/types";
 import { isTarget, pointFromImage } from "../domain/lineups";
 import { Icon } from "./Icon";
 
@@ -69,7 +69,7 @@ export function Radar({
   const groups = new Map<string, { item: Lineup; target: Target; markerType: GrenadeType; targetIndex: number }[]>();
   lineups.forEach(item => (item.destinations?.length ? item.destinations : [item.target]).forEach((target, targetIndex) => {
     const key = `${target.x}:${target.y}`;
-    const markerType = "type" in target && (target.type === "smoke" || target.type === "flashbang" || target.type === "molotov") ? target.type : item.type;
+    const markerType = "type" in target && isSingleGrenadeType(target.type) ? target.type : item.type;
     groups.set(key, [...(groups.get(key) ?? []), { item, target, markerType, targetIndex }]);
   }));
   return (

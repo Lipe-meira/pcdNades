@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { Video } from "../../domain/types";
 import { videoLabels } from "../../domain/types";
-import { renewalDelay } from "../../domain/playback";
+import { renewalDelay, initialAudio, captureAudio, restoreAudio } from "../../domain/playback";
+import type { AudioState } from "../../domain/playback";
+import { MutedVideo } from "../../components/MutedVideo";
 import type { LineupService } from "../../services/lineupService";
 import type { Playback } from "../../services/apiContracts";
 import { Icon } from "../../components/Icon";
@@ -18,20 +20,23 @@ export function VideoPlayer({
   const [loading, setLoading] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const element = useRef<HTMLVideoElement>(null);
-  const resume = useRef({ time: 0, playing: false });
+  const resume = useRef<{ time: number; playing: boolean } & AudioState>({ time: 0, playing: false, ...initialAudio });
+  const resumeFor = useRef(video.id);
   useEffect(() => {
     if (video.status !== "ready") return;
+    // Outro vídeo: posição e áudio recomeçam (mutado). Mesmo vídeo: preserva o que o usuário escolheu.
+    // `carry` evita copiar posição/áudio do elemento do vídeo anterior, ainda montado neste instante.
+    let carry = resumeFor.current === video.id;
+    if (!carry) {
+      resumeFor.current = video.id;
+      resume.current = { time: 0, playing: false, ...initialAudio };
+    }
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
     setError(undefined);
     setLoading(true);
     async function load() {
       try {
-        if (element.current)
-          resume.current = {
-            time: element.current.currentTime,
-            playing: !element.current.paused,
-          };
         const result = service
           ? await service.playback(video, controller.signal)
           : video.playbackUrl
@@ -40,6 +45,14 @@ export function VideoPlayer({
         if (!result)
           throw new Error("O endereço do vídeo não está disponível.");
         if (controller.signal.aborted) return;
+        // Captura só agora (após a espera da rede) para não restaurar um estado de áudio já desatualizado.
+        if (carry && element.current)
+          resume.current = {
+            time: element.current.currentTime,
+            playing: !element.current.paused,
+            ...captureAudio(element.current),
+          };
+        carry = true;
         setLease(result);
         setLoading(false);
         setError(undefined);
@@ -84,8 +97,9 @@ export function VideoPlayer({
         </div>
       );
     return (
-      <video
+      <MutedVideo
         ref={element}
+        sourceKey={video.id}
         className="video-player"
         src={lease.url}
         controls
@@ -93,6 +107,7 @@ export function VideoPlayer({
         preload="metadata"
         aria-label="Vídeo da granada"
         onLoadedMetadata={(event) => {
+          restoreAudio(event.currentTarget, resume.current);
           if (
             resume.current.time &&
             Number.isFinite(event.currentTarget.duration)
@@ -109,6 +124,7 @@ export function VideoPlayer({
             resume.current = {
               time: element.current.currentTime,
               playing: !element.current.paused,
+              ...captureAudio(element.current),
             };
           setError(
             "Não foi possível reproduzir o arquivo. Solicite um novo endereço ou tente outro navegador.",
@@ -116,7 +132,7 @@ export function VideoPlayer({
         }}
       >
         Seu navegador não suporta a reprodução deste vídeo.
-      </video>
+      </MutedVideo>
     );
   }
   return (

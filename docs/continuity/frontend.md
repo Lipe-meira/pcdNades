@@ -1,3 +1,7 @@
+# HE Grenade e vídeos mutados — 10/11/2026
+
+Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261111015949_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration NÃO aplicada em Supabase; sem merge nem deploy.
+
 # Correção de continuidade — 05/11/2026
 
 # Mobile UX — 10/11/2026 (implementação parcial, local)

@@ -592,6 +592,47 @@ test("playback renova URL e preserva posição com respostas controladas", async
     .toBeGreaterThan(0.6);
 });
 
+test("playback inicia mutado e a renovação da URL preserva áudio, volume e posição", async ({
+  page,
+}) => {
+  const state = await setup(page, { initial: true });
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: /^Granada de teste controlado Smoke/ })
+    .click();
+  const video = page.getByLabel("Vídeo da granada", { exact: true });
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.readyState))
+    .toBeGreaterThanOrEqual(1);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.muted)).toBe(true);
+  await video.evaluate((el: HTMLVideoElement) => {
+    el.muted = false;
+    el.volume = 0.35;
+    el.currentTime = 0.7;
+  });
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.currentTime))
+    .toBeGreaterThan(0.6);
+  const initialLeaseCount = state.playback;
+  state.allowLongLease = true;
+  await expect
+    .poll(() => state.playback, { timeout: 8000 })
+    .toBeGreaterThan(initialLeaseCount);
+  await expect(video).toHaveAttribute(
+    "src",
+    new RegExp("v=" + (initialLeaseCount + 1) + "$"),
+  );
+  await expect
+    .poll(() =>
+      video.evaluate((el: HTMLVideoElement) => ({
+        muted: el.muted,
+        volume: el.volume,
+        ok: el.currentTime > 0.6,
+      })),
+    )
+    .toEqual({ muted: false, volume: 0.35, ok: true });
+});
+
 test("403 não remove a granada nem afirma sucesso", async ({ page }) => {
   await setup(page, { initial: true, forbidden: true });
   await page.goto("/");

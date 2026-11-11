@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { clampPreviewTime, previewBounds } from "../../domain/clip";
 import type { Clip } from "../../domain/clip";
+import { MutedVideo } from "../../components/MutedVideo";
 
 export function LocalVideoPreview({
   src,
@@ -53,8 +54,9 @@ export function LocalVideoPreview({
   }, [src, clip?.startSeconds, clip?.endSeconds]);
   return (
     <>
-      <video
+      <MutedVideo
         ref={video}
+        sourceKey={src}
         className="media-preview"
         src={src}
         controls
