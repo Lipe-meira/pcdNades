@@ -1,3 +1,48 @@
+# Radares da Nuke substituídos pelas imagens fornecidas — 11/11/2026
+
+Estado: concluído e validado; commit `1c615b9` enviado à branch `feat/nuke-radares-novos`. PR ainda não aberto (GitHub CLI indisponível nesta máquina); link de comparação: https://github.com/Lipe-meira/pcdNades/compare/main...feat/nuke-radares-novos
+
+## Objetivo e pedido atual
+
+Trocar exclusivamente `frontend/public/maps/valve/nuke.png` (andar superior) e `nuke_lower.png` (andar inferior) pelas imagens
+novas fornecidas pelo usuário (1558×848, fundo transparente), preservando alternância de andares, radar ampliado, biblioteca,
+editor, Solo Exec e as coordenadas gravadas. Sem alterar banco, migrations, Supabase, Storage nem outros mapas. Sem merge e sem deploy.
+
+## Localização do trabalho
+
+- Branch: `feat/nuke-radares-novos`, worktree `F:/projetos/nadesCs2-nuke-radares`.
+- Base: `origin/main` em `07cc294` (PR #14 já integrado).
+- Push: enviado para `origin/feat/nuke-radares-novos` (commit `1c615b9`). Sem merge e sem deploy.
+- Arquivos da entrega (commit `1c615b9`): `frontend/public/maps/valve/nuke.png`, `frontend/public/maps/valve/nuke_lower.png`,
+  `frontend/public/maps/valve/ATTRIBUTION.md`, `docs/continuity/frontend.md`. Nada pendente localmente.
+
+## Decisões
+
+- Calibração medida, não presumida: escala uniforme 0,625 e deslocamento (42, 260) dentro do quadro 1024×1024 antigo.
+  Sobreposição da silhueta com o `nuke.png` antigo: 98%. Limites do conteúdo: 63–998 × 280–769 antes e 63–998 × 281–769 depois.
+  O andar inferior fecha com a silhueta do superior (IoU 0,964).
+- Adaptação: imagem reduzida proporcionalmente para 974×530 (sem distorção), colocada em canvas 1024×1024 com margens
+  transparentes. Com isso as coordenadas normalizadas e `RadarViewport` em `domain/mapLevels.ts` continuam válidas sem alteração de código.
+- Origem e licença das imagens novas não verificadas; registrado em `ATTRIBUTION.md`.
+
+## Validação
+
+- `npm run typecheck`: PASS. `npm run build`: PASS. `npm test` (vitest): 15 arquivos, 83 testes PASS.
+- `npx playwright test --project=desktop --project=mobile`: 72/72 PASS (inclui nuke-levels: marcadores em 320/390 px, desktop,
+  ambos os andares e radar ampliado; regressão dos sete mapas).
+- Capturas antes/depois (fora do repositório): pasta `C:/Users/felip/AppData/Local/Temp/claude/af9c3bf5e0d969f0/3180eb7a-cf75-4f93-9815-c917054abceb/scratchpad/shots/`
+  (`antes_*` e `depois_*`, andares 1 e 2, desktop e 390 px).
+- Rodada final (CI=1, sem reutilizar servidores): Playwright desktop+mobile 72/72 PASS; typecheck sem erros; vitest 83/83 PASS; build PASS.
+- Dados (somente leitura, projeto kdyzxxgzvgiffluyjjxu): `select ... from public.grenades where map_id = 'nuke'` retornou zero linhas. Nenhuma coordenada histórica da Nuke precisa de conversão.
+- Não executado: revisão visual humana no celular real e teste de cadastro/edição em ambiente API com Supabase. O Playwright
+  rodou em modo demo. Não foram tocados Supabase nem Storage.
+
+## Retomar daqui
+
+1. `git -C F:/projetos/nadesCs2-nuke-radares status` e confirmar a branch `feat/nuke-radares-novos`.
+2. Abrir o PR `feat/nuke-radares-novos` → `main` (título: feat(radar): substitui radares da Nuke pelas imagens dos dois andares), usando o resumo deste checkpoint.
+
+---
 # CI do Playwright sem apt — 11/11/2026
 
 Estado: commit `861f2d0` enviado à branch `ci/playwright-sem-apt` (base `origin/main` b093701). PR não aberto (GitHub CLI indisponível); link: https://github.com/Lipe-meira/pcdNades/compare/main...ci/playwright-sem-apt
