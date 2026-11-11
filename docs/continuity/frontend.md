@@ -1,5 +1,20 @@
 # Correção de continuidade — 05/11/2026
 
+# Mobile UX — 10/11/2026 (implementação parcial, local)
+
+Objetivo: melhorar usabilidade móvel (320/375/390/768px) sem redesign, em PR separado da HE Grenade/PR #10 (ainda aberto e não mesclado em 10/11). Branch codex/ux-mobile-20261110, worktree pcdnades-mobile-ux-20261110, base origin/main 67445d5. Upstream desvinculado para evitar push na main.
+
+Medições (modo demo, Vite local, Playwright): sem overflow horizontal em 320/375/390/768, biblioteca e admin. Corrigido: filtro "Filtrar por mapa" no admin com fonte de 12-14px (zoom automático no iOS) e texto cortado ("Todos o…") em telas pequenas. Diálogo de exclusão cabe em 320/375, sem alterações.
+
+Não corrigido por estar em arquivos do PR #10 (Radar.tsx, Library*.tsx, styles.css, LineupForm.tsx): botão "Ampliar radar" 104x40; link de atribuição do radar 30px de altura; "Créditos e licença" 13px de altura; faixa de mapas corta "Inferno" em 320px sem indicador de rolagem.
+
+Alterações: frontend/src/mobile-ux.css (novo, carregado depois de styles.css); frontend/src/main.tsx (import); frontend/tests/browser/mobile-ux.spec.ts (novo, 3 testes: dois de admin com 16px e texto inteiro em 320/375; um de biblioteca sem overflow em 320). Testes de admin falham sem o CSS e passam com ele.
+
+Verificações: typecheck, build, npm test 12 arquivos/63 testes PASS; Playwright mobile 24/24 PASS; Playwright desktop 24/24 PASS.
+
+Próxima ação ao retomar: confirmar estado do PR #10 na API. Se mesclado, sincronizar com origin/main antes de abrir o PR. Se não, manter a branch pronta sem merge. Itens do PR #10 listados acima ficam para depois dele.
+
+
 PR #8, branch codex/redesign-form-granada-20261105; base main 9187b72, HEAD anterior b99cbc9. Histórico da main restaurado integralmente, com checkpoints do editor preservados acima dele; limitação de concorrência permanece na revisão de integração. Alteração exclusivamente documental, sem testes de código, merge ou deploy. Próximo: revisão independente do PR atualizado.
 
 # Revisão de integração — 05/11/2026
