@@ -23,6 +23,10 @@ export type Video = {
   status: VideoStatus;
   playbackUrl?: string;
   sourceUrl?: string;
+  /** Origem registrada pelo servidor (upload, tiktok, instagram…). */
+  sourceType?: string;
+  /** Intervalo da fonte usado no corte publicado, quando o servidor o registrou. */
+  clip?: Clip;
   error?: string;
 };
 export type Lineup = {
@@ -62,7 +66,9 @@ export type Filters = {
 export type MediaDraft =
   | { kind: "keep" }
   | { kind: "file"; file: File | null; durationSeconds?: number; clip?: Clip }
-  | { kind: "link"; sourceUrl: string; clip?: Clip; inspection?: ImportInspection; inspectedUrl?: string };
+  | { kind: "link"; sourceUrl: string; clip?: Clip; inspection?: ImportInspection; inspectedUrl?: string;
+      /** Presente ao reeditar o corte de um vídeo já publicado: guarda o intervalo anterior. */
+      reedit?: { previousClip?: Clip } };
 export type LineupDraft = Omit<
   Lineup,
   "id" | "revision" | "video" | "target" | "createdAt" | "updatedAt"

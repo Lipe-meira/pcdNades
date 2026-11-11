@@ -9,6 +9,7 @@ import { Icon } from "../../components/Icon";
 import { VideoPlayer } from "../library/VideoPlayer";
 import { ClipSelector } from "./ClipSelector";
 import { ImportLinkEditor } from "./ImportLinkEditor";
+import { ImportedSourcePanel } from "./ImportedSourcePanel";
 import { LocalVideoPreview } from "./LocalVideoPreview";
 
 export function MediaInput({
@@ -125,6 +126,7 @@ export function MediaInput({
               ? "O vídeo atual será mantido. Arquivos locais só existem nesta sessão."
               : "O vídeo atual será mantido até o novo arquivo ser validado e o cadastro salvo."}
           </p>
+          <ImportedSourcePanel video={existing} capabilities={capabilities} onReedit={changeMode} />
         </>
       )}
       {value.kind === "file" && (

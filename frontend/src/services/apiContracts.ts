@@ -183,6 +183,12 @@ export function checkMedia(media: MediaRecord): MediaRecord {
     contractError();
   return media;
 }
+function validStoredClip(value: unknown): Clip | undefined {
+  const clip = value as Partial<Clip> | null | undefined;
+  return clip && Number.isFinite(clip.startSeconds) && Number.isFinite(clip.endSeconds) &&
+    clip.startSeconds! >= 0 && clip.endSeconds! > clip.startSeconds!
+    ? { startSeconds: clip.startSeconds!, endSeconds: clip.endSeconds! } : undefined;
+}
 export function mapApiGrenade(item: ApiGrenade): Lineup {
   if (
     !item ||
@@ -212,6 +218,8 @@ export function mapApiGrenade(item: ApiGrenade): Lineup {
           id: media.id,
           status: media.status,
           sourceUrl: media.sourceUrl ?? undefined,
+          sourceType: typeof media.sourceType === "string" ? media.sourceType : undefined,
+          clip: validStoredClip(media.clip),
           error: media.error?.message,
         }
       : { id: "", status: "missing" },
