@@ -3,6 +3,8 @@ import type { LineupService } from "../../services/lineupService";
 import type { ImportInspection } from "../../domain/imports";
 import { formatTimecode } from "../../domain/timecode";
 import { ApiError } from "../../services/apiClient";
+import { MutedVideo } from "../../components/MutedVideo";
+import { captureAudio, restoreAudio } from "../../domain/playback";
 
 export function ImportSourcePreview({ inspection, service, onMark, onExpired }: {
   inspection: ImportInspection;
@@ -31,7 +33,7 @@ export function ImportSourcePreview({ inspection, service, onMark, onExpired }: 
       if (controller.signal.aborted) return;
       if (!prepare && video.current) {
         const player = video.current;
-        resume.current = { time: player.currentTime, playing: !player.paused, muted: player.muted, volume: player.volume };
+        resume.current = { time: player.currentTime, playing: !player.paused, ...captureAudio(player) };
       }
       setPreview({url: data.url, expiresAt: data.expiresAt});
     } catch (cause) {
@@ -63,7 +65,7 @@ export function ImportSourcePreview({ inspection, service, onMark, onExpired }: 
     </button>}
     {preview && <>
       <p className="field-hint">Prévia temporária: o trecho ainda não foi importado nem publicado.</p>
-      <video ref={video} className="media-preview" src={preview.url} controls playsInline preload="metadata"
+      <MutedVideo ref={video} sourceKey={inspection.sourceId} className="media-preview" src={preview.url} controls playsInline preload="metadata"
         aria-label="Prévia do vídeo de origem" onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onSeeked={(event) => setCurrentTime(event.currentTarget.currentTime)} onLoadedMetadata={(event) => {
           const state = resume.current;
           const player = event.currentTarget;
@@ -71,7 +73,7 @@ export function ImportSourcePreview({ inspection, service, onMark, onExpired }: 
           resume.current = null;
           player.currentTime = Math.min(state.time, Number.isFinite(player.duration) ? player.duration : state.time);
           setCurrentTime(player.currentTime);
-          player.muted = state.muted; player.volume = state.volume;
+          restoreAudio(player, state);
           if (state.playing) void player.play().catch(() => {});
         }} onError={() => { setPreview(undefined); setError("A prévia não está disponível. Carregue novamente ou escolha pelos horários."); }} />
       <p className="field-hint">Posição atual: <output aria-label="Posição atual do vídeo">{formatTimecode(currentTime)}</output></p>

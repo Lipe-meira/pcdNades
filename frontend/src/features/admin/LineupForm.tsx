@@ -16,6 +16,7 @@ import { MediaInput } from "./MediaInput";
 import type { MediaCapabilities, Progress } from "../../services/apiContracts";
 import { ApiError } from "../../services/apiClient";
 import { videoLabels } from "../../domain/types";
+import { MutedVideo } from "../../components/MutedVideo";
 import { isTarget } from "../../domain/lineups";
 import { PointCoordinates } from "./PointCoordinates";
 import { importSelectionError } from "../../domain/imports";
@@ -515,7 +516,7 @@ export function LineupForm({
             finally { submitLock.current = false; setBusy(false); setProgress(undefined); request.current = null; }
           }}>Importar e testar em privado</button>
           <p className="field-hint">O teste armazena apenas o vídeo e não cadastra nem publica uma granada.</p>
-          {testPlayback && <video controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
+          {testPlayback && <MutedVideo sourceKey={testPlayback} controls playsInline src={testPlayback} aria-label="Vídeo importado para teste privado" />}
         </div>}
         <div className="editor-draft-status" role="status"><p>{storageIssue || (savedSnapshot && (contentSnapshot(snapshot) !== contentSnapshot(savedSnapshot) || savedMedia.current !== draft.media) ? "Alterações pendentes desde o último rascunho." : notice || "Rascunho local: salve seu progresso em qualquer etapa.")}</p><p className="field-hint">O rascunho guarda os campos e pontos. Arquivos, links e sessões de vídeo não são salvos após fechar ou recarregar.</p></div>
         <div className="form-actions">
