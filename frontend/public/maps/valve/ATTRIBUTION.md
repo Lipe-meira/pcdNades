@@ -12,7 +12,15 @@ Servidos localmente; nenhum hotlink ou download em runtime.
 - O andar inferior da Nuke (`nuke_lower.png`) tem a mesma origem, tamanho e calibração do `nuke.png` (mesmos 1024×1024, mesmo
   sistema de coordenadas): um ponto normalizado (x, y) cai no mesmo lugar nos dois arquivos. Por isso as granadas gravam
   apenas qual andar é usado, sem duplicar nem recalcular coordenadas.
-- Os arquivos não foram editados. O recorte exibido na interface é só de apresentação (ver `domain/mapLevels.ts`).
+- **Substituição de 11/11/2026 (somente Nuke):** `nuke.png` e `nuke_lower.png` passaram a ser as imagens fornecidas pelo
+  usuário (andar superior e inferior, originais 1558×848 com fundo transparente). **Origem e licença dessas imagens não foram
+  verificadas pelo projeto**; são de responsabilidade de quem as forneceu até que se confirme sua procedência.
+  - Adaptação: cada imagem foi reduzida proporcionalmente (fator 0,625, sem distorção) para 974×530 e colocada num canvas
+    1024×1024 transparente, na posição (42, 260). Essa calibração foi medida contra o `nuke.png` anterior (sobreposição da
+    silhueta de 98%; limites do conteúdo 63–998 × 280–769 antes e depois). Assim as coordenadas normalizadas gravadas
+    continuam válidas sem alteração e `domain/mapLevels.ts` não muda.
+  - Os arquivos anteriores continuam no histórico git (commit `a8aa9ee`).
+- O recorte exibido na interface é só de apresentação (ver `domain/mapLevels.ts`).
 - Os radares podem estar defasados em relação a atualizações recentes da Nuke. **Antes de divulgar amplamente, confirme com
   o jogo atual** e, se houver mudança de enquadramento, as coordenadas existentes precisam de revisão.
 
@@ -30,7 +38,9 @@ Servidos localmente; nenhum hotlink ou download em runtime.
 
 | Arquivo | Bytes | SHA256 |
 | --- | ---: | --- |
-| nuke.png | 80130 | 6230346d3ce969006062fbd02220b083245f621ef366ce26a42dc27a80120bd0 |
-| nuke_lower.png | 80046 | 040c958f141d0365ca9125388bc20228b0df0ac6abd1fe78d743ecfa1be4bb64 |
+| nuke.png (andar superior, atual) | 112279 | 42be92a7884b0d9471c00c72f24154257675fd33b08b40dd41c81378daf86e29 |
+| nuke_lower.png (andar inferior, atual) | 104236 | 7383299696fb52c4d2b9dff3f65040f8d49ae3b4671f73ecf48383d1cba39a4b |
+
+Anteriores (substituídos em 11/11/2026): `nuke.png` 80130 bytes, SHA256 `6230346d…20bd0`; `nuke_lower.png` 80046 bytes, SHA256 `040c958f…4bb64`.
 
 Counter-Strike 2 é marca da Valve Corporation.
