@@ -452,8 +452,11 @@ test("carregamento lento avisa o usuário e oferece tentar novamente", async ({ 
   await expect(page.getByRole("status")).toContainText("Carregando biblioteca");
   await expect(page.getByRole("button", { name: "Tentar novamente" })).toHaveCount(0);
   await expect(page.getByText("demorando mais que o normal")).toBeVisible({ timeout: 15_000 });
+  // StrictMode (dev) executa o efeito de carga duas vezes e a primeira requisição abortada nem sempre
+  // chega ao handler, então o total inicial varia: o que importa é que "Tentar novamente" faz uma nova.
+  const before = calls;
   await page.getByRole("button", { name: "Tentar novamente" }).click();
-  await expect.poll(() => calls).toBe(2);
+  await expect.poll(() => calls).toBeGreaterThan(before);
   release();
   await expect(page.getByRole("heading", { name: "Nenhum mapa cadastrado" })).toBeVisible();
 });

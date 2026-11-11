@@ -1,5 +1,7 @@
 # Reedição de corte de vídeos importados por link — 11/11/2026 (PR aberto, sem merge)
 
+Atualização (11/11/2026, pós PR #15): main b093701 incorporada por merge f76919d (único conflito: este arquivo, preservados os dois blocos). Instabilidade de "carregamento lento avisa…": causa concreta = StrictMode em dev executa o efeito de carga duas vezes e a 1ª requisição abortada nem sempre chega ao handler do Playwright, então `calls` ficava em 2 ou 3 e o teste exigia exatamente 2 (reproduzido: 3 falhas em 16 com --repeat-each=8 --workers=8). Corrigido só o teste (compara com a contagem antes do clique); 0 falhas em 16 depois. Sem mudança de comportamento da aplicação. Pós-merge: build PASS, vitest 93/93, Playwright completo 166/166 (portas isoladas 5374/5375).
+
 Pedido: mostrar a URL original e o corte anterior de granadas importadas por link e permitir "Reeditar corte" (nova consulta + novo intervalo), sem migration e sem mexer em backend.
 Branch feat/reeditar-corte-importacao, worktree F:/projetos/nadesCs2-reedit-corte, base main 07cc294. Sem merge, deploy, migration ou alteração em produção.
 
