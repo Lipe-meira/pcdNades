@@ -425,7 +425,7 @@ export function LineupForm({
                 <legend>{soloMode ? `Andar do destino ${destinationIndex + 1}` : "Andar do destino"}</legend>
                 {levelsOf(draft.mapId)!.levels.map((item) => <label key={item.id}>
                   <input type="radio" name="target-level" value={item.id} checked={activeTargetLevel === item.id}
-                    onChange={() => setTargetLevel(item.id)} />
+                    disabled={soloMode && !activeDestination} onChange={() => setTargetLevel(item.id)} />
                   <span>{item.label} · {item.name}</span>
                 </label>)}
               </fieldset>

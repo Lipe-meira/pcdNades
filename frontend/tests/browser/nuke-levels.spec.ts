@@ -248,3 +248,19 @@ test("editor de outros mapas não mostra andares e a troca de mapa limpa os pont
   await page.getByRole("button", { name: "Posicionamento" }).click();
   await expect(page.getByRole("group", { name: "Andar da origem" })).toHaveCount(0);
 });
+
+test("regressão: os sete mapas carregam o radar e só a Nuke tem andares", async ({ page }) => {
+  await page.goto("/");
+  const maps = ["Mirage", "Inferno", "Ancient", "Cache", "Nuke", "Dust II", "Anubis"];
+  for (const name of maps) {
+    await page.getByRole("navigation", { name: "Selecionar mapa" }).getByRole("button", { name, exact: true }).click();
+    await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+    const radar = page.getByAltText(new RegExp(`Radar do mapa ${name}`));
+    await expect(radar).toBeVisible();
+    await expect.poll(() => radar.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBe(1024);
+    await expect(page.getByRole("group", { name: "Andar do radar" })).toHaveCount(name === "Nuke" ? 1 : 0);
+    await expect(page.locator(".radar-image.is-cropped")).toHaveCount(name === "Nuke" ? 1 : 0);
+    const box = (await radar.boundingBox())!;
+    expect(Math.abs(box.width - box.height)).toBeLessThanOrEqual(1); // quadrado: nenhum recorte nos mapas de um andar
+  }
+});

@@ -32,11 +32,21 @@ layout e identidade continuam os do pcdNades. **A migration deste PR não foi ap
   ACL/policies/RLS/grants/triggers idênticos, regras de andar, rollback testado. Não substitui validar no Supabase real.
 - Rollback: `backend/rollbacks/20261111120000_map_levels_rollback.sql` (descarta as colunas; só com a Nuke sem registros).
 
+## Revisão final e ensaio (11/11/2026)
+- Schema de produção lido (somente leitura) e igual ao esperado: `grenades_solo_destinations_check` exatamente com `target = (destinations->0) - 'type'`, `grenades_type_check` já com `he` (migration `20261111015949_he_grenade_type` registrada), 2 triggers (`grenade_ready`, `grenade_revision`), 4 policies com RLS ativo, `authenticated` sem UPDATE, função `private.valid_solo_destinations` com `he` e ACL `postgres/authenticated/service_role`, mapa `nuke` em `public.maps`, `private.map_has_levels` ainda inexistente, 16 granadas (0 na Nuke).
+- Ensaio: o dump real de produção (`pg_dump -Fc`, com `private`) foi restaurado em Postgres 17 descartável (sem rede), a migration da HE e a da Nuke foram aplicadas nessa ordem e, depois, o rollback. Resultado: hash das 16 linhas idêntico antes/depois, policies, grants, triggers, RLS e ACL da função idênticos, as 2 granadas `solo_exec` reais revalidaram na nova constraint, inserção Nuke andar 1 → andar 2 aceita, andar em mapa sem andares rejeitado, e o rollback devolveu exatamente o estado anterior.
+- Limites do ensaio: banco local, não o Supabase real; extensões como `pg_cron` não existem lá, mas a migration não toca nelas.
+
 ## Sequência de publicação (aguarda autorização)
-1. Backup do banco (pg_dump, schemas incluindo `private`) e dos objetos novos do Storage.
-2. Aplicar a migration (aditiva; compatível com o backend e o frontend atuais, que ignoram as colunas novas).
-3. Merge deste PR e conferência dos deployments `pcdnades` e `pcdnades-api`. Backend antes do frontend se forem publicados separados.
-4. Smoke: cadastrar uma granada de teste na Nuke (origem andar 1, destino andar 2), conferir os dois radares, editar, excluir.
+Pré-condições: PR aprovado, CI verde, branch sincronizada com a `main` (incluindo o PR #13).
+1. **Backup novo** (o último, `release-20261110-delta`, é anterior a mudanças de dados): `pg_dump -Fc` com os schemas `public`, `private`, `auth`, `storage` e `supabase_migrations`, mais os objetos novos do Storage; conferir SHA256 e `pg_restore --list`.
+2. **Pré-checagem** (somente leitura, repetir no momento da aplicação): `list_migrations` sem `map_levels`; `grenades_solo_destinations_check` com o texto acima; contagens (granadas, mídias, objetos) iguais às do backup; `private.map_has_levels` inexistente.
+3. **Aplicar** com `apply_migration` (nome `map_levels`, SQL de `20261111120000_map_levels.sql` sem `begin`/`commit`, que o `apply_migration` já envolve numa transação). Sem inserir nada à mão em `schema_migrations`.
+4. **Pós-checagem**: histórico registrado; colunas `origin_level`/`target_level`; checks `grenades_levels_check` e `grenades_solo_destinations_check` validados; `private.map_has_levels` com ACL `postgres/authenticated/service_role`; contagens e hash das linhas iguais ao pré; policies, grants, triggers, RLS e função iguais.
+5. **Alinhar o nome do arquivo** à versão que o Supabase registrar (como foi feito na HE) em commit pequeno na branch do PR, antes do merge.
+6. **Merge** do PR e conferência dos deployments `pcdnades` e `pcdnades-api` na Vercel (backend antes do frontend se forem publicados separados; a migration vem antes de ambos).
+7. **Smoke** com granada de teste na Nuke (origem andar 1, destino andar 2 e um Solo Exec com destinos nos dois andares): conferir os dois radares, editar, excluir; depois confirmar 16 granadas originais. Excluir a granada não remove a mídia enviada pelo teste: sobra 1 mídia e 1 objeto (limpeza só com autorização).
+- **Rollback**: antes de qualquer registro na Nuke, `backend/rollbacks/20261111120000_map_levels_rollback.sql`. Se já houver registros com andares, exportá-los ou removê-los primeiro (as colunas são descartadas). Problema só no frontend/backend: reverter o deployment na Vercel; a migration é compatível com as versões anteriores.
 
 ## Limitações
 - Radares: ver `frontend/public/maps/valve/ATTRIBUTION.md` (origem e licença não registradas; setpos.gg não tem andar inferior).
