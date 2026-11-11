@@ -1,3 +1,18 @@
+# Reedição de corte de vídeos importados por link — 11/11/2026 (PR aberto, sem merge)
+
+Pedido: mostrar a URL original e o corte anterior de granadas importadas por link e permitir "Reeditar corte" (nova consulta + novo intervalo), sem migration e sem mexer em backend.
+Branch feat/reeditar-corte-importacao, worktree F:/projetos/nadesCs2-reedit-corte, base main 07cc294. Sem merge, deploy, migration ou alteração em produção.
+
+O que já existia (confirmado no código): `media_assets` guarda source_url, clip e import_source_id; `mediaView` (backend/src/model.ts) devolve sourceUrl, clip e sourceId e `grenadeView` embute isso em `video` na listagem. O frontend descartava `clip` e `sourceType` ao mapear (apiContracts.ts). A troca de vídeo na edição já só faz PATCH com o novo videoId depois do `ready`, e falha de importação já preserva granada e vídeo; expectedRevision já vai no PATCH. Nenhum arquivo do Storage é apagado por esse fluxo. Backend NÃO foi alterado.
+
+Implementado (frontend): `Video.sourceType/clip` e `MediaDraft.link.reedit` (types.ts); `domain/reedit.ts` (importedSource, reeditDraft, initialClipFor); mapeamento de sourceType/clip validado em apiContracts.ts; painel `ImportedSourcePanel` em MediaInput (URL, Copiar, Abrir com noopener, corte usado, Reeditar corte, mensagens de URL ausente/importação indisponível); ImportLinkEditor mostra o corte anterior, reaproveita-o se couber na fonte/limites e acrescenta aviso de vídeo removido quando a consulta falha na reedição; LineupForm preserva `reedit` após falha; CSS responsivo.
+
+Verificações executadas (portas isoladas 5374/5375, config local descartada): tsc/build PASS; vitest 16 arquivos/93 testes PASS (10 novos em tests/reedit.test.ts); backend typecheck PASS e 155/155 testes PASS; Playwright completo 165/166 — 18 novos de "reeditar corte" PASS em desktop e mobile (inclui 320px); a única falha foi "carregamento lento avisa…" (api-mobile, teste do PR #13 dependente de 8s de relógio, não tocado), que passou isolado em desktop e mobile.
+
+Limitações: testes usam API/Auth controladas; NÃO provam nova consulta real ao TikTok nem importação em produção (importação TikTok em produção segue limitada por HTTP 403 da CDN, ver import-flow.md). Corte anterior só aparece para vídeos cujo clip foi registrado; source_url inválido/ausente mostra mensagem e não oferece reedição. O vídeo antigo permanece no Storage (sem limpeza automática). Instagram usa o mesmo caminho, só validado com mocks.
+
+Próxima ação: revisão do PR; se a main mudar, sincronizar por merge (sem force push) e repetir build e testes isolados.
+
 # Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
 
 Autorizada pelo responsável e aplicada uma única vez com apply_migration no projeto kdyzxxgzvgiffluyjjxu; registrada pelo Supabase como 20261111031252 map_levels (arquivos da migration e do rollback renomeados no repositório, conteúdo idêntico). Pré e pós-checagens aprovadas: 15 granadas, 21 mídias, 17 objetos, hash das linhas de grenades, policies, grants, triggers e RLS iguais ao backup release-20261111-nuke-premigration; colunas origin_level/target_level criadas e vazias; checks validados. Sem alterar dados nem limpar Storage. PR #14 segue aberto, SEM merge e SEM deploy (frontend/backend publicados ainda ignoram as colunas novas). Próximo: autorização para o merge do PR #14, conferência dos deployments pcdnades e pcdnades-api e smoke na Nuke.
