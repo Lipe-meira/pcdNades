@@ -1,5 +1,28 @@
 # HE Grenade e vídeos mutados — 10/11/2026
 
+# Experiência de carregamento — 11/11/2026 (PR a abrir, sem merge)
+
+Objetivo: revisar estados de carregamento, feedback de navegação, operações administrativas, ações repetidas e situações de espera sem indicação. Sem alterar mapas, Radar.tsx, MapCarousel.tsx, LineupForm.tsx nem arquivos do sistema de mapas (Sonnet).
+Branch codex/loading-ux-20261111, worktree pcdnades-loading-ux-20261111, base origin/main 3566387.
+
+Problemas confirmados e corrigidos (frontend/src/app/App.tsx):
+1. Carregamento sem aviso de espera: após 8s de "Carregando biblioteca…", a mensagem passa a dizer que está demorando mais que o normal e oferece "Tentar novamente". A API já tinha timeout de 30s; antes disso a tela parecia travada.
+2. "Atualizar biblioteca" sem estado de andamento e clicável várias vezes: agora mostra "Atualizando…" e fica desabilitado até a resposta.
+
+Auditoria sem alteração (adequado): troca de página é instantânea (hashchange, sem consulta extra); erro de carregamento já tem "Tentar novamente"; carregamento de sessão, consulta de vídeo, prévia, verificação de arquivo e VideoPlayer já têm indicador; exclusão, login, logout, consulta de importação e prévia já bloqueiam ação repetida.
+
+Limitação conhecida, não corrigida: se uma atualização falhar depois de a biblioteca já ter dados, a tela inteira é substituída pelo erro, mesmo com dados ainda válidos. Mudança de comportamento; fica para decisão posterior.
+
+Testes:
+- tests/browser/api.spec.ts: 2 novos ("carregamento lento avisa…" e "atualizar biblioteca fica indisponível…"). Falham no App.tsx anterior e passam no atual.
+- npm run build PASS; npm test 13 arquivos/69 testes PASS.
+- Playwright desktop + mobile (demo): 52/52 PASS. API desktop + mobile: 74/74 PASS. Executados com configuração isolada nas portas 5274/5275.
+
+Processo importante: o Playwright reutiliza servidores nas portas 5174/5175 (reuseExistingServer). Nesta sessão, essas portas estavam ocupadas pelo Vite da worktree pcdnades-nuke-levels (Sonnet), e os primeiros resultados ficaram inconsistentes. Para rodar sem interferir, usar uma cópia temporária de playwright.config.ts com outras portas, sem commitá-la, e não encerrar processos de outras worktrees.
+
+Próxima ação: abrir PR para main; não fazer merge. Se a main mudar, sincronizar por merge e repetir build e testes.
+
+
 Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261111015949_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration NÃO aplicada em Supabase; sem merge nem deploy.
 
 # Correção de continuidade — 05/11/2026
