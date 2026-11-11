@@ -1,5 +1,29 @@
 # HE Grenade e vídeos mutados — 10/11/2026
 
+# Experiência de carregamento — 11/11/2026 (PR #13 aberto, sem merge)
+
+Objetivo: revisar estados de carregamento, feedback de navegação, operações administrativas, ações repetidas e situações de espera sem indicação. Sem alterar mapas, Radar.tsx, MapCarousel.tsx, LineupForm.tsx nem arquivos do sistema de mapas (Sonnet).
+Branch codex/loading-ux-20261111, worktree pcdnades-loading-ux-20261111, base origin/main 3566387.
+
+Problemas confirmados e corrigidos (frontend/src/app/App.tsx):
+1. Carregamento sem aviso de espera: após 8s de "Carregando biblioteca…", a mensagem passa a dizer que está demorando mais que o normal e oferece "Tentar novamente". A API já tinha timeout de 30s; antes disso a tela parecia travada.
+2. "Atualizar biblioteca" sem estado de andamento e clicável várias vezes: agora mostra "Atualizando…" e fica desabilitado até a resposta.
+
+Auditoria sem alteração (adequado): troca de página é instantânea (hashchange, sem consulta extra); erro de carregamento já tem "Tentar novamente"; carregamento de sessão, consulta de vídeo, prévia, verificação de arquivo e VideoPlayer já têm indicador; exclusão, login, logout, consulta de importação e prévia já bloqueiam ação repetida.
+
+Limitação conhecida, não corrigida: se uma atualização falhar depois de a biblioteca já ter dados, a tela inteira é substituída pelo erro, mesmo com dados ainda válidos. Mudança de comportamento; fica para decisão posterior.
+
+Testes:
+- tests/browser/api.spec.ts: 2 novos ("carregamento lento avisa…" e "atualizar biblioteca fica indisponível…"). Falham no App.tsx anterior e passam no atual.
+- npm run build PASS; npm test 13 arquivos/69 testes PASS.
+- Playwright desktop + mobile (demo): 52/52 PASS. API desktop + mobile: 74/74 PASS. Executados com configuração isolada nas portas 5274/5275.
+
+Processo importante: o Playwright reutiliza servidores nas portas 5174/5175 (reuseExistingServer). Nesta sessão, essas portas estavam ocupadas pelo Vite da worktree pcdnades-nuke-levels (Sonnet), e os primeiros resultados ficaram inconsistentes. Para rodar sem interferir, usar uma cópia temporária de playwright.config.ts com outras portas, sem commitá-la, e não encerrar processos de outras worktrees.
+
+Estado em 11/11/2026: PR #13 atualizado com origin/main 3566387 (0 atrás), sem conflitos com a main. Testes isolados (5274/5275) do PR #13: build PASS, unitários 69/69, demo desktop+mobile 52/52, API desktop+mobile 74/74.
+
+Ordem de merge recomendada: PR #12 primeiro, depois PR #13. Após o merge do PR #12, o PR #13 deve conflitar apenas em docs/continuity/frontend.md (os dois PRs inserem bloco logo abaixo do título). Resolver mantendo os dois blocos, sem reescrever histórico (merge de origin/main, sem force push), e repetir build e testes isolados.
+
 # Feedback e mensagens de erro — 11/11/2026 (PR #12, pronto para revisão)
 
 Objetivo: auditar mensagens de erro, carregamento, ações duplicadas e feedback de salvar/editar/excluir na interface, com correções pequenas e comprovadas, sem tocar em Radar, MapCarousel, LineupForm nem no sistema de mapas (reservados ao Sonnet, dois andares da Nuke).

@@ -8,6 +8,9 @@ import { Icon } from "../components/Icon";
 import { Admin } from "../features/admin/Admin";
 import { AuthGate } from "../features/admin/AuthGate";
 
+/** Após este tempo, a espera deixa de parecer normal e o usuário pode tentar de novo. */
+const SLOW_LOAD_MS = 8000;
+
 export function App({
   service,
   auth,
@@ -25,10 +28,15 @@ export function App({
   }>();
   const [error, setError] = useState<string>();
   const [attempt, setAttempt] = useState(0);
+  const [slow, setSlow] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const demo = service.mode === "demo";
   useEffect(() => {
     const controller = new AbortController();
     setError(undefined);
+    setSlow(false);
+    setRefreshing(true);
+    const slowTimer = window.setTimeout(() => setSlow(true), SLOW_LOAD_MS);
     Promise.all([
       service.listMaps(controller.signal),
       service.listLineups(controller.signal),
@@ -45,8 +53,14 @@ export function App({
               ? error.message
               : "Não foi possível consultar a biblioteca.",
           );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setRefreshing(false);
       });
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      window.clearTimeout(slowTimer);
+    };
   }, [service, attempt]);
   useEffect(() => {
     const listener = () =>
@@ -132,9 +146,10 @@ export function App({
             <span>Biblioteca compartilhada · modo API</span>
             <button
               className="text-button"
+              disabled={refreshing}
               onClick={() => setAttempt((current) => current + 1)}
             >
-              Atualizar biblioteca
+              {refreshing ? "Atualizando…" : "Atualizar biblioteca"}
             </button>
           </div>
         )}
@@ -155,9 +170,22 @@ export function App({
             </button>
           </div>
         ) : !data ? (
-          <p className="loading" role="status">
-            Carregando biblioteca…
-          </p>
+          <>
+            <p className="loading" role="status">
+              Carregando biblioteca…
+              {slow && " Isso está demorando mais que o normal."}
+            </p>
+            {slow && (
+              <div>
+                <button
+                  className="button secondary"
+                  onClick={() => setAttempt((current) => current + 1)}
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            )}
+          </>
         ) : !data.maps.length ? (
           <section className="empty-state">
             <h1>Nenhum mapa cadastrado</h1>
