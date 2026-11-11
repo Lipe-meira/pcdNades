@@ -1,5 +1,26 @@
 # HE Grenade e vídeos mutados — 10/11/2026
 
+# Feedback e mensagens de erro — 11/11/2026 (PR #12, pronto para revisão)
+
+Objetivo: auditar mensagens de erro, carregamento, ações duplicadas e feedback de salvar/editar/excluir na interface, com correções pequenas e comprovadas, sem tocar em Radar, MapCarousel, LineupForm nem no sistema de mapas (reservados ao Sonnet, dois andares da Nuke).
+Branch codex/ux-feedback-20261111, worktree pcdnades-ux-feedback-20261111, base origin/main 3566387 (PR #11 mesclado). Não há merge nem deploy.
+
+Correções realizadas:
+1. Login (frontend/src/services/supabaseRuntime.ts): falha de rede ou erro 5xx do servidor de login mostra "Não foi possível conectar ao servidor de login…" em vez de "Confira e-mail e senha". Credenciais incorretas mantêm a orientação anterior. Classificação em função pura exportada loginFailureMessage.
+2. Resposta inesperada da API (frontend/src/services/apiClient.ts): "A API retornou uma resposta inválida." virou "O servidor respondeu de forma inesperada. Tente novamente mais tarde.".
+
+Auditoria sem alterações (já adequado): carregamento em biblioteca, sessão, consulta de vídeo, prévia e verificação de arquivo; bloqueio de ações duplicadas em exclusão, login, logout, consulta de importação e prévia; exclusão com confirmação, rótulo "Excluindo…", aviso de sucesso e erro dentro do diálogo; mensagens de tempo esgotado e de conexão.
+
+Testes:
+- npm run build (typecheck + build): PASS.
+- npm test: 14 arquivos, 73 testes PASS (4 novos em frontend/tests/feedback.test.ts).
+- Playwright mobile e desktop: 52/52 PASS.
+
+Limitações: a classificação de login foi testada como função pura, não contra Supabase real; não há teste com backend real nem Supabase de produção; nenhuma migration, API, Storage ou produção foi alterada.
+
+Próxima ação: aguardar revisão do PR #12. Se a main mudar, sincronizar por merge (sem force push) e repetir build e testes de navegador.
+
+
 Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261111015949_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration NÃO aplicada em Supabase; sem merge nem deploy.
 
 # Correção de continuidade — 05/11/2026
