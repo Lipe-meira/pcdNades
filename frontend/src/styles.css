@@ -1647,3 +1647,29 @@ label{font-size:14px;font-weight:400}
 .editor-draft-status { margin-top:24px; color:#e4d09d; }
 .editor-draft-status p { margin:8px 0; }
 @media(max-width:600px) { .editor-steps { gap:4px; }.editor-steps button { flex-direction:column; align-items:flex-start; gap:6px; padding:10px 8px; font-size:13px; }.editor-review dl { grid-template-columns:1fr; }.form-actions { flex-wrap:wrap; }.editor-panels .field-row { flex-wrap:wrap; } }
+
+/* Radar com andares (Nuke): recorte de exibição, botões 1/2 e nota de andar. Coordenadas continuam no PNG 1024×1024. */
+.radar-plain{display:contents}
+.radar-image.is-cropped{width:100%;overflow:hidden;background:#171b20;border-radius:2px}
+.radar-frame .radar-image.is-cropped{max-width:100%}
+.radar-canvas{position:absolute}
+.radar-canvas img{display:block;width:100%;height:auto}
+.radar-levels{position:absolute;top:10px;left:10px;z-index:6;display:flex;flex-direction:column;gap:6px}
+.radar-level{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid #5a6572;border-radius:3px;background:#1c2025ee;color:var(--text);font-family:var(--display);font-size:24px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 2px 6px #0008}
+.radar-level:hover{border-color:var(--blue);background:#2a3440}
+.radar-level[aria-pressed=true]{background:#343333;border-color:var(--accent);color:var(--accent);box-shadow:inset 0 -3px var(--accent),0 2px 6px #0008}
+.radar-level:focus-visible{outline:3px solid #eeece6;outline-offset:2px}
+.radar-level-note{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:8px 0 0;color:var(--muted);font-size:13px}
+.radar-level-note strong{color:#e5e9ed;font-weight:600}
+.radar-level-note .text-button{min-height:36px}
+.radar-shell-expanded .radar-level-note{max-width:1200px;margin-inline:auto}
+@media(max-width:520px){.radar-levels{top:6px;left:6px}.radar-level-note{font-size:12px}}
+
+/* Editor: escolha de andar da origem e do destino (mapas com andares). */
+.level-fields{display:flex;flex-wrap:wrap;gap:10px 18px;margin:10px 0}
+.level-fields .field-hint,.level-fields .field-error{flex-basis:100%;margin:0}
+.level-choice{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;min-width:0;margin:0;padding:6px 10px;border:1px solid #454d57;border-radius:3px}
+.level-choice legend{padding:0 6px;color:var(--muted);font-size:13px}
+.level-choice label{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 6px;cursor:pointer}
+.level-choice input{width:20px;height:20px;accent-color:var(--accent)}
+.destination-level{color:var(--muted);font-size:13px}

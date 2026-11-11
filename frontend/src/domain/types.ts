@@ -1,12 +1,13 @@
 import type { Clip } from "./clip";
 import type { ImportInspection } from "./imports";
+import type { MapLevelId } from "./mapLevels";
 export const singleGrenadeTypes = ["smoke", "flashbang", "molotov", "he"] as const;
 export const grenadeTypes = [...singleGrenadeTypes, "solo_exec"] as const;
 export type SingleGrenadeType = (typeof singleGrenadeTypes)[number];
 export type GrenadeType = (typeof grenadeTypes)[number];
 export const isSingleGrenadeType = (value: unknown): value is SingleGrenadeType => (singleGrenadeTypes as readonly unknown[]).includes(value);
 export const isGrenadeType = (value: unknown): value is GrenadeType => (grenadeTypes as readonly unknown[]).includes(value);
-export type SoloDestination = Target & { type: SingleGrenadeType };
+export type SoloDestination = Target & { type: SingleGrenadeType; level?: MapLevelId | null };
 export type Side = "T" | "CT";
 export type Target = { x: number; y: number };
 export type VideoStatus =
@@ -36,6 +37,9 @@ export type Lineup = {
   target: Target;
   destinations?: SoloDestination[] | null;
   origin?: Target | null;
+  /** Só em mapas com andares (Nuke). null/ausente = andar padrão do mapa. */
+  originLevel?: MapLevelId | null;
+  targetLevel?: MapLevelId | null;
   createdAt: string;
   updatedAt: string;
 };
