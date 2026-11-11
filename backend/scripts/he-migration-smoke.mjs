@@ -6,7 +6,7 @@ const pre="create role anon;create role authenticated;create role service_role b
 try{
  await db.exec(pre);
  const files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
- const heName='20261110120000_he_grenade_type.sql';assert.ok(files.at(-1)===heName,'HE deve ser a última migration');
+ const heName='20261111015949_he_grenade_type.sql';assert.ok(files.at(-1)===heName,'HE deve ser a última migration');
  for(const f of files.slice(0,-1))await db.exec(await readFile(`${dir}/${f}`,'utf8'));
  const owner='123e4567-e89b-42d3-a456-426614174000';await db.query('insert into auth.users values($1)',[owner]);
  const media=(await db.query("insert into public.media_assets(owner_id,source_type,storage_key) values($1,'upload','a.mp4') returning id",[owner])).rows[0].id;

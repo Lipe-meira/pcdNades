@@ -1,6 +1,6 @@
 # HE Grenade e vídeos mutados — 10/11/2026
 
-Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261110120000_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration NÃO aplicada em Supabase; sem merge nem deploy.
+Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261111015949_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration APLICADA em produção em 11/11/2026 02:00 UTC via apply_migration (versão registrada 20261111015949); backup prévio em F:/BackupsPrivados/pcdnades/release-20261110-delta (restauração testada). 16 granadas, 21 mídias e 17 objetos preservados. Merge e deploy pendentes de autorização.
 
 ## Investigação de 2 mídias ready sem objeto — 10/11/2026 (somente leitura)
 
