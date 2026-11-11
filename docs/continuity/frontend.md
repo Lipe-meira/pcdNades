@@ -1,6 +1,6 @@
 # HE Grenade e vídeos mutados — 10/11/2026
 
-# Experiência de carregamento — 11/11/2026 (PR a abrir, sem merge)
+# Experiência de carregamento — 11/11/2026 (PR #13 aberto, sem merge)
 
 Objetivo: revisar estados de carregamento, feedback de navegação, operações administrativas, ações repetidas e situações de espera sem indicação. Sem alterar mapas, Radar.tsx, MapCarousel.tsx, LineupForm.tsx nem arquivos do sistema de mapas (Sonnet).
 Branch codex/loading-ux-20261111, worktree pcdnades-loading-ux-20261111, base origin/main 3566387.
@@ -20,7 +20,9 @@ Testes:
 
 Processo importante: o Playwright reutiliza servidores nas portas 5174/5175 (reuseExistingServer). Nesta sessão, essas portas estavam ocupadas pelo Vite da worktree pcdnades-nuke-levels (Sonnet), e os primeiros resultados ficaram inconsistentes. Para rodar sem interferir, usar uma cópia temporária de playwright.config.ts com outras portas, sem commitá-la, e não encerrar processos de outras worktrees.
 
-Próxima ação: abrir PR para main; não fazer merge. Se a main mudar, sincronizar por merge e repetir build e testes.
+Estado em 11/11/2026: PR #13 atualizado com origin/main 3566387 (0 atrás), sem conflitos com a main. Testes isolados (5274/5275) do PR #13: build PASS, unitários 69/69, demo desktop+mobile 52/52, API desktop+mobile 74/74.
+
+Ordem de merge recomendada: PR #12 primeiro, depois PR #13. Após o merge do PR #12, o PR #13 deve conflitar apenas em docs/continuity/frontend.md (os dois PRs inserem bloco logo abaixo do título). Resolver mantendo os dois blocos, sem reescrever histórico (merge de origin/main, sem force push), e repetir build e testes isolados.
 
 
 Branch feat/he-video-muted, worktree pcdnades-he-video/nadesCs2, base origin/main 67445d5. Implementado tipo `he` (frontend, Zod, migration 20261111015949_he_grenade_type.sql, ícone he.png) e `MutedVideo` em todos os players. Detalhes e ordem de publicação: docs/HE-VIDEO-MUTED-20261110.md. Verificações: ver PR. Migration NÃO aplicada em Supabase; sem merge nem deploy.
