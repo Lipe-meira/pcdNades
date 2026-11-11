@@ -1,3 +1,14 @@
+# CI do Playwright sem apt — 11/11/2026
+
+Estado: commit `861f2d0` enviado à branch `ci/playwright-sem-apt` (base `origin/main` b093701). PR não aberto (GitHub CLI indisponível); link: https://github.com/Lipe-meira/pcdNades/compare/main...ci/playwright-sem-apt
+
+Problema: no PR #17, `npx playwright install --with-deps chromium` falhou por DNS em azure.archive.ubuntu.com. Apenas remover `--with-deps` não basta: em Ubuntu 24.04 limpo o Chromium não inicia (libglib-2.0.so.0 ausente). Reproduzido em contêiner.
+
+Solução: job `verify` roda em `mcr.microsoft.com/playwright:v1.64.1-noble` (oficial, com navegador e bibliotecas). Passo de guarda confere que `@playwright/test` do lockfile é 1.64.1. Nenhum teste desativado.
+
+Validação (mesma imagem, Node 24.11.0, `--ipc=host`, CI=true): typecheck OK; vitest 15 arquivos/83 testes OK; build OK; `npm run test:browser` 148/148 OK (desktop, mobile, api-desktop, api-mobile).
+Não validado: execução real no GitHub Actions (só pode ser confirmada pelo próprio CI após o push).
+
 # CI automático do frontend — 11/11/2026 (implementado; PR aberto, sem merge)
 
 Estado: concluído na branch; aguarda revisão e merge do responsável. Pedido: workflow do GitHub Actions para alterações do frontend (npm ci, typecheck, build, testes unitários e Playwright com servidores isolados), sem deploy, sem dependências novas, preservando `.github/workflows/backend-linux.yml` e sem tocar importação, mídia, editor ou banco (o Sonnet trabalha nisso).
