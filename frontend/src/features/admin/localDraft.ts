@@ -1,5 +1,7 @@
 import type { LineupDraft, Target, SoloDestination } from "../../domain/types";
 import { isGrenadeType, isSingleGrenadeType } from "../../domain/types";
+import { isMapLevelId } from "../../domain/mapLevels";
+import type { MapLevelId } from "../../domain/mapLevels";
 import { isTarget } from "../../domain/lineups";
 
 /** Only non-media form fields are persisted. Never serialize the full draft. */
@@ -9,7 +11,7 @@ export type LocalDraft = {
   step: 0 | 1 | 2;
   originTouched: boolean;
   mapChanged: boolean;
-  fields: Pick<LineupDraft, "title" | "mapId" | "type" | "side" | "instructions" | "target" | "origin" | "destinations">;
+  fields: Pick<LineupDraft, "title" | "mapId" | "type" | "side" | "instructions" | "target" | "origin" | "destinations" | "originLevel" | "targetLevel">;
 };
 
 export function localDraftKey(accountId: string, lineupId?: string): string {
@@ -23,7 +25,8 @@ export function makeLocalDraft(draft: LineupDraft, step: 0 | 1 | 2, baseUpdatedA
     fields: {
       title: draft.title, mapId: draft.mapId, type: draft.type, side: draft.side,
       instructions: draft.instructions, target: point(draft.target), origin: point(draft.origin),
-      destinations: draft.destinations?.map(({ x, y, type }) => ({ x, y, type })) ?? null,
+      destinations: draft.destinations?.map(({ x, y, type, level }) => ({ x, y, type, ...(level ? { level } : {}) })) ?? null,
+      originLevel: draft.originLevel ?? null, targetLevel: draft.targetLevel ?? null,
     },
   };
 }
@@ -43,12 +46,14 @@ export function parseLocalDraft(raw: string, mapIds: string[]): LocalDraft | nul
       typeof f.mapId !== "string" || !mapIds.includes(f.mapId) || !isGrenadeType(f.type) ||
       !["T", "CT"].includes(f.side as string) || !(f.target === null || validPoint(f.target)) ||
       !(f.origin === null || validPoint(f.origin)) ||
-      !(f.destinations === null || Array.isArray(f.destinations) && f.destinations.length <= 12 && f.destinations.every((d: unknown) => validPoint(d) && isSingleGrenadeType((d as SoloDestination).type)))) return null;
+      !(f.destinations === null || Array.isArray(f.destinations) && f.destinations.length <= 12 && f.destinations.every((d: unknown) => validPoint(d) && isSingleGrenadeType((d as SoloDestination).type) && ((d as SoloDestination).level == null || isMapLevelId((d as SoloDestination).level)))) ||
+      !(f.originLevel == null || isMapLevelId(f.originLevel)) || !(f.targetLevel == null || isMapLevelId(f.targetLevel))) return null;
     // Reconstruct rather than trust unknown properties from storage.
     const point = (p: unknown): Target | null => p === null ? null : { x: (p as Target).x, y: (p as Target).y };
     return { version: 1, step: value.step as 0 | 1 | 2, baseUpdatedAt: value.baseUpdatedAt as string | null,
       originTouched: value.originTouched, mapChanged: value.mapChanged,
       fields: { title: f.title, mapId: f.mapId, type: f.type as LineupDraft["type"], side: f.side as LineupDraft["side"], instructions: f.instructions,
-        target: point(f.target), origin: point(f.origin), destinations: f.destinations === null ? null : (f.destinations as SoloDestination[]).map(d => ({ x: d.x, y: d.y, type: d.type })) } };
+        target: point(f.target), origin: point(f.origin), destinations: f.destinations === null ? null : (f.destinations as SoloDestination[]).map(d => ({ x: d.x, y: d.y, type: d.type, ...(d.level ? { level: d.level } : {}) })),
+        originLevel: (f.originLevel as MapLevelId | null | undefined) ?? null, targetLevel: (f.targetLevel as MapLevelId | null | undefined) ?? null } };
   } catch { return null; }
 }

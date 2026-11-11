@@ -17,6 +17,8 @@ import type { MediaCapabilities, Progress } from "../../services/apiContracts";
 import { ApiError } from "../../services/apiClient";
 import { videoLabels } from "../../domain/types";
 import { MutedVideo } from "../../components/MutedVideo";
+import { hasLevels, levelFor, levelsOf, levelText } from "../../domain/mapLevels";
+import type { MapLevelId } from "../../domain/mapLevels";
 import { isTarget } from "../../domain/lineups";
 import { PointCoordinates } from "./PointCoordinates";
 import { importSelectionError } from "../../domain/imports";
@@ -55,8 +57,13 @@ export function LineupForm({
           side: existing.side,
           instructions: existing.instructions,
           target: existing.target,
-          destinations: existing.destinations,
+          destinations: existing.destinations?.map((d) => { const level = levelFor(existing.mapId, d.level ?? existing.targetLevel); return level ? { ...d, level } : d; }) ?? existing.destinations,
           origin: existing.origin ?? null,
+          // Cadastros anteriores aos andares (nível nulo) pertencem ao andar padrão do mapa.
+          ...(hasLevels(existing.mapId) ? {
+            originLevel: existing.origin ? levelFor(existing.mapId, existing.originLevel) : null,
+            targetLevel: levelFor(existing.mapId, existing.targetLevel),
+          } : {}),
           media: { kind: "keep" },
         }
       : {
@@ -89,6 +96,7 @@ export function LineupForm({
   const [marking, setMarking] = useState<"origin" | "target" | "idle">("origin");
   const [originTouched, setOriginTouched] = useState(false);
   const [mapChanged, setMapChanged] = useState(false);
+  const [viewLevel, setViewLevel] = useState<MapLevelId>();
   const [failure, setFailure] = useState<string>();
   const [fileReady, setFileReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -115,6 +123,30 @@ export function LineupForm({
     }
     setDraft((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: "" }));
+  }
+  const leveled = hasLevels(draft.mapId);
+  const shownLevel = leveled ? levelFor(draft.mapId, viewLevel) : undefined;
+  const soloMode = draft.type === "solo_exec";
+  const activeDestination = soloMode ? draft.destinations?.[destinationIndex] : undefined;
+  const activeTargetLevel = soloMode ? activeDestination?.level : draft.targetLevel;
+  // O radar mostra o andar do ponto que está sendo marcado; clicar nele grava o ponto nesse andar.
+  const showLevel = (value?: MapLevelId | null) => { if (leveled && value) setViewLevel(value); };
+  const levelName = (value?: MapLevelId | null) => (value ? levelText(draft.mapId, value) : "andar não definido");
+  function setOriginLevel(value: MapLevelId) {
+    setOriginTouched(true);
+    setDraft((current) => ({ ...current, originLevel: value }));
+    setErrors((current) => ({ ...current, originLevel: "" }));
+    setViewLevel(value);
+  }
+  function setTargetLevel(value: MapLevelId) {
+    setDraft((current) => {
+      if (current.type !== "solo_exec") return { ...current, targetLevel: value };
+      const destinations = [...(current.destinations ?? [])];
+      if (destinations[destinationIndex]) destinations[destinationIndex] = { ...destinations[destinationIndex], level: value };
+      return { ...current, destinations, targetLevel: destinations[0]?.level ?? null };
+    });
+    setErrors((current) => ({ ...current, targetLevel: "", destinations: "" }));
+    setViewLevel(value);
   }
   const snapshot = JSON.stringify(makeLocalDraft(draft, step, existing?.updatedAt ?? null, originTouched, mapChanged));
   const contentSnapshot = (value: string) => { const parsed = JSON.parse(value); delete parsed.step; return JSON.stringify(parsed); };
@@ -209,7 +241,7 @@ export function LineupForm({
           };
           try {
             // PATCH omission preserves the existing origin; null is an explicit removal.
-            const { origin: _origin, ...unchangedOrigin } = draft;
+            const { origin: _origin, originLevel: _originLevel, ...unchangedOrigin } = draft;
             const savingDraft = existing && !originTouched ? unchangedOrigin : draft;
             const item = existing
               ? await service.updateLineup(existing.id, savingDraft, options)
@@ -303,7 +335,10 @@ export function LineupForm({
                       target: null,
                       destinations: null,
                       origin: null,
+                      // Só limpa os andares se o mapa anterior os tinha; nos demais mapas nada é enviado.
+                      ...(current.originLevel || current.targetLevel ? { originLevel: null, targetLevel: null } : {}),
                     }));
+                    setViewLevel(undefined);
                     setOriginTouched(true);
                     setMapChanged(true);
                     setDestinationIndex(0);
@@ -370,34 +405,63 @@ export function LineupForm({
             </p>
             <div className="point-modes" role="group" aria-label="Ponto a marcar">
               <button type="button" className="filter" aria-pressed={marking === "origin"}
-                onClick={() => setMarking("origin")}>Marcar origem</button>
+                onClick={() => { setMarking("origin"); showLevel(draft.originLevel); }}>Marcar origem</button>
               <button type="button" className="filter" aria-pressed={marking === "target"}
-                onClick={() => setMarking("target")}>Marcar destino</button>
+                onClick={() => { setMarking("target"); showLevel(activeTargetLevel); }}>Marcar destino</button>
             </div>
             <p className="field-hint" role="status">
               {marking === "origin" ? "Clique no radar para marcar a posição de lançamento." : marking === "target" ? "Clique no radar para marcar onde a granada cai." : "Pontos marcados. Selecione um ponto para reposicioná-lo."}
             </p>
+            {leveled && <div className="level-fields">
+              <fieldset className="level-choice">
+                <legend>Andar da origem</legend>
+                {levelsOf(draft.mapId)!.levels.map((item) => <label key={item.id}>
+                  <input type="radio" name="origin-level" value={item.id} checked={draft.originLevel === item.id}
+                    onChange={() => setOriginLevel(item.id)} />
+                  <span>{item.label} · {item.name}</span>
+                </label>)}
+              </fieldset>
+              <fieldset className="level-choice">
+                <legend>{soloMode ? `Andar do destino ${destinationIndex + 1}` : "Andar do destino"}</legend>
+                {levelsOf(draft.mapId)!.levels.map((item) => <label key={item.id}>
+                  <input type="radio" name="target-level" value={item.id} checked={activeTargetLevel === item.id}
+                    onChange={() => setTargetLevel(item.id)} />
+                  <span>{item.label} · {item.name}</span>
+                </label>)}
+              </fieldset>
+              <p className="field-hint" role="status">
+                Origem: {draft.origin ? levelName(draft.originLevel) : "não marcada"} · Destino: {draft.target ? levelName(activeTargetLevel) : "não marcado"}.
+                {draft.origin && draft.target && draft.originLevel && activeTargetLevel && draft.originLevel !== activeTargetLevel ? " A granada muda de andar." : ""}
+              </p>
+              {(errors.originLevel || errors.targetLevel) && <p className="field-error">{errors.originLevel || errors.targetLevel}</p>}
+            </div>}
             <Radar
               demo={demo}
               map={map}
               target={draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target}
               extraTargets={draft.type === "solo_exec" ? draft.destinations : undefined}
               origin={draft.origin}
+              level={shownLevel}
+              onLevelChange={leveled ? setViewLevel : undefined}
+              originLevel={draft.originLevel}
+              targetLevel={draft.targetLevel}
+              levelGroupLabel={marking === "origin" ? "Andar exibido (a origem será marcada neste andar)" : "Andar exibido (o destino será marcado neste andar)"}
               marking={marking}
               selectedTargetIndex={destinationIndex}
-              onEditOrigin={() => setMarking("origin")}
-              onEditTarget={(index) => { setDestinationIndex(index); setMarking("target"); }}
+              onEditOrigin={() => { setMarking("origin"); showLevel(draft.originLevel); }}
+              onEditTarget={(index) => { setDestinationIndex(index); setMarking("target"); showLevel(soloMode ? draft.destinations?.[index]?.level : draft.targetLevel); }}
               onOriginChange={(origin) => {
                 update("origin", origin);
+                if (leveled) setDraft((current) => ({ ...current, originLevel: shownLevel ?? null }));
                 const destination = draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target;
                 setMarking(destination ? "idle" : "target");
               }}
               onTargetChange={(target) => {
                 setMarking("idle");
-                if (draft.type !== "solo_exec") { update("target", target); return; }
+                if (draft.type !== "solo_exec") { update("target", target); if (leveled) setDraft((current) => ({ ...current, targetLevel: shownLevel ?? null })); return; }
                 const destinations = [...(draft.destinations ?? [])];
-                destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" };
-                setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations }));
+                destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke", ...(leveled && shownLevel ? { level: shownLevel } : {}) };
+                setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, ...(leveled ? { targetLevel: destinations[0]?.level ?? null } : {}), destinations }));
               }}
             />
             <p className="field-hint">Círculo com +: origem. Círculo com mira: destino. Selecione um ponto para ajustar.</p>
@@ -412,25 +476,26 @@ export function LineupForm({
             <details className="editor-advanced"><summary>Ajustar coordenadas da origem</summary>
             <h4 className="point-heading">Origem do lançamento</h4>
             <PointCoordinates origin value={draft.origin ?? null} error={errors.origin}
-              onChange={(origin) => update("origin", origin)} />
+              onChange={(origin) => { update("origin", origin); if (leveled && origin) setDraft((current) => ({ ...current, originLevel: current.originLevel ?? shownLevel ?? null })); }} />
             {errors.origin && <p className="field-error">{errors.origin}</p>}
             </details>
             {draft.type === "solo_exec" && <div className="solo-destinations">
               <h4>Granadas da execução</h4>
               {(draft.destinations ?? []).map((destination, index) => <div key={index}>
-                <button type="button" aria-pressed={destinationIndex === index} onClick={() => { setDestinationIndex(index); setMarking("target"); }}>Destino {index + 1}</button>
+                <button type="button" aria-pressed={destinationIndex === index} onClick={() => { setDestinationIndex(index); setMarking("target"); showLevel(destination.level); }}>Destino {index + 1}</button>
+                {leveled && <span className="destination-level">{levelName(destination.level)}</span>}
                 <select aria-label={`Tipo do destino ${index + 1}`} value={destination.type} onChange={event => {
                   const destinations = [...(draft.destinations ?? [])]; destinations[index] = { ...destination, type: event.target.value as SingleGrenadeType }; update("destinations", destinations);
                 }}><option value="smoke">Smoke</option><option value="flashbang">Flashbang</option><option value="molotov">Molotov</option><option value="he">HE Grenade</option></select>
                 <button type="button" onClick={() => { const destinations = (draft.destinations ?? []).filter((_, i) => i !== index); setDestinationIndex(0); setDraft(current => ({ ...current, destinations, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null })); }}>Remover</button>
               </div>)}
-              <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
+              <button type="button" disabled={!draft.target || (draft.destinations?.length ?? 0) >= 12} onClick={() => { const destinations = [...(draft.destinations ?? []), { ...draft.target!, type: "smoke" as const, ...(leveled && shownLevel ? { level: shownLevel } : {}) }]; setDestinationIndex(destinations.length - 1); setMarking("target"); update("destinations", destinations); }}>Adicionar destino</button>
               {errors.destinations && <p className="field-error">{errors.destinations}</p>}
             </div>}
             <details className="editor-advanced"><summary>Ajustar coordenadas do destino</summary>
             <h4 className="point-heading">Destino da granada</h4>
             <PointCoordinates value={draft.type === "solo_exec" ? draft.destinations?.[destinationIndex] ?? draft.target : draft.target} error={errors.target}
-              onChange={(target) => { if (draft.type !== "solo_exec" || !target) { update("target", target); return; } const destinations = [...(draft.destinations ?? [])]; destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke" }; setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, destinations })); }} />
+              onChange={(target) => { if (draft.type !== "solo_exec" || !target) { update("target", target); if (leveled && target) setDraft((current) => ({ ...current, targetLevel: current.targetLevel ?? shownLevel ?? null })); return; } const destinations = [...(draft.destinations ?? [])]; const level = leveled ? destinations[destinationIndex]?.level ?? shownLevel : undefined; destinations[destinationIndex] = { ...target, type: destinations[destinationIndex]?.type ?? "smoke", ...(level ? { level } : {}) }; setDraft(current => ({ ...current, target: destinations[0] ? {x: destinations[0].x, y: destinations[0].y} : null, ...(leveled ? { targetLevel: destinations[0]?.level ?? null } : {}), destinations })); }} />
             <p className="field-hint">
               Você também pode preencher as coordenadas pelo teclado. O ponto
               (0%, 0%) fica no canto superior esquerdo da imagem.

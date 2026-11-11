@@ -1,5 +1,6 @@
 import type { LineupDraft } from "./types";
 import { isGrenadeType, isSingleGrenadeType } from "./types";
+import { hasLevels, levelsOf } from "./mapLevels";
 import { isTarget } from "./lineups";
 import { recognizeVideoSource } from "./videoSource";
 import { validateClip } from "./clip";
@@ -56,6 +57,15 @@ export function validateDraft(
   if (draft.type === "solo_exec" && (!draft.origin || (!draft.destinations?.length || draft.destinations.length > 12) || draft.destinations.some(d => !isTarget(d) || !isSingleGrenadeType(d.type)))) errors.destinations = "Marque a origem e pelo menos um destino válido para o Solo Exec.";
   if (draft.origin != null && !isTarget(draft.origin))
     errors.origin = "Informe uma origem com coordenadas entre 0 e 100%.";
+  const levelIds = levelsOf(draft.mapId)?.levels.map((item) => item.id) as string[] | undefined;
+  const levelOk = (value: unknown) => !!levelIds && typeof value === "string" && levelIds.includes(value);
+  if (hasLevels(draft.mapId)) {
+    if (!levelOk(draft.targetLevel)) errors.targetLevel = "Escolha o andar do destino.";
+    if (draft.origin && !levelOk(draft.originLevel)) errors.originLevel = "Escolha o andar da origem.";
+    if (draft.type === "solo_exec" && draft.destinations?.some((d) => !levelOk(d.level)))
+      errors.destinations = "Escolha o andar de cada destino do Solo Exec.";
+  } else if (draft.originLevel || draft.targetLevel || draft.destinations?.some((d) => d.level))
+    errors.targetLevel = "Andares só existem em mapas com mais de um nível.";
   if (draft.media.kind === "keep" && !editing)
     errors.media = "Selecione um arquivo MP4 ou informe um link.";
   if (draft.media.kind === "file" && !draft.media.file)
