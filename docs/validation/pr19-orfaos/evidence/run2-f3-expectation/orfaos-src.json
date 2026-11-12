@@ -1,0 +1,222 @@
+{
+  "src": "src",
+  "mediaIds": [
+    "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3",
+    "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8"
+  ],
+  "results": [
+    {
+      "name": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+      "status": "PASS",
+      "detail": {
+        "faultInjection": "um lease sintético expirado ao entrar em storing; nada substituído",
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/clip.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+      "status": "PASS",
+      "detail": {
+        "afterFirstAttempt": {
+          "objects": 2,
+          "physical": 231586
+        },
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/clip.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "F3 objeto publicado é preservado: repetir complete e tentar regravar não altera nada",
+      "status": "FAIL",
+      "error": "ifError got unwanted exception: The resource already exists"
+    },
+    {
+      "name": "T1 validade efetiva medida (token de sonda, nenhum byte enviado)",
+      "status": "PASS",
+      "detail": {
+        "ttlSeconds": 60,
+        "assumedBySql": 7200,
+        "sqlWindowMinutes": 150,
+        "sqlPendingWindowCoversTtl": true,
+        "suggestedDrainWaitSeconds": 690
+      }
+    },
+    {
+      "name": "T2 token já emitido permite reenviar o mesmo caminho depois de a exclusão do objeto (dentro da validade) e expira depois",
+      "status": "PASS",
+      "detail": {
+        "tokenTtlSeconds": 60,
+        "firstPut": 200,
+        "duplicatePutWhileObjectExists": 400,
+        "resendAfterObjectDeleted": 200,
+        "putAfterExpiry": 400,
+        "probeObjectRemoved": "sintético, do próprio laboratório"
+      }
+    },
+    {
+      "name": "I1 inventário somente leitura sobre o estado real do laboratório (duas leituras, TTL medido)",
+      "status": "PASS",
+      "detail": {
+        "ttlSecondsUsed": 60,
+        "graceSeconds": 690,
+        "readOnlyWriteAttempt": "cannot execute UPDATE in a read-only transaction",
+        "tablesUnchanged": true,
+        "real": {
+          "totals": {
+            "objects": 30,
+            "bytes": 3561381,
+            "byClass": {
+              "current_reference": {
+                "objects": 15,
+                "bytes": 1404675
+              },
+              "source_retained": {
+                "objects": 10,
+                "bytes": 1757660
+              },
+              "deterministic_output_unreferenced": {
+                "objects": 0,
+                "bytes": 0
+              },
+              "attempt_output_unreferenced": {
+                "objects": 4,
+                "bytes": 223280
+              },
+              "no_media_row": {
+                "objects": 0,
+                "bytes": 0
+              },
+              "unrecognized_name": {
+                "objects": 1,
+                "bytes": 175766
+              }
+            },
+            "candidateBytes": 0,
+            "blockedBytes": 223280
+          },
+          "accounting": {
+            "contributor": {
+              "physicalBytes": 3010628,
+              "chargedBytes": 1852688,
+              "unaccountedBytes": 1157940,
+              "mediaWithGap": 10
+            },
+            "adminPhysicalBytes": 374987,
+            "noRowBytes": 0
+          },
+          "thisRunItems": [
+            {
+              "key": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/clip.mp4",
+              "bytes": 55820,
+              "class": "current_reference",
+              "verdict": "keep",
+              "reasons": [
+                "referenced_by_media_assets"
+              ]
+            },
+            {
+              "key": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/source.mp4",
+              "bytes": 175766,
+              "class": "source_retained",
+              "verdict": "keep",
+              "reasons": [
+                "source_retained_by_design"
+              ]
+            },
+            {
+              "key": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/clip.mp4",
+              "bytes": 55820,
+              "class": "current_reference",
+              "verdict": "keep",
+              "reasons": [
+                "referenced_by_media_assets"
+              ]
+            },
+            {
+              "key": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/source.mp4",
+              "bytes": 175766,
+              "class": "source_retained",
+              "verdict": "keep",
+              "reasons": [
+                "source_retained_by_design"
+              ]
+            }
+          ]
+        },
+        "whatIfPlus3h": {
+          "note": "simulação: apenas o relógio do relatório foi avançado 3 h; nada foi esperado nem alterado",
+          "candidateBytes": 223280,
+          "thisRunItems": [
+            {
+              "key": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/clip.mp4",
+              "bytes": 55820,
+              "class": "current_reference",
+              "verdict": "keep",
+              "reasons": [
+                "referenced_by_media_assets"
+              ]
+            },
+            {
+              "key": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8/source.mp4",
+              "bytes": 175766,
+              "class": "source_retained",
+              "verdict": "keep",
+              "reasons": [
+                "source_retained_by_design"
+              ]
+            },
+            {
+              "key": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/clip.mp4",
+              "bytes": 55820,
+              "class": "current_reference",
+              "verdict": "keep",
+              "reasons": [
+                "referenced_by_media_assets"
+              ]
+            },
+            {
+              "key": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3/source.mp4",
+              "bytes": 175766,
+              "class": "source_retained",
+              "verdict": "keep",
+              "reasons": [
+                "source_retained_by_design"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

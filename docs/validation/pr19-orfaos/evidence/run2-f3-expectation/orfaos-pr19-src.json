@@ -1,0 +1,73 @@
+{
+  "src": "pr19-src",
+  "mediaIds": [
+    "ee87cb7a-e807-41b5-8b0b-fa60af3e622a",
+    "0faf92f0-e055-435a-a0e1-37056e46de04"
+  ],
+  "results": [
+    {
+      "name": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+      "status": "PASS",
+      "detail": {
+        "faultInjection": "um lease sintético expirado ao entrar em storing; nada substituído",
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "ee87cb7a-e807-41b5-8b0b-fa60af3e622a/clip-2.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "ee87cb7a-e807-41b5-8b0b-fa60af3e622a/clip-1.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "ee87cb7a-e807-41b5-8b0b-fa60af3e622a/clip-2.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "ee87cb7a-e807-41b5-8b0b-fa60af3e622a/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 287406,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 55820
+      }
+    },
+    {
+      "name": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+      "status": "PASS",
+      "detail": {
+        "afterFirstAttempt": {
+          "objects": 2,
+          "physical": 231586
+        },
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "0faf92f0-e055-435a-a0e1-37056e46de04/clip-2.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "0faf92f0-e055-435a-a0e1-37056e46de04/clip-1.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "0faf92f0-e055-435a-a0e1-37056e46de04/clip-2.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "0faf92f0-e055-435a-a0e1-37056e46de04/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 287406,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 55820
+      }
+    },
+    {
+      "name": "F3 objeto publicado é preservado: repetir complete e tentar regravar não altera nada",
+      "status": "FAIL",
+      "error": "ifError got unwanted exception: The resource already exists"
+    }
+  ]
+}
