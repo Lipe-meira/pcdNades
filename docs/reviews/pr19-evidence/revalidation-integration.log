@@ -1,0 +1,16 @@
+{"level":30,"time":1794509144824,"pid":29168,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794509144844,"pid":29168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":18.93560000000025,"msg":"request completed"}
+{"level":30,"time":1794509144844,"pid":29168,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+PROBE {"label":"only-first-migration-flags-off","adminUpload":201,"adminInspect":503,"error":"SERVICE_UNAVAILABLE"}
+{"level":30,"time":1794509144854,"pid":29168,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":503},"responseTime":9.485099999999875,"msg":"request completed"}
+{"level":30,"time":1794509145809,"pid":29168,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794509145820,"pid":29168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":10.135600000000068,"msg":"request completed"}
+{"level":30,"time":1794509145820,"pid":29168,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794509145834,"pid":29168,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":13.838199999999688,"msg":"request completed"}
+PROBE {"label":"both-migrations-flags-off","adminUpload":201,"adminInspect":201,"error":null}
+{"level":30,"time":1794509146746,"pid":29168,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794509146758,"pid":29168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":11.64260000000013,"msg":"request completed"}
+{"level":30,"time":1794509146759,"pid":29168,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+PROBE {"label":"after-second-rollback-flags-off","adminUpload":201,"adminInspect":503,"error":"SERVICE_UNAVAILABLE"}
+{"level":30,"time":1794509146763,"pid":29168,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":503},"responseTime":4.78020000000015,"msg":"request completed"}
+PROBE {"contributorSlot":true,"adminWhileHeld":false,"adminAfterRelease":true}

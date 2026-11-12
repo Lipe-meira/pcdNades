@@ -1,0 +1,14 @@
+✔ pilot caps new TikTok selections independently of the historical 90s schema (3.3505ms)
+✔ known oversized source is rejected before downloading (1.7642ms)
+✔ unknown-length file growth aborts downloader without deleting unrelated files (63.4173ms)
+✔ deadline rejects a stalled auth/storage operation and observes late errors (0.4365ms)
+✔ an already-expired deadline still observes an operation rejected later (0.2011ms)
+✔ pilot uses protected native download with 50MB limit and optimized compatible encoding (0.2855ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 790.588

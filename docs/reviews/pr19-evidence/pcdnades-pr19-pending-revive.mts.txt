@@ -1,0 +1,12 @@
+import {createDb,seedUsers,ids} from 'file:///F:/projetos/nadesCs2-review-pr19/backend/tests/support/pg.ts';
+const db=await createDb();await seedUsers(db);await db.query('select * from public.register_contributor($1,$2)',[ids.anonA,'Ana']);
+const rows=[];
+for(let i=0;i<2;i++)rows.push((await db.query("insert into public.media_assets(owner_id,source_type,storage_key) values($1,'upload',$2) returning id",[ids.anonA,`pending/source${i}.mp4`])).rows[0].id);
+// Simular apenas passagem do tempo na fixture; nenhum serviço/objeto real.
+await db.exec('alter table public.media_assets disable trigger user');
+await db.query("update public.media_assets set created_at=now()-interval '151 minutes' where id=any($1::uuid[])",[rows]);
+await db.exec('alter table public.media_assets enable trigger user');
+rows.push((await db.query("insert into public.media_assets(owner_id,source_type,storage_key) values($1,'upload','pending/source3.mp4') returning id",[ids.anonA])).rows[0].id);
+for(const id of rows)await db.query("update public.media_assets set status='queued' where id=$1",[id]);
+console.log(JSON.stringify((await db.query("select count(*)::integer queued,sum(storage_charge_bytes)::bigint charged from public.media_assets where status='queued' and owner_id=$1",[ids.anonA])).rows[0]));
+await db.close();

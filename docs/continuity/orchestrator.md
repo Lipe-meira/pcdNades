@@ -1,3 +1,57 @@
+# Checkpoint — orchestrator: revalidação independente PR #19
+
+Atualizado em: 12/11/2026, America/Sao_Paulo. Estado: concluído (revisão, sem correções).
+
+## Objetivo e pedido atual
+Revalidar S1/S2/S3 e segurança do merge inativo/ativação do PR19 atualizado. Sem correções no código, migrations Supabase produtivas, merge do PR/main, deploy ou alterações de flags.
+
+## Localização do trabalho
+- Branch codex/revisao-pr19-20261112; worktree F:/projetos/nadesCs2-review-pr19.
+- Base produto8776ddf; anterior revisado3e3858c; head atual cd627de000a1f0467f2cd7e69052d20ffb47177b, reconferido no GitHub (CI Linux verde).
+- Última revisão3967d67 preservada; incorporação SOMENTE LOCAL do head à branch própria em ceff03e. Implementação do PR não alterada.
+- Entrega documental desta revisão: consultar git log -1; enviada junto para origin/codex/revisao-pr19-20261112. Sem push na main/branch do PR.
+- Arquivos desta entrega: docs/reviews/PR19-SECURITY-20261112.md (nova revisão no topo, anterior preservada); este checkpoint; evidências novas em docs/reviews/pr19-evidence/revalidation-* e sondagens pcdnades-pr19-*.mts.txt.
+
+## Feito
+- Revisados delta3e3858c..cd627de, duas migrations/rollbacks, flags, budgets, processamento e slots.
+- S3 corrigido (TT/IG429); S2 corrige pool de reservas, preservando cota administrativa; slot permanece compartilhado.
+- R1 alto condicional: worker-transcode retém fonte e cobra só saída (prova7MB cobrados para saída7MB, sem fonte).
+- R2 médio: awaiting_upload com mais150min pode ser reativado acima do teto2; prova3 queued com150MB.
+- R3 médio operacional: só desligar flags não preserva imports administrativos ao remover migration2; admin inspect503 sem RPC3args/apos rollback2,201 com ambas.
+- Vercel somente leitura: última produção da API é Git/main8776ddf; flags não listadas (defaultsfalse), modo inline-original, duração90. Não foi comprovado bloqueio da publicação automática. Supabase produtivo não consultado.
+
+## Em andamento
+Nada em implementação. Relatório concluído. Nenhuma correção aplicada. Dependências temporárias de PostgreSQL em TEMP/pcdnades-pr19-revalidation-realpg-20261112; cluster próprio descartável foi parado. Log completo nesse diretório/concurrency-full.log; resumo versionado. Bancos/volumes/backups existentes preservados.
+
+## Retomar daqui
+1. Conferir git status/branch/HEAD; ler versão atual do relatório.
+2. Devolver R1/R2/R3 ao autor se usuário autorizar acompanhamento; não implementar nesta tarefa.
+3. Antes de main, comprovar schema compatível ou barreira de publicação e coordenar implantação autorizada.
+4. Antes de ativação, corrigir lacunas e executar checklist Supabase descartável do relatório.
+
+## Decisões e contrato
+- Fundação inativa com schema completo: GO técnico condicionado; merge imediato com possível auto-deploy/schema não confirmado: NO-GO operacional.
+- Ativação pública: NO-GO, devolver ao autor R1/R2/R3. S1 parcial; S2 cotas e S3 corrigidos no escopo testado.
+- Sem bypass novo de autoria/RLS comprovado. Limite global contábil não prova ocupação física; sem limpeza,8 reservas vazias esgotam400MB e bloqueiam contribuição até intervenção.
+- Slots mantêm possível503 admin durante lease colaborativa; não prometer isolamento físico/fairness.
+- Duas migrations antes do backend novo; backend compatível antes de rollback2 e ordem2→1 para desfazer ambas. Rollback1 perde autoria/vínculos.
+- Duração20s continua divergindo do padrão/variável Vercel90; pendência preexistente.
+
+## Validação
+- Suíte inicial247/248: falha no timeout antigo import-pilot. Repetição isolada6/6; repetição completa248/248 PASS. Typecheck PASS; smokes andares18/HE10 PASS.
+- PostgreSQL17.5 local multiconexão7/7 PASS:30 rodadas pendentes/bytes,20 cota/hora,15 reservas,20 slot, carga mista; máximo400MB, zero deadlocks. Não é Supabase, sem Auth/PostgREST/Storage reais.
+- Sondagens próprias de R1/R2, matriz schema/flags/R3 e slot compartilhado executadas em PGlite sintético. Sem upload/extrator real.
+- Supabase real, inventário físico de objetos, reuso/expiração URLs, CAPTCHA e rollout/restauração produtiva continuam não validados. Sem análise de grafo/taint.
+
+## Bloqueios e dependências
+Nenhum para emitir parecer. Merge imediato depende de sequência segura; ativação depende das correções, controles antiabuso/limpeza e testes reais do relatório.
+
+## Entrega e histórico curto
+- PR alvo https://github.com/Lipe-meira/pcdNades/pull/19, headcd627de; não modificado.
+- Revisão anterior8ca07a8/3967d67; revalidação em branch própria com relatório/evidências/checkpoint. Nenhum deploy ou alteração produtiva.
+
+---
+
 # Checkpoint — orchestrator (revisão independente PR #19)
 
 Atualizado em: 12/11/2026, America/Sao_Paulo. Estado: concluído (revisão; sem implementação).

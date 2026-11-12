@@ -1,0 +1,8 @@
+import {createDb,seedUsers,ids} from 'file:///F:/projetos/nadesCs2-review-pr19/backend/tests/support/pg.ts';
+const db=await createDb();await seedUsers(db);await db.query('select * from public.register_contributor($1,$2)',[ids.anonA,'Ana']);
+const id=(await db.query('insert into public.media_assets(owner_id,source_type,storage_key) values($1,\'upload\',\'worker/source.mp4\') returning id',[ids.anonA])).rows[0].id;
+await db.query("update public.media_assets set status='queued' where id=$1",[id]);
+await db.query("update public.media_assets set status='processing',locked_until=now()+interval '15 minutes',attempts=1 where id=$1",[id]);
+await db.query("update public.media_assets set status='ready',storage_key='worker/playback-1.mp4',metadata=$2,locked_until=null where id=$1",[id,JSON.stringify({bytes:7000000,durationSeconds:10,width:1280,height:720,mimeType:'video/mp4'})]);
+console.log(JSON.stringify((await db.query('select storage_charge_bytes,clip,source_type,storage_key from public.media_assets where id=$1',[id])).rows[0]));
+await db.close();

@@ -1,0 +1,9 @@
+PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.43.34808, 64-bit
+PASS A) 16 inserts simultâneos do mesmo contribuidor: exatamente 2 pendentes (30 rodadas) rodadas fora do esperado=0
+PASS B) 20 identidades simultâneas: exatamente 8 reservas (400 MB), nunca mais (30 rodadas) rodadas fora do esperado=0, maior soma=400 MB
+PASS C) cota de 10 mídias/h com 9 existentes e 8 inserts simultâneos: exatamente 1 (20 rodadas) rodadas fora do esperado=0
+PASS D) reservas simultâneas: contribuidor ≤6 cada, ≤20 somados; administrador sempre chega às suas 20 (15 rodadas) rodadas fora do esperado=0
+PASS E) 13 pedidos simultâneos do slot: exatamente 1 dono e 1 registro de uso (20 rodadas) rodadas fora do esperado=0
+PASS F) carga mista simultânea: soma de bytes ≤ 400 MB soma=400 MB
+PASS G) nenhum deadlock em toda a bateria deadlocks=0
+{"engine":"PostgreSQL embedded (multi-conexão)","checks":7,"failed":0}
