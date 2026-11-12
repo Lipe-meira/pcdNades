@@ -26,3 +26,13 @@ export function readProcessorMode(env:Record<string,string|undefined>=process.en
 }
 
 export function readTrimmingEnabled(env:Record<string,string|undefined>=process.env):boolean{const value=env.MEDIA_TRIMMING_ENABLED;if(value===undefined||value==='false')return false;if(value==='true')return true;throw new Error('MEDIA_TRIMMING_ENABLED deve ser true ou false.');}
+
+function readFlag(name:string,env:Record<string,string|undefined>){const value=env[name];if(value===undefined||value==='false')return false;if(value==='true')return true;throw new Error(`${name} deve ser true ou false.`);}
+/** Publicação colaborativa por sessão anônima. Padrão desligado: sem a flag, só administradores escrevem. */
+export function readContributorsEnabled(env:Record<string,string|undefined>=process.env):boolean{return readFlag('CONTRIBUTORS_ENABLED',env);}
+/** Importação por link para contribuidores (TikTok/Instagram). Padrão desligado e exige CONTRIBUTORS_ENABLED. */
+export function readContributorImportsEnabled(env:Record<string,string|undefined>=process.env):boolean{
+ const enabled=readFlag('CONTRIBUTOR_IMPORTS_ENABLED',env);
+ if(enabled&&!readContributorsEnabled(env))throw new Error('CONTRIBUTOR_IMPORTS_ENABLED exige CONTRIBUTORS_ENABLED=true.');
+ return enabled;
+}
