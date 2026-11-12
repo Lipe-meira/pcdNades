@@ -8,8 +8,8 @@ Revisão técnica e de segurança independente do PR #19. Sem alterar código, a
 ## Localização do trabalho
 - Branch: codex/revisao-pr19-20261112. Worktree: F:/projetos/nadesCs2-review-pr19.
 - Base: 8776ddf4d3658b1d5ecf8d91a5e13760047d8f50. Head revisado/última implementação: 3e3858cdfb8c107de036fc83d1acfa324c7b11bb; ambos reconferidos no GitHub.
-- Entrega documental/checkpoint: commit desta branch, consultar git log -1. Push a efetuar junto com esta entrega, sem main/branch do PR.
-- Alterações não commitadas antes de registrar a entrega: este checkpoint, docs/reviews/PR19-SECURITY-20261112.md e docs/reviews/pr19-evidence/{tests.log,probes.log,probe.mts.txt}. Nenhum código rastreado alterado.
+- Entrega documental: 8ca07a8, enviada a origin/codex/revisao-pr19-20261112. Ajuste final deste checkpoint acompanha a entrega; main/branch do PR intactas.
+- Arquivos documentais registrados na entrega (sem alterações de código): este checkpoint, docs/reviews/PR19-SECURITY-20261112.md e docs/reviews/pr19-evidence/{tests.log,probes.log,probe.mts.txt}. Nenhum código rastreado alterado.
 
 ## Feito
 - Revisados diff completo, rotas, dependências SQL/RLS/mídia/importação, testes e histórico. Sem bypass de autoria/IDOR comprovado.
@@ -1734,5 +1734,3 @@ Coordenar os chats de frontend/backend do pcdNades. Pedido atual: continuar apó
 - `e889e3b`: upload/importação registrados.
 - `056eea8`, `e3b66c0`, `953a2ad`: base frontend, radares licenciados e administração demonstrativa.
 - Publicação inicial em https://pcdnades.vercel.app ; demais entregas aguardam integração.
-
-
