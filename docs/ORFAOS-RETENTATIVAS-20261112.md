@@ -23,7 +23,7 @@ A divergência do `clip-N` por tentativa é a causa raiz. O limite de tentativas
 
 - `clipOutputKey(id) = <id>/clip.mp4`, igual em todas as tentativas (`backend/src/clip-storage.ts`).
 - A gravação continua com `upsert:false` (já era assim; o Storage real recusa até **emitir** nova URL para chave existente: `The resource already exists`, F3).
-- Se a gravação falhar e `info(<id>/clip.mp4)` mostrar que o objeto existe, a tentativa corrente o **baixa com limite de bytes, valida** (contêiner/codec via `ffprobe`, duração igual à do intervalo da mídia ±0,1 s, limite de bytes) e **adota** com os **bytes reais do objeto armazenado** em `metadata.bytes`. Se a validação falhar, a mídia vira `failed` (`STORED_CLIP_INVALID`) e o objeto é preservado, nunca sobrescrito nem apagado.
+- Se a gravação falhar e `info(<id>/clip.mp4)` mostrar que o objeto existe, a tentativa corrente o **baixa com limite de bytes, valida** (contêiner/codec via `ffprobe`, duração igual à do intervalo da mídia ±0,1 s, limite de bytes **e decodificação integral e limitada do arquivo baixado**, §11) e **adota** com os **bytes reais do objeto armazenado** em `metadata.bytes`. Se o **conteúdo** for comprovadamente inválido, a mídia vira `failed` (`STORED_CLIP_INVALID`) e o objeto é preservado, nunca sobrescrito nem apagado. Falha **temporária de infraestrutura** durante a adoção não grava `failed` (§11).
 - A adoção só acontece depois do `claim` fenciado e a publicação continua exigindo o `UPDATE` fenciado final; uma tentativa antiga não publica nada.
 - Evento de log por adoção: `{"event":"clip_output_adopted","mediaId":...,"attempt":N}` (sinal de detecção, sem dados pessoais).
 
@@ -135,7 +135,7 @@ Não cobertos: duas instâncias reais disputando a mesma mídia ao mesmo tempo (
 ## 8. Riscos residuais
 
 1. Importações e worker mantêm chave por tentativa (§3).
-2. A adoção confia em um objeto que só o backend escreve nessa chave; valida contêiner/codec/duração/tamanho, mas não o deslocamento inicial do corte nem a identidade bit a bit. O `clip` da mídia não é alterado por nenhum endpoint de usuário.
+2. A adoção confia em um objeto que só o backend escreve nessa chave; valida contêiner/codec/duração/tamanho e (após R1) decodifica o arquivo por inteiro, mas não verifica o deslocamento inicial do corte nem a identidade bit a bit. O `clip` da mídia não é alterado por nenhum endpoint de usuário.
 3. Mídias que terminam `failed` com `clip.mp4` ficam com fonte + trecho no Storage; isso está coberto pela reserva retida (≤ 100 MB), mas só é liberável por limpeza manual aprovada.
 4. A validade efetiva em produção é desconhecida; a migration segue com a suposição de 150 min e o runbook de 2 h.
 5. Cobrança zerada após reaplicar a migration 2 sobre mídias existentes exige backfill/reconciliação antes de reativar contribuições.
@@ -161,3 +161,41 @@ node docs/validation/pr19-orfaos/orfaos-launch.mjs -r70
 ```
 
 Parar apenas a stack própria ao terminar; nenhuma instrução de remoção acompanha esta entrega. Evidências: `docs/validation/pr19-orfaos/evidence/`.
+
+## 11. Correções R1 e R2 da revisão independente (PR #20, SHA revisado `e5add82`)
+
+Relatório: `docs/REVISAO-PR20-20261112.md` (branch `codex/revisao-pr20-20261112`). Escopo: somente R1 e R2; chave `<id>/clip.mp4`, `upsert:false`, contabilidade, inventário e medição de TTL ficaram como estavam.
+
+### R1 — MP4 truncado aceito na adoção
+**Causa:** `adoptStoredClip` chamava só `probeOriginal` (lê o contêiner/`moov`). A decodificação integral existia apenas no corte novo (`trimVideo`), então o objeto remoto adotado nunca era decodificado. Um MP4 de cabeçalho válido e conteúdo truncado passava e era publicado como `ready`.
+
+**Correção:** o arquivo **baixado do Storage** passa pela mesma rotina de decodificação do corte novo, agora exposta como `decodeVideoOutcome` em `trimming.ts` (mesmos argumentos e limites: 1 thread, 20 s, saída de 64 KiB, cancelável pelo sinal da tentativa). `decodeVideo` continua com o contrato anterior (qualquer resultado diferente de `ok` lança `INVALID_MEDIA`, ou `PROCESSING_TIMEOUT` se cancelado). A decodificação ocorre depois do download (limitado a `maxBytes`), do probe e da conferência de duração, e antes de qualquer publicação. Conteúdo recusado vira `failed` (`STORED_CLIP_INVALID`) e o objeto é preservado, sem sobrescrita nem exclusão.
+
+### R2 — falha temporária tornava a mídia irrecuperável
+**Causa:** qualquer erro durante a adoção (assinar, baixar, `info`, decodificar, prazo) caía no tratamento genérico que grava `failed`, estado terminal. Além disso `decodeVideo` mapeava tudo, inclusive tempo esgotado e binário ausente, para `INVALID_MEDIA`, sem distinguir infraestrutura de conteúdo.
+
+**Correção:** só **conteúdo comprovadamente inválido** (probe recusa, duração fora do intervalo, arquivo maior que o limite, decodificação reprovada) vira `STORED_CLIP_INVALID`. Falha de **infraestrutura** responde `503 STORAGE_UNAVAILABLE` **sem gravar nada**: a linha continua `processing`, a reserva é mantida, o objeto é preservado e a retomada fica por conta do lease e do fencing já existentes. São transitórios: erro ao assinar a leitura, erro de download diferente de "grande demais", `info` com resposta que não seja "objeto inexistente", decodificação sem conclusão (cancelamento, tempo esgotado, falha de execução) e prazo de 110 s esgotado depois que a adoção começou. A tentativa antiga não escreve nada, então não altera a nova; `failed` continua terminal e **não** é reaberto. Cada retomada consome uma das 3 tentativas; ao esgotar, o caminho existente grava `ATTEMPTS_EXHAUSTED` e a reserva permanece. A falha genuína de gravação (`info` diz que o objeto não existe) segue terminal, como antes.
+
+### Testes e evidências
+- `tests/clip-adoption-hardening.test.ts` (18): decodificação reprovada no arquivo baixado e ordem baixar→probe→decodificar→publicar; sinal de cancelamento repassado; **fixture real** (FFmpeg, MP4 de 2 s com `+faststart` truncado em 65%: o probe aceita, a decodificação recusa, a adoção falha e o objeto fica intacto) e controle positivo; falha única de assinatura, download, decodificação e `info`, prazo (também com o sinal realmente abortado por relógio simulado) e recuperação; esgotamento; lease ainda ativo (202 sem trabalho); tentativa antiga sem alterar a linha nova; conteúdo inválido continua terminal e `failed` não é reaberto. Contra o código revisado 12 dos 17 testes então escritos falhavam (os demais eram guardas); o 18º (prazo realmente abortado) foi validado por mutação. Todos passam agora. 12 mutações (remover decodificação, tratar transitório como terminal ou como publicação, etc.) foram todas detectadas.
+- Backend **322/322** (304 + 18), `tsc --noEmit` limpo.
+- Laboratório novo `-r72` (serviços reais; o `-r71` ficou como primeira rodada, em `evidence/pr20-r1-r2/run1-r71-budget-exhausted/`, onde só a corrida real falhou por esgotamento do orçamento global de 400 MB do laboratório com reservas retidas de mídias `failed`, não por defeito): fluxo documentado **29 PASS / 0 FAIL**. Falhas HTTP reais (503 pontual) injetadas por proxy no processo do teste, com PostgreSQL, Storage e FFmpeg reais atrás:
+
+| Cenário | SHA revisado `e5add82` | Correção |
+|---|---|---|
+| R1 MP4 truncado (44.796 B) já no Storage | **`ready`**, cobrado 220.562 B (defeito reproduzido) | `failed` `STORED_CLIP_INVALID`, objeto intacto (mesmo SHA-256), reserva 100 MB retida |
+| R1 controle: MP4 íntegro | `ready` | `ready`, bytes do objeto = cobrança |
+| R2 503 ao assinar a leitura | **`failed` terminal**; nova chamada continua `failed` (defeito reproduzido) | 503 `STORAGE_UNAVAILABLE`, linha `processing`, 202 enquanto o lease vale, depois `ready` com físico = cobrado = 231.586 B |
+| R2 503 no download / no `info` | não executado | 503, recupera, físico = cobrado |
+| R2 três falhas seguidas | não executado | `ATTEMPTS_EXHAUSTED`, 2 objetos, reserva 100 MB, objeto intacto |
+| R2 corrida real (tentativa antiga retida na leitura do objeto; outra instância publica) | não executado | nova 200, antiga 202, linha publicada idêntica, físico = cobrado |
+
+O erro real de `info` para objeto inexistente é `StorageApiError` com `message: "Object not found"` e `statusCode: "404"` (HTTP 400): a classificação "não existe" casa com essa forma. Bytes físicos (`find/stat` no volume) iguais a `storage.objects` em todos os casos (`adocao-summary.json`).
+
+### Limites e riscos residuais destas correções
+1. Resposta 503: no trecho lido de `frontend/src/services/apiService.ts` o erro é propagado com a mensagem existente de `STORAGE_UNAVAILABLE` e a chamada não é repetida ali; uma nova `complete` retoma depois que o lease vencer (até 120 s). Nada foi alterado no frontend.
+2. `probeOriginal` mapeia qualquer falha do ffprobe, inclusive tempo esgotado, para `INVALID_MEDIA`; na adoção isso conta como conteúdo inválido (terminal). Não alterei o probe, usado em todos os caminhos de upload. O caso é improvável (ffprobe de arquivo de até 50 MB, 20 s), mas a classificação não é perfeita.
+3. Falha de gravação genuína (objeto inexistente) continua terminal, comportamento anterior ao PR.
+4. A decodificação integral usa o limite de 20 s existente; um arquivo legítimo mais lento que isso tem a decodificação tratada como transitória e consome tentativas até esgotar (`ATTEMPTS_EXHAUSTED`), ficando `failed` com fonte e trecho no Storage (reserva retida).
+5. Dois processos hospedados reais disputando a mesma mídia continuam não demonstrados (a corrida real usa dois módulos no mesmo processo contra Storage e PostgreSQL reais).
+6. Os demais riscos de §8 e as limitações de §9 continuam valendo.

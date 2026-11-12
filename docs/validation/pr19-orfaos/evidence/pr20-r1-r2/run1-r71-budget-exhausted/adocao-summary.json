@@ -1,0 +1,215 @@
+{
+  "project": "pcdn-pr19-352c-20261112-r71",
+  "reviewedSha": "e5add826b4affb14b4390c5f42c43184ac814796",
+  "fixedSourceIntegrity": {
+    "inline.ts": {
+      "match": true,
+      "sha256": "72b8c4496dca21e67586a3c027c54ad28a9cd53487a0651b656e7e9759f0ea8c"
+    },
+    "trimming.ts": {
+      "match": true,
+      "sha256": "b844b7d14decfef15de304a67eac11e99369980b96d5d77f69f1b6bbbc6f8184"
+    },
+    "clip-storage.ts": {
+      "match": true,
+      "sha256": "a4c38a5775e7b958bd1e16f21689678a41c2f00ab0c74d8c543c15a11161f11a"
+    },
+    "storage-inventory.ts": {
+      "match": true,
+      "sha256": "eb580f88f69ec18ced080bfcce0b9599e277179facaa5302edfbdb6c20a414ff"
+    },
+    "signed-url-ttl.ts": {
+      "match": true,
+      "sha256": "a81049e0ba736fe1ecdefac7d2fab7be8d04451970d27dd743e537b2cf24e654"
+    }
+  },
+  "runs": {
+    "pr20-src": {
+      "passes": 3,
+      "fails": 0,
+      "accounting": [
+        {
+          "scenario": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+          "mediaId": "881aabe0-65b4-4c54-96df-fa5b1a2c8d99",
+          "status": "ready",
+          "errorCode": null,
+          "physicalFiles": {
+            "clip.mp4": 44796,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 220562,
+          "dbObjectBytes": 220562,
+          "chargedBytes": 220562,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+          "mediaId": "65e06665-ae61-4320-8e0a-0b4ccdabec44",
+          "status": "ready",
+          "errorCode": null,
+          "physicalFiles": {
+            "clip.mp4": 68918,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 244684,
+          "dbObjectBytes": 244684,
+          "chargedBytes": 244684,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+          "mediaId": "2cac5656-5cb4-4f54-8605-a7ce5ba9a3e6",
+          "status": "failed",
+          "errorCode": "STORAGE_UNAVAILABLE",
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 100000000,
+          "dbMatchesDisk": true
+        }
+      ],
+      "results": [
+        {
+          "name": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+          "status": "PASS"
+        },
+        {
+          "name": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+          "status": "PASS"
+        }
+      ]
+    },
+    "src": {
+      "passes": 7,
+      "fails": 1,
+      "accounting": [
+        {
+          "scenario": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+          "mediaId": "9b6c650f-37a2-46bc-a276-9a7de31213ca",
+          "status": "failed",
+          "errorCode": "STORED_CLIP_INVALID",
+          "physicalFiles": {
+            "clip.mp4": 44796,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 220562,
+          "dbObjectBytes": 220562,
+          "chargedBytes": 100000000,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+          "mediaId": "0991b1c4-b719-42aa-a1d1-1acfc24aaf4e",
+          "status": "ready",
+          "errorCode": null,
+          "physicalFiles": {
+            "clip.mp4": 68918,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 244684,
+          "dbObjectBytes": 244684,
+          "chargedBytes": 244684,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+          "mediaId": "79b47f20-1f35-4bde-8ac4-c345bbe0e3bf",
+          "status": "ready",
+          "errorCode": null,
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 231586,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R2 falha única no DOWNLOAD do objeto (503 real injetado) e retomada",
+          "mediaId": "406ef1de-efbe-4e41-9f78-8dea1417c7c9",
+          "status": "ready",
+          "errorCode": null,
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 231586,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R2 resposta ambígua do info (503 real injetado) e retomada",
+          "mediaId": "14a59947-1119-4fc5-9277-93c03aebf429",
+          "status": "ready",
+          "errorCode": null,
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 231586,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "R2 esgotamento: falhas temporárias repetidas terminam em ATTEMPTS_EXHAUSTED sem novo objeto e com a reserva retida",
+          "mediaId": "2544dc99-894b-4724-bfe9-eb1f03ecd84f",
+          "status": "failed",
+          "errorCode": "ATTEMPTS_EXHAUSTED",
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 100000000,
+          "dbMatchesDisk": true
+        }
+      ],
+      "results": [
+        {
+          "name": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+          "status": "PASS"
+        },
+        {
+          "name": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 falha única no DOWNLOAD do objeto (503 real injetado) e retomada",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 resposta ambígua do info (503 real injetado) e retomada",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 esgotamento: falhas temporárias repetidas terminam em ATTEMPTS_EXHAUSTED sem novo objeto e com a reserva retida",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 corrida real: tentativa antiga retida na leitura do objeto não altera a mídia que outra instância já publicou",
+          "status": "FAIL",
+          "error": "{\"status\":503,\"data\":{\"error\":{\"code\":\"CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED\",\"message\":\"CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED\"}}}\n\n503 !== 201\n"
+        },
+        {
+          "name": "forma real do erro de info para objeto inexistente (classificação \"não existe\")",
+          "status": "PASS"
+        }
+      ]
+    }
+  }
+}

@@ -1,3 +1,14 @@
+# PR #20 — correções finais R1/R2 da revisão independente (SHA revisado e5add82) — 12/11/2026 23:50 (America/Sao_Paulo), IMPLEMENTADO E VALIDADO (aguardando push/CI e aprovação)
+
+Estado: R1 (adoção sem decodificação integral) e R2 (falha temporária virava failed terminal) corrigidas em `backend/src/inline.ts` + `backend/src/trimming.ts` (commit 7e2fb4f; docs/evidências no commit seguinte). Backend 322/322, typecheck limpo, 12 mutações detectadas. Laboratório novo `-r72` (serviços reais): fluxo documentado 29 PASS; SHA revisado reproduz R1 (MP4 truncado publicado ready) e R2 (failed terminal); correção 8/8 (inclui corrida real e esgotamento). Relatório: docs/REVISAO-PR20-20261112.md (branch codex/revisao-pr20-20261112, só leitura). Seção §11 de docs/ORFAOS-RETENTATIVAS-20261112.md. Sem merge, deploy, migration, flags, PR #19 intacto. PARAR e aguardar aprovação.
+
+Pedido: corrigir exclusivamente R1 e R2 preservando a chave `<id>/clip.mp4`, `upsert:false`, contabilidade, inventário read-only e medição de TTL.
+Local: branch `fix/backend-orfaos-retentativa-20261112`, worktree `F:/projetos/nadesCs2/.claude/worktrees/orfaos-retentativa`, base da tarefa = e5add82. Stacks `-r70` (parada), `-r71` e `-r72` (mesma harness; r71 = 1ª rodada com a corrida falhando por orçamento do lab) ficam PARADAS/preservadas, volumes intactos (r71/r72 ainda a parar ao fim, ver Entrega). Harness extraída em `docs/validation/pr19/` e `.dockerignore` seguem UNTRACKED de propósito.
+Riscos residuais: ver §11 do documento (503 não é reenviado sozinho pelo frontend no trecho lido; probeOriginal mapeia tudo para INVALID_MEDIA; falha genuína de gravação segue terminal; decodificação >20 s consome tentativas; dois processos hospedados reais não demonstrados). Importações/worker e demais itens de §8/§9 inalterados.
+Retomar: `git status`; conferir CI do SHA final do PR #20; aguardar aprovação do usuário (nenhum merge/deploy/migration/flag autorizado).
+
+---
+
 # Hardening de mídia pós-validação integrada do PR #19 — órfãos em retentativas — 12/11/2026 23:05 (America/Sao_Paulo), IMPLEMENTADO E VALIDADO NO LABORATÓRIO (aguardando push/PR de revisão e aprovação)
 
 Estado: correção (9c3a411), inventário/TTL (38f022e) e documentação/evidências do laboratório (commit seguinte) na branch; suíte 304/304; laboratório Docker `-r70` com serviços reais: fluxo documentado 29 PASS/0 FAIL e cenários de órfãos (PR #19 reproduz +55.820 B; corrigido 0 B). Análise completa: `docs/ORFAOS-RETENTATIVAS-20261112.md`. Push: ver "Entrega" no fim desta seção. Sem merge, deploy, migration, flags, PR B/C. PARAR e aguardar aprovação.

@@ -1,0 +1,181 @@
+{
+  "src": "src",
+  "mediaIds": [
+    "9b6c650f-37a2-46bc-a276-9a7de31213ca",
+    "0991b1c4-b719-42aa-a1d1-1acfc24aaf4e",
+    "79b47f20-1f35-4bde-8ac4-c345bbe0e3bf",
+    "406ef1de-efbe-4e41-9f78-8dea1417c7c9",
+    "14a59947-1119-4fc5-9277-93c03aebf429",
+    "2544dc99-894b-4724-bfe9-eb1f03ecd84f"
+  ],
+  "fixtures": {
+    "goodBytes": 68918,
+    "truncatedBytes": 44796
+  },
+  "results": [
+    {
+      "name": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+      "status": "PASS",
+      "detail": {
+        "published": false,
+        "status": "failed",
+        "attempts": 1,
+        "storageKey": "9b6c650f-37a2-46bc-a276-9a7de31213ca/source.mp4",
+        "errorCode": "STORED_CLIP_INVALID",
+        "metadataBytes": null,
+        "objects": [
+          {
+            "name": "9b6c650f-37a2-46bc-a276-9a7de31213ca/clip.mp4",
+            "bytes": 44796
+          },
+          {
+            "name": "9b6c650f-37a2-46bc-a276-9a7de31213ca/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 220562,
+        "chargedBytes": 100000000,
+        "unaccountedBytes": -99779438
+      }
+    },
+    {
+      "name": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 1,
+        "storageKey": "0991b1c4-b719-42aa-a1d1-1acfc24aaf4e/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 68918,
+        "objects": [
+          {
+            "name": "0991b1c4-b719-42aa-a1d1-1acfc24aaf4e/clip.mp4",
+            "bytes": 68918
+          },
+          {
+            "name": "0991b1c4-b719-42aa-a1d1-1acfc24aaf4e/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 244684,
+        "chargedBytes": 244684,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "afterFault": "503 STORAGE_UNAVAILABLE, linha processing, reserva retida",
+        "whileLeaseActive": 202,
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "79b47f20-1f35-4bde-8ac4-c345bbe0e3bf/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "79b47f20-1f35-4bde-8ac4-c345bbe0e3bf/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "79b47f20-1f35-4bde-8ac4-c345bbe0e3bf/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 falha única no DOWNLOAD do objeto (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "406ef1de-efbe-4e41-9f78-8dea1417c7c9/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "406ef1de-efbe-4e41-9f78-8dea1417c7c9/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "406ef1de-efbe-4e41-9f78-8dea1417c7c9/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 resposta ambígua do info (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "14a59947-1119-4fc5-9277-93c03aebf429/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "14a59947-1119-4fc5-9277-93c03aebf429/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "14a59947-1119-4fc5-9277-93c03aebf429/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 esgotamento: falhas temporárias repetidas terminam em ATTEMPTS_EXHAUSTED sem novo objeto e com a reserva retida",
+      "status": "PASS",
+      "detail": {
+        "faultHits": 2,
+        "attempts": 3,
+        "status": "failed",
+        "storageKey": "2544dc99-894b-4724-bfe9-eb1f03ecd84f/source.mp4",
+        "errorCode": "ATTEMPTS_EXHAUSTED",
+        "metadataBytes": null,
+        "objects": [
+          {
+            "name": "2544dc99-894b-4724-bfe9-eb1f03ecd84f/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "2544dc99-894b-4724-bfe9-eb1f03ecd84f/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 100000000,
+        "unaccountedBytes": -99768414
+      }
+    },
+    {
+      "name": "R2 corrida real: tentativa antiga retida na leitura do objeto não altera a mídia que outra instância já publicou",
+      "status": "FAIL",
+      "error": "{\"status\":503,\"data\":{\"error\":{\"code\":\"CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED\",\"message\":\"CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED\"}}}\n\n503 !== 201\n"
+    },
+    {
+      "name": "forma real do erro de info para objeto inexistente (classificação \"não existe\")",
+      "status": "PASS",
+      "detail": {
+        "name": "StorageApiError",
+        "message": "Object not found",
+        "status": 400,
+        "statusCode": "404",
+        "classifiedAsNotFound": true
+      }
+    }
+  ]
+}
