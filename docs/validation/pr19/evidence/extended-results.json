@@ -1,0 +1,68 @@
+[
+  {
+    "name": "E01 real Storage rejects >50MB, wrong MIME and token path substitution",
+    "status": "PASS",
+    "detail": {
+      "wrongMime": 400,
+      "oversize": 400,
+      "changedPath": 400
+    }
+  },
+  {
+    "name": "E02 queued contributor skipped by real worker, reservation retained",
+    "status": "PASS",
+    "detail": {
+      "status": "failed",
+      "error": {
+        "code": "PROCESSOR_UNSUPPORTED",
+        "message": "Este processador não aceita envios de contribuidores. Envie o vídeo novamente quando o envio colaborativo estiver disponível."
+      },
+      "storage_charge_bytes": "50000000"
+    }
+  },
+  {
+    "name": "E03 lost lease after storing creates physical orphan on retry",
+    "status": "PASS",
+    "detail": {
+      "faultInjection": "one synthetic lease expired at storing, no downloader substitution",
+      "attempts": 2,
+      "objects": [
+        {
+          "name": "80df6f04-4129-4564-8e71-ff0e903325f8/clip-1.mp4",
+          "bytes": "55820"
+        },
+        {
+          "name": "80df6f04-4129-4564-8e71-ff0e903325f8/clip-2.mp4",
+          "bytes": "55820"
+        },
+        {
+          "name": "80df6f04-4129-4564-8e71-ff0e903325f8/source.mp4",
+          "bytes": "175766"
+        }
+      ],
+      "physical": 287406,
+      "charged": 231586,
+      "unaccounted": 55820
+    }
+  },
+  {
+    "name": "E04 time budget and expired slot recovery via real PostgREST",
+    "status": "PASS",
+    "detail": {
+      "fixture": "400s consumed time seeded; real RPC rejection",
+      "error": "IMPORT_RATE_LIMIT",
+      "adminSlotUnaffected": true,
+      "naturalSlotExpiryMs": 1400,
+      "lateReleasePreservesNewHolder": true
+    }
+  },
+  {
+    "name": "E05 logout: backend rejects session while PostgREST JWT remains valid until expiry",
+    "status": "PASS",
+    "detail": {
+      "backend": 401,
+      "postgrest": 200,
+      "restriction": "JWT/RLS still applies; contributor write RPCs remain forbidden"
+    }
+  }
+]

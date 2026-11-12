@@ -1,0 +1,76 @@
+{
+  "rls": [
+    {
+      "relname": "media_assets",
+      "relrowsecurity": true
+    },
+    {
+      "relname": "grenades",
+      "relrowsecurity": true
+    },
+    {
+      "relname": "contributors",
+      "relrowsecurity": true
+    },
+    {
+      "relname": "contributor_links",
+      "relrowsecurity": true
+    },
+    {
+      "relname": "import_slot_usage",
+      "relrowsecurity": true
+    }
+  ],
+  "rpc": [
+    {
+      "signature": "claim_import_slot(uuid,integer)",
+      "anon": false,
+      "authenticated": false,
+      "service": true
+    },
+    {
+      "signature": "claim_import_slot(uuid,integer,uuid)",
+      "anon": false,
+      "authenticated": false,
+      "service": true
+    },
+    {
+      "signature": "contributor_storage_report()",
+      "anon": false,
+      "authenticated": false,
+      "service": true
+    },
+    {
+      "signature": "register_contributor(uuid,text)",
+      "anon": false,
+      "authenticated": false,
+      "service": true
+    },
+    {
+      "signature": "reserve_import_source(uuid)",
+      "anon": false,
+      "authenticated": false,
+      "service": true
+    }
+  ],
+  "triggers": [
+    {
+      "tgname": "grenade_ready"
+    },
+    {
+      "tgname": "media_state"
+    },
+    {
+      "tgname": "immutable_import_source"
+    },
+    {
+      "tgname": "grenade_revision"
+    },
+    {
+      "tgname": "media_contributor"
+    },
+    {
+      "tgname": "grenade_authorship"
+    }
+  ]
+}

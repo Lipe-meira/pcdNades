@@ -1,0 +1,58 @@
+[
+  {
+    "name": "12c59e61-9f0a-4a4d-ad1c-23cb6c2cd6c9/clip-1.mp4",
+    "bytes": "55820"
+  },
+  {
+    "name": "12c59e61-9f0a-4a4d-ad1c-23cb6c2cd6c9/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "36d272f4-f498-4b00-a876-b8ed229df42e/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "4d083b12-e6cc-4ffd-92db-4cf454775392/source.mp4",
+    "bytes": "10"
+  },
+  {
+    "name": "57bfb19b-c456-40bc-8e04-37885060ca77/playback-1.mp4",
+    "bytes": "199221"
+  },
+  {
+    "name": "57bfb19b-c456-40bc-8e04-37885060ca77/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "76d18e3f-6e9e-4dd2-bf0a-f70dca5cbbf7/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "80df6f04-4129-4564-8e71-ff0e903325f8/clip-1.mp4",
+    "bytes": "55820"
+  },
+  {
+    "name": "80df6f04-4129-4564-8e71-ff0e903325f8/clip-2.mp4",
+    "bytes": "55820"
+  },
+  {
+    "name": "80df6f04-4129-4564-8e71-ff0e903325f8/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "88f22f67-0039-41f3-905a-1f61779382b2/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "aabe183f-7a8b-4fa4-b361-0c73c7fff45c/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "cec48679-804d-4586-838a-dfc1d40aa4f2/source.mp4",
+    "bytes": "175766"
+  },
+  {
+    "name": "synthetic-replay/test.mp4",
+    "bytes": "175766"
+  }
+]

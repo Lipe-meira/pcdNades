@@ -1,0 +1,20 @@
+import {execFileSync} from 'node:child_process';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import assert from 'node:assert/strict';
+const suffix=process.argv[2]??'',here=dirname(fileURLToPath(import.meta.url)),runtime=resolve(here,'runtime'+suffix),project='pcdn-pr19-352c-20261112'+suffix;
+const docker=(...args)=>execFileSync('docker',args,{encoding:'utf8'});
+const baseline=JSON.parse(readFileSync(resolve(runtime,'baseline.json')));
+const network=JSON.parse(docker('network','inspect',project+'-internal'))[0];assert.equal(network.Internal,true);
+const ids=docker('ps','-aq','--filter',`label=com.docker.compose.project=${project}`).trim().split(/\s+/);assert.equal(ids.length,6);
+const containers=JSON.parse(docker('inspect',...ids)).map(c=>{
+ assert.deepEqual(Object.keys(c.NetworkSettings.Networks),[project+'-internal']);assert.ok(Object.values(c.HostConfig.PortBindings??{}).every(v=>!v?.length));assert.equal(c.HostConfig.Privileged,false);
+ for(const m of c.Mounts)if(m.Type==='volume')assert.ok(!baseline.volumes.includes(m.Name));else assert.ok(m.Source.toLowerCase().replaceAll('\\','/').includes('/pr19/runtime'+suffix));
+ return {id:c.Id,name:c.Name,image:c.Image,networks:Object.keys(c.NetworkSettings.Networks),ports:c.HostConfig.PortBindings,mounts:c.Mounts.map(m=>({type:m.Type,name:m.Name??null,destination:m.Destination})),privileged:c.HostConfig.Privileged};
+});
+const present=new Set(docker('ps','-aq').trim().split(/\s+/));assert.ok(baseline.containers.every(id=>present.has(id)));
+const vols=new Set(docker('volume','ls','-q').trim().split(/\s+/));assert.ok(baseline.volumes.every(id=>vols.has(id)));
+const egress=docker('exec',project+'-runner-1','node','-e',"const s=require('net').connect({host:'1.1.1.1',port:443});s.setTimeout(2000);s.on('connect',()=>process.exit(1));s.on('timeout',()=>{console.log('BLOCKED timeout');s.destroy()});s.on('error',e=>console.log('BLOCKED '+e.code))").trim();assert.match(egress,/BLOCKED/);
+const data={project,internal:true,publishedPorts:0,containers,egress,baselineContainersPreserved:baseline.containers.length,baselineVolumesPreserved:baseline.volumes.length};
+writeFileSync(resolve(runtime,'isolation.json'),JSON.stringify(data,null,2));console.log('PASS isolation',project,egress,'baseline preserved');

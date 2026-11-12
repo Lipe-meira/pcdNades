@@ -1,0 +1,19 @@
+[
+  {
+    "name": "T04 natural access expiry then refresh preserving UID (focused corrected retest)",
+    "status": "PASS",
+    "detail": {
+      "rest": 401,
+      "auth": 403,
+      "authError": {
+        "code": 403,
+        "error_code": "bad_jwt",
+        "msg": "invalid JWT: unable to parse or verify signature, token has invalid claims: token is expired"
+      },
+      "refresh": "same UID",
+      "tokenTtl": 30,
+      "waitedMs": 62001,
+      "postgrestGraceSeconds": 30
+    }
+  }
+]

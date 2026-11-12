@@ -1,0 +1,33 @@
+import {spawn,execFileSync} from 'node:child_process';
+import {createWriteStream,readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+const suffix=process.argv[2]??'',here=dirname(fileURLToPath(import.meta.url)),runtime=resolve(here,'runtime'+suffix),project='pcdn-pr19-352c-20261112'+suffix;
+const docker=(...args)=>execFileSync('docker',args,{encoding:'utf8',maxBuffer:8e6});
+const db=project+'-db-1',runner=project+'-runner-1';
+assert.ok(!existsSync(resolve(runtime,'before-rollback.ready')),'Use a fresh lab');
+docker('cp',resolve(here,'run.ts'),runner+':/app/backend/lab-run.ts');
+docker('cp',resolve(runtime,'old/backend/src'),runner+':/app/backend/old-src');
+const log=createWriteStream(resolve(runtime,'run.log'));const child=spawn('docker',['exec',runner,'node','--import','tsx','lab-run.ts']);child.stdout.pipe(log);child.stderr.pipe(log);
+let finished=false;child.on('exit',()=>finished=true);
+while(!existsSync(resolve(runtime,'before-rollback.ready'))){if(finished)throw Error('Runner exited before backup');await new Promise(r=>setTimeout(r,400));}
+const psql=(database,sql)=>docker('exec',db,'psql','-U','postgres','-d',database,'-At','-v','ON_ERROR_STOP=1','-c',sql).trim();
+const tables=psql('postgres',"select schemaname||'.'||tablename from pg_tables where schemaname in('public','private','auth','storage') order by 1").split('\n');
+const hashes=database=>Object.fromEntries(tables.map(t=>[t,psql(database,`select count(*)::text||':'||coalesce(md5(string_agg(to_jsonb(t)::text,'' order by to_jsonb(t)::text)),'empty') from ${t} t`)]));
+docker('exec',db,'pg_dump','-U','postgres','-Fc','-f','/tmp/pr19-synthetic.dump','postgres');
+docker('exec',db,'createdb','-U','postgres','pr19_restore');
+docker('exec',db,'pg_restore','-U','postgres','-d','pr19_restore','/tmp/pr19-synthetic.dump');
+const original=hashes('postgres'),restored=hashes('pr19_restore');assert.deepEqual(original,restored);
+docker('cp',db+':/tmp/pr19-synthetic.dump',resolve(runtime,'synthetic.dump'));
+const evidence={tables:tables.length,identical:true,hashes:original,dumpSha256:createHash('sha256').update(readFileSync(resolve(runtime,'synthetic.dump'))).digest('hex')};
+writeFileSync(resolve(runtime,'backup-restore.json'),JSON.stringify(evidence,null,2));
+// Physical disk inspection is independent of storage.objects metadata.
+const files=docker('exec',project+'-storage-1','find','/var/lib/storage','-type','f','-exec','sha256sum','{}',';');
+writeFileSync(resolve(runtime,'physical-sha256.txt'),files);
+writeFileSync(resolve(runtime,'physical-sizes.txt'),docker('exec',project+'-storage-1','find','/var/lib/storage','-type','f','-exec','stat','-c','%s %n','{}',';'));
+writeFileSync(resolve(runtime,'backup.done'),'verified');console.log('PASS synthetic backup/restore',tables.length,'tables identical');
+while(!finished)await new Promise(r=>setTimeout(r,500));
+const results=JSON.parse(readFileSync(resolve(runtime,'results.json')));console.log('RESULT',results.filter(r=>r.status==='PASS').length,'PASS',results.filter(r=>r.status==='FAIL').length,'FAIL');
+if(results.some(r=>r.status==='FAIL'))process.exitCode=1;

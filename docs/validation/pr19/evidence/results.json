@@ -1,0 +1,250 @@
+[
+  {
+    "name": "M00 baseline schema from exact PR migrations",
+    "status": "PASS",
+    "detail": {
+      "n": 3
+    }
+  },
+  {
+    "name": "A00 real GoTrue anonymous A/B and password administrator",
+    "status": "PASS",
+    "detail": {
+      "anonymousDistinct": true,
+      "adminAnonymous": false
+    }
+  },
+  {
+    "name": "M01 first contributors migration then legacy read/admin",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "M02 storage/import migration then legacy admin",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "M03 catalogs: RLS grants triggers and RPC overloads",
+    "status": "PASS",
+    "detail": {
+      "rls": 5,
+      "rpc": 5,
+      "triggers": 6
+    }
+  },
+  {
+    "name": "A01 visitor public reads but write 401",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "A02 registrations use UID, equal nicknames do not share identity",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "A03 PostgREST direct private tables/RPC denied",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "F01 all flags off and parent-only configuration",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "S00 generate physical synthetic H264 MP4 with real FFmpeg",
+    "status": "PASS",
+    "detail": {
+      "bytes": 175766,
+      "sha256": "16fac93427d944c74e6677d0b2f5eb72e72675bc30f972d96097f6fe9676265d"
+    }
+  },
+  {
+    "name": "S01 inline upload physical storage, repeated complete",
+    "status": "PASS",
+    "detail": {
+      "bytes": "175766",
+      "key": "88f22f67-0039-41f3-905a-1f61779382b2/source.mp4"
+    }
+  },
+  {
+    "name": "S02 private video before publication and ownership isolation",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "A04 publish edit owner, foreign editing denied, public playback",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "S03 signed upload replay cannot overwrite existing source",
+    "status": "PASS",
+    "detail": {
+      "replayStatus": 400
+    }
+  },
+  {
+    "name": "S04 upload cut accounts source plus output bytes",
+    "status": "PASS",
+    "detail": {
+      "charge": "231586",
+      "physical": 231586,
+      "objects": [
+        {
+          "name": "12c59e61-9f0a-4a4d-ad1c-23cb6c2cd6c9/clip-1.mp4",
+          "size": 55820
+        },
+        {
+          "name": "12c59e61-9f0a-4a4d-ad1c-23cb6c2cd6c9/source.mp4",
+          "size": 175766
+        }
+      ]
+    }
+  },
+  {
+    "name": "S05 worker contributor gate and admin real FFmpeg transcode",
+    "status": "PASS",
+    "detail": {
+      "status": "ready",
+      "objects": 2
+    }
+  },
+  {
+    "name": "S06 abandoned upload reserves bytes; flags stop complete but not signed upload",
+    "status": "PASS",
+    "detail": {
+      "afterFlagOffUpload": 200,
+      "charge": "50000000"
+    }
+  },
+  {
+    "name": "S07 late complete admission with real HTTP concurrency",
+    "status": "PASS",
+    "detail": {
+      "responses": [
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429,
+        429
+      ]
+    }
+  },
+  {
+    "name": "S08 simultaneous complete performs one attempt",
+    "status": "PASS",
+    "detail": {
+      "responses": [
+        202,
+        202,
+        202,
+        202,
+        200,
+        202,
+        202,
+        202,
+        202,
+        202,
+        202,
+        202
+      ]
+    }
+  },
+  {
+    "name": "S09 invalid MP4 failure retains reservation",
+    "status": "PASS",
+    "detail": {
+      "status": "failed",
+      "error": {
+        "code": "INVALID_MEDIA",
+        "message": "Arquivo MP4 inválido ou resolução não suportada."
+      }
+    }
+  },
+  {
+    "name": "I01 controlled extraction: real HTTP/PostgREST quotas and owner isolation",
+    "status": "PASS",
+    "detail": {
+      "contributorReservations": 6,
+      "extraction": "controlled fixture; no provider download"
+    }
+  },
+  {
+    "name": "I02 PostgREST pool 20 collaborative leaves administrator 20",
+    "status": "PASS",
+    "detail": {
+      "collaborative": 20,
+      "admin": 20
+    }
+  },
+  {
+    "name": "I03 real RPC slot concurrency and recovery with late release",
+    "status": "PASS",
+    "detail": {
+      "claimants": 8,
+      "winners": 1
+    }
+  },
+  {
+    "name": "A05 session refresh and revocation via real GoTrue",
+    "status": "PASS",
+    "detail": {
+      "refreshRejected": 400,
+      "accessAfterLogout": 401,
+      "oldTokenDifferent": true
+    }
+  },
+  {
+    "name": "A06 administrative delete and public library continues",
+    "status": "PASS",
+    "detail": null
+  },
+  {
+    "name": "S10 short signed read URL expiry and valid upload token after deletion",
+    "status": "PASS",
+    "detail": {
+      "readExpired": 400,
+      "uploadAfterDeletion": 200,
+      "uploadExpiry": "2h token not time-waited"
+    }
+  },
+  {
+    "name": "M04 rollback 2 then 1 with legacy backend and authorship recovery",
+    "status": "PASS",
+    "detail": {
+      "rollbackOrder": "2 -> 1",
+      "contributorsRecovered": 6,
+      "authorshipRestored": true,
+      "chargeAfterReapply": "existing rows zero: reconciliation required before reactivation"
+    }
+  },
+  {
+    "name": "S11 SQL accounting and physical object inventory",
+    "status": "PASS",
+    "detail": {
+      "objects": 10,
+      "physicalBytes": 1485413,
+      "postRollbackCharges": {
+        "pending": 1,
+        "budgetBytes": 400000000,
+        "chargedBytes": 0,
+        "unfinishedBytes": 0
+      }
+    }
+  },
+  {
+    "name": "A07 natural access token expiration and refresh after expiry",
+    "status": "FAIL",
+    "error": "Expected values to be strictly equal:\n\n200 !== 401\n"
+  }
+]

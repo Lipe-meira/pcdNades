@@ -1,0 +1,43 @@
+[
+  {
+    "name": "C01 legacy inspect with both migrations (controlled extraction)",
+    "status": "PASS",
+    "http": 201
+  },
+  {
+    "name": "C02 modern inspect with both migrations (controlled extraction)",
+    "status": "PASS",
+    "http": 201
+  },
+  {
+    "name": "C03 legacy inspect after rollback2",
+    "status": "PASS",
+    "http": 201
+  },
+  {
+    "name": "C04 modern inspect after rollback2 negative control",
+    "status": "PASS",
+    "http": 503
+  },
+  {
+    "name": "C05 legacy inspect after rollback2 then rollback1",
+    "status": "PASS",
+    "http": 201
+  },
+  {
+    "name": "C06 media/grenade content hashes preserved through both rollbacks",
+    "status": "PASS",
+    "hashes": [
+      {
+        "kind": "media",
+        "n": 14,
+        "hash": "5eee9cca554b3a2b92b578439e5b9442"
+      },
+      {
+        "kind": "grenades",
+        "n": 1,
+        "hash": "be121c8460b6bc465e00d216ecea587d"
+      }
+    ]
+  }
+]

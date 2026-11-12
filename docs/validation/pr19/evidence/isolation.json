@@ -1,0 +1,105 @@
+{
+  "project": "pcdn-pr19-352c-20261112-r5",
+  "internal": true,
+  "publishedPorts": 0,
+  "containers": [
+    {
+      "id": "f8ed8128174be8c5aa3c6c9c28f9a97403bcc96fd440282458c37883d80db023",
+      "name": "/pcdn-pr19-352c-20261112-r5-auth-1",
+      "image": "sha256:1736a63078f5922b198c4cbe50f80ab9a2d3b54fe8b7b6cfb2e9dc5dbbc12c6b",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r5-internal"
+      ],
+      "ports": {},
+      "mounts": [],
+      "privileged": false
+    },
+    {
+      "id": "f2cb30a177e0b94c29e978381684eb588e69594444d67568d459f28ad9a48aac",
+      "name": "/pcdn-pr19-352c-20261112-r5-storage-1",
+      "image": "sha256:a0420573837ee08c0afdc9cd01f90b4b8027579da99e0b9a159fe912ef756c99",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r5-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "pcdn-pr19-352c-20261112-r5-objects",
+          "destination": "/var/lib/storage"
+        }
+      ],
+      "privileged": false
+    },
+    {
+      "id": "6a592c2c8f4ff4547006ba1342eb91180fc482effff7fd3dd784adf3aacd56fc",
+      "name": "/pcdn-pr19-352c-20261112-r5-rest-1",
+      "image": "sha256:54000f24847d01a2c2302e0041cf0618b875c57fb48507d743cfa9aaa50bf43c",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r5-internal"
+      ],
+      "ports": {},
+      "mounts": [],
+      "privileged": false
+    },
+    {
+      "id": "e9f6f47d6768536da6cb0c906bae6080008aca09a3b4e858dc664c91e485d740",
+      "name": "/pcdn-pr19-352c-20261112-r5-db-1",
+      "image": "sha256:3b0cda93be7c8dba2ed484d19393d93845dc3dafb88973e248ba8e6d99d784e1",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r5-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "pcdn-pr19-352c-20261112-r5-db",
+          "destination": "/var/lib/postgresql/data"
+        },
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/docker-entrypoint-initdb.d/00-lab.sql"
+        }
+      ],
+      "privileged": false
+    },
+    {
+      "id": "858f6c9df5c7f9bb8ff0cf9cb62ab95f2be156ff5552a005a8bbe905bd42ebc4",
+      "name": "/pcdn-pr19-352c-20261112-r5-runner-1",
+      "image": "sha256:c60bc33f188c135bf5bb252cbefc803a8a47526dbd7a4c50044f9dc8553103c6",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r5-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/results"
+        }
+      ],
+      "privileged": false
+    },
+    {
+      "id": "b3b3217b35d3a7595894c64a991c198a7deb30aa578c8fecdf966402a4c7259d",
+      "name": "/pcdn-pr19-352c-20261112-r5-gateway-1",
+      "image": "sha256:c60bc33f188c135bf5bb252cbefc803a8a47526dbd7a4c50044f9dc8553103c6",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r5-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/results"
+        }
+      ],
+      "privileged": false
+    }
+  ],
+  "egress": "BLOCKED ENETUNREACH",
+  "baselineContainersPreserved": 85,
+  "baselineVolumesPreserved": 46
+}

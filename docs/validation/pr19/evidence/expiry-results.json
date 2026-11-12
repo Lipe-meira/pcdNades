@@ -1,0 +1,25 @@
+[
+  {
+    "name": "T01 measured upload TTL in Storage 1.84.19 defaults to 60s",
+    "status": "PASS",
+    "ttl": 60,
+    "expectedInPRDocs": 7200
+  },
+  {
+    "name": "T02 natural default signed upload expiry and no resurrection after deletion",
+    "status": "PASS",
+    "ttl": 60,
+    "waitMs": 58952,
+    "expiredUpload": 400
+  },
+  {
+    "name": "T03 real GoTrue anonymous rate limit 2 per hour",
+    "status": "PASS",
+    "codes": [
+      200,
+      200,
+      429
+    ],
+    "captcha": "not enabled; external provider excluded"
+  }
+]

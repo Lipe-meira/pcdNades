@@ -1,3 +1,61 @@
+# Checkpoint — orchestrator: validação integrada isolada PR #19
+
+Atualizado em: 12/11/2026, America/Sao_Paulo. Estado: validação encerrada; aguardando aprovação do usuário.
+
+## Objetivo e pedido atual
+Validar o SHA352c0e177602fc1e6e79fe817960f92c76286f43 com serviços reais e dados sintéticos. Entregar relatório/checkpoints e parar; sem merge, deploy, alteração do PR/produção, credenciais reais ou downloads de provedores.
+
+## Localização do trabalho
+- Branch codex/validacao-integrada-pr19-20261112; worktree C:/Users/felip/.codex/worktrees/pr19-validacao-isolada/nadesCs2.
+- Base/último código:352c0e177602fc1e6e79fe817960f92c76286f43. Backend anterior exportado de8776ddf4d3658b1d5ecf8d91a5e13760047d8f50.
+- Commit documental: consultar git log -1 desta branch; não é alteração do PR. Push da entrega destinado exclusivamente a origin/codex/validacao-integrada-pr19-20261112, confirmado no fechamento do chat.
+- Arquivos da entrega: este checkpoint, .dockerignore, docs/validation/pr19/{REPORT.md, scripts, Dockerfile, .gitignore, evidence/}. Sem diff em backend/ ou frontend/.
+- runtime*/ ignorados preservam configurações/credenciais APENAS sintéticas, MP4, dumps, logs e tentativas anteriores. Não versionar esses diretórios.
+
+## Feito
+- Stack real descartável: PostgreSQL17.11, GoTrue2.197.0, PostgREST14.12, Storage1.84.19, Node24.22.2, FFmpeg5.1.9, backend/worker reais.
+- Rede interna exclusiva, zero portas publicadas, egress bloqueado ENETUNREACH; volumes novos. Inventário inicial61 containers/38 volumes preservado.
+- Duas migrations aplicadas em banco sintético, grants/RLS/triggers e overloads conferidos. Backends antigo/novo por HTTP, rollback2→1, recuperação de autoria e dump/restore de48 tabelas com hashes iguais.
+-43 verificações com resultado esperado (28 matriz,5 extras,6 compatibilidade,4 expiração/rate limit), mais isolamento e backup. Não significa43 critérios de ativação aprovados: E03 reproduz falha de contabilidade física.
+- MP4 simples175766 bytes; corte fonte+saída231586 cobrados corretamente. Worker admin real ready; contribuidor bloqueado/não reivindicado. Complete tardio12×429 e simultâneo com uma tentativa.
+- Perda de lease com trigger de falha restrito à fixture produziu fonte+clip1+clip2=287406 bytes, cobrança231586; órfão55820 não contabilizado. Risco anteriormente descrito, agora demonstrado fisicamente.
+- Auth real: UID, login/anon, refresh, logout; backend401 após revogação, PostgREST aceita JWT ainda válido com RLS. Expiração natural: PostgREST401 após tolerância30s; GoTrue403/bad_jwt; refresh preservou UID.
+- Storage local emite uploadTTL60s, divergindo da premissa2h do PR; expiração natural confirmou400 após prazo. Reuso válido após excluir objeto funciona. Não inferir TTL produtivo.
+- GoTrue rate limit real:2 cadastros200 e terceiro429 após gateway sobrescrever X-Forwarded-For e configuração explícita do cabeçalho; CAPTCHA externo não executado.
+- Cotas/slots reais API/PostgREST; pool colaborativo20 não consumiu reservas admin20. Extração do inspect foi fixture declarada; nenhum provedor acessado.
+- Relatório completo e plano ordenado sem execução em docs/validation/pr19/REPORT.md. PR continua aberto, não mergeado, SHA exato confirmado no fechamento.
+
+## Em andamento
+Nada a implementar. Fechamento documental/commit/push desta entrega. Todas as cinco stacks próprias paradas, volumes/dumps/objetos preservados. Schema final de r5 está após rollback1 pelo último ensaio de compatibilidade; não religar backend novo sem reconstrução compatível. Auth foi configurado apenas localmente com JWT30s e rate1000/h após a sondagem específica2/h.
+
+## Retomar daqui
+1. Conferir git status/branch/log, ler REPORT.md e evidence/README.md; aguardar decisão humana, sem repetir testes aprovados.
+2. Se autorizado, corrigir/tratar órfãos e dimensionamento, alinhar TTL/documentação e política antiabuso. Fazer em nova tarefa/branch; não editar PR19 automaticamente.
+3. Para nova reprodução, escolher sufixo novo; não reutilizar o banco pós-rollback. Código e instruções estão no relatório.
+4. Antes de qualquer implantação autorizada: backup, schema completo antes do backend, três flagsfalse; backend/worker compatíveis antes de rollback2→1.
+
+## Decisões e contrato
+- GO técnico condicionado para fundação inativa, sem autorização de merge/deploy.
+- NO-GO ativação pública: órfãos físicos, capacidade/antiabuso/CAPTCHA/provedores e diferenças de ambiente pendentes.
+- Somente fixtures, sem segredos ou backups produtivos. Nenhuma rotina destrutiva automática.
+- Duração local20s configurada; padrão90s do código não alterado. Novas migrations sobre dados existentes precisam reconciliação: reaplicar migration2 inicializa cobrança0.
+
+## Validação
+- Evidências: docs/validation/pr19/evidence/. Fontes/migrations43 arquivos no container comparados por hash; git diff352c0e1 backend/frontend vazio.
+- Inventário antes do rollback10 arquivos/1485413 bytes com igualdade SQL/disco; final14/1948585 incluindo órfão.
+- Dump sintético SHA256501ab584b3163fc8fa7c82219c1dac9446844050e246444e410cbfbd3c09bf20;48 tabelas restauradas idênticas.
+- Falhas iniciais da harness corrigidas/preservadas: bootstrap/grants, FRONTEND_URL, chmod probe, mapa, BusyBox find, tolerânciaJWT/status403 e cabeçalho rate limit. A07 bruto28/29 mantém expectativa errada; T04 corrigido comprovou o comportamento real.
+- Verificações finais: node --check dos scripts de controle, git diff --check, isolamento/preservação, varredura de artefatos proibidos e SHA remoto da branch documental no fechamento.
+- Não executado: frontend/browser, Supabase gerenciado/quotas reais/TLS, CAPTCHA, provedores externos, prévia/Edge/Cron, carga prolongada e restauração produtiva.
+
+## Bloqueios e dependências
+Nenhum bloqueio de infraestrutura pendente para os ensaios locais encerrados. Ativação pública continua NO-GO pelos pontos acima; não improvisar testes externos ou configuração produtiva. Serviços locais parados não são deploy e não precisam continuar online.
+
+## Entrega e histórico curto
+-12/11: worktree própria; preparo e tentativas documentados; r5 consolidada; nenhum recurso preexistente removido.
+-12/11: relatório e evidências concluídos; commit/push documental nesta branch; PR https://github.com/Lipe-meira/pcdNades/pull/19 sem alteração. Sem URL de deploy novo.
+
+---
 # Publicação colaborativa — PR A (backend/banco) — 12/11/2026
 
 Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.
