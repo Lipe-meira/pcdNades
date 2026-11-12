@@ -35,7 +35,10 @@ export async function createLab(){
  let trims=0,downloads=0;
  // `trimSizes[n]` = bytes do corte gerado na n-ésima execução do FFmpeg (permite simular codificação não determinística).
  const config={sourceBytes:50_000,trimSizes:[20_000,20_000,20_000,20_000],clipDuration:2,probeError:undefined as string|undefined,storeFault:undefined as undefined|((key:string)=>Promise<void>|void)};
- const deps={
+ const decodeCalls:string[]=[];
+ const deps:Record<string,any>={
+  // Decodificação integral do objeto ADOTADO. O falso aceita tudo; os testes de integridade a substituem (ou usam o FFmpeg real).
+  decode:async(path:string)=>{decodeCalls.push(path);return 'ok' as const;},
   download:async(url:string,path:string)=>{downloads++;const key=new URL(url).pathname.replace('/videos-staging/','');await writeFile(path,Buffer.alloc(storage.objects.get(key)??0));},
   probe:async()=>{if(config.probeError)throw new MediaError(config.probeError);return {durationSeconds:config.clipDuration,width:320,height:240,mimeType:'video/mp4'};},
   trim:async(_input:string,output:string)=>{const size=config.trimSizes[Math.min(trims,config.trimSizes.length-1)];trims++;await writeFile(output,Buffer.alloc(size));return {durationSeconds:config.clipDuration,width:320,height:240,mimeType:'video/mp4',bytes:size,clip:CLIP,sourceDurationSeconds:4};},
@@ -62,6 +65,6 @@ export async function createLab(){
  /** Invariante de contabilidade: todo byte físico da mídia (fonte + saídas + órfãos) precisa estar coberto pela cobrança SQL. */
  const accounting=async(id:string)=>{const r=await row(id);return {physical:storage.sizeOf(`${id}/`),charged:Number(r.storage_charge_bytes),keys:storage.keysOf(`${id}/`)};};
  const close=async()=>{await db.close();if(previous===undefined)delete process.env.MEDIA_TRIMMING_ENABLED;else process.env.MEDIA_TRIMMING_ENABLED=previous;};
- return {db:db as PGlite,client,storage,config,deps,newClipMedia,complete,row,loseLeaseAtStoring,clearFault,accounting,close,counts:()=>({trims,downloads})};
+ return {db:db as PGlite,client,storage,config,deps,newClipMedia,complete,row,loseLeaseAtStoring,clearFault,accounting,close,decodeCalls,counts:()=>({trims,downloads})};
 }
 export {assert};
