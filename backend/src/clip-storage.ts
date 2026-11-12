@@ -13,6 +13,9 @@ function storageOperation<T>(operation:()=>PromiseLike<T>,signal:AbortSignal):Pr
  });
 }
 
+// Chave ÚNICA do corte de uma mídia (independe da tentativa). Ver inline.ts: o objeto existente é adotado, nunca sobrescrito.
+export const clipOutputKey=(mediaId:string)=>`${mediaId}/clip.mp4`;
+
 export async function storeClip(db:SupabaseClient,key:string,path:string,signal:AbortSignal){
  try{
   const session=await storageOperation(()=>db.storage.from('videos-staging').createSignedUploadUrl(key,{upsert:false}),signal);

@@ -1,11 +1,11 @@
-import {storeClip} from './clip-storage.js';
+import {storeClip,clipOutputKey} from './clip-storage.js';
 import { trimVideo, sourceLimits } from './trimming.js';
 import {contributorError} from './contributor-errors.js';import {clipSchema} from './importers.js';
 import {readTrimmingEnabled} from './config.js';
 import {mkdtemp,rm,stat} from 'node:fs/promises';import {join} from 'node:path';import {tmpdir} from 'node:os';import type {SupabaseClient} from '@supabase/supabase-js';
 import type {MediaLimits} from './config.js';import {downloadBounded} from './transfer.js';import {probeOriginal,MediaError} from './probe.js';
 let activeTrim=false;
-const messages:Record<string,string>={INVALID_MEDIA:'Arquivo MP4 inválido ou resolução não suportada.',UNSUPPORTED_CODEC:'Exporte MP4 com vídeo H.264/yuv420p e áudio AAC ou sem áudio.',DURATION_EXCEEDED:'O vídeo ultrapassa a duração máxima permitida.',FILE_TOO_LARGE:'O arquivo ultrapassa o tamanho permitido.',PROCESSING_TIMEOUT:'Validação interrompida por tempo limite. Se continuar em processamento, tente novamente após a recuperação.',CLIP_OUT_OF_RANGE:'O intervalo está fora da duração da fonte ou do limite final.',CLIP_PROCESSING_FAILED:'Não foi possível gerar um trecho íntegro. Selecione outro intervalo.',SOURCE_DURATION_EXCEEDED:'A fonte para recorte deve ter até 180 segundos.',STORAGE_UNAVAILABLE:'Não foi possível armazenar o trecho. Tente uma nova seleção.',ATTEMPTS_EXHAUSTED:'Tentativas esgotadas. Selecione o arquivo novamente.'};
+const messages:Record<string,string>={INVALID_MEDIA:'Arquivo MP4 inválido ou resolução não suportada.',UNSUPPORTED_CODEC:'Exporte MP4 com vídeo H.264/yuv420p e áudio AAC ou sem áudio.',DURATION_EXCEEDED:'O vídeo ultrapassa a duração máxima permitida.',FILE_TOO_LARGE:'O arquivo ultrapassa o tamanho permitido.',PROCESSING_TIMEOUT:'Validação interrompida por tempo limite. Se continuar em processamento, tente novamente após a recuperação.',CLIP_OUT_OF_RANGE:'O intervalo está fora da duração da fonte ou do limite final.',CLIP_PROCESSING_FAILED:'Não foi possível gerar um trecho íntegro. Selecione outro intervalo.',SOURCE_DURATION_EXCEEDED:'A fonte para recorte deve ter até 180 segundos.',STORAGE_UNAVAILABLE:'Não foi possível armazenar o trecho. Tente uma nova seleção.',ATTEMPTS_EXHAUSTED:'Tentativas esgotadas. Selecione o arquivo novamente.',STORED_CLIP_INVALID:'O trecho gravado em uma tentativa anterior não passou na verificação. Selecione o arquivo novamente.'};
 export async function completeInline(db:SupabaseClient,id:string,limits:MediaLimits,dependencies:{probe:typeof probeOriginal;download:typeof downloadBounded;trim?:typeof trimVideo;store?:typeof storeClip}={probe:probeOriginal,download:downloadBounded,trim:trimVideo,store:storeClip}){
  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),110000);timer.unref();const signal=controller.signal;
  const table=()=>db.from('media_assets');
@@ -13,6 +13,14 @@ export async function completeInline(db:SupabaseClient,id:string,limits:MediaLim
  async function checked<T>(query:PromiseLike<{data:T;error:unknown}>){const r=await bounded(query);if(r.error){const known=contributorError((r.error as any).message);if(known)throw Object.assign(new Error(known.code),{statusCode:known.status,code:known.code});throw Object.assign(new Error('MEDIA_SERVICE_UNAVAILABLE'),{statusCode:503});}return r.data;}
  async function current(){const r=await checked(table().select('*').eq('id',id).maybeSingle());if(!r)throw Object.assign(new Error('NOT_FOUND'),{statusCode:404});return r;}
  let dir:string|undefined;let trimSlot=false;
+ // Verifica o objeto já existente como se fosse uma saída nova: baixa com limite, valida contêiner/codec/duração e mede os bytes REAIS.
+ async function adoptStoredClip(key:string,file:string,clip:{startSeconds:number;endSeconds:number}){
+  const signed=await bounded(db.storage.from('videos-staging').createSignedUrl(key,120));if(signed.error)throw new MediaError('STORAGE_UNAVAILABLE');
+  try{await dependencies.download(signed.data.signedUrl,file,limits.maxBytes,signal);}catch(error){throw new MediaError(signal.aborted?'PROCESSING_TIMEOUT':error instanceof Error&&error.message==='FILE_TOO_LARGE'?'STORED_CLIP_INVALID':'STORAGE_UNAVAILABLE');}
+  let probed;try{probed=await dependencies.probe(file,limits,signal);}catch(error){throw error instanceof MediaError&&error.code==='PROCESSING_TIMEOUT'?error:new MediaError('STORED_CLIP_INVALID');}
+  if(Math.abs(probed.durationSeconds-(clip.endSeconds-clip.startSeconds))>0.1)throw new MediaError('STORED_CLIP_INVALID');
+  return {metadata:probed,bytes:(await stat(file)).size};
+ }
  try{
  let asset=await current();
  if(['ready','failed'].includes(asset.status))return {status:200,asset};
@@ -42,8 +50,17 @@ export async function completeInline(db:SupabaseClient,id:string,limits:MediaLim
   await stage('trimming');playbackFile=join(dir,'clip.mp4');
   metadata=await (dependencies.trim??trimVideo)(file,playbackFile,clip,limits,signal);bytes=(await stat(playbackFile)).size;if(bytes>limits.maxBytes)throw new MediaError('FILE_TOO_LARGE');
   if(signal.aborted)throw new MediaError('PROCESSING_TIMEOUT');
-  await stage('storing');playbackKey=`${id}/clip-${claimed.attempts}.mp4`;
-  await bounded((dependencies.store??storeClip)(db,playbackKey,playbackFile,signal));
+  await stage('storing');playbackKey=clipOutputKey(id);
+  // A chave NÃO depende da tentativa: só pode existir um corte por mídia (fonte + um trecho = a reserva cobrada). Se uma tentativa
+  // anterior já gravou o objeto (lease perdido, resposta perdida), ele é verificado e adotado; nunca sobrescrito nem apagado.
+  try{await bounded((dependencies.store??storeClip)(db,playbackKey,playbackFile,signal));}
+  catch(error){
+   if(signal.aborted)throw error;
+   const present=await bounded(db.storage.from('videos-staging').info(playbackKey));if(present.error||!present.data)throw error;
+   const adopted=await adoptStoredClip(playbackKey,join(dir,'stored.mp4'),clip!);
+   metadata={...metadata,...adopted.metadata};bytes=adopted.bytes;
+   console.info(JSON.stringify({event:'clip_output_adopted',mediaId:id,attempt:claimed.attempts}));
+  }
  }else{metadata=await dependencies.probe(file,limits,signal);bytes=(await stat(file)).size;}
  if(bytes>limits.maxBytes)throw new MediaError('FILE_TOO_LARGE');if(signal.aborted)throw new MediaError('PROCESSING_TIMEOUT');
  const ready=await finish({status:'ready',stage:null,error:null,locked_until:null,storage_key:playbackKey,metadata:{...metadata,bytes,...(sourceBytes!==undefined?{sourceBytes}:{})}});return {status:ready?200:202,asset:ready??await current()};

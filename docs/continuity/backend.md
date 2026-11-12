@@ -1,3 +1,17 @@
+# Hardening de mídia pós-validação integrada do PR #19 — órfãos em retentativas — 12/11/2026 22:40 (America/Sao_Paulo), EM ANDAMENTO
+
+Estado: causa do E03 confirmada e corrigida localmente (chave de corte única por mídia + adoção verificada); inventário/dry-run, medição de TTL e docs ainda por fazer. Nada commitado ainda.
+
+Pedido atual: tratar a contabilidade física de arquivos órfãos em retentativas (E03 de `docs/validation/pr19/REPORT.md`, branch documental `codex/validacao-integrada-pr19-20261112`), URLs assinadas (TTL medido 60 s no lab x 2 h assumido) e política de limpeza (inventário/dry-run primeiro). SEM merge, deploy, migration produtiva, flags, PR B/C, exclusão de dados reais ou alteração da branch do PR #19.
+
+Local: branch `fix/backend-orfaos-retentativa-20261112`, worktree `F:/projetos/nadesCs2/.claude/worktrees/orfaos-retentativa`, base = 352c0e1 (SHA aprovado do PR #19; `feat/colaboracao-identidade` NÃO foi tocada). Push: pendente.
+
+Feito: (1) baseline no SHA aprovado: typecheck OK, 267/267. (2) Teste RED que reproduz E03 em PGlite (físico 90.000 B x cobrado 70.000 B). (3) Correção em `backend/src/inline.ts` + `clip-storage.ts`: `clipOutputKey` = `<id>/clip.mp4` (antes `clip-<tentativa>.mp4`), `upsert:false` mantido, e se a gravação falha porque o objeto já existe ele é baixado, validado (probe + duração do intervalo + limite de bytes) e adotado com os bytes reais; nunca sobrescreve nem apaga. (4) Matriz de 12 testes em `backend/tests/clip-retry-accounting.test.ts` (+ `tests/support/clip-lab.ts`): contra o `src/` original 9 falham e 3 passam (guardas); com a correção 12/12.
+Retomar: `git status`; rodar `cd backend && npm test`; seguir com inventário read-only (`backend/src/storage-inventory.ts` + script), medição de TTL, docs e validação em Docker novo (sufixo r7 ou outro, sem tocar nas stacks r1–r6).
+Não validado ainda: Storage/FFmpeg reais, suíte completa pós-mudança, CI.
+
+---
+
 # PR #19 — correções finais R1/R2/R3 (segunda revisão, SHA revisado cd627de) — 12/11/2026, IMPLEMENTADO E TESTADO LOCALMENTE (commit/push/CI ver entrega)
 
 Estado: R1 (worker-transcode: contribuidor bloqueado na API, fila do worker e trava no banco `CONTRIBUTOR_STORAGE_UNACCOUNTED`), R2 (admissão atômica de pendentes ao entrar em queued/processing, no trigger de UPDATE) e R3 (ordem do rollback no cabeçalho do SQL + teste de compatibilidade; sem código de fallback) implementados. Backend 267/267, typecheck OK, smokes HE 10 e andares 18 PASS. Concorrência multiconexão H (R2) em PostgreSQL 17.5 descartável: PASS, e falha 25/25 sem os locks. Detalhes: docs/COLABORACAO-IDENTIDADE-20261112.md §11. Nada aplicado em Supabase/Vercel; sem merge, deploy ou flags; PR B/C não iniciados.
