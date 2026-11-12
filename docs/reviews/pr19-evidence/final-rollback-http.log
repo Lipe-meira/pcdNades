@@ -1,0 +1,15 @@
+{"level":30,"time":1794512597059,"pid":25736,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794512597086,"pid":25736,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":26.804799999999886,"msg":"request completed"}
+PROBE {"backend":"8776ddf-with-two-migrations","status":201,"error":null}
+{"level":30,"time":1794512597092,"pid":25736,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794512597105,"pid":25736,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":13.345400000000154,"msg":"request completed"}
+PROBE {"backend":"352c0e-with-two-migrations","status":201,"error":null}
+{"level":30,"time":1794512597113,"pid":25736,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794512597121,"pid":25736,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":8.159499999999753,"msg":"request completed"}
+PROBE {"backend":"8776ddf-after-rollback2","status":201,"error":null}
+{"level":30,"time":1794512597124,"pid":25736,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+PROBE {"backend":"352c0e-after-rollback2-negative-control","status":503,"error":"SERVICE_UNAVAILABLE"}
+{"level":30,"time":1794512597128,"pid":25736,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":503},"responseTime":3.7720000000003893,"msg":"request completed"}
+{"level":30,"time":1794512597135,"pid":25736,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794512597143,"pid":25736,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.867400000000089,"msg":"request completed"}
+PROBE {"backend":"8776ddf-after-rollback2-then-rollback1","status":201,"error":null}

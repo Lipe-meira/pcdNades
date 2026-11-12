@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {pathToFileURL} from 'node:url';import {join} from 'node:path';import {tmpdir} from 'node:os';
+import {createDb,ids,seedUsers} from 'file:///F:/projetos/nadesCs2-review-pr19-final/backend/tests/support/pg.ts';
+import {createSupabaseOverPg} from 'file:///F:/projetos/nadesCs2-review-pr19-final/backend/tests/support/supabase-pg.ts';
+import {buildApp as newApp} from 'file:///F:/projetos/nadesCs2-review-pr19-final/backend/src/application.ts';
+const {buildApp:oldApp}=await import(pathToFileURL(join(tmpdir(),'pcdnades-pr19-final-main-8776ddf/backend/src/application.ts')).href);
+for(const k of ['CONTRIBUTORS_ENABLED','CONTRIBUTOR_UPLOADS_ENABLED','CONTRIBUTOR_IMPORTS_ENABLED'])process.env[k]='false';process.env.MEDIA_UPLOAD_ENABLED='true';process.env.MEDIA_TIKTOK_ADMIN_USER_ID=ids.admin;process.env.MEDIA_PROCESSOR_MODE='inline-original';
+const db=await createDb();await seedUsers(db);const sb=createSupabaseOverPg(db,{admin:{sub:ids.admin,anonymous:false}});const deps={available:()=>true,extract:async()=>({metadata:{provider:'tiktok',sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766',videoId:'7701366996495125766',title:'Test',author:'Test',durationSeconds:60} as any})};
+async function inspect(factory,label,expected){const app=factory(sb.clients,deps);const r=await app.inject({method:'POST',url:'/api/v1/media/imports/inspect',headers:{authorization:'Bearer admin'},payload:{sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766'}});assert.equal(r.statusCode,expected,r.body);console.log('PROBE '+JSON.stringify({backend:label,status:r.statusCode,error:expected===201?null:r.json().error.code}));await app.close();}
+await inspect(oldApp,'8776ddf-with-two-migrations',201);await inspect(newApp,'352c0e-with-two-migrations',201);
+const rb='F:/projetos/nadesCs2-review-pr19-final/backend/rollbacks/';await db.exec(await readFile(rb+'20261112180000_contributor_storage_and_import_pools_rollback.sql','utf8'));
+await inspect(oldApp,'8776ddf-after-rollback2',201);await inspect(newApp,'352c0e-after-rollback2-negative-control',503);
+await db.exec(await readFile(rb+'20261112120000_contributors_authorship_rollback.sql','utf8'));
+await inspect(oldApp,'8776ddf-after-rollback2-then-rollback1',201);await db.close();

@@ -1,3 +1,53 @@
+# Checkpoint — orchestrator: revisão final independente PR #19
+
+Atualizado em: 12/11/2026, America/Sao_Paulo. Estado: concluído (revisão, sem implementação).
+
+## Objetivo e pedido atual
+Validar exclusivamente R1/R2/R3 no delta cd627de→352c0e e regressões diretas. Sem alterações de código/migrations do PR, main, flags, produção ou deploy. Parecer separado para fundação inativa e ativação pública.
+
+## Localização do trabalho
+- Branch documental codex/revisao-pr19-20261112; worktree F:/projetos/nadesCs2-review-pr19. Base desta entrega5c4908c; código dessa branch não atualizado nem editado nesta etapa.
+- Código testado em worktree separada DETACHED F:/projetos/nadesCs2-review-pr19-final, HEAD352c0e177602fc1e6e79fe817960f92c76286f43; status limpo. Base PR/main8776ddf; anterior revisado cd627de000a1f0467f2cd7e69052d20ffb47177b.
+- Commit documental desta entrega: consultar git log -1; push normal junto da entrega para origin/codex/revisao-pr19-20261112. PR/main não alterados.
+- Arquivos da entrega: este checkpoint, docs/reviews/PR19-SECURITY-20261112.md (nova conclusão no topo, histórico preservado); docs/reviews/pr19-evidence/final-{focused-tests.log,all-tests.log,concurrency-summary.log,repeated-complete.log,rollback-http.log,repeated-complete.mts.txt,rollback-http.mts.txt}.
+
+## Feito
+- R1: API recusa contribuidor em worker-transcode, fila nunca reivindica mídia colaborativa, trigger recusa cenário de ready com chave nova/saída subcontabilizada. Fluxo administrativo local preservado.
+- R2: duas antigas+nova respeitam admissão; multiconexão H25/25, máximo2 pendentes por contribuidor, sem exclusão nem perda de bytes. Sondagem própria12 completes concorrentes rejeitados429 e12 repetidos em processing202 sem nova tentativa/download.
+- R3: runbook exige backend compatível antes de rollback2→1. Executados backends REAIS main8776ddf e novo352c0e por HTTP/adaptador: ambos201 com schema completo, antigo201 após cada rollback; novo503 após rollback2 como controle negativo esperado.
+- Nenhum achado novo concreto no delta. S1/S2/S3/autoria/edição/exclusão administrativa sem regressão nos testes executados.
+
+## Em andamento
+Nada em implementação. Relatório/evidências concluídos; sem correções. Dependências backend/node_modules próprias da worktree final. Fontes antigas exportadas em TEMP/pcdnades-pr19-final-main-8776ddf para prova de rollback. Sondagens temporárias e log integral PostgreSQL preservados; cluster próprio encerrado. Nenhum banco/volume/backup preexistente utilizado ou apagado.
+
+## Retomar daqui
+1. Conferir git status/branch/HEAD e ler a conclusão352c0e no topo do relatório.
+2. Fundação inativa: respeitar as duas migrations antes do novo backend e coordenação do auto-deploy antes de eventual merge autorizado.
+3. Ativação: executar checklist Supabase descartável do relatório; não interpretar este GO como autorização de publicação ou flags.
+
+## Decisões e contrato
+- GO técnico para fundação inativa com três flags false e schema compatível; nenhum bloqueador novo de código nem motivo novo para devolver ao Sonnet no escopo.
+- NO-GO para ativação pública até validar Auth/PostgREST/Storage, FFmpeg/worker físico, concorrência pela API real e rollout/rollback.
+- CI verde não prova integração. Não reabrir auditoria extensa nem repetir achados históricos como se continuassem sem correção.
+- Rollback1 perde autoria/vínculos; rollback2 perde contabilidade. Atualizar também processos worker para versão compatível antes de remover schema, se estiverem em uso.
+- Migration2 foi editada no lugar: bancos descartáveis com conteúdo anterior precisam reconstrução/atualização controlada; timestamp sozinho não prova correção.
+
+## Validação
+- Focada111/111 PASS (inclui19 novos); completa267/267 PASS, sem skips/falhas; typecheck PASS.
+- PostgreSQL17.5 multiconexão8/8 PASS, máximo400MB contabilizados e zero deadlocks; H25 rodadas. Cluster novo/porta55449. Sem Supabase/Auth/PostgREST/Storage reais.
+- Sondagens próprias de HTTP repetido (12×429,12×202) e matriz backend antigo/novo/rollback executadas, zero rede externa/extrator real.
+- CI Linux do head verde run43288438807, conferido no GitHub junto com head/base no fim.
+- Não executado: Supabase descartável, FFmpeg/storage físico, provedores reais, tokens/expiração reais, ensaio de restauração produtiva. Sem consultas novas a produção/Vercel nesta revisão final.
+
+## Bloqueios e dependências
+Nenhum bloqueador novo de código para fundação inativa. Publicação continua dependendo de sequência autorizada/schema; ativação depende da lista integrada do relatório e decisões sobre antiabuso/limpeza/capacidade.
+
+## Entrega e histórico curto
+- PR https://github.com/Lipe-meira/pcdNades/pull/19 head352c0e confirmado, não modificado.
+- Revisões anteriores preservadas8ca07a8/3967d67/5c4908c; revisão final documental na mesma branch. Nenhuma mudança na implementação, migrations do PR, flags ou produção.
+
+---
+
 # Checkpoint — orchestrator: revalidação independente PR #19
 
 Atualizado em: 12/11/2026, America/Sao_Paulo. Estado: concluído (revisão, sem correções).
