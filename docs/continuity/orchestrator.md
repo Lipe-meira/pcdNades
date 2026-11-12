@@ -1,3 +1,74 @@
+# Checkpoint — orquestrador / revisão independente do PR #20
+
+Atualizado em: 12/11/2026 20:18 (America/Sao_Paulo)
+Estado: concluído — NO-GO para integração do HEAD revisado; documentação entregue em branch própria.
+
+## Objetivo e pedido atual
+
+Revisar independentemente PR #20 empilhado sobre #19: bytes físicos/SQL, chave/upsert, adoção, lease/concorrência, inventário read-only, TTL, compatibilidade administrativa e regressões. Registrar gravidade, evidências, reprodução e correções, sem modificar implementação/PRs, fazer merge/deploy/migration ou alterar produção.
+
+## Localização do trabalho
+
+- Branch: `codex/revisao-pr20-20261112`.
+- Worktree próprio: `F:/projetos/nadesCs2-review-pr20` (nenhuma branch/worktree de outro chat alterada).
+- Base/último commit de implementação revisado: `e5add826b4affb14b4390c5f42c43184ac814796` (PR #20).
+- Base empilhada/merge-base: `352c0e177602fc1e6e79fe817960f92c76286f43` (PR #19).
+- Commit documental desta entrega: consultar `git log -1` nesta branch; mensagem `docs(revisao): registra parecer independente do PR 20` (evita autorreferência de SHA no arquivo).
+- Push: branch própria `origin/codex/revisao-pr20-20261112`; igualdade HEAD/upstream conferida na entrega. Sem PR novo e sem push para main ou branches dos PRs #19/#20.
+- Arquivos relevantes desta entrega: `docs/REVISAO-PR20-20261112.md`, `docs/validation/pr20-review/REPRODUCAO.md`, `docs/validation/pr20-review/observacoes.json`, este checkpoint.
+- Mudanças não commitadas ao encerrar: nenhuma. Dependências e índice `.gitnexus` são locais/ignorados; três arquivos temporários de reprodução/log foram removidos após preservar código/resultados em documentação.
+
+## Feito
+
+- Lidos README, continuidade e checkpoints backend/orquestrador, template, diff completo de 33 arquivos, fontes/testes/SQL/chamadores e evidências do laboratório (incluindo rodadas anteriores falhas).
+- Parecer NO-GO com dois P2 reproduzidos: R1 adoção publica MP4 truncado que passa probe e falha decode; R2 download temporariamente indisponível na adoção persiste failed terminal, impedindo novo complete de recuperar objeto válido.
+- Verificado desenho positivo: chave única/upsert false e bytes reais corrigem divergência; corrida com dois módulos isolados preserva linha/objeto publicado e físico=cobrado.
+- Inventário/TTL sem bloqueador novo: read-only, referências/fontes preservadas, candidatos condicionados, capacidade de sonda sem upload/log de segredo. Riscos residuais documentados separadamente.
+- Conferidos hashes de fontes (LF/CRLF) e quatro somas físicas do laboratório: PR #19 +55.820 B nos F1/F2; correção 0 B. Evidência reaproveitada, sem reexecutar Docker ou operações remotas.
+- Grafo/PDG indexado no HEAD; context/impact/detect/explain/pdg consultados; dois especialistas auxiliares read-only conferiram diagnóstico e calibração; crítica final PASS.
+- PR #20 reconferido aberto, não mergeado, mesmos SHAs de base/head. Nenhum comentário/review postado nos PRs.
+
+## Em andamento
+
+Nada de implementação. Somente conclusão documental e conferência do push desta entrega.
+
+## Retomar daqui
+
+1. Conferir `git status`, branch/log/upstream e este checkpoint. Ler `docs/REVISAO-PR20-20261112.md` e confirmar se PR #20 ainda está em e5add82.
+2. Se houver nova solicitação e SHA com correções, revisar R1/R2 e seus testes focados, preservando chave determinística/upsert false/fencing/reservas. Esta revisão não autoriza editar a implementação.
+3. Avaliar integração somente após resolver os dois P2; tratar ativação pública e seus gates operacionais como decisão separada, sem inferir autorização de merge, deploy, migration ou serviços.
+
+## Decisões e contrato
+
+- Confirmado: documentação apenas; NO-GO de integração por dois P2 funcionais, sem alegação de vulnerabilidade crítica/escrita arbitrária por contribuidor.
+- Correções propostas: decode integral bounded sobre objeto adotado; tratar infraestrutura transitória como recuperável sob fencing/limite de tentativas, sem reabrir failed indiscriminadamente.
+- Preservar chave `<id>/clip.mp4`, `upsert:false`, objetos existentes, seleção imutável e cobrança conservadora.
+- Riscos residuais de ativação: duas instâncias reais, import/worker por tentativa, TTL produtivo/tokens históricos, backfill após reaplicação, antiabuso/gateway/capacidade/dispositivos/restauração produtiva.
+
+## Validação
+
+- `npm ci --ignore-scripts` e `npm run typecheck`: PASS, somente neste worktree.
+- 58 testes de inline/adoção/inventário/TTL/API e 73 de Storage/identidade/hardening/admin/mídia/playback/concorrência/manutenção: 131 PASS, 0 FAIL. Comandos exatos e ressalva sobre um nome inexistente ignorado pelo runner no relatório.
+- Probes adicionais: MP4 sintético 68.903→44.786 B, probe real aceita 2 s mas decode real falha e adoção termina ready; falha única no download gera failed sem retomada; corrida de módulos independentes novo=200/antigo=202 e físico=cobrado=71.500 B; três guards CLI saem 2 antes de conectar, com env sintética.
+- Reproduções usam PGlite real em processo com Storage/trim simulados; não declarar Supabase E2E ou duas instâncias hospedadas. FFmpeg/ffprobe reais apenas onde descrito.
+- Índice grafo contém avisos de truncamento e colisão/resolução de nomes; taint sem achados não prova segurança. Launcher gerado falhou instalação nativa ao pedir help; MCP operou normalmente.
+- Não repetidos: suíte completa 304/mutações/laboratório real, porque evidências existentes bastavam para os casos normais. Não executados: remoto, Docker, produção, importador externo, frontend/browser/dispositivos.
+- `git diff --check` PASS; diff de backend/src/tests/scripts/migrations/frontend contra e5add82 vazio. Evidências JSON adicionais verificadas. Status/upstream conferidos no fechamento.
+
+## Bloqueios e dependências
+
+- R1 e R2 bloqueiam aprovação desta revisão. Implementador deve corrigir e entregar novo SHA para reavaliação.
+- Nenhuma dependência impede uso do relatório. Nenhum segredo ou conteúdo de env registrado.
+- Ativação pública continua NO-GO independentemente deste conserto pontual até tratar seus requisitos operacionais.
+
+## Entrega e histórico curto
+
+- 12/11/2026: revisão de https://github.com/Lipe-meira/pcdNades/pull/20 concluída; implementação e PRs preservados, sem merge/deploy/migration.
+- Relatório: `docs/REVISAO-PR20-20261112.md`; reprodução e observações: `docs/validation/pr20-review/`; checkpoint nesta seção.
+- Histórico anterior do orquestrador preservado abaixo; não representa estado remoto recém-verificado.
+
+---
+
 # Publicação colaborativa — PR A (backend/banco) — 12/11/2026
 
 Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.

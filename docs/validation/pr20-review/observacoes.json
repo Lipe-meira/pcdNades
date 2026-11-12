@@ -1,0 +1,70 @@
+{
+  "reviewedHead": "e5add826b4affb14b4390c5f42c43184ac814796",
+  "scope": "local synthetic; PGlite and simulated Storage; real FFmpeg/probe for integrity fixture",
+  "corruptAdoption": {
+    "originalBytes": 68903,
+    "truncatedBytes": 44786,
+    "probeMetadata": {
+      "durationSeconds": 2,
+      "width": 320,
+      "height": 240,
+      "mimeType": "video/mp4"
+    },
+    "fullDecodeFails": true,
+    "status": "ready",
+    "storageKey": "12d42b4d-c025-441e-9aae-b2b54966d130/clip.mp4",
+    "chargedBytes": 94786
+  },
+  "temporaryReadFailure": {
+    "afterFault": "failed",
+    "error": "STORAGE_UNAVAILABLE",
+    "afterRecovery": "failed",
+    "attempts": 2,
+    "retryDidNoWork": true,
+    "physicalAndCharged": {
+      "physical": 70000,
+      "charged": 100000000,
+      "keys": [
+        "dc414b63-e227-4259-83e4-e76e99fb4918/clip.mp4",
+        "dc414b63-e227-4259-83e4-e76e99fb4918/source.mp4"
+      ]
+    }
+  },
+  "isolatedModuleRace": {
+    "fresh": 200,
+    "late": 202,
+    "attempts": 2,
+    "publishedRowUnchanged": true,
+    "physicalAndCharged": {
+      "physical": 71500,
+      "charged": 71500,
+      "keys": [
+        "29ebb8c9-b74e-42ff-a995-abb28f76807c/clip.mp4",
+        "29ebb8c9-b74e-42ff-a995-abb28f76807c/source.mp4"
+      ]
+    }
+  },
+  "cliGuards": [
+    {
+      "script": "measure-upload-url-ttl.ts",
+      "args": [],
+      "status": 2,
+      "stderr": "Trava: defina CONFIRM_TARGET_HOST=127.0.0.1:1 para confirmar que este é o ambiente a medir."
+    },
+    {
+      "script": "storage-inventory.ts",
+      "args": [
+        "--signed-url-ttl-seconds",
+        "60"
+      ],
+      "status": 2,
+      "stderr": "Trava: defina CONFIRM_TARGET_HOST=127.0.0.1:1 para confirmar o banco a inventariar."
+    },
+    {
+      "script": "storage-inventory.ts",
+      "args": [],
+      "status": 2,
+      "stderr": "Informe --signed-url-ttl-seconds com o TTL efetivo medido (scripts/measure-upload-url-ttl.ts)."
+    }
+  ]
+}
