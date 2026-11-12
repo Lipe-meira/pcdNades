@@ -1,6 +1,14 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readMediaLimits} from '../src/config.js';
+import {readMediaLimits,readContributorsEnabled,readContributorImportsEnabled} from '../src/config.js';
+test('flags de contribuidores: padrão desligado, só true/false, importação exige contribuidores',()=>{
+ assert.equal(readContributorsEnabled({}),false);assert.equal(readContributorImportsEnabled({}),false);
+ assert.equal(readContributorsEnabled({CONTRIBUTORS_ENABLED:'true'}),true);assert.equal(readContributorsEnabled({CONTRIBUTORS_ENABLED:'false'}),false);
+ for(const value of ['','TRUE','1','yes',' true'])assert.throws(()=>readContributorsEnabled({CONTRIBUTORS_ENABLED:value}),/CONTRIBUTORS_ENABLED/);
+ assert.equal(readContributorImportsEnabled({CONTRIBUTORS_ENABLED:'true',CONTRIBUTOR_IMPORTS_ENABLED:'true'}),true);
+ assert.throws(()=>readContributorImportsEnabled({CONTRIBUTOR_IMPORTS_ENABLED:'true'}),/exige CONTRIBUTORS_ENABLED/);
+ assert.throws(()=>readContributorImportsEnabled({CONTRIBUTORS_ENABLED:'true',CONTRIBUTOR_IMPORTS_ENABLED:'maybe'}),/CONTRIBUTOR_IMPORTS_ENABLED/);
+});
 import {buildApp} from '../src/application.js';
 test('limits have documented defaults and accept explicit overrides',()=>{
  assert.deepEqual(readMediaLimits({}),{maxBytes:50000000,maxDurationSeconds:90});

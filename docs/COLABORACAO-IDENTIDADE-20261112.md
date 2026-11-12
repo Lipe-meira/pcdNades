@@ -93,11 +93,42 @@ Estourou: `P0001` com `CONTRIBUTOR_QUOTA_EXCEEDED` → API devolve `429`. Admini
 - Sessão anônima perdida = autoria inacessível até o PR C; admin continua podendo editar.
 - Cotas por contribuidor não impedem muitos contribuidores falsos (ver §6.2).
 - `author_id` (uuid opaco) é legível pela API pública do PostgREST (`select=*` anônimo) como todo o resto de `grenades`; não concede nenhuma autoridade e não é o uid de login.
+- Importação por link para contribuidores (flag, desligada): `reserve_import_source` limita 50 reservas/hora **globais**; um contribuidor sozinho (20/h) pode consumir 40% e dois esgotam, travando a importação do administrador por até 1 hora. Por isso a flag nasce desligada; antes de ligá-la, separar a cota global por papel (PR próprio).
+- Sem moderação de conteúdo além de o administrador poder editar/excluir; título e instruções de contribuidor são texto livre (a interface React escapa; qualquer outro consumidor precisa escapar também).
 - A validação do JWT é remota a cada requisição (como hoje): mais latência, mas token revogado/usuário apagado falha imediatamente.
 - Concorrência das cotas é garantida por lock consultivo em PostgreSQL real; o PGlite dos testes tem uma única conexão, então a corrida multi-conexão **não** foi exercitada.
 - Os testes de API usam PostgreSQL real (PGlite) com um adaptador mínimo no lugar do PostgREST; não há GoTrue, PostgREST nem Storage reais. Não equivalem a teste no ambiente Supabase.
 
-## 8. PR C — recuperação opcional (desenho, não implementado)
+## 8. Testes e verificações
+
+Arquivos: `backend/tests/contributors-sql.test.ts` (19, banco), `backend/tests/contributors-api.test.ts` (17, API), `backend/tests/config.test.ts` (+1, flags), apoio em `backend/tests/support/` (`pg.ts`: PostgreSQL real em PGlite com papéis/JWT/privilégios no estilo Supabase; `supabase-pg.ts`: adaptador mínimo que executa as consultas do backend nesse banco com o papel e o JWT de cada cliente).
+
+| # pedido | Cobertura |
+| --- | --- |
+| 1 A publica | API: "A publica" (autoria do servidor; corpo com `authorId`/`author_id`/`ownerId` → 400) |
+| 2 A edita a sua | API: "A edita a própria granada" (+ conflito de revisão e corrida entre duas edições) |
+| 3 B edita a de A → 403 | API: mesma suíte; a linha não muda |
+| 4 B não assume a autoria | API (PATCH com `authorId` → 400) + banco (`author_id` imutável, inclusive para `service_role`; NULL→valor proibido) |
+| 5 A exclui a própria → 403 | API ("ninguém exclui…"; também B e anônimo sem apelido) + banco (RLS: dono anônimo não apaga direto) |
+| 6 Admin edita A e B | API: "admin edita…" (autor continua sendo A/B; publicação de admin sem autor) |
+| 7 Admin exclui A e B | API: "ninguém exclui…" (204) |
+| 8 sem sessão → 401 | API: "visitante sem sessão" (publicar, editar, excluir, upload, `/me`, token inválido) |
+| 9 apelido não altera permissões | API: renomear (inclusive para o apelido de outro) mantém autoria e 403 |
+| 10 vídeo de outra pessoa | API: criação e edição → 403 `VIDEO_NOT_OWNED`; banco: trigger recusa mesmo com bug da API |
+| 11 reedição respeita dono | API: "reedição de corte…" (próprio ok; alheio/legado → 403; admin ok; admin não troca por vídeo de OUTRO contribuidor) |
+| 12 falha de upload/importação | API: upload sem arquivo → `complete` 409; mídia não pronta → `VIDEO_NOT_READY`; publicação existente intacta (revisão e vídeo iguais) |
+| 13 registros antigos | API + banco: legado legível, `author: null`, só admin edita; migration deixa linhas, policies, grants e RLS idênticos (exceto `grenades_insert`) |
+| 14 recuperação | **Não aplicável neste PR** (recuperação é o PR C). Fica pendente. |
+
+Extras: importação por link fechada por padrão e presa ao dono (fonte inspecionada por A não vira importação de B); cotas por hora/dia/granada/global (429); RLS isolada com triggers desligados para provar que a política sozinha nega; rollback testado; backend antigo continua inserindo após a migration; resposta pública sem ids de contribuidor/login.
+
+Execução (12/11/2026, Windows/Node 24, esta worktree): `npm --prefix backend test` → 192/192 (155 anteriores + 37 novos); `npm --prefix backend run typecheck` OK; smokes legados `map-levels-migration-smoke.mjs` (18 checagens, corrigido para não exigir ser a última migration) e `he-migration-smoke.mjs` (10) PASS via PGlite.
+
+Mutação manual (defesa removida → teste falha): checagem de dono no PATCH (3 testes), `ownMedia` aceitando mídia sem dono (1), ignorar `is_anonymous` (1), dono em `GET /media/:id` e `complete` (2). Todas revertidas.
+
+Não executado: teste contra Supabase real (Auth anônimo, PostgREST, Storage), concorrência multi-conexão, ensaio da migration sobre restauração do dump de produção, frontend contra a API nova (compatibilidade por inspeção: `apiContracts.ts` não rejeita chaves extras).
+
+## 9. PR C — recuperação opcional (desenho, não implementado)
 
 - Código de 160 bits (CSPRNG, base32), mostrado uma única vez; no banco só `HMAC-SHA256(pepper, código)` em `contributor_recovery_codes(contributor_id, code_hash unique, created_at, used_at, revoked_at)`. Nada em log.
 - `POST /recovery/redeem` com a sessão anônima **nova** + código: busca por hash, compara em tempo constante, e numa RPC única e transacional marca `used_at` (condicionado a `used_at is null and revoked_at is null`) e insere o vínculo `(nova sessão → contributor)`. Uso concorrente: só um vence.

@@ -1,3 +1,9 @@
+# Publicação colaborativa — PR A (backend/banco) — 12/11/2026
+
+Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.
+
+---
+
 # Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
 
 Autorizada pelo responsável e aplicada uma única vez com apply_migration no projeto kdyzxxgzvgiffluyjjxu; registrada pelo Supabase como 20261111031252 map_levels (arquivos da migration e do rollback renomeados no repositório, conteúdo idêntico). Pré e pós-checagens aprovadas: 15 granadas, 21 mídias, 17 objetos, hash das linhas de grenades, policies, grants, triggers e RLS iguais ao backup release-20261111-nuke-premigration; colunas origin_level/target_level criadas e vazias; checks validados. Sem alterar dados nem limpar Storage. PR #14 segue aberto, SEM merge e SEM deploy (frontend/backend publicados ainda ignoram as colunas novas). Próximo: autorização para o merge do PR #14, conferência dos deployments pcdnades e pcdnades-api e smoke na Nuke.

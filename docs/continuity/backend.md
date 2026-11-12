@@ -1,4 +1,6 @@
-# Colaboração — PR A (identidade, autoria e autorização) — 12/11/2026, EM ANDAMENTO
+# Colaboração — PR A (identidade, autoria e autorização) — 12/11/2026, CONCLUÍDO LOCALMENTE (aguardando push/PR e aprovação para PR B)
+
+Atualização: API implementada (`resolveActor`, `/contributors`, `/me`, `/me/grenades`, propriedade em PATCH/mídia/importação, flags `CONTRIBUTORS_ENABLED`/`CONTRIBUTOR_IMPORTS_ENABLED`). `npm --prefix backend test` 192/192, typecheck OK, smokes legados andares/HE PASS. Mutação manual validada. Cobertura dos 14 testes e limitações em `docs/COLABORACAO-IDENTIDADE-20261112.md` §8 (teste 14 = PR C). Próximo: push da branch, PR, relatório; PR B/C só com aprovação do usuário. O texto abaixo é o registro anterior desta tarefa.
 
 Pedido: sistema colaborativo (amigos publicam com apelido, sem e-mail/senha, via Auth anônimo do Supabase). Entregar só o PR A (backend/banco), parar e aguardar aprovação antes de interface (PR B) e recuperação (PR C). Proibido: migration em produção, deploy, merge, force push, dados de teste em produção.
 

@@ -7,8 +7,9 @@ const db=new PGlite();let checks=0;const ok=()=>checks++;
 const pre="create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql as $$select null::uuid$$;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);alter default privileges in schema public grant all on tables to service_role;";
 try{
  await db.exec(pre);
- const files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
- const name='20261111031252_map_levels.sql';assert.equal(files.at(-1),name,'a migration de andares deve ser a última');
+ const name='20261111031252_map_levels.sql';
+ // Migrations posteriores (ex.: contribuidores) não fazem parte deste ensaio: ele valida a de andares sobre o esquema anterior a ela.
+ const files=(await readdir(dir)).filter(f=>f.endsWith('.sql')&&f<=name).sort();assert.equal(files.at(-1),name,'a migration de andares deve ser a última do ensaio');
  for(const f of files.slice(0,-1))await db.exec(await readFile(`${dir}/${f}`,'utf8'));
  // Produção tem a Nuke cadastrada em public.maps (as migrations locais só semeiam 3 mapas).
  await db.query("insert into public.maps(id,name,radar) values('nuke','Nuke','{\"imageUrl\":\"/maps/valve/nuke.png\",\"width\":1024,\"height\":1024,\"coordinateVersion\":\"valve-nuke-v1\"}')");
