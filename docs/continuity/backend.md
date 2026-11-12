@@ -1,4 +1,6 @@
-# PR #20 — correções finais R1/R2 da revisão independente (SHA revisado e5add82) — 12/11/2026 23:50 (America/Sao_Paulo), IMPLEMENTADO E VALIDADO (aguardando push/CI e aprovação)
+# PR #20 — correções finais R1/R2 da revisão independente (SHA revisado e5add82) — 12/11/2026 23:50 (America/Sao_Paulo), IMPLEMENTADO, VALIDADO E ENVIADO (aguardando aprovação)
+
+Entrega: PR #20 atualizado (https://github.com/Lipe-meira/pcdNades/pull/20, sem merge). Código R1/R2 em 7e2fb4f; SHA validado pelo CI f85493e, CI Linux "Build, testes e ffprobe empacotado" PASS (run 43332085109: 322/322, 0 pulados, testes com FFmpeg real executados). Commits posteriores só tocam o checkpoint.
 
 Estado: R1 (adoção sem decodificação integral) e R2 (falha temporária virava failed terminal) corrigidas em `backend/src/inline.ts` + `backend/src/trimming.ts` (commit 7e2fb4f; docs/evidências no commit seguinte). Backend 322/322, typecheck limpo, 12 mutações detectadas. Laboratório novo `-r72` (serviços reais): fluxo documentado 29 PASS; SHA revisado reproduz R1 (MP4 truncado publicado ready) e R2 (failed terminal); correção 8/8 (inclui corrida real e esgotamento). Relatório: docs/REVISAO-PR20-20261112.md (branch codex/revisao-pr20-20261112, só leitura). Seção §11 de docs/ORFAOS-RETENTATIVAS-20261112.md. Sem merge, deploy, migration, flags, PR #19 intacto. PARAR e aguardar aprovação.
 
