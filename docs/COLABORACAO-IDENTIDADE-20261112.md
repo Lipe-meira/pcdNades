@@ -73,7 +73,7 @@ Códigos: não autenticado `401`, sem permissão `403`, granada inexistente `404
 - granadas criadas: 30 por dia;
 - teto global de mídias de contribuidores: 200 por dia.
 
-Estourou: `P0001` com `CONTRIBUTOR_QUOTA_EXCEEDED` → API devolve `429`. Administradores (sem `contributor_id`) não são afetados. Os valores estão em `private.contributor_quota()`. Não existe limpeza automática de uploads abandonados; o teto diário limita o dano, mas o plano gratuito (1 GB de Storage) continua sensível: monitorar e, se necessário, adicionar expurgo em PR próprio.
+Estourou: `P0001` com `CONTRIBUTOR_QUOTA_EXCEEDED` → API devolve `429`. Administradores (sem `contributor_id`) não são afetados. Os valores estão em `private.contributor_quota()`. Limites de BYTES, pendentes e abandonados (S1) estão no §10; não existe limpeza automática de uploads abandonados (de propósito, §10.3).
 
 ## 5. Estratégia para os dados existentes
 
@@ -86,17 +86,18 @@ Estourou: `P0001` com `CONTRIBUTOR_QUOTA_EXCEEDED` → API devolve `429`. Admini
 
 1. Habilitar *Anonymous sign-ins* no Supabase Auth (painel) — **não feito**.
 2. Ativar CAPTCHA (Turnstile/hCaptcha) para logins anônimos e conferir o limite por IP do Auth: sem isso, quem cria milhares de sessões anônimas multiplica as cotas. Esta é a principal limitação de abuso e não se resolve no backend.
-3. Variáveis novas (todas opcionais, padrão desligado): `CONTRIBUTORS_ENABLED`, `CONTRIBUTOR_IMPORTS_ENABLED`.
+3. Variáveis novas (todas opcionais, padrão desligado): `CONTRIBUTORS_ENABLED`, `CONTRIBUTOR_UPLOADS_ENABLED` (exige a primeira), `CONTRIBUTOR_IMPORTS_ENABLED` (exige a primeira).
+4. Conferir no projeto real o bucket `videos-staging` (privado, `file_size_limit` ≤ 50.000.000, apenas `video/mp4`): a migration inicial só cria o bucket se ele não existir (`on conflict do nothing`), então um bucket antigo com configuração diferente derrota o orçamento de bytes (§10).
 
 ## 7. Riscos e limitações conhecidos
 
 - Sessão anônima perdida = autoria inacessível até o PR C; admin continua podendo editar.
 - Cotas por contribuidor não impedem muitos contribuidores falsos (ver §6.2).
 - `author_id` (uuid opaco) é legível pela API pública do PostgREST (`select=*` anônimo) como todo o resto de `grenades`; não concede nenhuma autoridade e não é o uid de login.
-- Importação por link para contribuidores (flag, desligada): `reserve_import_source` limita 50 reservas/hora **globais**; um contribuidor sozinho (20/h) pode consumir 40% e dois esgotam, travando a importação do administrador por até 1 hora. Por isso a flag nasce desligada; antes de ligá-la, separar a cota global por papel (PR próprio).
+- Importação por link para contribuidores (flag, desligada): o acoplamento de cotas com o administrador foi corrigido (§10.2); restam riscos operacionais descritos lá (slot único, prévias, falhas externas).
 - Sem moderação de conteúdo além de o administrador poder editar/excluir; título e instruções de contribuidor são texto livre (a interface React escapa; qualquer outro consumidor precisa escapar também).
 - A validação do JWT é remota a cada requisição (como hoje): mais latência, mas token revogado/usuário apagado falha imediatamente.
-- Concorrência das cotas é garantida por lock consultivo em PostgreSQL real; o PGlite dos testes tem uma única conexão, então a corrida multi-conexão **não** foi exercitada.
+- Concorrência das cotas e dos orçamentos é garantida por lock consultivo; o PGlite dos testes tem uma única conexão. A corrida multiconexão foi exercitada **à parte**, em PostgreSQL 17.5 real descartável (`backend/scripts/contributor-concurrency-real-pg.mjs`, §10.5), mas NÃO no Supabase.
 - Os testes de API usam PostgreSQL real (PGlite) com um adaptador mínimo no lugar do PostgREST; não há GoTrue, PostgREST nem Storage reais. Não equivalem a teste no ambiente Supabase.
 
 ## 8. Testes e verificações
@@ -135,3 +136,73 @@ Não executado: teste contra Supabase real (Auth anônimo, PostgREST, Storage), 
 - Limites: por IP, por uid anônimo e global de falhas, com bloqueio progressivo; resposta idêntica para código inexistente/usado/revogado.
 - Após o resgate o código morre; emitir outro exige sessão já vinculada. Revogar vínculos antigos é opcional (decidir no PR C).
 - Nenhuma granada/vídeo é reescrito, graças ao contribuidor como dono estável.
+
+## 10. Correções da revisão independente do PR #19 (S1, S2, S3)
+
+Relatório de origem: `docs/reviews/PR19-SECURITY-20261112.md` (worktree de revisão, só leitura). Migration nova, **também não aplicada**: `backend/migrations/20261112180000_contributor_storage_and_import_pools.sql` (+ rollback), a aplicar **depois** de `20261112120000`. Aditiva: a coluna nova tem default constante e nenhuma linha existente muda.
+
+### 10.1 S1 — orçamento de bytes de Storage (ALTO)
+
+Princípio: o limite que protege o Storage é **de bytes e global**, aplicado no banco (vale até para `service_role`), e não depende do número de identidades.
+
+| Regra | Valor | Onde |
+| --- | --- | --- |
+| Reserva por mídia ao pedir upload | 50 MB (upload simples), 100 MB (upload com corte: fonte + trecho), 50 MB (importação: só o trecho é armazenado) | `private.media_charge`, coluna `media_assets.storage_charge_bytes` |
+| Pendentes por contribuidor | 2 | trigger `private.media_contributor` |
+| Pendentes globais | 10 | idem |
+| Orçamento por contribuidor | 150 MB | idem |
+| Orçamento global de contribuidores | 400 MB | idem |
+| Janela de "pendente" para `awaiting_upload` | 150 min (URL assinada de upload vale 2 h + 30 min de margem) | `contributor_quota('upload_window_minutes')` |
+
+- **Reserva atômica**: o trigger toma os advisory locks (global → contribuidor) e só então soma os bytes; a reserva é gravada na mesma linha da mídia. Não há janela entre "checar" e "reservar".
+- **Reservado × efetivamente usado**: a linha nasce com a reserva máxima; ao virar `ready` a cobrança cai para o tamanho real (`metadata.bytes`, mais `metadata.sourceBytes` quando há corte — gravado agora por `completeInline`; sem ele assume-se 50 MB). A cobrança só pode **cair**, nunca é definida nem alterada pelo chamador (testado com `service_role`).
+- **Fonte original + vídeo processado**: contabilizados juntos no upload com corte (a fonte continua no Storage). Resíduo conhecido: se uma tentativa de processamento morre depois de gravar o trecho e outra recomeça (`attempts` ≤ 3), podem sobrar até 2 trechos órfãos de ≤ 50 MB por mídia com corte; não são reservados individualmente.
+- **Uploads abandonados/não finalizados**: o *slot* de pendente libera após a janela das URLs assinadas, mas a **reserva de bytes permanece** (o objeto pode existir; uma URL ainda válida pode reenviar). Falhas (`failed`) também mantêm a reserva inteira.
+- **Várias identidades anônimas**: identidade nova ganha cota individual, mas **não amplia** o orçamento global (400 MB) nem o teto global de pendentes. O custo do abuso é bloqueio da própria contribuição (503 `CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED`), nunca consumo ilimitado nem prejuízo ao administrador (uploads do administrador não são contabilizados nem barrados).
+- **URLs assinadas**: apagar a linha **não** revoga uma URL ainda válida. Por isso nada é apagado automaticamente (§10.3). Premissas sobre o Storage real (a validar): URL de upload vale ~2 h; o backend não usa `upsert`, então um objeto existente não é sobrescrito; o bucket recusa > 50 MB e MIME diferente de `video/mp4`.
+- **Contrato HTTP**: `429 CONTRIBUTOR_PENDING_LIMIT`, `429 CONTRIBUTOR_STORAGE_EXCEEDED` (limite do próprio contribuidor) e `503 CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED` (capacidade global). Mesma tradução nas rotas comuns e nas RPCs de importação (`src/contributor-errors.ts`).
+- **Flag própria**: `CONTRIBUTOR_UPLOADS_ENABLED` (padrão `false`, exige `CONTRIBUTORS_ENABLED`). Sem ela contribuidores recebem 403 `CONTRIBUTOR_UPLOADS_DISABLED` em `POST /media/uploads` e não finalizam mídia de upload; o administrador não é afetado. **Decisão**: embora o orçamento esteja implementado e testado, a flag fica desligada porque a proteção do Storage real (limites do bucket, expiração e reuso de URLs, ocupação efetiva) não foi validada num Supabase descartável nesta etapa.
+- **Operação (somente leitura)**: `public.contributor_storage_report()` (orçamento, cobrado, pendentes, bytes de não finalizados) e `public.contributor_reclaim_candidates(p_grace_minutes)` (mídias `awaiting_upload`/`failed` de contribuidor, antigas, sem granada nem importação ativa; a carência nunca é menor que a janela das URLs). Ambas só `service_role`. **Nada apaga linha ou objeto.** Procedimento manual: remover o objeto do Storage e só então apagar a linha (a cobrança some com ela).
+
+### 10.2 S2 — importações de contribuidores × administrador (MÉDIO)
+
+- **Reservas de inspeção** (`reserve_import_source`): mantidos o limite individual de 20/h e o total de 50/h para todos. Contribuidores ganham teto próprio: **6/h cada** e **20/h somados**. Como 20 < 50, sempre sobram ≥ 30 reservas/h para o administrador; o teto individual dele (20/h) segue valendo. "Contribuidor" = dono com vínculo em `contributor_links` (o cadastro é negado a administradores na API).
+- **Slot único do processador** (inspeção, prévia e importação): `claim_import_slot(holder, seconds, owner)` aplica orçamento de **tempo** a contribuidores: **400 s/h** cada e **1200 s/h** somados (no máximo 1/3 do processador); estourou → `429 IMPORT_RATE_LIMIT` (também na prévia e na conclusão da importação). Cobra o pior caso ao assumir e devolve o tempo não usado ao liberar (`release_import_slot`). O administrador não tem esse limite. A assinatura antiga de dois argumentos continua existindo (compatibilidade), mas o backend só usa a nova.
+- **Falhas do importador**: a reserva é feita antes da extração e continua contando se ela falhar (a extração é o recurso caro); isso vale só para contribuidores e não toca a reserva do administrador.
+- **Resíduos**: (a) o slot é um só: se um contribuidor estiver executando, o administrador pode receber `503 PROCESSOR_BUSY` por até 30–120 s (transitório, não é cota); (b) o limite de trim em processo (`activeTrim`) e o de importação em processo (`active`) continuam únicos por instância; (c) prévias gravam em `import-previews` (bucket próprio, varredura de expiração já existente) e não entram no orçamento de bytes de contribuidores. `CONTRIBUTOR_IMPORTS_ENABLED` segue `false` por padrão.
+
+### 10.3 O que NÃO foi feito, de propósito
+
+Expurgo automático de uploads abandonados. Condições que precisam ser **comprovadas num Supabase descartável** antes de qualquer remoção automática: (1) validade real e não reuso da URL assinada de upload; (2) a remoção do objeto não ressuscita permissão (a URL expirada não reenvia); (3) objetos `ready` não são sobrescritos por permissões antigas; (4) o objeto removido é exatamente o da linha (nada de prefixo). Proposta: PR complementar com *reaper* idempotente, só sobre `contributor_reclaim_candidates`, com dry-run e auditoria.
+
+### 10.4 S3 — erro de cota na importação (BAIXO)
+
+`importDbResult` agora usa a mesma tradução que `checked()`: `CONTRIBUTOR_QUOTA_EXCEEDED` → 429 (antes 503 `SERVICE_UNAVAILABLE`), mais os códigos novos de §10.1. Testado para TikTok e Instagram com cota horária, diária, pendentes, bytes por contribuidor e orçamento global; a seleção é revertida (nenhuma mídia criada, `import_sources.media_id` continua nulo) e a mesma fonte funciona depois que a janela passa. Erros antigos (404/400/410/409/429 do importador) continuam iguais.
+
+### 10.5 Evidências
+
+- `npm --prefix backend test`: **248/248** (192 do PR A + 56 novos); typecheck OK; arquivos novos `contributor-storage-sql.test.ts`, `import-pools-sql.test.ts`, `contributor-hardening-api.test.ts` (PostgreSQL real via PGlite). Reproduz o achado S1 (21 autorizações/1,05 GB → no máximo 6/300 MB), o S2 (admin com 429 → continua com as suas 20/h) e o S3.
+- Mutação manual: remover cada defesa (tradução S3, limite de pendentes, orçamento global, orçamento individual, pool/teto individual de reservas, orçamento de tempo individual e somado do slot, flag de uploads, reserva de corte) faz testes falharem. Equivalente: remover o `least()` na conciliação não muda resultado (limites de entrada já impõem o teto).
+- **Concorrência multiconexão** (não é Supabase): `backend/scripts/contributor-concurrency-real-pg.mjs` sobe PostgreSQL 17.5 descartável (embedded-postgres, sem Docker) e dispara transações simultâneas com o lock seguro por 30 ms: 16 inserts do mesmo contribuidor → exatamente 2 pendentes; 20 identidades → exatamente 8 reservas (400 MB); cota horária 9→10; reservas simultâneas com administrador chegando às suas 20; 13 pedidos do slot → 1 dono; carga mista sem deadlock. Sem os advisory locks as verificações A, B, C e F falham (soma chegou a 1000 MB), o que prova que o teste enxerga a corrida. Não roda no CI.
+- Smokes legados de andares (18) e HE (10) continuam PASS.
+
+### 10.6 Riscos residuais
+
+- Sem validação no Storage real a premissa "1 URL = 1 objeto ≤ 50 MB em 2 h" é uma premissa; por isso a flag de uploads fica desligada.
+- Reservas de bytes de falhas/abandonos só se liberam por limpeza manual: um enxame de identidades pode esgotar os 400 MB e travar **contribuições** (nunca o administrador) até o operador limpar. É o preço de nunca apagar sem prova.
+- Os valores (50/100 MB, 150/400 MB, 2/10 pendentes, 6/20 reservas, 400/1200 s) são constantes na migration, escolhidas sem conhecer a capacidade livre do projeto: **conferir antes de abrir**; mudar exige migration.
+- CAPTCHA/limites de criação de sessões anônimas e crescimento de `auth.users`/`contributors` continuam dependendo da configuração do Supabase.
+- Trechos órfãos de tentativas repetidas (§10.1) e prévias (§10.2) ficam fora do orçamento.
+
+### 10.7 Validações que dependem de Supabase real descartável (não executadas)
+
+GoTrue (anônimo + CAPTCHA, `getUser`, expiração); PostgREST com chaves anon/authenticated/service_role (grants, owners, default privileges, RLS, rollback das RPCs, resolução do overload de `claim_import_slot` com 2 e 3 argumentos); Storage (expiração/reuso de URL, `upsert`, limite e MIME do bucket, sobrescrita de mídia pronta, ocupação real); ensaio migration→backend→rollback sobre restauração do dump; TikTok/Instagram reais; navegador contra a API nova.
+
+### 10.8 Divergência preexistente: duração máxima (20 s × 90 s) — NÃO alterada
+
+Valor efetivo do código: `MEDIA_MAX_DURATION_SECONDS` tem padrão e teto **90** (`backend/src/config.ts`, `.env.example`); a máquina de estados de mídia aceita `ready` com até 90 s (migration 003, que substituiu o limite de 20 s da 001); o corte importado é limitado a `min(30, MEDIA_MAX_DURATION_SECONDS)`. O limite de 20 s do produto (AGENTS.md) só vale se o ambiente definir `MEDIA_MAX_DURATION_SECONDS=20`, o que não foi verificado em produção. Correção separada necessária: conferir a variável no deploy e, se 20 s for regra firme, alinhar padrão, constraint do banco e frontend num PR próprio.
+
+### 10.9 Avaliação (duas decisões separadas)
+
+- **Merge com tudo desligado** (`CONTRIBUTORS_ENABLED`, `CONTRIBUTOR_UPLOADS_ENABLED`, `CONTRIBUTOR_IMPORTS_ENABLED` = false): sem bloqueador conhecido; ressalva: o backend novo exige as duas migrations (aplicar antes, com backup e autorização) e ainda falta o ensaio sobre a restauração do dump.
+- **Ativação pública**: **ainda não**. Faltam Supabase real (Auth anônimo + CAPTCHA, Storage, PostgREST), conferir bucket e capacidade, decidir os valores dos limites, e ligar por etapas (contribuição sem upload/importação → upload → importação).

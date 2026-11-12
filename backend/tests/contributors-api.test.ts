@@ -10,12 +10,12 @@ import {createSupabaseOverPg} from './support/supabase-pg.js';
 const member='00000000-0000-4000-8000-0000000000c9'; // usuário permanente (não anônimo) que não é admin
 const tokens={admin:{sub:ids.admin,anonymous:false},ta:{sub:ids.anonA,anonymous:true},tb:{sub:ids.anonB,anonymous:true},tc:{sub:ids.anonC,anonymous:true},member:{sub:member,anonymous:false}};
 const tiktok={provider:'tiktok',sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766',videoId:'7701366996495125766',title:'Tutorial',author:'Autor',durationSeconds:4000};
-const envKeys=['CONTRIBUTORS_ENABLED','CONTRIBUTOR_IMPORTS_ENABLED','MEDIA_UPLOAD_ENABLED','MEDIA_TIKTOK_ADMIN_USER_ID','FRONTEND_URL'];
+const envKeys=['CONTRIBUTORS_ENABLED','CONTRIBUTOR_IMPORTS_ENABLED','CONTRIBUTOR_UPLOADS_ENABLED','MEDIA_UPLOAD_ENABLED','MEDIA_TIKTOK_ADMIN_USER_ID','FRONTEND_URL'];
 
 let db:PGlite,app:ReturnType<typeof buildApp>,saved:Record<string,string|undefined>;
 async function start(env:Record<string,string|undefined>={}){
  saved=Object.fromEntries(envKeys.map(k=>[k,process.env[k]]));
- Object.assign(process.env,{CONTRIBUTORS_ENABLED:'true',MEDIA_UPLOAD_ENABLED:'true',MEDIA_TIKTOK_ADMIN_USER_ID:ids.admin,FRONTEND_URL:'http://localhost:5173'},env);
+ Object.assign(process.env,{CONTRIBUTORS_ENABLED:'true',CONTRIBUTOR_UPLOADS_ENABLED:'true',MEDIA_UPLOAD_ENABLED:'true',MEDIA_TIKTOK_ADMIN_USER_ID:ids.admin,FRONTEND_URL:'http://localhost:5173'},env);
  for(const [k,v] of Object.entries(env))if(v===undefined)delete process.env[k];
  db=await createDb();await db.query('insert into auth.users(id,is_anonymous) values($1,false)',[member]);await seedUsers(db);await seedMap(db);
  const sb=createSupabaseOverPg(db,Object.fromEntries(Object.entries(tokens)));
@@ -58,7 +58,7 @@ describe('sem sessão ou sem permissão',()=>{
 });
 
 describe('com a flag desligada nada muda para quem não é admin',()=>{
- before(()=>start({CONTRIBUTORS_ENABLED:undefined}));after(stop);
+ before(()=>start({CONTRIBUTORS_ENABLED:undefined,CONTRIBUTOR_UPLOADS_ENABLED:undefined}));after(stop);
  test('contribuidores ficam fechados e a capability informa',async()=>{
   assert.equal((await call('tc','POST','/api/v1/contributors',{nickname:'Ana'})).status,403);
   const vid=await readyMedia(db,ids.anonC);
@@ -193,9 +193,11 @@ describe('fluxo colaborativo',()=>{
   const notReady=await call('ta','PATCH',`/api/v1/grenades/${g.id}`,{videoId:mid,expectedRevision:1});assert.equal(notReady.status,409);assert.equal(notReady.json.error.code,'VIDEO_NOT_READY');
   const still=await call(null,'GET',`/api/v1/grenades/${g.id}`);assert.equal(still.status,200);assert.equal(still.json.data.video.status,'ready');assert.equal(still.json.data.revision,1); // publicação intacta
   assert.equal((await call('tb','POST','/api/v1/grenades',grenadeBody(mid))).status,403);
-  for(let i=0;i<8;i++)assert.equal((await call('ta','POST','/api/v1/media/uploads',{})).status,201);
-  const over=await call('ta','POST','/api/v1/media/uploads',{});assert.equal(over.status,429,over.text);assert.equal(over.json.error.code,'CONTRIBUTOR_QUOTA_EXCEEDED');
-  assert.equal((await call('tb','POST','/api/v1/media/uploads',{})).status,201); // cota é por contribuidor
+  assert.equal((await call('ta','POST','/api/v1/media/uploads',{})).status,201); // 2º pendente
+  const third=await call('ta','POST','/api/v1/media/uploads',{});assert.equal(third.status,429,third.text);assert.equal(third.json.error.code,'CONTRIBUTOR_PENDING_LIMIT'); // teto de pendentes (S1)
+  // cota de QUANTIDADE (10 mídias/h) é independente do teto de pendentes: Bia completa 10 mídias e a 11ª é barrada
+  for(let i=0;i<10;i++)await readyMedia(db,ids.anonB);
+  const over=await call('tb','POST','/api/v1/media/uploads',{});assert.equal(over.status,429,over.text);assert.equal(over.json.error.code,'CONTRIBUTOR_QUOTA_EXCEEDED');
   assert.equal((await call('admin','POST','/api/v1/media/uploads',{})).status,201); });
 
  test('importação por link: fechada para contribuidores por padrão; liberada pela flag, sempre presa ao dono',async()=>{

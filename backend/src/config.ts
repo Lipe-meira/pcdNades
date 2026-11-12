@@ -30,6 +30,12 @@ export function readTrimmingEnabled(env:Record<string,string|undefined>=process.
 function readFlag(name:string,env:Record<string,string|undefined>){const value=env[name];if(value===undefined||value==='false')return false;if(value==='true')return true;throw new Error(`${name} deve ser true ou false.`);}
 /** Publicação colaborativa por sessão anônima. Padrão desligado: sem a flag, só administradores escrevem. */
 export function readContributorsEnabled(env:Record<string,string|undefined>=process.env):boolean{return readFlag('CONTRIBUTORS_ENABLED',env);}
+/** Upload de MP4 por contribuidores. Padrão desligado e exige CONTRIBUTORS_ENABLED: só ligar depois de validar o Storage real (ver docs). */
+export function readContributorUploadsEnabled(env:Record<string,string|undefined>=process.env):boolean{
+ const enabled=readFlag('CONTRIBUTOR_UPLOADS_ENABLED',env);
+ if(enabled&&!readContributorsEnabled(env))throw new Error('CONTRIBUTOR_UPLOADS_ENABLED exige CONTRIBUTORS_ENABLED=true.');
+ return enabled;
+}
 /** Importação por link para contribuidores (TikTok/Instagram). Padrão desligado e exige CONTRIBUTORS_ENABLED. */
 export function readContributorImportsEnabled(env:Record<string,string|undefined>=process.env):boolean{
  const enabled=readFlag('CONTRIBUTOR_IMPORTS_ENABLED',env);

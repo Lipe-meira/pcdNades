@@ -35,9 +35,10 @@ export async function completeInline(db:SupabaseClient,id:string,limits:MediaLim
  dir=await mkdtemp(join(tmpdir(),'pcdnades-inline-'));const file=join(dir,'source.mp4');
  const signed=await bounded(db.storage.from('videos-staging').createSignedUrl(claimed.storage_key,120));if(signed.error)throw new Error('STORAGE_UNAVAILABLE');
  await dependencies.download(signed.data.signedUrl,file,clip?sourceLimits.maxBytes:limits.maxBytes,signal);
- let playbackFile=file;let playbackKey=claimed.storage_key;let metadata:any;let bytes:number;
+ let playbackFile=file;let playbackKey=claimed.storage_key;let metadata:any;let bytes:number;let sourceBytes:number|undefined;
  const stage=async(value:string)=>{const r=await checked(table().update({stage:value}).eq('id',id).eq('status','processing').eq('attempts',claimed.attempts).eq('locked_until',claimed.locked_until).gt('locked_until',new Date().toISOString()).select().maybeSingle());if(!r)throw new MediaError('CLAIM_LOST');};
  if(clip){
+  sourceBytes=(await stat(file)).size; // a fonte original continua no Storage: o orçamento de bytes de contribuidores conta fonte + trecho
   await stage('trimming');playbackFile=join(dir,'clip.mp4');
   metadata=await (dependencies.trim??trimVideo)(file,playbackFile,clip,limits,signal);bytes=(await stat(playbackFile)).size;if(bytes>limits.maxBytes)throw new MediaError('FILE_TOO_LARGE');
   if(signal.aborted)throw new MediaError('PROCESSING_TIMEOUT');
@@ -45,7 +46,7 @@ export async function completeInline(db:SupabaseClient,id:string,limits:MediaLim
   await bounded((dependencies.store??storeClip)(db,playbackKey,playbackFile,signal));
  }else{metadata=await dependencies.probe(file,limits,signal);bytes=(await stat(file)).size;}
  if(bytes>limits.maxBytes)throw new MediaError('FILE_TOO_LARGE');if(signal.aborted)throw new MediaError('PROCESSING_TIMEOUT');
- const ready=await finish({status:'ready',stage:null,error:null,locked_until:null,storage_key:playbackKey,metadata:{...metadata,bytes}});return {status:ready?200:202,asset:ready??await current()};
+ const ready=await finish({status:'ready',stage:null,error:null,locked_until:null,storage_key:playbackKey,metadata:{...metadata,bytes,...(sourceBytes!==undefined?{sourceBytes}:{})}});return {status:ready?200:202,asset:ready??await current()};
  }catch(error){
  const code=signal.aborted?'PROCESSING_TIMEOUT':error instanceof MediaError?error.code:error instanceof Error&&error.message==='FILE_TOO_LARGE'?'FILE_TOO_LARGE':'INVALID_MEDIA';
  const failed=await finish({status:'failed',stage:null,locked_until:null,error:{code,message:messages[code]??'Não foi possível finalizar o vídeo. Seu cadastro anterior foi preservado.'}});return {status:failed?200:202,asset:failed??await current()};

@@ -17,7 +17,10 @@ export async function sourcePreview(db:SupabaseClient,sourceId:string,ownerId:st
   if(existing?.ownerId===ownerId&&existing.state==='ready')return await ready();
   if(!prepare)throw importFailure('PREVIEW_UNAVAILABLE',404);
   if(existing)throw importFailure('PREVIEW_UNAVAILABLE',503);
-  const candidate=randomUUID();if(!checked(await db.rpc('claim_import_slot',{p_holder:candidate,p_seconds:120}).abortSignal(signal)))throw importFailure('PROCESSOR_BUSY',503);holder=candidate;
+  const candidate=randomUUID();const claim:any=await db.rpc('claim_import_slot',{p_holder:candidate,p_seconds:120,p_owner:ownerId}).abortSignal(signal);
+  // Orçamento de tempo do slot por contribuidor (S2): estourou = 429, não indisponibilidade.
+  if(claim.error?.message?.includes('IMPORT_RATE_LIMIT'))throw importFailure('IMPORT_RATE_LIMIT',429);
+  if(!checked(claim))throw importFailure('PROCESSOR_BUSY',503);holder=candidate;
   const rechecked=await ports.lookup(sourceId);if(rechecked?.ownerId===ownerId&&rechecked.state==='ready')return await ready();if(rechecked)throw importFailure('PREVIEW_UNAVAILABLE',503);
   dir=await mkdtemp(join(tmpdir(),'pcdnades-source-preview-'));
   const localSource=await preparePreviewSource(session.metadata,controller,dir);

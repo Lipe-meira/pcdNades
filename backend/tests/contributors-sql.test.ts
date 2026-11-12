@@ -3,7 +3,7 @@ import {test,describe,before} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import type {PGlite} from '@electric-sql/pglite';
-import {createLegacyDb,applyContributorsMigration,createDb,asRole,ids,seedUsers,seedMap,readyMedia,grenadeSql,rollbacksDir,CONTRIBUTORS_MIGRATION} from './support/pg.js';
+import {createLegacyDb,applyContributorsMigration,createDb,asRole,ids,seedUsers,seedMap,readyMedia,grenadeSql,rollbacksDir,CONTRIBUTORS_MIGRATION,STORAGE_MIGRATION} from './support/pg.js';
 
 const register=async(db:PGlite,uid:string,nick='Fulano')=>(await db.query<{id:string}>('select * from public.register_contributor($1,$2)',[uid,nick])).rows[0].id;
 const rejects=(p:Promise<unknown>,re:RegExp)=>assert.rejects(p,re);
@@ -40,6 +40,7 @@ describe('legado: a migration é aditiva e retrocompatível',()=>{
   const db=await createDb();await seedUsers(db);await seedMap(db);
   const cid=await register(db,ids.anonA);const media=await readyMedia(db,ids.anonA);
   await db.query(grenadeSql,['Autoral',media,cid]);
+  await db.exec(await readFile(rollbacksDir+STORAGE_MIGRATION.replace('.sql','_rollback.sql'),'utf8')); // ordem inversa: primeiro a mais nova
   await db.exec(await readFile(rollbacksDir+CONTRIBUTORS_MIGRATION.replace('.sql','_rollback.sql'),'utf8'));
   assert.equal((await db.query<any>('select count(*)::int n from public.grenades')).rows[0].n,1);
   assert.equal((await db.query<any>('select count(*)::int n from public.media_assets')).rows[0].n,1);
@@ -190,11 +191,15 @@ describe('cotas por contribuidor (anti-abuso, atômicas no banco)',()=>{
  });
  test('teto global de 200 mídias/dia de contribuidores',async()=>{
   const db=await createDb();await seedUsers(db);await register(db,ids.anonA);
-  await db.exec(`do $$ declare u uuid; begin for i in 1..200 loop
+  // Linhas semeadas com o trigger de contribuidor desligado (cobrança 0): aqui só importa a cota de QUANTIDADE; os bytes têm testes próprios.
+  await db.exec('alter table public.media_assets disable trigger media_contributor');
+  await db.exec(`do $$ declare u uuid; c uuid; begin for i in 1..200 loop
     u:=gen_random_uuid(); insert into auth.users(id,is_anonymous) values(u,true);
     perform public.register_contributor(u,'Bot'||i);
-    insert into public.media_assets(owner_id,source_type,storage_key) values(u,'upload',gen_random_uuid()||'/s.mp4');
+    select contributor_id into c from public.contributor_links where auth_user_id=u;
+    insert into public.media_assets(owner_id,contributor_id,source_type,storage_key) values(u,c,'upload',gen_random_uuid()||'/s.mp4');
    end loop; end $$`);
+  await db.exec('alter table public.media_assets enable trigger media_contributor');
   assert.equal((await db.query<any>('select count(*)::int n from public.media_assets where contributor_id is not null')).rows[0].n,200);
   await rejects(readyMedia(db,ids.anonA),/CONTRIBUTOR_QUOTA_EXCEEDED/);
   await readyMedia(db,ids.admin); // admin não conta nem é barrado
