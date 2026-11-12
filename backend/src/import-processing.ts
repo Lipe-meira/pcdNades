@@ -13,7 +13,7 @@ let active=false;
 export async function completeImport(db:SupabaseClient,id:string,limits:MediaLimits,deps:Dependencies={available:availableSource,process:processSource,store:storeClip,remove:removeClip},started=performance.now()){
  const controller=new AbortController(),signal=controller.signal;const timer=setTimeout(()=>controller.abort(importFailure('IMPORT_TIMEOUT')),Math.max(1,90000-(performance.now()-started)));timer.unref();
  const holder=randomUUID();let slot=false,local=false,dir:string|undefined;
- const checked=async(query:any)=>{const bounded=AbortSignal.any([signal,AbortSignal.timeout(5000)]);const result:any=await beforeDeadline(typeof query.abortSignal==='function'?query.abortSignal(bounded):query,bounded);if(result.error)throw importFailure('SERVICE_UNAVAILABLE',503);return result.data;};
+ const checked=async(query:any)=>{const bounded=AbortSignal.any([signal,AbortSignal.timeout(5000)]);const result:any=await beforeDeadline(typeof query.abortSignal==='function'?query.abortSignal(bounded):query,bounded);if(result.error){if(result.error.message?.includes('IMPORT_RATE_LIMIT'))throw importFailure('IMPORT_RATE_LIMIT',429);throw importFailure('SERVICE_UNAVAILABLE',503);}return result.data;};
  const table=()=>db.from('media_assets');
  const current=async()=>{const row=await checked(table().select('*').eq('id',id).maybeSingle());if(!row)throw importFailure('NOT_FOUND',404);return row;};
  try{
@@ -27,7 +27,7 @@ export async function completeImport(db:SupabaseClient,id:string,limits:MediaLim
   const snapshot=asset.import_snapshot;
   const raw={webpage_url:snapshot.sourceUrl,id:snapshot.videoId,title:snapshot.title,uploader:snapshot.author,duration:snapshot.durationSeconds};const source=asset.source_type==='instagram'?instagramMetadata(raw,snapshot.durationSeconds):sourceMetadata(raw);
   if(active)throw importFailure('PROCESSOR_BUSY',503);active=true;local=true;
-  if(!await checked(db.rpc('claim_import_slot',{p_holder:holder,p_seconds:120})))throw importFailure('PROCESSOR_BUSY',503);slot=true;
+  if(!await checked(db.rpc('claim_import_slot',{p_holder:holder,p_seconds:120,p_owner:asset.owner_id})))throw importFailure('PROCESSOR_BUSY',503);slot=true;
   let query=table().update({status:'processing',stage:'resolving',attempts:asset.attempts+1,locked_until:new Date(Date.now()+120000).toISOString()}).eq('id',id).eq('status',asset.status).eq('attempts',asset.attempts);
   if(asset.status==='processing')query=query.lte('locked_until',new Date().toISOString());
   const claimed=await checked(query.select().maybeSingle());if(!claimed)return {status:202,asset:await current()};

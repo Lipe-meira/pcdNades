@@ -8,6 +8,7 @@ import {fileURLToPath} from 'node:url';
 export const migrationsDir=fileURLToPath(new URL('../../migrations/',import.meta.url));
 export const rollbacksDir=fileURLToPath(new URL('../../rollbacks/',import.meta.url));
 export const CONTRIBUTORS_MIGRATION='20261112120000_contributors_authorship.sql';
+export const STORAGE_MIGRATION='20261112180000_contributor_storage_and_import_pools.sql';
 
 const supabaseStubs=`
 create role anon nologin;create role authenticated nologin;create role service_role nologin bypassrls;
@@ -25,15 +26,18 @@ alter default privileges in schema public grant all on sequences to anon,authent
 
 export async function sqlFiles(dir=migrationsDir){return (await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();}
 
-/** Cria o banco, aplica todas as migrations anteriores à de contribuidores e devolve o banco. */
+/** Cria o banco, aplica todas as migrations anteriores à de contribuidores (inclusive as que dependem dela ficam de fora) e devolve o banco. */
 export async function createLegacyDb(){
  const db=new PGlite();
  await db.exec(supabaseStubs);
- for(const f of await sqlFiles()){if(f===CONTRIBUTORS_MIGRATION)continue;await db.exec(await readFile(migrationsDir+f,'utf8'));}
+ for(const f of await sqlFiles()){if(f>=CONTRIBUTORS_MIGRATION)continue;await db.exec(await readFile(migrationsDir+f,'utf8'));}
  return db;
 }
 export const applyContributorsMigration=async(db:PGlite)=>db.exec(await readFile(migrationsDir+CONTRIBUTORS_MIGRATION,'utf8'));
-export async function createDb(){const db=await createLegacyDb();await applyContributorsMigration(db);return db;}
+export const applyStorageMigration=async(db:PGlite)=>db.exec(await readFile(migrationsDir+STORAGE_MIGRATION,'utf8'));
+/** Estado do PR A (só a migration de contribuidores): base para provar que a migration de orçamento se aplica por cima. */
+export async function createPrADb(){const db=await createLegacyDb();await applyContributorsMigration(db);return db;}
+export async function createDb(){const db=await createPrADb();await applyStorageMigration(db);return db;}
 
 /** Executa `fn` com o papel e o JWT informados (como o PostgREST faz), sempre restaurando o papel. */
 export async function asRole<T>(db:PGlite,role:'anon'|'authenticated'|'service_role',claims:{sub?:string;anonymous?:boolean}|null,fn:()=>Promise<T>):Promise<T>{

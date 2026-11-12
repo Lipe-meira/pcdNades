@@ -1,3 +1,15 @@
+# PR #19 — correções de segurança da revisão independente (S1 Storage, S2 importações, S3 erro) — 12/11/2026, IMPLEMENTADO E TESTADO LOCALMENTE (commit/push/CI ver abaixo)
+
+Estado: S1/S2/S3 implementados (migration 20261112180000 + rollback, flag CONTRIBUTOR_UPLOADS_ENABLED, slot com dono, tradução única de erros). Backend 248/248, typecheck OK, smokes legados PASS (18 e 10). Concorrência multiconexão verificada em PostgreSQL 17.5 descartável via backend/scripts/contributor-concurrency-real-pg.mjs (não é Supabase; não roda no CI). Detalhes: docs/COLABORACAO-IDENTIDADE-20261112.md §10. Pendente: acompanhar CI do push, atualizar corpo do PR #19, validações em Supabase real, e autorização do usuário para qualquer merge/migration/flag. Não iniciar PR B/C.
+
+Pedido atual: corrigir S1 (ALTO, esgotamento de Storage por contribuidores), S2 (MÉDIO, importações de contribuidores consomem a cota do admin) e S3 (BAIXO, `CONTRIBUTOR_QUOTA_EXCEEDED` vira 503 no importador) apontados em `docs/reviews/PR19-SECURITY-20261112.md` (worktree de revisão `F:/projetos/nadesCs2-review-pr19`, só leitura). Sem PR B/C, sem merge, sem deploy, sem migration real, sem ligar flags.
+
+Local: branch `feat/colaboracao-identidade`, worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, base do trabalho = 3e3858c (limpo, em sincronia com origin). Push: pendente.
+
+Plano: (1) testes que falham; (2) nova migration aditiva `20261112180000_contributor_storage_and_import_pools.sql` + rollback (bytes reservados/armazenados por mídia, orçamento global e por contribuidor, limite de pendentes, pools de importação e admissão justa do slot); (3) backend: flag `CONTRIBUTOR_UPLOADS_ENABLED` (padrão desligado), tradução única de erros (S3), uso do slot com dono; (4) docs e CI. Docker local NÃO está ativo (daemon parado): sem teste multiconexão real nem Supabase descartável nesta sessão.
+
+---
+
 # Colaboração — PR A (identidade, autoria e autorização) — 12/11/2026, CONCLUÍDO LOCALMENTE (aguardando push/PR e aprovação para PR B)
 
 Entrega: branch `feat/colaboracao-identidade` enviada (push normal); implementação em f68032b; PR https://github.com/Lipe-meira/pcdNades/pull/19 (aberto, sem merge); CI Linux "Build, testes e ffprobe empacotado" PASS (run 43244643794). Worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, árvore limpa. Nada aplicado em Supabase/Vercel.

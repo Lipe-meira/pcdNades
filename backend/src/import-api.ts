@@ -7,11 +7,12 @@ import {inspectRequest,selectedImport,effectiveImportLimits,type sourceMetadata}
 import type {MediaLimits} from './config.js';
 import {importFailure} from './import-network.js';
 import {beforeDeadline} from './import-deadline.js';
+import {contributorError} from './contributor-errors.js';
 type Provider='tiktok'|'instagram';
 export type ImportDependencies={available:(provider?:Provider)=>boolean;extract:(url:string,controller:AbortController,dir:string)=>Promise<{metadata:ReturnType<typeof sourceMetadata>|ReturnType<typeof instagramMetadata>;localSource?:string}>};
 export const importDependencies:ImportDependencies={available:provider=>provider==='instagram'?instagramRuntimeAvailable():tikTokRuntimeAvailable(),extract:(url,controller,dir)=>recognizeSource(url).provider==='instagram'?extractInstagram(url,controller,dir):extractTikTok(url,controller,dir)};
 export function importDbResult<T>(result:{data:T;error?:{message?:string}|null}):T{
- if(result.error){const code=['SOURCE_NOT_FOUND','SOURCE_EXPIRED','IMPORT_SELECTION_CONFLICT','CLIP_OUT_OF_RANGE','IMPORT_RATE_LIMIT'].find(v=>result.error?.message?.includes(v));if(code)throw importFailure(code,({SOURCE_NOT_FOUND:404,SOURCE_EXPIRED:410,IMPORT_SELECTION_CONFLICT:409,CLIP_OUT_OF_RANGE:400,IMPORT_RATE_LIMIT:429} as Record<string,number>)[code]);throw importFailure('SERVICE_UNAVAILABLE',503);}return result.data;
+ if(result.error){const known=contributorError(result.error.message);if(known)throw importFailure(known.code,known.status);const code=['SOURCE_NOT_FOUND','SOURCE_EXPIRED','IMPORT_SELECTION_CONFLICT','CLIP_OUT_OF_RANGE','IMPORT_RATE_LIMIT'].find(v=>result.error?.message?.includes(v));if(code)throw importFailure(code,({SOURCE_NOT_FOUND:404,SOURCE_EXPIRED:410,IMPORT_SELECTION_CONFLICT:409,CLIP_OUT_OF_RANGE:400,IMPORT_RATE_LIMIT:429} as Record<string,number>)[code]);throw importFailure('SERVICE_UNAVAILABLE',503);}return result.data;
 }
 export async function inspectSource(db:SupabaseClient,owner:string,input:unknown,deps:ImportDependencies,limits?:MediaLimits){
  const request=inspectRequest.parse(input);const source=recognizeSource(request.sourceUrl);if(source.provider!=='tiktok'&&source.provider!=='instagram')throw importFailure('SOURCE_UNSUPPORTED');
@@ -19,7 +20,7 @@ export async function inspectSource(db:SupabaseClient,owner:string,input:unknown
  const controller=new AbortController(),holder=randomUUID(),inspectionMs=source.provider==='instagram'?65000:25000;const timer=setTimeout(()=>controller.abort(importFailure('IMPORT_TIMEOUT')),inspectionMs);timer.unref();let slot=false,dir:string|undefined;
  const rpc=async(name:string,args:Record<string,unknown>)=>{const query=db.rpc(name,args),signal=AbortSignal.any([controller.signal,AbortSignal.timeout(5000)]);return await beforeDeadline<any>(typeof query.abortSignal==='function'?query.abortSignal(signal):query,signal);};
  try{
-  if(!importDbResult(await rpc('claim_import_slot',{p_holder:holder,p_seconds:source.provider==='instagram'?70:30})))throw importFailure('PROCESSOR_BUSY',503);slot=true;
+  if(!importDbResult(await rpc('claim_import_slot',{p_holder:holder,p_seconds:source.provider==='instagram'?70:30,p_owner:owner})))throw importFailure('PROCESSOR_BUSY',503);slot=true;
   const session=importDbResult<any>(await rpc('reserve_import_source',{p_owner:owner}));
   dir=await mkdtemp(join(tmpdir(),'pcdnades-inspect-'));const {metadata}=await deps.extract(source.canonicalUrl,controller,dir);
   if(controller.signal.aborted)throw importFailure('IMPORT_TIMEOUT');if(metadata.provider!==source.provider)throw importFailure('SOURCE_CHANGED');
