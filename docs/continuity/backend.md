@@ -1,3 +1,19 @@
+# Colaboração — PR A (identidade, autoria e autorização) — 12/11/2026, EM ANDAMENTO
+
+Pedido: sistema colaborativo (amigos publicam com apelido, sem e-mail/senha, via Auth anônimo do Supabase). Entregar só o PR A (backend/banco), parar e aguardar aprovação antes de interface (PR B) e recuperação (PR C). Proibido: migration em produção, deploy, merge, force push, dados de teste em produção.
+
+Localização: branch `feat/colaboracao-identidade`, worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, base `main` 8776ddf. Push: pendente. Desenho, auditoria, matriz e riscos: `docs/COLABORACAO-IDENTIDADE-20261112.md`.
+
+Feito: auditoria; desenho (contribuidor como dono estável + vínculo sessão→contribuidor, `grenades.author_id`, `media_assets.contributor_id` por trigger, cotas no banco); migration `backend/migrations/20261112120000_contributors_authorship.sql` + rollback; harness PGlite (`backend/tests/support/pg.ts`, devDependency `@electric-sql/pglite@0.5.13`); `backend/tests/contributors-sql.test.ts` 19/19 PASS (legado intacto, rollback, autoria imutável, vídeo alheio, RLS isolada, cotas).
+
+Em andamento: API (`backend/src/application.ts`): `resolveActor`, rotas `/contributors`, `/me`, `/me/grenades`, propriedade em PATCH/media/import, flags `CONTRIBUTORS_ENABLED` e `CONTRIBUTOR_IMPORTS_ENABLED` (padrão desligado), testes de API sobre PGlite.
+
+Retomar daqui: `git status`; `npm --prefix backend test`; seguir a lista de tarefas da API no doc; depois docs, PR e relatório. Migration NÃO aplicada em nenhum Supabase.
+
+Pendências de configuração (fora do código): habilitar Anonymous sign-ins e CAPTCHA no Supabase Auth; nada disso foi feito.
+
+---
+
 # Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
 
 Autorizada pelo responsável e aplicada uma única vez com apply_migration no projeto kdyzxxgzvgiffluyjjxu; registrada pelo Supabase como 20261111031252 map_levels (arquivos da migration e do rollback renomeados no repositório, conteúdo idêntico). Pré e pós-checagens aprovadas: 15 granadas, 21 mídias, 17 objetos, hash das linhas de grenades, policies, grants, triggers e RLS iguais ao backup release-20261111-nuke-premigration; colunas origin_level/target_level criadas e vazias; checks validados. Sem alterar dados nem limpar Storage. PR #14 segue aberto, SEM merge e SEM deploy (frontend/backend publicados ainda ignoram as colunas novas). Próximo: autorização para o merge do PR #14, conferência dos deployments pcdnades e pcdnades-api e smoke na Nuke.
