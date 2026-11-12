@@ -1,6 +1,48 @@
-# Publicação colaborativa — PR A (backend/banco) — 12/11/2026
+# Checkpoint — orchestrator (revisão independente PR #19)
 
-Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.
+Atualizado em: 12/11/2026, America/Sao_Paulo. Estado: concluído (revisão; sem implementação).
+
+## Objetivo e pedido atual
+Revisão técnica e de segurança independente do PR #19. Sem alterar código, aplicar migrations em Supabase, merge ou deploy.
+
+## Localização do trabalho
+- Branch: codex/revisao-pr19-20261112. Worktree: F:/projetos/nadesCs2-review-pr19.
+- Base: 8776ddf4d3658b1d5ecf8d91a5e13760047d8f50. Head revisado/última implementação: 3e3858cdfb8c107de036fc83d1acfa324c7b11bb; ambos reconferidos no GitHub.
+- Entrega documental/checkpoint: commit desta branch, consultar git log -1. Push a efetuar junto com esta entrega, sem main/branch do PR.
+- Alterações não commitadas antes de registrar a entrega: este checkpoint, docs/reviews/PR19-SECURITY-20261112.md e docs/reviews/pr19-evidence/{tests.log,probes.log,probe.mts.txt}. Nenhum código rastreado alterado.
+
+## Feito
+- Revisados diff completo, rotas, dependências SQL/RLS/mídia/importação, testes e histórico. Sem bypass de autoria/IDOR comprovado.
+- Relatório: docs/reviews/PR19-SECURITY-20261112.md. S1 alto: orçamento de uploads excede capacidade sem finalizar. S2 médio: inspeções colaborativas esgotam cota administrativa. S3 baixo: cota de mídia em imports vira 503 em vez de 429.
+- Sondagens adicionais em PGlite sintético: 21 tickets/1.050.000.000 bytes permitidos; 50 reservas bloqueiam admin com429; import em cota retorna503. Nenhum objeto real enviado/extrator chamado.
+
+## Em andamento
+Revisão concluída. Nenhuma correção implementada. Dependências em backend/node_modules e junction ignorada backend/vendor/sql-test/node_modules criadas só nesta worktree. Sondagem temporária em diretório TEMP do Windows; cópia documental registrada.
+
+## Retomar daqui
+1. Conferir status/branch/commits e ler relatório/evidências.
+2. Se usuário pedir correção, tratar S1/S2/S3 em entrega separada; não presumir autorização para migrations ou publicação.
+3. Antes da ativação, validar Auth/PostgREST/Storage, concorrência multiconexão e rollout/rollback em ambiente Supabase descartável.
+
+## Decisões e contrato
+- Recurso público: REQUEST CHANGES, S1 bloqueia abertura de uploads; S2 bloqueia abertura de imports sem aceitação de indisponibilidade.
+- Fundação com ambas flags desligadas: nenhum bloqueador comprovado de autorização que sozinho impeça merge; não confundir integração inativa com recurso validado/pronto.
+- Rollback perde autoria/vínculos; backup recuperável e backend anterior antes da remoção do schema.
+- Limite padrão90s preexistente diverge do requisito20s; verificar configuração real, sem atribuir a regressão ao PR.
+
+## Validação
+- npm ci --ignore-scripts; npm test192/192; typecheck PASS.
+- Smokes map-levels18 e HE10 PASS em PGlite após resolver caminho legado das dependências com junction local.
+- PGlite/SQL em memória com Auth/PostgREST/Storage substituídos; não chamar integração Supabase real.
+- GitNexus sem repositórios indexados: revisão manual sem análise de grafo/taint.
+- Não executado: Supabase real, downloads externos reais, navegador integrado, ensaio em restauração produtiva nem concorrência multiconexão (Docker local indisponível).
+
+## Bloqueios e dependências
+Sem bloqueio para emitir revisão; ativação depende das correções e validações descritas. Nenhuma credencial ou dado produtivo acessado.
+
+## Entrega e histórico curto
+- PR alvo: https://github.com/Lipe-meira/pcdNades/pull/19 . Nenhum comentário/review/merge/deploy no PR.
+- 12/11: revisão/evidências concluídas em branch própria. Código do PR e demais worktrees preservados.
 
 ---
 
@@ -1692,3 +1734,5 @@ Coordenar os chats de frontend/backend do pcdNades. Pedido atual: continuar apó
 - `e889e3b`: upload/importação registrados.
 - `056eea8`, `e3b66c0`, `953a2ad`: base frontend, radares licenciados e administração demonstrativa.
 - Publicação inicial em https://pcdnades.vercel.app ; demais entregas aguardam integração.
+
+

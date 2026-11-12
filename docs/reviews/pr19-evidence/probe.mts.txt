@@ -1,0 +1,22 @@
+import {createDb,ids,seedUsers,seedMap,readyMedia} from 'file:///F:/projetos/nadesCs2-review-pr19/backend/tests/support/pg.ts';
+import {createSupabaseOverPg} from 'file:///F:/projetos/nadesCs2-review-pr19/backend/tests/support/supabase-pg.ts';
+import {buildApp} from 'file:///F:/projetos/nadesCs2-review-pr19/backend/src/application.ts';
+const db=await createDb(); await seedUsers(db); await seedMap(db);
+process.env.CONTRIBUTORS_ENABLED='true';process.env.CONTRIBUTOR_IMPORTS_ENABLED='true';process.env.MEDIA_UPLOAD_ENABLED='true';process.env.MEDIA_TIKTOK_ADMIN_USER_ID=ids.admin;
+const sb=createSupabaseOverPg(db,{a:{sub:ids.anonA,anonymous:true},b:{sub:ids.anonB,anonymous:true},c:{sub:ids.anonC,anonymous:true},admin:{sub:ids.admin,anonymous:false}});
+const app=buildApp(sb.clients,{available:()=>true,extract:async()=>{throw Error('must not extract');}});
+const post=async(token,url,payload)=>app.inject({method:'POST',url,headers:{authorization:`Bearer ${token}`},payload});
+for(const token of ['a','b','c'])await post(token,'/api/v1/contributors',{nickname:'Pessoa '+token});
+let issued=0;let max=0;for(const token of ['a','b','c'])for(let i=0;i<7;i++){const r=await post(token,'/api/v1/media/uploads',{});if(r.statusCode!==201)throw Error(r.body);issued++;max=r.json().data.limits.maxBytes;}
+console.log('PROBE '+JSON.stringify({uploadTicketsIssued:issued,reservedByteBudget:issued*max,maxDuration: (await app.inject('/api/v1/media/capabilities')).json().data.upload.maxDurationSeconds}));
+// Preenche apenas cotas sintéticas, sem rede/extrator/objetos Storage.
+for(let i=0;i<50;i++)await db.query('select public.reserve_import_source($1)',[[ids.anonA,ids.anonB,ids.anonC][Math.floor(i/20)]]);
+const blocked=await post('admin','/api/v1/media/imports/inspect',{sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766'});
+console.log('PROBE '+JSON.stringify({adminInspectAfterAnonymousReservations:blocked.statusCode,error:blocked.json().error.code}));
+const source=(await db.query('select id from public.import_sources where owner_id=$1 limit 1',[ids.anonA])).rows[0].id;
+await db.query('update public.import_sources set metadata=$2 where id=$1',[source,JSON.stringify({provider:'tiktok',sourceUrl:'https://www.tiktok.com/@creator/video/7701366996495125766',videoId:'7701366996495125766',title:'Test',author:'Test',durationSeconds:60})]);
+for(let i=0;i<3;i++)await post('a','/api/v1/media/uploads',{});
+const over=await post('a','/api/v1/media/imports',{sourceId:source,clip:{startSeconds:0,endSeconds:10}});
+console.log('PROBE '+JSON.stringify({importOverMediaQuota:over.statusCode,error:over.json().error.code}));
+await app.close();await db.close();
+

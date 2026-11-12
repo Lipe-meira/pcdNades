@@ -1,0 +1,738 @@
+
+> test
+> tsx --test tests/*.test.ts
+
+{"level":30,"time":1794499041219,"pid":16440,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/health","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ health and capabilities work without credentials (629.1507ms)
+✔ coordinates and unknown fields rejected (3.9543ms)
+{"level":30,"time":1794499041246,"pid":16440,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041225,"pid":16440,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":5.46100000000024,"msg":"request completed"}
+{"level":30,"time":1794499041226,"pid":16440,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041227,"pid":16440,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":200},"responseTime":0.7989999999999782,"msg":"request completed"}
+{"level":30,"time":1794499041255,"pid":16440,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":503},"responseTime":8.259600000000319,"msg":"request completed"}
+✔ unconfigured protected writes fail closed (22.2171ms)
+✔ accepts exact coordinate boundaries and rejects invalid values (1.8978ms)
+✔ solo exec requires typed destinations and one common origin (4.2436ms)
+✔ he is accepted as a grenade type, solo exec destination and list filter (2.927ms)
+✔ solo exec patch rejects contradictory explicit fields (0.3498ms)
+✔ map levels: nuke requires levels, other maps reject them, solo exec keeps per-destination levels (2.589ms)
+✔ map levels: patch validates only what was sent and maps columns (2.3784ms)
+✔ aborted storage never requests a signing URL (1.5259ms)
+✔ signed upload sends exact final bytes without upsert and rejects HTTP failure safely (156.3943ms)
+✔ a stalled signing operation stops waiting at cancellation (0.5737ms)
+✔ real Supabase SDK signs and uploads through a loopback HTTP contract fixture (343.7866ms)
+{"level":30,"time":1794499041522,"pid":69368,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041526,"pid":69368,"hostname":"lipePC","reqId":"req-2","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ duas edições com a mesma revisão: uma vence e outra retorna conflito (773.6873ms)
+{"level":30,"time":1794499041560,"pid":69368,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041545,"pid":69368,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":21.461500000000342,"msg":"request completed"}
+{"level":30,"time":1794499041547,"pid":69368,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":409},"responseTime":20.089100000000144,"msg":"request completed"}
+{"level":30,"time":1794499041563,"pid":69368,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":428},"responseTime":3.1085000000002765,"msg":"request completed"}
+✔ PATCH sem versão é recusado sem alteração (14.7683ms)
+{"level":30,"time":1794499041572,"pid":69368,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041574,"pid":69368,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":400},"responseTime":2.1487999999999374,"msg":"request completed"}
+{"level":30,"time":1794499041575,"pid":69368,"hostname":"lipePC","reqId":"req-2","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041579,"pid":69368,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":400},"responseTime":3.9659999999998945,"msg":"request completed"}
+{"level":30,"time":1794499041579,"pid":69368,"hostname":"lipePC","reqId":"req-3","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041580,"pid":69368,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":400},"responseTime":0.9104999999999563,"msg":"request completed"}
+{"level":30,"time":1794499041580,"pid":69368,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041582,"pid":69368,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":400},"responseTime":1.2426000000000386,"msg":"request completed"}
+{"level":30,"time":1794499041582,"pid":69368,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041583,"pid":69368,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":400},"responseTime":0.9089999999996508,"msg":"request completed"}
+{"level":30,"time":1794499041583,"pid":69368,"hostname":"lipePC","reqId":"req-6","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ versões inválidas são rejeitadas e não alteram registros (20.4045ms)
+{"level":30,"time":1794499041584,"pid":69368,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":400},"responseTime":1.124699999999848,"msg":"request completed"}
+✔ flags de contribuidores: padrão desligado, só true/false, importação exige contribuidores (2.3805ms)
+✔ limits have documented defaults and accept explicit overrides (1.1171ms)
+✔ invalid limits fail closed without exposing env values (0.4655ms)
+{"level":30,"time":1794499041644,"pid":50360,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ capabilities publishes configured limits and startup rejects invalid env (820.8901ms)
+✔ duration may be reduced but never exceed 90 seconds (0.3869ms)
+✔ upload flag defaults off and rejects ambiguous env (0.504ms)
+✔ 50 MB hard ceiling is preserved (3.6795ms)
+{"level":30,"time":1794499041656,"pid":50360,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":8.963600000000042,"msg":"request completed"}
+{"level":30,"time":1794499044872,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044894,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":21.574100000000726,"msg":"request completed"}
+{"level":30,"time":1794499044895,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/maps","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044902,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":200},"responseTime":6.406099999999242,"msg":"request completed"}
+{"level":30,"time":1794499044922,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044926,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":401},"responseTime":4.169400000000678,"msg":"request completed"}
+{"level":30,"time":1794499044927,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/6b672265-a6c7-4f0e-86c2-eb7ecfb8fd57","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044928,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":401},"responseTime":1.5625,"msg":"request completed"}
+{"level":30,"time":1794499044928,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"DELETE","url":"/api/v1/grenades/6b672265-a6c7-4f0e-86c2-eb7ecfb8fd57","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044929,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":401},"responseTime":0.44280000000071595,"msg":"request completed"}
+{"level":30,"time":1794499044929,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044930,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":401},"responseTime":0.7448000000003958,"msg":"request completed"}
+{"level":30,"time":1794499044930,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044931,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":401},"responseTime":0.826799999999821,"msg":"request completed"}
+{"level":30,"time":1794499044932,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"GET","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044932,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":401},"responseTime":0.30899999999928696,"msg":"request completed"}
+{"level":30,"time":1794499044932,"pid":78632,"hostname":"lipePC","reqId":"req-9","req":{"method":"GET","url":"/api/v1/me/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044933,"pid":78632,"hostname":"lipePC","reqId":"req-9","res":{"statusCode":401},"responseTime":0.3522999999995591,"msg":"request completed"}
+{"level":30,"time":1794499044933,"pid":78632,"hostname":"lipePC","reqId":"req-a","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+▶ sem sessão ou sem permissão
+  ✔ visitante sem sessão: lê a biblioteca, mas publicar/editar/excluir/enviar dá 401 (#8) (107.1863ms)
+{"level":30,"time":1794499044935,"pid":78632,"hostname":"lipePC","reqId":"req-a","res":{"statusCode":401},"responseTime":1.3869999999997162,"msg":"request completed"}
+{"level":30,"time":1794499044943,"pid":78632,"hostname":"lipePC","reqId":"req-b","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044952,"pid":78632,"hostname":"lipePC","reqId":"req-b","res":{"statusCode":403},"responseTime":8.395599999999831,"msg":"request completed"}
+{"level":30,"time":1794499044952,"pid":78632,"hostname":"lipePC","reqId":"req-c","req":{"method":"GET","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044957,"pid":78632,"hostname":"lipePC","reqId":"req-c","res":{"statusCode":403},"responseTime":4.903900000000249,"msg":"request completed"}
+{"level":30,"time":1794499044957,"pid":78632,"hostname":"lipePC","reqId":"req-d","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044960,"pid":78632,"hostname":"lipePC","reqId":"req-d","res":{"statusCode":403},"responseTime":2.6031000000002678,"msg":"request completed"}
+{"level":30,"time":1794499044960,"pid":78632,"hostname":"lipePC","reqId":"req-e","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044965,"pid":78632,"hostname":"lipePC","reqId":"req-e","res":{"statusCode":403},"responseTime":5.221599999999853,"msg":"request completed"}
+{"level":30,"time":1794499044965,"pid":78632,"hostname":"lipePC","reqId":"req-f","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ anônimo sem apelido e usuário permanente não publicam; só anônimo cria apelido; admin não vira contribuidor (33.0461ms)
+{"level":30,"time":1794499044968,"pid":78632,"hostname":"lipePC","reqId":"req-f","res":{"statusCode":403},"responseTime":2.508100000000013,"msg":"request completed"}
+{"level":30,"time":1794499044970,"pid":78632,"hostname":"lipePC","reqId":"req-g","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044978,"pid":78632,"hostname":"lipePC","reqId":"req-g","res":{"statusCode":400},"responseTime":8.854400000000169,"msg":"request completed"}
+{"level":30,"time":1794499044979,"pid":78632,"hostname":"lipePC","reqId":"req-h","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044986,"pid":78632,"hostname":"lipePC","reqId":"req-h","res":{"statusCode":400},"responseTime":6.839100000000144,"msg":"request completed"}
+{"level":30,"time":1794499044986,"pid":78632,"hostname":"lipePC","reqId":"req-i","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044991,"pid":78632,"hostname":"lipePC","reqId":"req-i","res":{"statusCode":400},"responseTime":5.02350000000024,"msg":"request completed"}
+{"level":30,"time":1794499044991,"pid":78632,"hostname":"lipePC","reqId":"req-j","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044997,"pid":78632,"hostname":"lipePC","reqId":"req-j","res":{"statusCode":400},"responseTime":5.682700000000295,"msg":"request completed"}
+{"level":30,"time":1794499044997,"pid":78632,"hostname":"lipePC","reqId":"req-k","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499045002,"pid":78632,"hostname":"lipePC","reqId":"req-k","res":{"statusCode":400},"responseTime":4.936499999999796,"msg":"request completed"}
+{"level":30,"time":1794499045003,"pid":78632,"hostname":"lipePC","reqId":"req-l","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499045008,"pid":78632,"hostname":"lipePC","reqId":"req-l","res":{"statusCode":400},"responseTime":5.1370999999999185,"msg":"request completed"}
+{"level":30,"time":1794499045008,"pid":78632,"hostname":"lipePC","reqId":"req-m","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499045013,"pid":78632,"hostname":"lipePC","reqId":"req-m","res":{"statusCode":400},"responseTime":4.996599999999489,"msg":"request completed"}
+{"level":30,"time":1794499045013,"pid":78632,"hostname":"lipePC","reqId":"req-n","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499045018,"pid":78632,"hostname":"lipePC","reqId":"req-n","res":{"statusCode":400},"responseTime":4.736700000000383,"msg":"request completed"}
+{"level":30,"time":1794499045018,"pid":78632,"hostname":"lipePC","reqId":"req-o","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499045024,"pid":78632,"hostname":"lipePC","reqId":"req-o","res":{"statusCode":400},"responseTime":6.055199999999786,"msg":"request completed"}
+{"level":30,"time":1794499045024,"pid":78632,"hostname":"lipePC","reqId":"req-p","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499045029,"pid":78632,"hostname":"lipePC","reqId":"req-p","res":{"statusCode":400},"responseTime":4.6351000000004206,"msg":"request completed"}
+{"level":30,"time":1794499045029,"pid":78632,"hostname":"lipePC","reqId":"req-q","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ apelidos inválidos ou reservados são recusados (66.0526ms)
+✔ sem sessão ou sem permissão (3923.7709ms)
+{"level":30,"time":1794499045035,"pid":78632,"hostname":"lipePC","reqId":"req-q","res":{"statusCode":400},"responseTime":5.8159999999998035,"msg":"request completed"}
+{"level":30,"time":1794499046290,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046295,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":403},"responseTime":4.585000000000036,"msg":"request completed"}
+{"level":30,"time":1794499046301,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+▶ com a flag desligada nada muda para quem não é admin
+  ✔ contribuidores ficam fechados e a capability informa (18.6803ms)
+✔ com a flag desligada nada muda para quem não é admin (1265.9532ms)
+{"level":30,"time":1794499046302,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":403},"responseTime":1.6390000000001237,"msg":"request completed"}
+{"level":30,"time":1794499046302,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046303,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":0.36750000000029104,"msg":"request completed"}
+{"level":30,"time":1794499047365,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499047375,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":9.86030000000028,"msg":"request completed"}
+{"level":30,"time":1794499047375,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499047380,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.972700000000259,"msg":"request completed"}
+{"level":30,"time":1794499047382,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499047382,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":0.19759999999951106,"msg":"request completed"}
+{"level":30,"time":1794499047382,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499047386,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":200},"responseTime":4.275499999999738,"msg":"request completed"}
+{"level":30,"time":1794499047387,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"GET","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499047390,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":200},"responseTime":2.183500000001004,"msg":"request completed"}
+{"level":30,"time":1794499047390,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+▶ fluxo colaborativo
+  ✔ capability, /me e criação de apelido idempotente (1093.0486ms)
+{"level":30,"time":1794499047395,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":200},"responseTime":4.595200000001569,"msg":"request completed"}
+{"level":30,"time":1794499048604,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499048614,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":9.710100000000239,"msg":"request completed"}
+{"level":30,"time":1794499048614,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499048621,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":6.556200000000899,"msg":"request completed"}
+{"level":30,"time":1794499048632,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499048644,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":400},"responseTime":11.59100000000035,"msg":"request completed"}
+{"level":30,"time":1794499048644,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499048650,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":400},"responseTime":5.6437000000005355,"msg":"request completed"}
+{"level":30,"time":1794499048650,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499048655,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":400},"responseTime":4.721999999999753,"msg":"request completed"}
+{"level":30,"time":1794499048655,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499048660,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":400},"responseTime":5.3012999999991735,"msg":"request completed"}
+{"level":30,"time":1794499048660,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ A publica (#1): autoria vem do servidor e o corpo não pode trazê-la (1280.6782ms)
+{"level":30,"time":1794499048676,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":201},"responseTime":15.215099999999438,"msg":"request completed"}
+{"level":30,"time":1794499049785,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049793,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":8.789600000000064,"msg":"request completed"}
+{"level":30,"time":1794499049794,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049799,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.993799999998373,"msg":"request completed"}
+{"level":30,"time":1794499049807,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049823,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":15.606299999999464,"msg":"request completed"}
+{"level":30,"time":1794499049823,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049837,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":200},"responseTime":13.973400000000765,"msg":"request completed"}
+{"level":30,"time":1794499049837,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049846,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":409},"responseTime":8.304699999998775,"msg":"request completed"}
+{"level":30,"time":1794499049846,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049852,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":403},"responseTime":6.085999999999331,"msg":"request completed"}
+{"level":30,"time":1794499049853,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049857,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":400},"responseTime":4.641999999999825,"msg":"request completed"}
+{"level":30,"time":1794499049858,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049862,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":400},"responseTime":4.856900000000678,"msg":"request completed"}
+{"level":30,"time":1794499049863,"pid":78632,"hostname":"lipePC","reqId":"req-9","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049867,"pid":78632,"hostname":"lipePC","reqId":"req-9","res":{"statusCode":400},"responseTime":4.06630000000041,"msg":"request completed"}
+{"level":30,"time":1794499049867,"pid":78632,"hostname":"lipePC","reqId":"req-a","req":{"method":"PATCH","url":"/api/v1/grenades/4a0c01b0-bd8f-48f1-8447-f88713363320","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499049872,"pid":78632,"hostname":"lipePC","reqId":"req-a","res":{"statusCode":400},"responseTime":4.835100000000239,"msg":"request completed"}
+{"level":30,"time":1794499049873,"pid":78632,"hostname":"lipePC","reqId":"req-b","req":{"method":"PATCH","url":"/api/v1/grenades/00000000-0000-4000-8000-000000000000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ A edita a própria granada (#2) com controle de revisão; B recebe 403 (#3) e não assume a autoria (#4) (1199.9551ms)
+{"level":30,"time":1794499049878,"pid":78632,"hostname":"lipePC","reqId":"req-b","res":{"statusCode":404},"responseTime":5.593899999999849,"msg":"request completed"}
+{"level":30,"time":1794499050889,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499050901,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":11.757299999999304,"msg":"request completed"}
+{"level":30,"time":1794499050901,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499050908,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":6.889900000000125,"msg":"request completed"}
+{"level":30,"time":1794499050915,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499050928,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":13.174300000000585,"msg":"request completed"}
+{"level":30,"time":1794499050928,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/d84165df-8252-43d3-ab03-9d4d7fdd2335","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499050928,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/grenades/d84165df-8252-43d3-ab03-9d4d7fdd2335","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ conflito de revisão: duas edições do dono com a mesma revisão, uma vence (1069.112ms)
+{"level":30,"time":1794499050940,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":200},"responseTime":11.440899999999601,"msg":"request completed"}
+{"level":30,"time":1794499050948,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":409},"responseTime":19.17859999999928,"msg":"request completed"}
+{"level":30,"time":1794499051927,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051935,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.530300000000352,"msg":"request completed"}
+{"level":30,"time":1794499051935,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051939,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":3.768899999999121,"msg":"request completed"}
+{"level":30,"time":1794499051945,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051957,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":12.144200000000637,"msg":"request completed"}
+{"level":30,"time":1794499051960,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ ninguém exclui granada além do admin: nem o dono (#5), nem outro contribuidor; admin exclui as de A e B (#7) (1034.8146ms)
+{"level":30,"time":1794499051969,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":9.073300000000017,"msg":"request completed"}
+{"level":30,"time":1794499051969,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"DELETE","url":"/api/v1/grenades/0ff587c0-270c-45ec-b8a7-760e703eb7e7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051971,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":403},"responseTime":1.2353999999995722,"msg":"request completed"}
+{"level":30,"time":1794499051971,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"DELETE","url":"/api/v1/grenades/0ff587c0-270c-45ec-b8a7-760e703eb7e7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051973,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":403},"responseTime":1.9457000000002154,"msg":"request completed"}
+{"level":30,"time":1794499051973,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"DELETE","url":"/api/v1/grenades/0ff587c0-270c-45ec-b8a7-760e703eb7e7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051974,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":403},"responseTime":1.4773000000004686,"msg":"request completed"}
+{"level":30,"time":1794499051975,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"DELETE","url":"/api/v1/grenades/0ff587c0-270c-45ec-b8a7-760e703eb7e7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051975,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":401},"responseTime":0.2937000000001717,"msg":"request completed"}
+{"level":30,"time":1794499051976,"pid":78632,"hostname":"lipePC","reqId":"req-9","req":{"method":"DELETE","url":"/api/v1/grenades/0ff587c0-270c-45ec-b8a7-760e703eb7e7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051979,"pid":78632,"hostname":"lipePC","reqId":"req-9","res":{"statusCode":204},"responseTime":3.2991000000001804,"msg":"request completed"}
+{"level":30,"time":1794499051979,"pid":78632,"hostname":"lipePC","reqId":"req-a","req":{"method":"DELETE","url":"/api/v1/grenades/091b92b4-9ae1-4113-bcb2-aab884d1b283","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499051983,"pid":78632,"hostname":"lipePC","reqId":"req-a","res":{"statusCode":204},"responseTime":3.354300000000876,"msg":"request completed"}
+{"level":30,"time":1794499052875,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499052882,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.656499999999141,"msg":"request completed"}
+{"level":30,"time":1794499052883,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499052888,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.9056000000000495,"msg":"request completed"}
+{"level":30,"time":1794499052894,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499052907,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":12.425900000000183,"msg":"request completed"}
+{"level":30,"time":1794499052910,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499052919,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":8.742799999999988,"msg":"request completed"}
+{"level":30,"time":1794499052919,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/grenades/6da83b6b-a8c5-45d4-ad6b-4285ae3bca8e","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499052925,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":200},"responseTime":6.250299999999697,"msg":"request completed"}
+{"level":30,"time":1794499052926,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"PATCH","url":"/api/v1/grenades/4a4e55c4-9a5c-4ef3-b0cc-31bc0d0e6fbe","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499052931,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":200},"responseTime":5.742000000000189,"msg":"request completed"}
+{"level":30,"time":1794499052935,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ admin edita granadas de A e B (#6) sem virar autor; publicação de admin não tem autor (956.8347ms)
+{"level":30,"time":1794499052940,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":201},"responseTime":4.8914999999997235,"msg":"request completed"}
+{"level":30,"time":1794499053845,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499053852,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.081900000001042,"msg":"request completed"}
+{"level":30,"time":1794499053852,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499053857,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.174200000001292,"msg":"request completed"}
+{"level":30,"time":1794499053867,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499053874,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":403},"responseTime":6.095900000000256,"msg":"request completed"}
+{"level":30,"time":1794499053874,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499053878,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":403},"responseTime":4.243399999999383,"msg":"request completed"}
+{"level":30,"time":1794499053878,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499053882,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":403},"responseTime":4.303200000000288,"msg":"request completed"}
+{"level":30,"time":1794499053883,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499053893,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":201},"responseTime":10.696099999999205,"msg":"request completed"}
+{"level":30,"time":1794499053894,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"PATCH","url":"/api/v1/grenades/f195a651-c867-4e4f-84a4-9be31ee05e09","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ vincular vídeo de outra pessoa é recusado na criação e na edição (#10) (958.8249ms)
+{"level":30,"time":1794499053899,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":403},"responseTime":5.608099999999467,"msg":"request completed"}
+{"level":30,"time":1794499054791,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054799,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":8.08640000000014,"msg":"request completed"}
+{"level":30,"time":1794499054799,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054804,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.385199999998804,"msg":"request completed"}
+{"level":30,"time":1794499054818,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054831,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":12.902100000001155,"msg":"request completed"}
+{"level":30,"time":1794499054831,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/6f32cf1d-6f7c-4293-a373-fafe4c9ef5d7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054844,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":200},"responseTime":12.993399999999383,"msg":"request completed"}
+{"level":30,"time":1794499054845,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/grenades/6f32cf1d-6f7c-4293-a373-fafe4c9ef5d7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054851,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":403},"responseTime":5.85530000000108,"msg":"request completed"}
+{"level":30,"time":1794499054851,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"PATCH","url":"/api/v1/grenades/6f32cf1d-6f7c-4293-a373-fafe4c9ef5d7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054857,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":403},"responseTime":5.776100000000952,"msg":"request completed"}
+{"level":30,"time":1794499054857,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"PATCH","url":"/api/v1/grenades/6f32cf1d-6f7c-4293-a373-fafe4c9ef5d7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499054863,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":200},"responseTime":6.492099999999482,"msg":"request completed"}
+{"level":30,"time":1794499054864,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"PATCH","url":"/api/v1/grenades/6f32cf1d-6f7c-4293-a373-fafe4c9ef5d7","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ reedição de corte respeita a propriedade do vídeo (#11) (967.964ms)
+{"level":30,"time":1794499054868,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":403},"responseTime":4.096700000000055,"msg":"request completed"}
+{"level":30,"time":1794499055772,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055779,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.211999999999534,"msg":"request completed"}
+{"level":30,"time":1794499055779,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055784,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.785599999999249,"msg":"request completed"}
+{"level":30,"time":1794499055796,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055808,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":12.63669999999911,"msg":"request completed"}
+{"level":30,"time":1794499055811,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055820,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":9.131199999999808,"msg":"request completed"}
+{"level":30,"time":1794499055821,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055826,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":200},"responseTime":5.5099000000009255,"msg":"request completed"}
+{"level":30,"time":1794499055827,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"PATCH","url":"/api/v1/grenades/0692ea10-f2ce-41b2-8f49-0a0c0962752e","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055836,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":200},"responseTime":9.021899999999732,"msg":"request completed"}
+{"level":30,"time":1794499055836,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"PATCH","url":"/api/v1/grenades/c81a0436-3cae-440c-b33d-1298525de13b","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055841,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":403},"responseTime":4.516100000000733,"msg":"request completed"}
+{"level":30,"time":1794499055841,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"PATCH","url":"/api/v1/grenades/0692ea10-f2ce-41b2-8f49-0a0c0962752e","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055845,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":403},"responseTime":4.613100000002305,"msg":"request completed"}
+{"level":30,"time":1794499055845,"pid":78632,"hostname":"lipePC","reqId":"req-9","req":{"method":"GET","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055852,"pid":78632,"hostname":"lipePC","reqId":"req-9","res":{"statusCode":200},"responseTime":6.900000000001455,"msg":"request completed"}
+{"level":30,"time":1794499055853,"pid":78632,"hostname":"lipePC","reqId":"req-a","req":{"method":"PATCH","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055857,"pid":78632,"hostname":"lipePC","reqId":"req-a","res":{"statusCode":400},"responseTime":4.23070000000007,"msg":"request completed"}
+{"level":30,"time":1794499055857,"pid":78632,"hostname":"lipePC","reqId":"req-b","req":{"method":"PATCH","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499055861,"pid":78632,"hostname":"lipePC","reqId":"req-b","res":{"statusCode":400},"responseTime":4.052700000000186,"msg":"request completed"}
+{"level":30,"time":1794499055861,"pid":78632,"hostname":"lipePC","reqId":"req-c","req":{"method":"PATCH","url":"/api/v1/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ apelido é só exibição: renomear (inclusive para o apelido de outro) não altera autoria nem permissões (#9) (996.3349ms)
+{"level":30,"time":1794499055864,"pid":78632,"hostname":"lipePC","reqId":"req-c","res":{"statusCode":403},"responseTime":3.261800000000221,"msg":"request completed"}
+{"level":30,"time":1794499056873,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056882,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":9.044499999999971,"msg":"request completed"}
+{"level":30,"time":1794499056882,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056887,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.351300000002084,"msg":"request completed"}
+{"level":30,"time":1794499056895,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056910,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":15.548099999999977,"msg":"request completed"}
+{"level":30,"time":1794499056914,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ biblioteca pública mostra o autor (sem expor ids); /me/grenades lista só as próprias (1088.8761ms)
+{"level":30,"time":1794499056926,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":11.402699999998731,"msg":"request completed"}
+{"level":30,"time":1794499056926,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"GET","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056934,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":200},"responseTime":7.793900000000576,"msg":"request completed"}
+{"level":30,"time":1794499056934,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"GET","url":"/api/v1/grenades/6ae7045b-ef69-462a-8355-6ba4f17d2c3e","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056939,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":200},"responseTime":4.776700000002165,"msg":"request completed"}
+{"level":30,"time":1794499056939,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"GET","url":"/api/v1/me/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056951,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":200},"responseTime":12.196599999999307,"msg":"request completed"}
+{"level":30,"time":1794499056952,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"GET","url":"/api/v1/me/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499056954,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":403},"responseTime":1.8479000000006636,"msg":"request completed"}
+{"level":30,"time":1794499057988,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499057996,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.894799999998213,"msg":"request completed"}
+{"level":30,"time":1794499057996,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058001,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.8637999999991735,"msg":"request completed"}
+{"level":30,"time":1794499058008,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/grenades/d3e2fc23-9d54-4383-b4cf-9f4695951012","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058012,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":3.628000000000611,"msg":"request completed"}
+{"level":30,"time":1794499058012,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058017,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":200},"responseTime":4.853800000000774,"msg":"request completed"}
+{"level":30,"time":1794499058017,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"PATCH","url":"/api/v1/grenades/d3e2fc23-9d54-4383-b4cf-9f4695951012","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058024,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":403},"responseTime":6.9693999999981315,"msg":"request completed"}
+{"level":30,"time":1794499058024,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"DELETE","url":"/api/v1/grenades/d3e2fc23-9d54-4383-b4cf-9f4695951012","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058026,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":403},"responseTime":1.7401000000027125,"msg":"request completed"}
+{"level":30,"time":1794499058026,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"PATCH","url":"/api/v1/grenades/d3e2fc23-9d54-4383-b4cf-9f4695951012","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ registros antigos continuam acessíveis; só admin edita (#13) (1078.7615ms)
+{"level":30,"time":1794499058032,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":200},"responseTime":5.678400000000693,"msg":"request completed"}
+{"level":30,"time":1794499058969,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058978,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":8.67870000000039,"msg":"request completed"}
+{"level":30,"time":1794499058978,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499058983,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.555500000002212,"msg":"request completed"}
+{"level":30,"time":1794499058990,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059004,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":14.402899999997317,"msg":"request completed"}
+{"level":30,"time":1794499059004,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059013,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":8.976200000000972,"msg":"request completed"}
+{"level":30,"time":1794499059014,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"GET","url":"/api/v1/media/538bfc50-79df-4bb5-9756-1562650ea669","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059019,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":200},"responseTime":4.9953999999997905,"msg":"request completed"}
+{"level":30,"time":1794499059019,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"GET","url":"/api/v1/media/538bfc50-79df-4bb5-9756-1562650ea669","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059024,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":404},"responseTime":4.311999999998079,"msg":"request completed"}
+{"level":30,"time":1794499059024,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"GET","url":"/api/v1/media/538bfc50-79df-4bb5-9756-1562650ea669","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059028,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":200},"responseTime":4.0692999999992026,"msg":"request completed"}
+{"level":30,"time":1794499059028,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"POST","url":"/api/v1/media/538bfc50-79df-4bb5-9756-1562650ea669/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059034,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":404},"responseTime":6.299800000000687,"msg":"request completed"}
+{"level":30,"time":1794499059034,"pid":78632,"hostname":"lipePC","reqId":"req-9","req":{"method":"POST","url":"/api/v1/media/538bfc50-79df-4bb5-9756-1562650ea669/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059035,"pid":78632,"hostname":"lipePC","reqId":"req-9","res":{"statusCode":401},"responseTime":0.4852000000028056,"msg":"request completed"}
+{"level":30,"time":1794499059035,"pid":78632,"hostname":"lipePC","reqId":"req-a","req":{"method":"POST","url":"/api/v1/media/538bfc50-79df-4bb5-9756-1562650ea669/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059042,"pid":78632,"hostname":"lipePC","reqId":"req-a","res":{"statusCode":409},"responseTime":6.577300000000832,"msg":"request completed"}
+{"level":30,"time":1794499059042,"pid":78632,"hostname":"lipePC","reqId":"req-b","req":{"method":"PATCH","url":"/api/v1/grenades/d4e989c7-0acf-44e4-857e-a6cd5c92c349","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059049,"pid":78632,"hostname":"lipePC","reqId":"req-b","res":{"statusCode":409},"responseTime":7.143800000001647,"msg":"request completed"}
+{"level":30,"time":1794499059049,"pid":78632,"hostname":"lipePC","reqId":"req-c","req":{"method":"GET","url":"/api/v1/grenades/d4e989c7-0acf-44e4-857e-a6cd5c92c349","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059053,"pid":78632,"hostname":"lipePC","reqId":"req-c","res":{"statusCode":200},"responseTime":3.4949999999989814,"msg":"request completed"}
+{"level":30,"time":1794499059053,"pid":78632,"hostname":"lipePC","reqId":"req-d","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059058,"pid":78632,"hostname":"lipePC","reqId":"req-d","res":{"statusCode":403},"responseTime":5.147000000000844,"msg":"request completed"}
+{"level":30,"time":1794499059058,"pid":78632,"hostname":"lipePC","reqId":"req-e","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059064,"pid":78632,"hostname":"lipePC","reqId":"req-e","res":{"statusCode":201},"responseTime":6.352499999997235,"msg":"request completed"}
+{"level":30,"time":1794499059065,"pid":78632,"hostname":"lipePC","reqId":"req-f","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059070,"pid":78632,"hostname":"lipePC","reqId":"req-f","res":{"statusCode":201},"responseTime":5.534299999999348,"msg":"request completed"}
+{"level":30,"time":1794499059070,"pid":78632,"hostname":"lipePC","reqId":"req-g","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059076,"pid":78632,"hostname":"lipePC","reqId":"req-g","res":{"statusCode":201},"responseTime":5.5583000000005995,"msg":"request completed"}
+{"level":30,"time":1794499059076,"pid":78632,"hostname":"lipePC","reqId":"req-h","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059086,"pid":78632,"hostname":"lipePC","reqId":"req-h","res":{"statusCode":201},"responseTime":10.125899999999092,"msg":"request completed"}
+{"level":30,"time":1794499059086,"pid":78632,"hostname":"lipePC","reqId":"req-i","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059091,"pid":78632,"hostname":"lipePC","reqId":"req-i","res":{"statusCode":201},"responseTime":4.4003000000011525,"msg":"request completed"}
+{"level":30,"time":1794499059091,"pid":78632,"hostname":"lipePC","reqId":"req-j","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059098,"pid":78632,"hostname":"lipePC","reqId":"req-j","res":{"statusCode":201},"responseTime":7.159899999998743,"msg":"request completed"}
+{"level":30,"time":1794499059098,"pid":78632,"hostname":"lipePC","reqId":"req-k","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059104,"pid":78632,"hostname":"lipePC","reqId":"req-k","res":{"statusCode":201},"responseTime":5.844700000001467,"msg":"request completed"}
+{"level":30,"time":1794499059104,"pid":78632,"hostname":"lipePC","reqId":"req-l","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059112,"pid":78632,"hostname":"lipePC","reqId":"req-l","res":{"statusCode":201},"responseTime":7.789199999999255,"msg":"request completed"}
+{"level":30,"time":1794499059112,"pid":78632,"hostname":"lipePC","reqId":"req-m","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059120,"pid":78632,"hostname":"lipePC","reqId":"req-m","res":{"statusCode":429},"responseTime":7.618099999999686,"msg":"request completed"}
+{"level":30,"time":1794499059120,"pid":78632,"hostname":"lipePC","reqId":"req-n","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499059127,"pid":78632,"hostname":"lipePC","reqId":"req-n","res":{"statusCode":201},"responseTime":6.898699999997916,"msg":"request completed"}
+{"level":30,"time":1794499059127,"pid":78632,"hostname":"lipePC","reqId":"req-o","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+  ✔ uploads: dono definido pelo servidor, mídia alheia inacessível, falha não destrói publicações (#12), cota vira 429 (1098.3917ms)
+{"level":30,"time":1794499059132,"pid":78632,"hostname":"lipePC","reqId":"req-o","res":{"statusCode":201},"responseTime":4.293900000000576,"msg":"request completed"}
+{"level":30,"time":1794499060092,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499060099,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":6.921699999998964,"msg":"request completed"}
+{"level":30,"time":1794499060099,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499060103,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":3.9430000000029395,"msg":"request completed"}
+{"level":30,"time":1794499060104,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499060108,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":403},"responseTime":3.6075999999993655,"msg":"request completed"}
+{"level":30,"time":1794499060108,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/media/imports/00000000-0000-4000-8000-0000000000ab/preview","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499060114,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":403},"responseTime":5.645000000000437,"msg":"request completed"}
+{"level":30,"time":1794499060993,"pid":78632,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061000,"pid":78632,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":7.373800000001211,"msg":"request completed"}
+{"level":30,"time":1794499061001,"pid":78632,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/contributors","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061005,"pid":78632,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":4.247100000000501,"msg":"request completed"}
+{"level":30,"time":1794499061005,"pid":78632,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061005,"pid":78632,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":0.1735000000007858,"msg":"request completed"}
+{"level":30,"time":1794499061005,"pid":78632,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061021,"pid":78632,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":15.170599999997648,"msg":"request completed"}
+{"level":30,"time":1794499061021,"pid":78632,"hostname":"lipePC","reqId":"req-5","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061027,"pid":78632,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":404},"responseTime":6.2497999999977765,"msg":"request completed"}
+{"level":30,"time":1794499061028,"pid":78632,"hostname":"lipePC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061038,"pid":78632,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":201},"responseTime":10.128700000001118,"msg":"request completed"}
+{"level":30,"time":1794499061039,"pid":78632,"hostname":"lipePC","reqId":"req-7","req":{"method":"GET","url":"/api/v1/media/70b55586-dd34-4c51-a8eb-37ff0ebce0ec","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061046,"pid":78632,"hostname":"lipePC","reqId":"req-7","res":{"statusCode":404},"responseTime":6.942500000001019,"msg":"request completed"}
+{"level":30,"time":1794499061046,"pid":78632,"hostname":"lipePC","reqId":"req-8","req":{"method":"POST","url":"/api/v1/media/70b55586-dd34-4c51-a8eb-37ff0ebce0ec/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061050,"pid":78632,"hostname":"lipePC","reqId":"req-8","res":{"statusCode":404},"responseTime":4.717400000001362,"msg":"request completed"}
+{"level":30,"time":1794499061051,"pid":78632,"hostname":"lipePC","reqId":"req-9","req":{"method":"GET","url":"/api/v1/media/70b55586-dd34-4c51-a8eb-37ff0ebce0ec/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061056,"pid":78632,"hostname":"lipePC","reqId":"req-9","res":{"statusCode":404},"responseTime":5.585999999999331,"msg":"request completed"}
+{"level":30,"time":1794499061056,"pid":78632,"hostname":"lipePC","reqId":"req-a","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061059,"pid":78632,"hostname":"lipePC","reqId":"req-a","res":{"statusCode":403},"responseTime":2.376799999998184,"msg":"request completed"}
+{"level":30,"time":1794499061059,"pid":78632,"hostname":"lipePC","reqId":"req-b","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061061,"pid":78632,"hostname":"lipePC","reqId":"req-b","res":{"statusCode":403},"responseTime":2.0561999999990803,"msg":"request completed"}
+{"level":30,"time":1794499061061,"pid":78632,"hostname":"lipePC","reqId":"req-c","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499061070,"pid":78632,"hostname":"lipePC","reqId":"req-c","res":{"statusCode":201},"responseTime":8.547899999997753,"msg":"request completed"}
+  ✔ importação por link: fechada para contribuidores por padrão; liberada pela flag, sempre presa ao dono (1937.8136ms)
+✔ fluxo colaborativo (14766.2536ms)
+▶ legado: a migration é aditiva e retrocompatível
+  ✔ registros e privilégios existentes ficam intactos; backend antigo continua inserindo (2777.2308ms)
+  ✔ o rollback devolve o esquema anterior sem perder granadas nem mídias (2624.4992ms)
+✔ legado: a migration é aditiva e retrocompatível (5410.2527ms)
+▶ autoria e propriedade
+  ✔ register_contributor cria contribuidor + vínculo e é idempotente por sessão (11.0717ms)
+  ✔ mídia herda o contribuidor do dono pelo vínculo; imutável; admin/legado ficam sem contribuidor (17.8975ms)
+  ✔ author_id é imutável (inclusive NULL→valor e valor→NULL) mesmo para service_role (21.9256ms)
+  ✔ granada com autor só nasce com vídeo do próprio autor (nem alheio, nem legado) (17.9217ms)
+  ✔ trocar o vídeo de granada com autor: nunca vídeo de outro contribuidor; próprio e de admin (reedição) podem (21.3116ms)
+  ✔ contribuidor inexistente é recusado por chave estrangeira (4.3725ms)
+✔ autoria e propriedade (1348.4871ms)
+▶ RLS e privilégios: papel authenticated sozinho não autoriza nada
+  ✔ is_admin é falso para sessões anônimas e verdadeiro para o admin (4.3989ms)
+  ✔ usuário anônimo autenticado não insere, edita nem exclui granadas direto pela API de dados (10.8322ms)
+  ✔ o dono anônimo também não exclui a própria granada direto (2.0008ms)
+  ✔ admin insere pela API de dados, mas não forja autoria (9.0026ms)
+  ✔ contribuidores, vínculos e register_contributor são inacessíveis a anon/authenticated; mídia só o admin lê (8.9044ms)
+  ✔ qualquer um ainda lê granadas (biblioteca pública) (2.3302ms)
+  ✔ uma sessão só pode pertencer a um contribuidor (1.6759ms)
+✔ RLS e privilégios: papel authenticated sozinho não autoriza nada (1048.2165ms)
+▶ cotas por contribuidor (anti-abuso, atômicas no banco)
+  ✔ mídias: 10 por hora com janela móvel; admin e outros contribuidores não são afetados (1164.5641ms)
+  ✔ mídias: 30 por dia (1188.7701ms)
+  ✔ granadas: 30 por dia por autor (1060.3069ms)
+  ✔ teto global de 200 mídias/dia de contribuidores (1087.8988ms)
+✔ cotas por contribuidor (anti-abuso, atômicas no banco) (4503.0043ms)
+{"level":30,"time":1794499041158,"pid":33644,"hostname":"lipePC","reqId":"req-1","req":{"method":"OPTIONS","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ preflight allows only configured origins and API methods (561.2213ms)
+{"level":30,"time":1794499041185,"pid":33644,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041166,"pid":33644,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":204},"responseTime":7.565599999999904,"msg":"request completed"}
+{"level":30,"time":1794499041168,"pid":33644,"hostname":"lipePC","reqId":"req-2","req":{"method":"OPTIONS","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041169,"pid":33644,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":204},"responseTime":0.4773000000000138,"msg":"request completed"}
+{"level":30,"time":1794499041170,"pid":33644,"hostname":"lipePC","reqId":"req-3","req":{"method":"OPTIONS","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041170,"pid":33644,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":204},"responseTime":0.27520000000004075,"msg":"request completed"}
+{"level":30,"time":1794499041197,"pid":33644,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":11.691499999999905,"msg":"request completed"}
+{"level":30,"time":1794499041198,"pid":33644,"hostname":"lipePC","reqId":"req-2","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041204,"pid":33644,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":401},"responseTime":6.233000000000175,"msg":"request completed"}
+{"level":30,"time":1794499041204,"pid":33644,"hostname":"lipePC","reqId":"req-3","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ PATCH and DELETE enforce authentication and admin permission before writes (34.8648ms)
+{"level":30,"time":1794499041219,"pid":33644,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041208,"pid":33644,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":403},"responseTime":3.9443999999998596,"msg":"request completed"}
+{"level":30,"time":1794499041209,"pid":33644,"hostname":"lipePC","reqId":"req-4","req":{"method":"DELETE","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041209,"pid":33644,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":401},"responseTime":0.4278999999996813,"msg":"request completed"}
+{"level":30,"time":1794499041209,"pid":33644,"hostname":"lipePC","reqId":"req-5","req":{"method":"DELETE","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041210,"pid":33644,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":401},"responseTime":0.45100000000002183,"msg":"request completed"}
+{"level":30,"time":1794499041210,"pid":33644,"hostname":"lipePC","reqId":"req-6","req":{"method":"DELETE","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041211,"pid":33644,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":403},"responseTime":0.423200000000179,"msg":"request completed"}
+{"level":30,"time":1794499041227,"pid":33644,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":7.451900000000023,"msg":"request completed"}
+✔ admin PATCH succeeds and DELETE returns 204 then 404 for missing row (17.1429ms)
+{"level":30,"time":1794499041227,"pid":33644,"hostname":"lipePC","reqId":"req-2","req":{"method":"DELETE","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041227,"pid":33644,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":204},"responseTime":0.5015999999995984,"msg":"request completed"}
+{"level":30,"time":1794499041228,"pid":33644,"hostname":"lipePC","reqId":"req-3","req":{"method":"DELETE","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041228,"pid":33644,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":404},"responseTime":0.40079999999989013,"msg":"request completed"}
+{"level":30,"time":1794499041419,"pid":25624,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041440,"pid":25624,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":403},"responseTime":20.33159999999998,"msg":"request completed"}
+{"level":30,"time":1794499041441,"pid":25624,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041444,"pid":25624,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":403},"responseTime":3.166200000000117,"msg":"request completed"}
+{"level":30,"time":1794499041445,"pid":25624,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ only explicitly configured administrator may inspect, create, complete or privately play imported media (612.7234ms)
+{"level":30,"time":1794499041469,"pid":25624,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ authorized admin can privately play ready own import; missing configured identity fails closed (18.0794ms)
+{"level":30,"time":1794499041481,"pid":25624,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041451,"pid":25624,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":403},"responseTime":5.455300000000079,"msg":"request completed"}
+{"level":30,"time":1794499041451,"pid":25624,"hostname":"lipePC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041452,"pid":25624,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":403},"responseTime":0.87079999999969,"msg":"request completed"}
+{"level":30,"time":1794499041470,"pid":25624,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":1.0208000000002357,"msg":"request completed"}
+{"level":30,"time":1794499041471,"pid":25624,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041472,"pid":25624,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":403},"responseTime":1.16379999999981,"msg":"request completed"}
+{"level":30,"time":1794499041482,"pid":25624,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":403},"responseTime":0.6496999999999389,"msg":"request completed"}
+{"level":30,"time":1794499041482,"pid":25624,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041498,"pid":25624,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041488,"pid":25624,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":403},"responseTime":5.711800000000039,"msg":"request completed"}
+{"level":30,"time":1794499041488,"pid":25624,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041489,"pid":25624,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":403},"responseTime":0.5,"msg":"request completed"}
+{"level":30,"time":1794499041500,"pid":25624,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":403},"responseTime":1.9299999999998363,"msg":"request completed"}
+{"level":30,"time":1794499041512,"pid":25624,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ Instagram import routes preserve admin and owner isolation (41.2036ms)
+{"level":30,"time":1794499041500,"pid":25624,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/323e4567-e89b-42d3-a456-426614174000/import-playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499041501,"pid":25624,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":404},"responseTime":0.6396999999997206,"msg":"request completed"}
+{"level":30,"time":1794499041513,"pid":25624,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":0.7844000000000051,"msg":"request completed"}
+{"level":30,"time":1794499041570,"pid":8332,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046608,"pid":8332,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":504},"responseTime":5037.162699999999,"msg":"request completed"}
+✔ pilot deadline bounds stalled authentication before DB or extractor writes (5771.0927ms)
+{"level":30,"time":1794499046616,"pid":8332,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046619,"pid":8332,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":2.9952000000002954,"msg":"request completed"}
+{"level":30,"time":1794499046619,"pid":8332,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046629,"pid":8332,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":10.488199999999779,"msg":"request completed"}
+✔ inspection requires authentication before extracting and returns only safe metadata (20.8955ms)
+{"level":30,"time":1794499046636,"pid":8332,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046638,"pid":8332,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":2.0164999999997235,"msg":"request completed"}
+{"level":30,"time":1794499046638,"pid":8332,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ source-id import accepts long-source clip without invoking extractor or accepting user CDN URL (9.9569ms)
+{"level":30,"time":1794499046644,"pid":8332,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046640,"pid":8332,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":400},"responseTime":2.0306000000000495,"msg":"request completed"}
+{"level":30,"time":1794499046645,"pid":8332,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":503},"responseTime":0.7548999999999069,"msg":"request completed"}
+{"level":30,"time":1794499046646,"pid":8332,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ disabled runtime rejects source sessions and preserves disabled legacy source-url response (5.8494ms)
+{"level":30,"time":1794499046650,"pid":8332,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046646,"pid":8332,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":422},"responseTime":0.5465999999996711,"msg":"request completed"}
+{"level":30,"time":1794499046651,"pid":8332,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":0.6400000000003274,"msg":"request completed"}
+{"level":30,"time":1794499046651,"pid":8332,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046653,"pid":8332,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":1.415899999999965,"msg":"request completed"}
+✔ configured 20s/bytes limits are identical in capabilities, inspection and creation (7.5835ms)
+{"level":30,"time":1794499046653,"pid":8332,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499046654,"pid":8332,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":400},"responseTime":0.5442999999995664,"msg":"request completed"}
+✔ pilot caps new TikTok selections independently of the historical 90s schema (4.2789ms)
+✔ known oversized source is rejected before downloading (1.4113ms)
+✔ unknown-length file growth aborts downloader without deleting unrelated files (84.4463ms)
+✔ deadline rejects a stalled auth/storage operation and observes late errors (1.2172ms)
+✔ an already-expired deadline still observes an operation rejected later (1.0871ms)
+✔ pilot uses protected native download with 50MB limit and optimized compatible encoding (1.0727ms)
+✔ preflight absent by default and always absent in production (847.3115ms)
+✔ preview preflight requires dedicated token and accepts no commands or URLs (19.6821ms)
+✔ blocked executable yields sanitized failure and no successful preflight (4.8603ms)
+✔ import stores only validated output, preserves provenance, and terminal complete is idempotent (62.9722ms)
+✔ pilot preserves queued historical 90s selections and published historical media (1.4423ms)
+✔ elapsed request budget prevents processing or publishing ready (5.2851ms)
+✔ an aborted processing dependency cannot return metadata and publish ready (5.6782ms)
+✔ global slot busy leaves queued asset intact and retry does not create a new selection (0.8134ms)
+✔ failed download never stores or changes existing key and returns bounded error without raw extractor output (8.1041ms)
+✔ active lease is observed without claiming; expired second attempt cannot exceed recovery budget (0.9538ms)
+✔ stale attempt cannot publish a stored result over a later attempt (17.7095ms)
+✔ access denial and network quota failures remain explicit sanitized terminal errors (13.9738ms)
+✔ a lower runtime limit terminates an old queued selection without storing or leaving it queued (0.9118ms)
+✔ Storage failure preserves the existing key and removes the temporary directory (6.2725ms)
+✔ concurrent local processing fails busy before downloading the second asset (11.914ms)
+✔ Storage errors remain explicit and confirmed failed attempts clean only their own output (19.832ms)
+✔ ambiguous ready response never removes an object referenced by ready media (14.0566ms)
+✔ relay serves only its opaque local route and enforces ranges before upstream access (68.1033ms)
+✔ relay preserves streamed data and a byte over budget aborts and closes the transfer (103.9826ms)
+✔ metadata proxy rejects unauthenticated CONNECT and internal/alternate authorities without a remote socket (26.6676ms)
+✔ platform access denial is explicit and is never retried as a full download (9.1579ms)
+✔ extractor uses only metadata, fixed extractors and an explicit authenticated proxy (1.8383ms)
+✔ preserves yt-dlp preference order for equal-resolution formats and honors explicit selected format (1.0364ms)
+✔ inherits normal HTTP headers case-insensitively and strips authentication and transport headers (1.4138ms)
+✔ selects a bounded progressive MP4; rejects manifests, DRM, credentials and external hosts (0.6312ms)
+✔ encoder receives loopback only, fixed MOV demuxer, no external references and fixed output (2.4956ms)
+✔ TikTok opt-in defaults off and rejects ambiguous values (0.2446ms)
+✔ egress denies private, reserved, mapped IPv6 and mixed DNS responses (10.4745ms)
+✔ host allowlist has label boundaries and disallows addresses and alternate ports (0.2382ms)
+✔ network budget aggregates retries, counts requests and aborts whole task on exhaustion (0.4387ms)
+✔ range response must match requested offset/end, stable resource size and identity encoding (0.6591ms)
+✔ import selection handles long sources without relaxing uploaded file rules (10.2628ms)
+✔ metadata requires finite bounded VOD and does not leak CDN URLs or raw extractor fields (1.5063ms)
+✔ temporary download is explicit, native-only, pinned to one info file and output (2.0852ms)
+✔ temporary encoder cannot open network references and honors late selection (3.1519ms)
+✔ process diagnostics never expose URLs, cookies, signed queries or raw stderr (0.6215ms)
+✔ validation failures retain their public code without leaking raw error details (0.1736ms)
+✔ native session retains protected extractor arguments, format and identity output (0.3903ms)
+✔ temporary source validates rounded duration, codecs and matching selected dimensions (0.5202ms)
+✔ recognizes supported link shapes without resolving shortened links (3.2591ms)
+✔ rejects unsafe URLs before any network access (1.0894ms)
+✔ clip validates explicit increasing selection up to40 seconds (4.6154ms)
+✔ all importers explicitly disabled and perform no fetch (2.5067ms)
+{"level":30,"time":1794499044022,"pid":71888,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044038,"pid":71888,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":15.121099999999842,"msg":"request completed"}
+{"level":30,"time":1794499044039,"pid":71888,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044040,"pid":71888,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044040,"pid":71888,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044047,"pid":71888,"hostname":"lipePC","reqId":"req-5","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044065,"pid":71888,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":422},"responseTime":24.344800000000305,"msg":"request completed"}
+{"level":30,"time":1794499044066,"pid":71888,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":422},"responseTime":25.61429999999973,"msg":"request completed"}
+{"level":30,"time":1794499044067,"pid":71888,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":422},"responseTime":26.047199999999975,"msg":"request completed"}
+{"level":30,"time":1794499044067,"pid":71888,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":422},"responseTime":19.80540000000019,"msg":"request completed"}
+{"level":30,"time":1794499044069,"pid":71888,"hostname":"lipePC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ imports authenticates and rejects disabled platforms without modifying existing data (783.9182ms)
+{"level":30,"time":1794499044083,"pid":71888,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044073,"pid":71888,"hostname":"lipePC","reqId":"req-6","res":{"statusCode":400},"responseTime":3.45029999999997,"msg":"request completed"}
+{"level":30,"time":1794499044094,"pid":71888,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":422},"responseTime":10.438900000000103,"msg":"request completed"}
+✔ upload with explicit clip cannot silently publish uncut source (20.7996ms)
+{"level":30,"time":1794499044105,"pid":71888,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ upload without selection preserves signed session flow (12.3981ms)
+{"level":30,"time":1794499044124,"pid":71888,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044107,"pid":71888,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":1.3846000000003187,"msg":"request completed"}
+{"level":30,"time":1794499044127,"pid":71888,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":2.871399999999994,"msg":"request completed"}
+{"level":30,"time":1794499044131,"pid":71888,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044132,"pid":71888,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":200},"responseTime":1.154399999999896,"msg":"request completed"}
+{"level":30,"time":1794499044133,"pid":71888,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/media/9a0c4d35-edb3-4181-a0c9-ad551117cced/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ session persists clip and complete rejects a changed selection (30.4389ms)
+{"level":30,"time":1794499044138,"pid":71888,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":400},"responseTime":4.8815999999997075,"msg":"request completed"}
+✔ processor mode validated explicitly (2.5186ms)
+✔ inline completes original and repeats without another download (42.5218ms)
+✔ active lease returns202 without download (0.4584ms)
+✔ expired claim resumes and exhausted claims fail (5.0757ms)
+✔ validation error is persisted failed and does not publish (3.4137ms)
+✔ concurrent callers do not both download the original (4.3578ms)
+✔ clip output replaces only media reference after verified storage; replay is idempotent (8.3276ms)
+✔ failed clip never changes source key or stores output (4.01ms)
+✔ stale clip attempt cannot store or publish over a reclaimed lease (4.5599ms)
+✔ clip store failure preserves original media and never reaches ready (4.7318ms)
+✔ oversized encoded file is rejected before storage (6.8418ms)
+✔ only one clip runs per instance; other session can retry without losing input (53.3678ms)
+{"level":30,"time":1794499043654,"pid":89556,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499043661,"pid":89556,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":6.162900000000263,"msg":"request completed"}
+{"level":30,"time":1794499043662,"pid":89556,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499043671,"pid":89556,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":401},"responseTime":8.947700000000168,"msg":"request completed"}
+{"level":30,"time":1794499043671,"pid":89556,"hostname":"lipePC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499043685,"pid":89556,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":201},"responseTime":13.358300000000327,"msg":"request completed"}
+✔ Instagram inspection and source creation require admin, separate flag and correct owner (487.3063ms)
+{"level":30,"time":1794499043698,"pid":89556,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/inspect","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499043685,"pid":89556,"hostname":"lipePC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/media/imports","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499043689,"pid":89556,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":201},"responseTime":3.4899999999997817,"msg":"request completed"}
+{"level":30,"time":1794499043702,"pid":89556,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":503},"responseTime":4.008100000000013,"msg":"request completed"}
+✔ Instagram feature disabled fails closed before download (11.9436ms)
+✔ Instagram hosts are provider scoped; private and spoofed destinations are rejected (9.1362ms)
+✔ Reels metadata duration comes from validated source probe and canonical id (1.1095ms)
+✔ Instagram source probe rejects extra streams and unsupported codecs, oversized duration (0.4325ms)
+✔ Instagram extractor uses canonical source, proxy, restricted extractor and no login (0.4443ms)
+✔ Instagram progressive format admits bounded canonical fbcdn without trusting headers (0.8317ms)
+✔ source probe disallows external references and non-file protocols (1.3121ms)
+✔ Instagram flag is independent and fails closed by default (101.7367ms)
+✔ independent health probe detects a dead process despite a previously healthy file (2.5834ms)
+✔ runner serializes cycles and reports failure then recovery without losing last success (2.4261ms)
+✔ cancellation stops waiting even when an adapter never settles (0.9521ms)
+✔ leased expired backlog prevents a successful maintenance heartbeat (18.0645ms)
+✔ shutdown abort is propagated and never becomes a success (1.0117ms)
+✔ shutdown during the waiting period must not leave a healthy status behind (0.6033ms)
+✔ radar uses frontend origin and preserves canonical version (1.3235ms)
+{"level":30,"time":1794499044477,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ missing token denied before administrative data access (817.7287ms)
+{"level":30,"time":1794499044497,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ viewer denied administrative write (15.6014ms)
+{"level":30,"time":1794499044510,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044531,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044538,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/complete","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ complete repeated for queued and ready returns current state (37.263ms)
+{"level":30,"time":1794499044551,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ disabled upload authenticates first and never creates a Storage session (14.3512ms)
+{"level":30,"time":1794499044559,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044564,"pid":81804,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ enabled flag advertises upload only with configured clients (11.7292ms)
+{"level":30,"time":1794499044484,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":5.6262000000001535,"msg":"request completed"}
+{"level":30,"time":1794499044501,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":403},"responseTime":3.8056000000001404,"msg":"request completed"}
+{"level":30,"time":1794499044513,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":202},"responseTime":2.683300000000145,"msg":"request completed"}
+{"level":30,"time":1794499044532,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":202},"responseTime":0.8690000000001419,"msg":"request completed"}
+{"level":30,"time":1794499044539,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":0.7690999999999804,"msg":"request completed"}
+{"level":30,"time":1794499044551,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":0.4618000000000393,"msg":"request completed"}
+{"level":30,"time":1794499044551,"pid":81804,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/media/uploads","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044552,"pid":81804,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":503},"responseTime":0.9063999999998487,"msg":"request completed"}
+{"level":30,"time":1794499044553,"pid":81804,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044553,"pid":81804,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":0.5239000000001397,"msg":"request completed"}
+{"level":30,"time":1794499044559,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":0.4459999999999127,"msg":"request completed"}
+{"level":30,"time":1794499044565,"pid":81804,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":0.47069999999985157,"msg":"request completed"}
+✔ origin accepts null/omission and inclusive zero/one bounds (5.7779ms)
+✔ origin rejects partial, non-finite, outside bounds and unknown fields (2.7971ms)
+✔ DB mapping replaces/clears origin atomically and omitted patch preserves it (10.189ms)
+✔ view exposes origin, preserving zeros and legacy nulls without deriving it from target (0.3733ms)
+{"level":30,"time":1794499044350,"pid":32300,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044367,"pid":32300,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":15.268199999999979,"msg":"request completed"}
+{"level":30,"time":1794499044368,"pid":32300,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ create distinct origins for the same destination and return public list/detail (664.3365ms)
+{"level":30,"time":1794499044387,"pid":32300,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044370,"pid":32300,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":201},"responseTime":2.7034999999996217,"msg":"request completed"}
+{"level":30,"time":1794499044371,"pid":32300,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/grenades?mapId=mirage","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044373,"pid":32300,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":1.562199999999848,"msg":"request completed"}
+{"level":30,"time":1794499044373,"pid":32300,"hostname":"lipePC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044374,"pid":32300,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":200},"responseTime":0.5238000000003922,"msg":"request completed"}
+{"level":30,"time":1794499044391,"pid":32300,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":3.2265000000002146,"msg":"request completed"}
+{"level":30,"time":1794499044391,"pid":32300,"hostname":"lipePC","reqId":"req-2","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044393,"pid":32300,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":200},"responseTime":1.5006000000003041,"msg":"request completed"}
+{"level":30,"time":1794499044393,"pid":32300,"hostname":"lipePC","reqId":"req-3","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044395,"pid":32300,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":1.428400000000238,"msg":"request completed"}
+{"level":30,"time":1794499044395,"pid":32300,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ patch can set, preserve or explicitly clear origin without changing target/video (22.3103ms)
+{"level":30,"time":1794499044406,"pid":32300,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044397,"pid":32300,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":400},"responseTime":1.5073999999999614,"msg":"request completed"}
+{"level":30,"time":1794499044412,"pid":32300,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":201},"responseTime":4.901400000000194,"msg":"request completed"}
+{"level":30,"time":1794499044412,"pid":32300,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ create without origin remains compatible and partial origin cannot be persisted (15.8241ms)
+{"level":30,"time":1794499044420,"pid":32300,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044413,"pid":32300,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":400},"responseTime":1.206800000000385,"msg":"request completed"}
+{"level":30,"time":1794499044424,"pid":32300,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":2.255200000000059,"msg":"request completed"}
+{"level":30,"time":1794499044425,"pid":32300,"hostname":"lipePC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/grenades","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044426,"pid":32300,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":403},"responseTime":1.1337000000003172,"msg":"request completed"}
+{"level":30,"time":1794499044428,"pid":32300,"hostname":"lipePC","reqId":"req-3","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044429,"pid":32300,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":401},"responseTime":0.8656999999998334,"msg":"request completed"}
+{"level":30,"time":1794499044429,"pid":32300,"hostname":"lipePC","reqId":"req-4","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ anonymous and non-admin writes stay denied before origin mutation (16.6286ms)
+{"level":30,"time":1794499044438,"pid":32300,"hostname":"lipePC","reqId":"req-1","req":{"method":"PATCH","url":"/api/v1/grenades/123e4567-e89b-42d3-a456-426614174000","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044430,"pid":32300,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":403},"responseTime":0.8011000000001332,"msg":"request completed"}
+{"level":30,"time":1794499044440,"pid":32300,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":1.3101000000001477,"msg":"request completed"}
+✔ mapId-only patch does not infer or silently clear origin; caller must remark coordinates (9.6677ms)
+{"level":30,"time":1794499044469,"pid":82168,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ playback signs only published ready output, renews independently of TikTok and hides internal keys (617.5556ms)
+{"level":30,"time":1794499044491,"pid":82168,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044502,"pid":82168,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044517,"pid":82168,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ unpublished or nonready media never receives a playback URL (37.8025ms)
+{"level":30,"time":1794499044527,"pid":82168,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ signing failure returns bounded Storage error without raw response (8.183ms)
+{"level":30,"time":1794499044478,"pid":82168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":8.944700000000012,"msg":"request completed"}
+{"level":30,"time":1794499044479,"pid":82168,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/123e4567-e89b-42d3-a456-426614174000/playback","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044479,"pid":82168,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":200},"responseTime":0.6075000000000728,"msg":"request completed"}
+{"level":30,"time":1794499044519,"pid":82168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":404},"responseTime":1.351600000000417,"msg":"request completed"}
+{"level":30,"time":1794499044528,"pid":82168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":503},"responseTime":0.4768000000003667,"msg":"request completed"}
+{"level":30,"time":1794499044495,"pid":82168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":404},"responseTime":3.3805999999999585,"msg":"request completed"}
+{"level":30,"time":1794499044503,"pid":82168,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":404},"responseTime":0.4128000000000611,"msg":"request completed"}
+{"level":30,"time":1794499044592,"pid":88344,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ capabilities provides strict sourcePreview booleans and fails closed on stale heartbeat (621.818ms)
+{"level":30,"time":1794499044612,"pid":88344,"hostname":"lipePC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/media/imports/223e4567-e89b-42d3-a456-426614174000/preview","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044598,"pid":88344,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":4.9328999999997905,"msg":"request completed"}
+{"level":30,"time":1794499044599,"pid":88344,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044599,"pid":88344,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":200},"responseTime":0.5799999999999272,"msg":"request completed"}
+{"level":30,"time":1794499044600,"pid":88344,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/capabilities","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044600,"pid":88344,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":200},"responseTime":0.4295999999999367,"msg":"request completed"}
+{"level":30,"time":1794499044621,"pid":88344,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":401},"responseTime":8.702999999999975,"msg":"request completed"}
+{"level":30,"time":1794499044622,"pid":88344,"hostname":"lipePC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/media/imports/223e4567-e89b-42d3-a456-426614174000/preview","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044625,"pid":88344,"hostname":"lipePC","reqId":"req-2","res":{"statusCode":404},"responseTime":2.9885000000003856,"msg":"request completed"}
+{"level":30,"time":1794499044625,"pid":88344,"hostname":"lipePC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/media/imports/223e4567-e89b-42d3-a456-426614174000/preview","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044626,"pid":88344,"hostname":"lipePC","reqId":"req-3","res":{"statusCode":503},"responseTime":0.9949999999998909,"msg":"request completed"}
+{"level":30,"time":1794499044627,"pid":88344,"hostname":"lipePC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/media/imports/223e4567-e89b-42d3-a456-426614174000/preview","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1794499044627,"pid":88344,"hostname":"lipePC","reqId":"req-4","res":{"statusCode":410},"responseTime":0.6824999999998909,"msg":"request completed"}
+{"level":30,"time":1794499044628,"pid":88344,"hostname":"lipePC","reqId":"req-5","req":{"method":"POST","url":"/api/v1/media/imports/223e4567-e89b-42d3-a456-426614174000/preview","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+✔ preview endpoints enforce authentication, owner lookup and finite expiration (29.4586ms)
+{"level":30,"time":1794499044632,"pid":88344,"hostname":"lipePC","reqId":"req-5","res":{"statusCode":400},"responseTime":4.5210000000001855,"msg":"request completed"}
+✔ service fetch preserves cancellation carried by a Request object (4.3822ms)
+✔ preview signing cannot return a URL after its operation was cancelled (1.0955ms)
+✔ Storage failure cannot release a reservation or refresh heartbeat; final bucket untouched (4.8973ms)
+✔ failed CAS after object removal keeps sweep unhealthy for later recovery (0.5921ms)
+✔ hitting the batch cap never counts a partial sweep as complete (21.2983ms)
+✔ cancellation during orphan listing cannot publish a successful heartbeat (0.67ms)
+✔ complete cleanup and reconciliation can refresh heartbeat once (2.5839ms)
+✔ a competing collector cannot touch Storage or refresh the heartbeat (0.2893ms)
+✔ global release failure can happen after heartbeat confirmation (0.5064ms)
+{"level":30,"time":1794499044894,"pid":34988,"hostname":"lipePC","reqId":"req-1","req":{"method":"GET","url":"/health","host":"127.0.0.1:53895","remoteAddress":"127.0.0.1","remotePort":53896},"msg":"incoming request"}
+{"level":30,"time":1794499044900,"pid":34988,"hostname":"lipePC","reqId":"req-1","res":{"statusCode":200},"responseTime":5.632200000000012,"msg":"request completed"}
+✔ Vercel entrypoint exports a working HTTP adapter without binding its own port (1515.0125ms)
+✔ preview records reservation before upload and refuses flag absent (2.6335ms)
+✔ URL signing requires owner, ready status and bounds expiration (2.0204ms)
+✔ ambiguous upload failure leaves durable reservation, cleanup removes only strict preview key (0.5887ms)
+✔ signed URL must point to the exact expected private object and Supabase origin (14.1541ms)
+✔ cleanup does not release registry on storage failure or invalid ownership lease (0.3672ms)
+✔ orphan reconciliation ignores published buckets, malformed names, fresh files and rows still registered (0.7994ms)
+✔ preview availability fails closed on missing, stale, future or errored heartbeat (1.1366ms)
+✔ download bounds streamed content even without content-length (59.0581ms)
+✔ clip boundaries90s and source180s with explicit fractional selection (5.1086ms)
+✔ trimming flag defaultsfalse and rejects ambiguous values (0.2977ms)
+✔ manutenção API bloqueia toda escrita antes de clientes e preserva leitura (288.2108ms)
+✔ manutenção inválida falha no startup (1.1215ms)
+ℹ tests 192
+ℹ suites 7
+ℹ pass 192
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22635.4221
