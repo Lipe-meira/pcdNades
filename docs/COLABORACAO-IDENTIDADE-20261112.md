@@ -206,3 +206,32 @@ Valor efetivo do código: `MEDIA_MAX_DURATION_SECONDS` tem padrão e teto **90**
 
 - **Merge com tudo desligado** (`CONTRIBUTORS_ENABLED`, `CONTRIBUTOR_UPLOADS_ENABLED`, `CONTRIBUTOR_IMPORTS_ENABLED` = false): sem bloqueador conhecido; ressalva: o backend novo exige as duas migrations (aplicar antes, com backup e autorização) e ainda falta o ensaio sobre a restauração do dump.
 - **Ativação pública**: **ainda não**. Faltam Supabase real (Auth anônimo + CAPTCHA, Storage, PostgREST), conferir bucket e capacidade, decidir os valores dos limites, e ligar por etapas (contribuição sem upload/importação → upload → importação).
+
+## 11. Correções finais R1/R2/R3 (segunda revisão independente, SHA revisado cd627de)
+
+Origem: `docs/reviews/PR19-SECURITY-20261112.md` (branch `codex/revisao-pr19-20261112`). A revisão histórica do SHA 3e3858c (S1/S2/S3) é outra; aqui só R1, R2 e R3. As migrations continuam **não aplicadas em nenhum Supabase**, por isso a migration `20261112180000` foi editada no lugar (sem terceira migration); quem tiver aplicado a versão anterior em banco descartável deve reaplicar.
+
+### 11.1 R1 (ALTO) — worker-transcode subcontabilizava fonte + saída
+Estratégia B (menor solução comprovadamente segura), em três camadas, sem desligar o processamento de vídeos:
+- **API** (`application.ts`): contribuidor não cria nem finaliza upload quando `MEDIA_PROCESSOR_MODE=worker-transcode` (403 `CONTRIBUTOR_UPLOADS_UNSUPPORTED`, nada é reservado); `capabilities.contributors.uploads=false`. Administrador e `inline-original` inalterados.
+- **Worker** (`worker-queue.ts`, usado por `worker.ts`): a fila nunca assume mídia de contribuidor; o que ele deixou em `queued` vira `failed` (`PROCESSOR_UNSUPPORTED`, reserva de bytes mantida, nada apagado).
+- **Banco** (trigger `media_contributor`): upload de contribuidor **sem corte** só fica `ready` mantendo a `storage_key` da fonte; trocar a chave (playback-N.mp4) levanta `CONTRIBUTOR_STORAGE_UNACCOUNTED`. Com corte, a chave nova do trecho é legítima e continua cobrando fonte + trecho. Evita o estado "fonte 50 MB + saída 7 MB cobrados como 7 MB" mesmo por outro caminho. Limite: se o worker já tiver enviado `playback-N.mp4` antes da recusa, esse objeto fica órfão (≤50 MB, fora do orçamento) — por isso a camada do worker impede o caso antes do upload.
+Estratégia A (cobrar fonte + saída) foi descartada: exigiria reservar 100 MB em todo upload (dobrar o custo do orçamento) e reconciliar dois tamanhos no worker.
+
+### 11.2 R2 (MÉDIO) — complete tardio reativava pendentes antigos
+O mesmo trigger, no UPDATE, trata qualquer **entrada** em `queued/processing` vinda de outro estado (na prática `awaiting_upload → queued`): toma os mesmos locks do INSERT (global → contribuidor), conta os **outros** pendentes (`id <> new.id`, mesma definição de pendente do INSERT) e rejeita com `CONTRIBUTOR_PENDING_LIMIT` (429) ou `CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED` (503). Escolhi **admissão**, não expiração terminal: a idade do registro não prova que o objeto não pode mais ser enviado (URL assinada válida) nem que não foi enviado; a linha rejeitada continua `awaiting_upload`, com reserva de bytes intacta, **nada é apagado**, e o complete pode ser repetido quando abrir vaga. `inline.ts` agora traduz esses erros (antes virariam 503 genérico). Administrador (sem `contributor_id`) não é afetado.
+
+### 11.3 R3 (MÉDIO) — ordem de rollback
+Decisão: **runbook + teste de compatibilidade**, sem proteção adicional no código. Um fallback para a assinatura antiga deixaria o backend novo rodando as importações do administrador SEM os limites da S2, mascarando a incompatibilidade; o erro 503 explícito é preferível. O cabeçalho do rollback agora lista a ordem:
+1. desligar as três flags (`CONTRIBUTORS_ENABLED`, `CONTRIBUTOR_UPLOADS_ENABLED`, `CONTRIBUTOR_IMPORTS_ENABLED`);
+2. publicar backend **compatível com o schema de destino** (anterior ao PR #19, ou que use só `claim_import_slot(uuid,integer)`) e **confirmar** health + inspeção administrativa;
+3. só então executar `20261112180000_..._rollback.sql` (com backup);
+4. para o rollback completo, depois `20261112120000_contributors_authorship_rollback.sql` (também exige backend anterior).
+Flags desligadas não bastam: o backend novo chama `claim_import_slot(uuid,integer,uuid)` em todos os fluxos administrativos. Dados preservados (mídias, granadas, vínculos, fontes; só `storage_charge_bytes`, `import_slot_usage` e funções novas somem). Nenhum rollback real foi executado.
+
+### 11.4 Evidências e limites
+- `backend/tests/contributor-final-fixes.test.ts` (19 testes, PGlite): R1 (reprodução do achado, sem corte, com corte com/sem `sourceBytes`, falha mantém reserva, administrador, API em worker-transcode e inline, fila do worker), R2 (cenário exato do Codex: 2 antigas + 1 nova + complete nas 3 → no máximo 2; recuperação posterior; dentro da janela; isolamento entre contribuidores; administrador; API 429), R3 (backend anterior × schemas: só migration 1 / as duas / após rollback2 / após rollback1; backend atual falha sem a assinatura nova; dados preservados; permissões).
+- `npm --prefix backend test`: **267/267** (248 + 19); typecheck OK; smokes HE (10) e andares (18) PASS.
+- Concorrência multiconexão em **PostgreSQL 17.5 descartável** (embedded-postgres, fora do repositório, não é Supabase): `scripts/contributor-concurrency-real-pg.mjs` com o novo cenário H (6 completes tardios + inserts simultâneos de 2 contribuidores, 25 rodadas): nunca mais de 2 pendentes cada, nenhuma linha apagada, bytes intactos, 0 deadlocks; **sensibilidade**: removendo os advisory locks do bloco R2, H falha em 25/25 rodadas.
+- **Não validado**: Supabase real (Auth/PostgREST/Storage), FFmpeg/upload físico em worker-transcode, expiração real de URL assinada. PGlite é conexão única; adaptador de teste ≠ PostgREST.
+- Riscos residuais: objeto `playback-N.mp4` órfão se o worker for modificado para ignorar a fila segura; reservas de falhas/abandonos seguem liberadas só por limpeza manual (§10.6); ocupação física real só se confirma no Storage.

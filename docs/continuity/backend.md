@@ -1,3 +1,12 @@
+# PR #19 — correções finais R1/R2/R3 (segunda revisão, SHA revisado cd627de) — 12/11/2026, IMPLEMENTADO E TESTADO LOCALMENTE (commit/push/CI ver entrega)
+
+Estado: R1 (worker-transcode: contribuidor bloqueado na API, fila do worker e trava no banco `CONTRIBUTOR_STORAGE_UNACCOUNTED`), R2 (admissão atômica de pendentes ao entrar em queued/processing, no trigger de UPDATE) e R3 (ordem do rollback no cabeçalho do SQL + teste de compatibilidade; sem código de fallback) implementados. Backend 267/267, typecheck OK, smokes HE 10 e andares 18 PASS. Concorrência multiconexão H (R2) em PostgreSQL 17.5 descartável: PASS, e falha 25/25 sem os locks. Detalhes: docs/COLABORACAO-IDENTIDADE-20261112.md §11. Nada aplicado em Supabase/Vercel; sem merge, deploy ou flags; PR B/C não iniciados.
+
+Local: branch `feat/colaboracao-identidade`, worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, base cd627de. Migration 20261112180000 editada no lugar (nunca aplicada em lugar nenhum).
+Retomar: `git status`; conferir CI do SHA final do PR #19; aguardar aprovação do usuário. Não validado: Supabase real, FFmpeg físico em worker-transcode.
+
+---
+
 # PR #19 — correções de segurança da revisão independente (S1 Storage, S2 importações, S3 erro) — 12/11/2026, IMPLEMENTADO E TESTADO LOCALMENTE (commit/push/CI ver abaixo)
 
 Estado: S1/S2/S3 implementados (migration 20261112180000 + rollback, flag CONTRIBUTOR_UPLOADS_ENABLED, slot com dono, tradução única de erros). Backend 248/248, typecheck OK, smokes legados PASS (18 e 10). Concorrência multiconexão verificada em PostgreSQL 17.5 descartável via backend/scripts/contributor-concurrency-real-pg.mjs (não é Supabase; não roda no CI). Detalhes: docs/COLABORACAO-IDENTIDADE-20261112.md §10. Pendente: acompanhar CI do push, atualizar corpo do PR #19, validações em Supabase real, e autorização do usuário para qualquer merge/migration/flag. Não iniciar PR B/C.

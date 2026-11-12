@@ -1,7 +1,14 @@
 -- Reverte 20261112180000_contributor_storage_and_import_pools.sql (volta ao estado de 20261112120000).
--- ATENÇÃO: perde a contabilidade de bytes (storage_charge_bytes) e o histórico de uso do slot. Linhas de mídia e granadas são preservadas.
--- Sem estas regras, contribuidores voltam a poder reservar uploads sem orçamento de bytes: mantenha CONTRIBUTOR_UPLOADS_ENABLED=false/CONTRIBUTORS_ENABLED=false antes de reverter.
--- Para desfazer as duas migrations: rode ESTE arquivo primeiro e depois 20261112120000_contributors_authorship_rollback.sql.
+-- ORDEM OBRIGATÓRIA (R3 da revisão do PR #19). Este arquivo REMOVE public.claim_import_slot(uuid,integer,uuid), que o backend DESTE PR chama em
+-- TODOS os fluxos administrativos de importação (inspeção, prévia, processamento), mesmo com as três flags colaborativas desligadas.
+-- Flags desligadas NÃO tornam o backend novo compatível com este schema: sem a assinatura, inspeção/prévia/importação do administrador dão 503.
+--   1. Desligue CONTRIBUTORS_ENABLED, CONTRIBUTOR_UPLOADS_ENABLED e CONTRIBUTOR_IMPORTS_ENABLED.
+--   2. Publique no backend uma versão COMPATÍVEL com o schema de destino (a anterior ao PR #19, ou outra que use só claim_import_slot(uuid,integer))
+--      e CONFIRME que ela atende (health + inspeção administrativa) ANTES de executar este arquivo.
+--   3. Só então execute este arquivo (com backup). Não há uma etapa em que backend novo + este rollback convivam.
+--   4. Para o rollback COMPLETO: depois, 20261112120000_contributors_authorship_rollback.sql (também exige backend anterior ao PR #19).
+-- ATENÇÃO: perde a contabilidade de bytes (storage_charge_bytes) e o histórico de uso do slot. Linhas de mídia, granadas e vínculos são preservados.
+-- Sem estas regras contribuidores voltam a reservar uploads sem orçamento de bytes: mantenha as flags desligadas até reaplicar a migration.
 begin;
 create or replace function public.release_import_slot(p_holder uuid) returns void
 language sql security invoker set search_path='' as $$

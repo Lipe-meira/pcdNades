@@ -35,6 +35,21 @@ begin
   if new.contributor_id is distinct from old.contributor_id or new.owner_id is distinct from old.owner_id then raise exception 'IMMUTABLE_OWNERSHIP'; end if;
   -- A cobrança não vem do chamador: só a conciliação ao ficar pronta pode reduzi-la, e nunca acima da reserva.
   new.storage_charge_bytes:=old.storage_charge_bytes;
+  -- R1: o processador worker-transcode grava playback-N.mp4 e RETÉM source.mp4 (dois objetos), mas a cobrança só conheceria um.
+  -- Upload de contribuidor sem corte só fica pronto mantendo a storage_key da fonte; com corte a chave do trecho é legítima (fonte + trecho cobrados).
+  if new.contributor_id is not null and new.source_type='upload' and new.clip is null and new.status='ready' and old.status<>'ready' and new.storage_key is distinct from old.storage_key
+  then raise exception 'CONTRIBUTOR_STORAGE_UNACCOUNTED'; end if;
+  -- R2: qualquer ENTRADA em fila/processamento (ex.: complete tardio de upload cuja janela de 150 min já venceu, que saiu da contagem de
+  -- pendentes) passa pela mesma admissão atômica do INSERT: mesmos locks, mesma ordem, e conta os OUTROS pendentes. A linha não é apagada
+  -- nem tem a reserva de bytes alterada: a URL assinada pode continuar válida, e depois que uma vaga abrir o complete pode ser repetido.
+  if new.contributor_id is not null and old.status not in ('queued','processing') and new.status in ('queued','processing') then
+   perform pg_advisory_xact_lock(hashtextextended('pcdnades:contributor-media-global',0));
+   perform pg_advisory_xact_lock(hashtextextended('pcdnades:contributor:'||new.contributor_id::text,0));
+   if (select count(*) from public.media_assets where contributor_id=new.contributor_id and id<>new.id and (status in ('queued','processing') or (status='awaiting_upload' and created_at>now()-make_interval(mins=>private.contributor_quota('upload_window_minutes')))))>=private.contributor_quota('pending_contributor')
+   then raise exception 'CONTRIBUTOR_PENDING_LIMIT'; end if;
+   if (select count(*) from public.media_assets where contributor_id is not null and id<>new.id and (status in ('queued','processing') or (status='awaiting_upload' and created_at>now()-make_interval(mins=>private.contributor_quota('upload_window_minutes')))))>=private.contributor_quota('pending_global')
+   then raise exception 'CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED'; end if;
+  end if;
   if new.contributor_id is not null and new.status='ready' and old.status<>'ready' and jsonb_typeof(new.metadata->'bytes')='number' then
    actual:=(new.metadata->>'bytes')::numeric;
    if actual between 1 and 50000000 then

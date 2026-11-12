@@ -117,6 +117,27 @@ const insertMedia=async(owner,clip=false)=>{const c=await pool.connect();try{awa
  const out=await Promise.all(mixed);deadlocks+=out.filter(x=>typeof x==='string'&&/deadlock/i.test(x)).length;
  const total=Number((await su.query('select coalesce(sum(storage_charge_bytes),0) t from public.media_assets where contributor_id is not null')).rows[0].t);
  check('F) carga mista simultânea: soma de bytes ≤ 400 MB',total<=400*MB,`soma=${total/MB} MB`);
+ // H) R2: complete TARDIO simultâneo. Contribuidor com 6 mídias awaiting_upload já fora da janela de 150 min (não contam como pendentes)
+ //    + 1 INSERT novo ao mesmo tempo: no máximo 2 pendentes ao final, nada apagado, reserva de bytes intacta. Também com 2 contribuidores.
+ const completeLate=async id=>{const c=await pool.connect();try{await c.query('begin');await c.query("update public.media_assets set status='queued' where id=$1 and status='awaiting_upload'",[id]);await c.query('select pg_sleep(0.03)');await c.query('commit');return 'ok';}catch(e){await c.query('rollback').catch(()=>{});return e.message;}finally{c.release();}};
+ const agedMedia=async(owner,n)=>{ // linhas antigas criadas com o trigger de cotas desligado (só aqui, como superusuário)
+  const cid=(await su.query('select contributor_id from public.contributor_links where auth_user_id=$1',[owner])).rows[0].contributor_id;const out=[];
+  await su.query('alter table public.media_assets disable trigger user');
+  for(let i=0;i<n;i++)out.push((await su.query("insert into public.media_assets(owner_id,contributor_id,source_type,storage_key,storage_charge_bytes,created_at,updated_at) values($1,$2,'upload',$3,50000000,now()-interval '151 minutes',now()-interval '151 minutes') returning id",[owner,cid,`${randomUUID()}/source.mp4`])).rows[0].id);
+  await su.query('alter table public.media_assets enable trigger user');return out;};
+ let badH=0;
+ for(let r=0;r<25;r++){
+  await reset();const u=await newContributor();const v=await newContributor();
+  const old=await agedMedia(u,3),oldV=await agedMedia(v,3);
+  const out=await Promise.all([...old.map(completeLate),...oldV.map(completeLate),insertMedia(u),insertMedia(v)]);
+  deadlocks+=out.filter(x=>/deadlock/i.test(x)).length;
+  const per=(await su.query("select owner_id,count(*)::int n from public.media_assets where status in ('queued','processing') or (status='awaiting_upload' and created_at>now()-interval '150 minutes') group by 1")).rows;
+  const rows=Number((await su.query('select count(*) c from public.media_assets')).rows[0].c);
+  const charged=Number((await su.query('select coalesce(sum(storage_charge_bytes),0) t from public.media_assets')).rows[0].t);
+  const unexpected=out.filter(x=>x!=='ok'&&!/CONTRIBUTOR_PENDING_LIMIT|CONTRIBUTOR_STORAGE_EXCEEDED|CONTRIBUTOR_STORAGE_BUDGET_EXHAUSTED/.test(x));
+  if(per.some(x=>x.n>2)||unexpected.length||rows<6||charged<300*MB)badH++;
+ }
+ check('H) R2: 6 completes tardios + inserts simultâneos de 2 contribuidores: nunca mais de 2 pendentes cada, nada apagado, bytes intactos (25 rodadas)',badH===0,`rodadas fora do esperado=${badH}`);
  check('G) nenhum deadlock em toda a bateria',deadlocks===0,`deadlocks=${deadlocks}`);
  await pool.end();await su.end();
 }finally{await server.stop();}

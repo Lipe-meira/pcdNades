@@ -1,6 +1,6 @@
 import {storeClip} from './clip-storage.js';
 import { trimVideo, sourceLimits } from './trimming.js';
-import {clipSchema} from './importers.js';
+import {contributorError} from './contributor-errors.js';import {clipSchema} from './importers.js';
 import {readTrimmingEnabled} from './config.js';
 import {mkdtemp,rm,stat} from 'node:fs/promises';import {join} from 'node:path';import {tmpdir} from 'node:os';import type {SupabaseClient} from '@supabase/supabase-js';
 import type {MediaLimits} from './config.js';import {downloadBounded} from './transfer.js';import {probeOriginal,MediaError} from './probe.js';
@@ -10,7 +10,7 @@ export async function completeInline(db:SupabaseClient,id:string,limits:MediaLim
  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),110000);timer.unref();const signal=controller.signal;
  const table=()=>db.from('media_assets');
  async function bounded<T>(operation:PromiseLike<T>):Promise<T>{if(signal.aborted)throw new MediaError('PROCESSING_TIMEOUT');return new Promise((resolve,reject)=>{const stop=()=>reject(new MediaError('PROCESSING_TIMEOUT'));signal.addEventListener('abort',stop,{once:true});Promise.resolve(operation).then(resolve,reject).finally(()=>signal.removeEventListener('abort',stop));});}
- async function checked<T>(query:PromiseLike<{data:T;error:unknown}>){const r=await bounded(query);if(r.error)throw Object.assign(new Error('MEDIA_SERVICE_UNAVAILABLE'),{statusCode:503});return r.data;}
+ async function checked<T>(query:PromiseLike<{data:T;error:unknown}>){const r=await bounded(query);if(r.error){const known=contributorError((r.error as any).message);if(known)throw Object.assign(new Error(known.code),{statusCode:known.status,code:known.code});throw Object.assign(new Error('MEDIA_SERVICE_UNAVAILABLE'),{statusCode:503});}return r.data;}
  async function current(){const r=await checked(table().select('*').eq('id',id).maybeSingle());if(!r)throw Object.assign(new Error('NOT_FOUND'),{statusCode:404});return r;}
  let dir:string|undefined;let trimSlot=false;
  try{
