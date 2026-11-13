@@ -1,3 +1,21 @@
+# Checkpoint — orchestrator: candidato de integração do PR #19 (merge da main) — 13/11/2026
+
+Estado: candidato preparado; aguardando CI do novo HEAD e autorização para a próxima etapa. Fuso: America/Sao_Paulo.
+
+## Objetivo e pedido atual
+Autorizado exclusivamente: resolver o conflito documental de `docs/continuity/orchestrator.md` e preparar o candidato de integração do PR #19, integrando a main atual em `feat/colaboracao-identidade` por merge normal (sem squash/rebase/force-push). Sem merge na main, deploy, backup produtivo, migrations remotas, flags, pausas, exclusões ou alteração de dados.
+
+## Localização do trabalho
+- Merge feito em worktree dedicado F:/projetos/nadesCs2-merge-pr19 (branch local codex/merge-main-pr19-20261113, rastreando origin/feat/colaboracao-identidade); o worktree antigo da branch (.claude/worktrees/colab-identidade, 352c0e1) não foi tocado.
+- Pais do merge: 3596428942e51b526b75af7de23e842961ee3451 (PR #19) e e0ad9806804a3d554e03ff540b99d86d5319b3e4 (main). SHA do merge: consultar git log -1 / ref remota feat/colaboracao-identidade (sem autorreferência).
+- Única mudança vinda da main: README.md (e0ad980) e a seção do checkpoint do README, preservada abaixo. Implementação, migrations, workflows e configurações idênticas às do PR #19.
+- Conflito: apenas docs/continuity/orchestrator.md; resolvido mantendo integralmente, nesta ordem: este bloco, histórico do PR #20/PR A, histórico do README.
+
+## Próximo passo
+Após CI verde e nova autorização: backup atualizado e restauração verificada (preflight docs/preflight/pr19-main-20261113/REPORT.md). Migrations, merge na main e deploy seguem bloqueados até autorização própria.
+
+---
+
 # PR #20 MERGED no #19 — encerramento definitivo — 13/11/2026
 
 Estado: concluído; merge apenas em feat/colaboracao-identidade, sem rollout. Parar após confirmar entrega.
@@ -50,6 +68,52 @@ Sem bloqueio remanescente para este encerramento. Riscos públicos continuam: TT
 # Publicação colaborativa — PR A (backend/banco) — 12/11/2026
 
 Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.
+
+---
+
+# Checkpoint — orchestrator: README atualizado — 13/11/2026
+
+Estado: concluído. Fuso: America/Sao_Paulo.
+
+## Objetivo e pedido atual
+Pedido: atualizar o README do repositório Lipe-meira/pcdNades. Entrega exclusivamente documental na main, sem integrar PR19 nem alterar configuração de serviços.
+
+## Localização do trabalho
+- Branch codex/readme-20261113; worktree C:/Users/felip/.codex/worktrees/pcdnades-readme-20261113/nadesCs2.
+- Base8776ddf4d3658b1d5ecf8d91a5e13760047d8f50 (main). Commit documental desta entrega: consultar git log -1 nesta branch; sem autorreferência.
+- Push de entrega para origin/codex/readme-20261113 e origin/main com o mesmo commit, sem force push; confirmação remota no fechamento do chat.
+- Arquivos da entrega: README.md e este checkpoint. Nenhuma alteração de implementação. Worktree de validação PR19 preservada.
+
+## Feito
+- README reestruturado: funcionalidades integradas, tecnologias, execução demo/API/backend, configuração, testes, mídia, mapas/atribuição e documentação.
+- Removidos avisos contraditórios e propostas antigas de outubro. Documentados HE/Solo Exec/Nuke/reedição e disponibilidade por capabilities.
+- Regra20s diferenciada do padrão/teto90s ainda presente no código; orientação explícita MEDIA_MAX_DURATION_SECONDS=20, sem alterar runtime/constraints.
+- Créditos PNG separados de setpos CC BY4.0; lacunas de procedência dos PNGs/Nuke preservadas. Catálogo demo7 mapas separado do seed inicial3/API.
+- PR19 consultado: aberto, fora da main, head3596428942e51b526b75af7de23e842961ee3451. Validação anterior352c0e vinculada por commit e identificada como histórica/específica do SHA, sem extrapolar ao head novo.
+- Apenas README/checkpoint preparados a partir da main; nenhum código das branches de colaboração/validação incluído. Sem solicitação de deploy manual, migrations ou uso de credenciais produtivas.
+
+## Em andamento
+Nada em implementação. Fechamento de commit/push e conferência dos arquivos publicados.
+
+## Retomar daqui
+1. Conferir Git/status/branch e a main remota antes de nova tarefa.
+2. Alinhamento completo do limite20s e validação do novo headPR19 permanecem tarefas separadas; esta atualização documental não os resolve.
+
+## Decisões e contrato
+- README distingue implementação integrada, configuração de ambiente e trabalho em PR.
+- Não declara saúde/configuração atual de produção a partir de documentos. Links do projeto são referências de acesso.
+- Históricos detalhados permanecem nos checkpoints/documentos; nenhum relatório de teste é apresentado como prova de versão diferente.
+
+## Validação
+- PASS:19 links locais existentes, nomes dos scripts npm documentados conferidos com package.json, fences Markdown fechadas, diff limitado aos dois documentos e git diff --check.
+- Comandos comparados com scripts/fontes/env examples/atribuições da main; nenhuma suíte de aplicação executada por se tratar somente de documentação.
+- Conferência final: mesmo SHA em main/branch própria e conteúdo remoto do README no fechamento.
+
+## Bloqueios e dependências
+Nenhum para esta entrega. Pendências de produto/ativação apontadas no README, sem aplicação de alterações operacionais.
+
+## Entrega e histórico curto
+-13/11: README atualizado e publicado com checkpoint na mesma entrega documental. Repositório https://github.com/Lipe-meira/pcdNades.
 
 ---
 
