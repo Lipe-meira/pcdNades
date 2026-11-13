@@ -1,0 +1,79 @@
+{
+  "src": "pr19-src",
+  "mediaIds": [
+    "3514f940-c739-4d3f-8a1a-b2a638324b35",
+    "b364f3d6-15f0-4962-9528-436376d7f23c"
+  ],
+  "results": [
+    {
+      "name": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+      "status": "PASS",
+      "detail": {
+        "faultInjection": "um lease sintético expirado ao entrar em storing; nada substituído",
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "3514f940-c739-4d3f-8a1a-b2a638324b35/clip-2.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "3514f940-c739-4d3f-8a1a-b2a638324b35/clip-1.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "3514f940-c739-4d3f-8a1a-b2a638324b35/clip-2.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "3514f940-c739-4d3f-8a1a-b2a638324b35/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 287406,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 55820
+      }
+    },
+    {
+      "name": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+      "status": "PASS",
+      "detail": {
+        "afterFirstAttempt": {
+          "objects": 2,
+          "physical": 231586
+        },
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "b364f3d6-15f0-4962-9528-436376d7f23c/clip-2.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "b364f3d6-15f0-4962-9528-436376d7f23c/clip-1.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "b364f3d6-15f0-4962-9528-436376d7f23c/clip-2.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "b364f3d6-15f0-4962-9528-436376d7f23c/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 287406,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 55820
+      }
+    },
+    {
+      "name": "F3 objeto publicado é preservado: repetir complete e tentar regravar não altera nada",
+      "status": "PASS",
+      "detail": {
+        "publishedKey": "3514f940-c739-4d3f-8a1a-b2a638324b35/clip-2.mp4",
+        "sha256Unchanged": true,
+        "objectsUnchanged": true,
+        "newUploadCapabilityForPublishedKey": "recusada: The resource already exists",
+        "completeRepeats": 3
+      }
+    }
+  ]
+}

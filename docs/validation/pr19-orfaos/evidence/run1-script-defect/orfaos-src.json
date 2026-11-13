@@ -1,0 +1,80 @@
+{
+  "src": "src",
+  "mediaIds": [
+    "9b333cf3-b9b0-4e38-bfa0-0cff72968f63",
+    "071cac6f-44e5-4528-92cf-d0a7fb15828a"
+  ],
+  "results": [
+    {
+      "name": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+      "status": "PASS",
+      "detail": {
+        "faultInjection": "um lease sintético expirado ao entrar em storing; nada substituído",
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "9b333cf3-b9b0-4e38-bfa0-0cff72968f63/clip.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "9b333cf3-b9b0-4e38-bfa0-0cff72968f63/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "9b333cf3-b9b0-4e38-bfa0-0cff72968f63/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+      "status": "PASS",
+      "detail": {
+        "afterFirstAttempt": {
+          "objects": 2,
+          "physical": 231586
+        },
+        "status": "ready",
+        "attempts": 2,
+        "storageKey": "071cac6f-44e5-4528-92cf-d0a7fb15828a/clip.mp4",
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "071cac6f-44e5-4528-92cf-d0a7fb15828a/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "071cac6f-44e5-4528-92cf-d0a7fb15828a/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "F3 objeto publicado é preservado: repetir complete e tentar regravar não altera nada",
+      "status": "FAIL",
+      "error": "ifError got unwanted exception: new row violates row-level security policy"
+    },
+    {
+      "name": "T1 validade efetiva medida (token de sonda, nenhum byte enviado)",
+      "status": "FAIL",
+      "error": "não foi possível emitir o token de sonda"
+    },
+    {
+      "name": "T2 token já emitido permite reenviar o mesmo caminho depois de a exclusão do objeto (dentro da validade) e expira depois",
+      "status": "FAIL",
+      "error": "ifError got unwanted exception: new row violates row-level security policy"
+    },
+    {
+      "name": "I1 inventário somente leitura sobre o estado real do laboratório (duas leituras, TTL medido)",
+      "status": "FAIL",
+      "error": "TTL efetivo medido é obrigatório e deve ser positivo"
+    }
+  ]
+}

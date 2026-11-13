@@ -1,0 +1,132 @@
+{
+  "project": "pcdn-pr19-352c-20261112-r70",
+  "pr19Sha": "352c0e177602fc1e6e79fe817960f92c76286f43",
+  "fixedSourceIntegrity": {
+    "inline.ts": {
+      "match": true,
+      "sha256": "773fb89027629ff410deb237a6eb665e94551d07536bd41b09f1de7751b5c62d"
+    },
+    "clip-storage.ts": {
+      "match": true,
+      "sha256": "a4c38a5775e7b958bd1e16f21689678a41c2f00ab0c74d8c543c15a11161f11a"
+    },
+    "signed-url-ttl.ts": {
+      "match": true,
+      "sha256": "a81049e0ba736fe1ecdefac7d2fab7be8d04451970d27dd743e537b2cf24e654"
+    },
+    "storage-inventory.ts": {
+      "match": true,
+      "sha256": "eb580f88f69ec18ced080bfcce0b9599e277179facaa5302edfbdb6c20a414ff"
+    }
+  },
+  "runs": {
+    "pr19-src": {
+      "passes": 2,
+      "fails": 1,
+      "accounting": [
+        {
+          "scenario": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+          "mediaId": "ee87cb7a-e807-41b5-8b0b-fa60af3e622a",
+          "physicalFiles": {
+            "clip-1.mp4": 55820,
+            "clip-2.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 287406,
+          "dbObjectBytes": 287406,
+          "chargedBytes": 231586,
+          "physicalMinusCharged": 55820,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+          "mediaId": "0faf92f0-e055-435a-a0e1-37056e46de04",
+          "physicalFiles": {
+            "clip-1.mp4": 55820,
+            "clip-2.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 287406,
+          "dbObjectBytes": 287406,
+          "chargedBytes": 231586,
+          "physicalMinusCharged": 55820,
+          "dbMatchesDisk": true
+        }
+      ],
+      "results": [
+        {
+          "name": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+          "status": "PASS"
+        },
+        {
+          "name": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+          "status": "PASS"
+        },
+        {
+          "name": "F3 objeto publicado é preservado: repetir complete e tentar regravar não altera nada",
+          "status": "FAIL",
+          "error": "ifError got unwanted exception: The resource already exists"
+        }
+      ]
+    },
+    "src": {
+      "passes": 5,
+      "fails": 1,
+      "accounting": [
+        {
+          "scenario": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+          "mediaId": "cf3c5d77-88f7-4ca8-9b86-38f38eed1ec3",
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 231586,
+          "physicalMinusCharged": 0,
+          "dbMatchesDisk": true
+        },
+        {
+          "scenario": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+          "mediaId": "8cbdebfe-22ae-4209-b3d4-854ac7f2c8c8",
+          "physicalFiles": {
+            "clip.mp4": 55820,
+            "source.mp4": 175766
+          },
+          "physicalBytes": 231586,
+          "dbObjectBytes": 231586,
+          "chargedBytes": 231586,
+          "physicalMinusCharged": 0,
+          "dbMatchesDisk": true
+        }
+      ],
+      "results": [
+        {
+          "name": "F1 lease perdido ao entrar em storing e nova tentativa (E03)",
+          "status": "PASS"
+        },
+        {
+          "name": "F2 banco indisponível na confirmação (ready e failed) e nova tentativa",
+          "status": "PASS"
+        },
+        {
+          "name": "F3 objeto publicado é preservado: repetir complete e tentar regravar não altera nada",
+          "status": "FAIL",
+          "error": "ifError got unwanted exception: The resource already exists"
+        },
+        {
+          "name": "T1 validade efetiva medida (token de sonda, nenhum byte enviado)",
+          "status": "PASS"
+        },
+        {
+          "name": "T2 token já emitido permite reenviar o mesmo caminho depois de a exclusão do objeto (dentro da validade) e expira depois",
+          "status": "PASS"
+        },
+        {
+          "name": "I1 inventário somente leitura sobre o estado real do laboratório (duas leituras, TTL medido)",
+          "status": "PASS"
+        }
+      ]
+    }
+  }
+}

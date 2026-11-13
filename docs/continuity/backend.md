@@ -1,3 +1,110 @@
+# PR #20 INTEGRADO ao PR #19 — 13/11/2026 — encerramento autorizado
+
+Estado: correção incorporada exclusivamente em feat/colaboracao-identidade; PR20 MERGED, PR19 OPEN. Sem main/deploy/migration/flags/produção.
+
+## Objetivo e pedido atual
+Encerrar #20 com merge normal no #19, preservar código validado e registrar CI/ancestralidade/ausência de deploy. Não iniciar PR B/C nem rollout.
+
+## Localização do trabalho
+- Worktree documental próprio F:/projetos/nadesCs2-integrated-pr20; branch codex/registro-integracao-pr20-20261113; base de implementação1689f66789f5e0386dc0774136ae7e1ac10c90ab.
+- Merge1689f66 tem pais352c0e177602fc1e6e79fe817960f92c76286f43 e f6dc3143b84d0e5bc521205e1efa0bb8160acd7a. Tree idêntica ao aprovado9f295089a834fc924ce041718bc3d0011f0b8310.
+- HEAD final documental do #19: commit `docs(continuidade): encerra integração do PR 20 no PR 19`; obter SHA na ref remota feat/colaboracao-identidade/git log -1. Evita autorreferência neste checkpoint.
+- Push desta entrega: documentação enviada por fast-forward à feat/colaboracao-identidade; igualdade HEAD/ref remota conferida no fechamento. Nenhuma alteração pendente local; nenhum arquivo de implementação modificado.
+- Arquivos: docs/ENCERRAMENTO-PR20-20261113.md, docs/continuity/orchestrator.md, este checkpoint. Worktrees dos implementadores preservados; untracked de laboratório não tocados.
+
+## Feito e decisões
+- GO independente de f6dc314 e CI43332518278 conferidos; preflight Vercel resolvido via IAB autenticado: produção=main, Preview Branch Tracking desligado e nenhum deploy hook em frontend/API; auxiliar sem Git; custom environments vazios. GitHub workflows só CI, repo hooks=[]; nenhuma configuração alterada.
+- Merge API com expected_head_sha e método merge; #20 MERGED às12:39:49UTC/09:39:49Brasília. #19 continua aberto. Main8776ddf4d3658b1d5ecf8d91a5e13760047d8f50 intacta.
+- R1/R2 encerrados: decode integral do adotado, recuperação transitória com lease/fencing/tentativas; chave/upsert/contabilidade/inventário intactos. Nenhuma mutation Supabase ou migration remota.
+- Flags colaborativas ausentes nos metadados de env API (zero produção oculta) e padrões false no código; não ativadas.
+- Produção nos mesmos dpl_4Cx4CaU4v4s5tEwrcFG8kDBYMeSL e dpl_FzbX7WDngPU3YZHwqJUz5SuVPNhq. Lista de deployments desde preflight vazia após merge/entrega.
+
+## Validação
+- CI do merge1689f66: PASS — 322/322, 0 falhas, 0 pulos; build/bootstrap/trace/MP4 aprovados, run43427094800 https://github.com/Lipe-meira/pcdNades/actions/runs/43427094800 .
+- CI do HEAD documental final acompanhado nos checks do PR19; não repetir testes locais extensos porque código/config/workflows são idênticos. Evidências anteriores 322/322,44/44 e lab-r72 preservadas.
+- Ancestralidade, pais/tree exatos, diff f6dc314→merge vazio, main/PRs e ausência de novos deployments conferidos. Documentação final só docs, git diff --check aprovado.
+
+## Em andamento / retomar daqui
+Nada de implementação. Após conferir status/branch/log e relatório, aguardar nova instrução. Para #19→main: autorização específica e plano separado de backup/restauração, migrations, deploy e gates/flags, sem inferir permissão deste encerramento.
+
+## Riscos residuais
+TTL produtivo/tokens históricos, backfill após reaplicar migration2, órfãos importador/worker por tentativa, recuperação UI/ffprobe, decode lento, processos hospedados independentes e capacidade/antiabuso/gateway/provedores. Integração não remove esses gates e não ativa colaboração pública.
+
+## Entrega e histórico curto
+- PR20 https://github.com/Lipe-meira/pcdNades/pull/20 MERGED1689f66; PR19 https://github.com/Lipe-meira/pcdNades/pull/19 OPEN, contendo o #20 integralmente mais esta documentação.
+- Relatório docs/ENCERRAMENTO-PR20-20261113.md; parar após entrega. O histórico abaixo antecede o merge e não é o estado atual.
+
+---
+# PR #20 — correções finais R1/R2 da revisão independente (SHA revisado e5add82) — 12/11/2026 23:50 (America/Sao_Paulo), IMPLEMENTADO, VALIDADO E ENVIADO (aguardando aprovação)
+
+Entrega: PR #20 atualizado (https://github.com/Lipe-meira/pcdNades/pull/20, sem merge). Código R1/R2 em 7e2fb4f; SHA validado pelo CI f85493e, CI Linux "Build, testes e ffprobe empacotado" PASS (run 43332085109: 322/322, 0 pulados, testes com FFmpeg real executados). Commits posteriores só tocam o checkpoint.
+
+Estado: R1 (adoção sem decodificação integral) e R2 (falha temporária virava failed terminal) corrigidas em `backend/src/inline.ts` + `backend/src/trimming.ts` (commit 7e2fb4f; docs/evidências no commit seguinte). Backend 322/322, typecheck limpo, 12 mutações detectadas. Laboratório novo `-r72` (serviços reais): fluxo documentado 29 PASS; SHA revisado reproduz R1 (MP4 truncado publicado ready) e R2 (failed terminal); correção 8/8 (inclui corrida real e esgotamento). Relatório: docs/REVISAO-PR20-20261112.md (branch codex/revisao-pr20-20261112, só leitura). Seção §11 de docs/ORFAOS-RETENTATIVAS-20261112.md. Sem merge, deploy, migration, flags, PR #19 intacto. PARAR e aguardar aprovação.
+
+Pedido: corrigir exclusivamente R1 e R2 preservando a chave `<id>/clip.mp4`, `upsert:false`, contabilidade, inventário read-only e medição de TTL.
+Local: branch `fix/backend-orfaos-retentativa-20261112`, worktree `F:/projetos/nadesCs2/.claude/worktrees/orfaos-retentativa`, base da tarefa = e5add82. Stacks `-r70` (parada), `-r71` e `-r72` (mesma harness; r71 = 1ª rodada com a corrida falhando por orçamento do lab) ficam PARADAS/preservadas, volumes intactos (r71/r72 ainda a parar ao fim, ver Entrega). Harness extraída em `docs/validation/pr19/` e `.dockerignore` seguem UNTRACKED de propósito.
+Riscos residuais: ver §11 do documento (503 não é reenviado sozinho pelo frontend no trecho lido; probeOriginal mapeia tudo para INVALID_MEDIA; falha genuína de gravação segue terminal; decodificação >20 s consome tentativas; dois processos hospedados reais não demonstrados). Importações/worker e demais itens de §8/§9 inalterados.
+Retomar: `git status`; conferir CI do SHA final do PR #20; aguardar aprovação do usuário (nenhum merge/deploy/migration/flag autorizado).
+
+---
+
+# Hardening de mídia pós-validação integrada do PR #19 — órfãos em retentativas — 12/11/2026 23:05 (America/Sao_Paulo), IMPLEMENTADO E VALIDADO NO LABORATÓRIO (aguardando push/PR de revisão e aprovação)
+
+Estado: correção (9c3a411), inventário/TTL (38f022e) e documentação/evidências do laboratório (commit seguinte) na branch; suíte 304/304; laboratório Docker `-r70` com serviços reais: fluxo documentado 29 PASS/0 FAIL e cenários de órfãos (PR #19 reproduz +55.820 B; corrigido 0 B). Análise completa: `docs/ORFAOS-RETENTATIVAS-20261112.md`. Push: ver "Entrega" no fim desta seção. Sem merge, deploy, migration, flags, PR B/C. PARAR e aguardar aprovação.
+
+Pedido atual: tratar a contabilidade física de arquivos órfãos em retentativas (E03 de `docs/validation/pr19/REPORT.md`, branch documental `codex/validacao-integrada-pr19-20261112`), URLs assinadas (TTL medido 60 s no lab x 2 h assumido) e política de limpeza (inventário/dry-run primeiro). SEM merge, deploy, migration produtiva, flags, PR B/C, exclusão de dados reais ou alteração da branch do PR #19.
+
+Local: branch `fix/backend-orfaos-retentativa-20261112`, worktree `F:/projetos/nadesCs2/.claude/worktrees/orfaos-retentativa`, base = 352c0e1 (SHA aprovado do PR #19; `feat/colaboracao-identidade` NÃO foi tocada). Push: pendente.
+
+Feito: (1) baseline no SHA aprovado: typecheck OK, 267/267. (2) Teste RED que reproduz E03 em PGlite (físico 90.000 B x cobrado 70.000 B). (3) Correção em `backend/src/inline.ts` + `clip-storage.ts`: `clipOutputKey` = `<id>/clip.mp4` (antes `clip-<tentativa>.mp4`), `upsert:false` mantido, e se a gravação falha porque o objeto já existe ele é baixado, validado (probe + duração do intervalo + limite de bytes) e adotado com os bytes reais; nunca sobrescreve nem apaga. (4) Matriz de 12 testes em `backend/tests/clip-retry-accounting.test.ts` (+ `tests/support/clip-lab.ts`): contra o `src/` original 9 falham e 3 passam (guardas); com a correção 12/12.
+(5) Inventário/dry-run read-only `backend/src/storage-inventory.ts` + `scripts/storage-inventory.ts` (duas leituras, TTL medido obrigatório, sem caminho de exclusão; 10 mutações de segurança detectadas) e medição de TTL `src/signed-url-ttl.ts` + `scripts/measure-upload-url-ttl.ts`. (6) Laboratório Docker NOVO `pcdn-pr19-352c-20261112-r70` (rede interna, sem portas; isolamento PASS; recursos anteriores intactos), harness documentada extraída (NÃO versionada) em `docs/validation/pr19/`, `.dockerignore` local não versionado; `docs/validation/pr19-orfaos/` (orfaos.ts + orfaos-launch.mjs) é meu e vai no commit.
+(7) Laboratório: fluxo documentado sobre o código corrigido 29 PASS; `orfaos-launch.mjs` (3 rodadas; as 2 primeiras falharam por defeito do MEU script e ficaram em `evidence/run1-script-defect` e `run2-f3-expectation`): PR #19 físico 287.406 B x cobrado 231.586 B (+55.820, F1 e F2); corrigido 231.586 x 231.586; objeto publicado intacto (SHA-256 e `storage.objects`); TTL medido 60 s; reenvio com token antigo após exclusão: 200 dentro da validade, 400 depois; inventário CLI read-only sem alterar tabelas. (8) Docs: `docs/ORFAOS-RETENTATIVAS-20261112.md` (+ notas cruzadas em `docs/COLABORACAO-IDENTIDADE-20261112.md`); evidências em `docs/validation/pr19-orfaos/evidence/`.
+Entrega: branch `fix/backend-orfaos-retentativa-20261112` enviada (push normal); PR de revisão https://github.com/Lipe-meira/pcdNades/pull/20 (base `feat/colaboracao-identidade`, empilhado; aberto, SEM merge); código validado no SHA d8dca5d, CI Linux "Build, testes e ffprobe empacotado" PASS (run 43325269823). Commits: 9c3a411 (correção), 38f022e (inventário/TTL), d8dca5d (docs/evidências).
+Retomar: `git status`; aguardar aprovação do usuário (nenhum merge/deploy/migration/flag autorizado). A stack `-r70` foi PARADA (não removida); volumes `-r70-db`/`-r70-objects` e `docs/validation/pr19/runtime-r70/` (ignorado) preservados. Harness extraída em `docs/validation/pr19/` e `.dockerignore` são UNTRACKED de propósito (a harness pertence à branch documental). Não validado: importações e worker (chave por tentativa; risco residual §3 do doc), duas instâncias reais simultâneas, produção/gateway gerenciado, medição de TTL em produção (não executada), CI.
+
+---
+
+# PR #19 — correções finais R1/R2/R3 (segunda revisão, SHA revisado cd627de) — 12/11/2026, IMPLEMENTADO E TESTADO LOCALMENTE (commit/push/CI ver entrega)
+
+Estado: R1 (worker-transcode: contribuidor bloqueado na API, fila do worker e trava no banco `CONTRIBUTOR_STORAGE_UNACCOUNTED`), R2 (admissão atômica de pendentes ao entrar em queued/processing, no trigger de UPDATE) e R3 (ordem do rollback no cabeçalho do SQL + teste de compatibilidade; sem código de fallback) implementados. Backend 267/267, typecheck OK, smokes HE 10 e andares 18 PASS. Concorrência multiconexão H (R2) em PostgreSQL 17.5 descartável: PASS, e falha 25/25 sem os locks. Detalhes: docs/COLABORACAO-IDENTIDADE-20261112.md §11. Nada aplicado em Supabase/Vercel; sem merge, deploy ou flags; PR B/C não iniciados.
+
+Local: branch `feat/colaboracao-identidade`, worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, base cd627de. Migration 20261112180000 editada no lugar (nunca aplicada em lugar nenhum).
+Retomar: `git status`; conferir CI do SHA final do PR #19; aguardar aprovação do usuário. Não validado: Supabase real, FFmpeg físico em worker-transcode.
+
+---
+
+# PR #19 — correções de segurança da revisão independente (S1 Storage, S2 importações, S3 erro) — 12/11/2026, IMPLEMENTADO E TESTADO LOCALMENTE (commit/push/CI ver abaixo)
+
+Estado: S1/S2/S3 implementados (migration 20261112180000 + rollback, flag CONTRIBUTOR_UPLOADS_ENABLED, slot com dono, tradução única de erros). Backend 248/248, typecheck OK, smokes legados PASS (18 e 10). Concorrência multiconexão verificada em PostgreSQL 17.5 descartável via backend/scripts/contributor-concurrency-real-pg.mjs (não é Supabase; não roda no CI). Detalhes: docs/COLABORACAO-IDENTIDADE-20261112.md §10. Pendente: acompanhar CI do push, atualizar corpo do PR #19, validações em Supabase real, e autorização do usuário para qualquer merge/migration/flag. Não iniciar PR B/C.
+
+Pedido atual: corrigir S1 (ALTO, esgotamento de Storage por contribuidores), S2 (MÉDIO, importações de contribuidores consomem a cota do admin) e S3 (BAIXO, `CONTRIBUTOR_QUOTA_EXCEEDED` vira 503 no importador) apontados em `docs/reviews/PR19-SECURITY-20261112.md` (worktree de revisão `F:/projetos/nadesCs2-review-pr19`, só leitura). Sem PR B/C, sem merge, sem deploy, sem migration real, sem ligar flags.
+
+Local: branch `feat/colaboracao-identidade`, worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, base do trabalho = 3e3858c (limpo, em sincronia com origin). Push: pendente.
+
+Plano: (1) testes que falham; (2) nova migration aditiva `20261112180000_contributor_storage_and_import_pools.sql` + rollback (bytes reservados/armazenados por mídia, orçamento global e por contribuidor, limite de pendentes, pools de importação e admissão justa do slot); (3) backend: flag `CONTRIBUTOR_UPLOADS_ENABLED` (padrão desligado), tradução única de erros (S3), uso do slot com dono; (4) docs e CI. Docker local NÃO está ativo (daemon parado): sem teste multiconexão real nem Supabase descartável nesta sessão.
+
+---
+
+# Colaboração — PR A (identidade, autoria e autorização) — 12/11/2026, CONCLUÍDO LOCALMENTE (aguardando push/PR e aprovação para PR B)
+
+Entrega: branch `feat/colaboracao-identidade` enviada (push normal); implementação em f68032b; PR https://github.com/Lipe-meira/pcdNades/pull/19 (aberto, sem merge); CI Linux "Build, testes e ffprobe empacotado" PASS (run 43244643794). Worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, árvore limpa. Nada aplicado em Supabase/Vercel.
+
+Atualização: API implementada (`resolveActor`, `/contributors`, `/me`, `/me/grenades`, propriedade em PATCH/mídia/importação, flags `CONTRIBUTORS_ENABLED`/`CONTRIBUTOR_IMPORTS_ENABLED`). `npm --prefix backend test` 192/192, typecheck OK, smokes legados andares/HE PASS. Mutação manual validada. Cobertura dos 14 testes e limitações em `docs/COLABORACAO-IDENTIDADE-20261112.md` §8 (teste 14 = PR C). Próximo: push da branch, PR, relatório; PR B/C só com aprovação do usuário. O texto abaixo é o registro anterior desta tarefa.
+
+Pedido: sistema colaborativo (amigos publicam com apelido, sem e-mail/senha, via Auth anônimo do Supabase). Entregar só o PR A (backend/banco), parar e aguardar aprovação antes de interface (PR B) e recuperação (PR C). Proibido: migration em produção, deploy, merge, force push, dados de teste em produção.
+
+Localização: branch `feat/colaboracao-identidade`, worktree `F:/projetos/nadesCs2/.claude/worktrees/colab-identidade`, base `main` 8776ddf. Push: pendente. Desenho, auditoria, matriz e riscos: `docs/COLABORACAO-IDENTIDADE-20261112.md`.
+
+Feito: auditoria; desenho (contribuidor como dono estável + vínculo sessão→contribuidor, `grenades.author_id`, `media_assets.contributor_id` por trigger, cotas no banco); migration `backend/migrations/20261112120000_contributors_authorship.sql` + rollback; harness PGlite (`backend/tests/support/pg.ts`, devDependency `@electric-sql/pglite@0.5.13`); `backend/tests/contributors-sql.test.ts` 19/19 PASS (legado intacto, rollback, autoria imutável, vídeo alheio, RLS isolada, cotas).
+
+Em andamento: API (`backend/src/application.ts`): `resolveActor`, rotas `/contributors`, `/me`, `/me/grenades`, propriedade em PATCH/media/import, flags `CONTRIBUTORS_ENABLED` e `CONTRIBUTOR_IMPORTS_ENABLED` (padrão desligado), testes de API sobre PGlite.
+
+Retomar daqui: `git status`; `npm --prefix backend test`; seguir a lista de tarefas da API no doc; depois docs, PR e relatório. Migration NÃO aplicada em nenhum Supabase.
+
+Pendências de configuração (fora do código): habilitar Anonymous sign-ins e CAPTCHA no Supabase Auth; nada disso foi feito.
+
+---
+
 # Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
 
 Autorizada pelo responsável e aplicada uma única vez com apply_migration no projeto kdyzxxgzvgiffluyjjxu; registrada pelo Supabase como 20261111031252 map_levels (arquivos da migration e do rollback renomeados no repositório, conteúdo idêntico). Pré e pós-checagens aprovadas: 15 granadas, 21 mídias, 17 objetos, hash das linhas de grenades, policies, grants, triggers e RLS iguais ao backup release-20261111-nuke-premigration; colunas origin_level/target_level criadas e vazias; checks validados. Sem alterar dados nem limpar Storage. PR #14 segue aberto, SEM merge e SEM deploy (frontend/backend publicados ainda ignoram as colunas novas). Próximo: autorização para o merge do PR #14, conferência dos deployments pcdnades e pcdnades-api e smoke na Nuke.
