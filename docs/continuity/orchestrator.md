@@ -1,3 +1,22 @@
+# Checkpoint — orchestrator: revisão 3 do preflight de backup (final documental) — 13/11/2026
+
+Estado: preflight documental concluído; NO-GO para executar; aguardando decisões e autorização do responsável. Nada produtivo executado. Fuso: America/Sao_Paulo.
+
+## Feito nesta revisão
+- RUNBOOK.md relido do disco: 11 seções, sem cabeçalhos duplicados, tabelas completas, 2 blocos de código fechados; problemas reais corrigidos: orientação `-e NOME` e frase do nível B 3.
+- Credenciais no Docker: ensaio local com valor fictício mostrou que `-e NOME` aparece em `docker inspect`; adotado envio por stdin (`docker run -i` + `read -r`), sem valor em linha de comando, arquivo ou inspect. Contêineres de teste removidos.
+- CLI v3.1.0: help executado em pasta temporária isolada (SUPABASE_HOME próprio, sem login/link/conexão; pasta removida). Confirmado: `--remote` por comando, `--remote=<ref>` seleciona projeto sem link, `--workdir` isolado, `storage cp` sem `--experimental`, escopos (`database_write` para role temporária; `api_gateway_keys_secret_read` para Storage). Documentação oficial cobre db dump/--remote/conexão; página de storage cp não alcançável (vale o help).
+- Modos de conexão do pg_dump: direto recomendado (IPv6), session pooler alternativa (usada antes), transaction pooler não usar.
+- Seção 10 do RUNBOOK: proposta operacional (silêncio administrativo + pausa do Cron só com autorização específica + PRE/POST + restauração offline).
+
+## Git
+Branch codex/preflight-pr19-20261113; commits locais 603b2ce, 81723a3 preservados + commit desta revisão. Publicação reconfirmada: zero hooks no GitHub, workflows só CI (push só em main; PR), zero deployments, main e0ad980 e PR19 53686d2 inalterados; Vercel previews desligados conforme preflight (não relido nesta sessão). Push normal só nesta branch.
+
+## Retomar daqui
+Aguardar decisões da seção 9/10 do RUNBOOK. Não executar passos 0–9 sem autorização escrita.
+
+---
+
 # Checkpoint — orchestrator: revisão 2 do preflight de backup — 13/11/2026
 
 Estado: revisado; NO-GO para executar; aguardando decisões do responsável. Nada produtivo executado. Fuso: America/Sao_Paulo.
