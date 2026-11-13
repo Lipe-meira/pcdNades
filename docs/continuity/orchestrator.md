@@ -1,3 +1,28 @@
+# Checkpoint — orchestrator: candidato de integração do PR #19 pronto — 13/11/2026
+
+Estado: concluído; aguardando autorização para a próxima etapa (backup atualizado e restauração verificada). Fuso: America/Sao_Paulo.
+
+## Objetivo e pedido atual
+Resolver apenas o conflito documental e preparar o candidato do PR #19 (merge normal da main em feat/colaboracao-identidade). Sem merge na main, deploy, backup produtivo, migrations remotas, flags, pausas, exclusões ou alteração de dados.
+
+## Feito
+- HEADs remotos reconfirmados antes: main e0ad9806804a3d554e03ff540b99d86d5319b3e4; PR #19 3596428942e51b526b75af7de23e842961ee3451. Merge feito em worktree dedicado F:/projetos/nadesCs2-merge-pr19 (branch local codex/merge-main-pr19-20261113); worktree antigo da branch do PR (352c0e1) intocado.
+- Merge normal 53686d2272379207869c159c08e5908b71381375, pais 3596428 e e0ad980. Único conflito: docs/continuity/orchestrator.md, resolvido com novo bloco no topo + históricos PR #20/PR A + README, sem perda (verificado: todas as linhas das duas versões presentes, na ordem). Sem marcadores; git diff --check PASS.
+- Delta do merge contra o PR #19: somente README.md (idêntico ao da main) e orchestrator.md. Zero diferença em backend, frontend, migrations, workflows e configurações.
+- Reconfirmado antes do push: workflows só CI (sem deploy/migration/secrets), hooks do repositório = 0, nenhum GitHub Deployment, HEAD do PR sem statuses Vercel (a main tem Vercel – pcdnades e pcdnades-api). Configuração Vercel (preview desligado, tracking desmarcado) vem do preflight do mesmo dia; não relida por falta de acesso autenticado nesta sessão.
+- Push normal (fast-forward 3596428..53686d2) exclusivamente em feat/colaboracao-identidade; main permaneceu em e0ad980.
+- CI do novo HEAD: run 43438445670 success — 322/322, 0 falhas, 0 pulos. PR #19: OPEN, MERGEABLE, CLEAN, único check verde. Zero deployments e zero statuses de deploy após o push.
+
+## Validação
+- Executada: ancestralidade/delta, preservação de histórico, diff --check, ausência de marcadores, hooks/deployments/statuses, CI remoto. Não executada: testes locais (código idêntico ao já testado; dependências não instaladas no worktree novo). Frontend CI não disparou (sem arquivos de frontend no delta).
+- Evidência do checkpoint do PR registra só os SHAs conhecidos antes do push; este checkpoint (branch do preflight, local, não enviado) guarda CI e estado final, para não criar commit extra no PR.
+
+## Retomar daqui
+1. Conferir git status/branch e ref remota do PR #19 (esperado 53686d2).
+2. Próxima etapa, só com autorização: backup atualizado de banco e Storage + restauração verificada em destino autorizado. Depois migrations 1→2, merge na main (publica automaticamente), smoke. Nada disso autorizado agora.
+
+---
+
 # Checkpoint — orchestrator: preflight final PR19/PR20 — 13/11/2026
 
 Estado: concluído; NO-GO para merge imediato. Aguardar autorização. Fuso: America/Sao_Paulo.
