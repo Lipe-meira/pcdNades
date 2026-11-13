@@ -1,3 +1,20 @@
+# Checkpoint — orchestrator: revisão 2 do preflight de backup — 13/11/2026
+
+Estado: revisado; NO-GO para executar; aguardando decisões do responsável. Nada produtivo executado. Fuso: America/Sao_Paulo.
+
+## Mudanças da revisão
+- RUNBOOK.md reescrito: escopo honesto (cópia lógica de 5 schemas + bytes do Storage, não recuperação da plataforma); acesso diferenciado (token de gerenciamento x credencial PostgreSQL x service-role); dump pelo pg_dump explícito, pois supabase db dump exclui auth/storage por padrão; verificação obrigatória do dump (TABLE DATA/ACL/POLICY nos 5 schemas); comparação de bytes (tamanho, MD5=ETag, SHA256 contra o backup de 11/11); barreira em níveis A (detecção, sem alteração), B (reversível, autorização posterior) e C (não recomendado); ACL, temporários e volumes Docker; restauração offline x validação real de Auth/Storage; critérios de recuperável.
+- Verificado: sem login/CLI no host; refs remotas main e0ad980, PR19 53686d2, branch documental 8b9d1ca (antes do commit desta revisão); upload usa createSignedUploadUrl sem TTL próprio (2h é estimativa da documentação, não confirmada), leitura 3600s.
+- Documentação oficial da CLI consultada por subagente; parte do resumo não é verbatim, então conferir --help da CLI instalada antes de usar.
+
+## Não feito
+Sem login/link, sem backup.env, sem dados reais, sem alteração de vínculo de outras worktrees, sem push.
+
+## Retomar daqui
+Aguardar decisões da seção 9 do RUNBOOK. Não executar os passos 0–9 sem autorização escrita.
+
+---
+
 # Checkpoint — orchestrator: preflight operacional do backup (PR #19) — 13/11/2026
 
 Estado: preparado, aguardando autorização específica. NO-GO para executar até pré-requisitos. Fuso: America/Sao_Paulo.
