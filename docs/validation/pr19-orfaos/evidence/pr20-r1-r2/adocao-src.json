@@ -1,0 +1,204 @@
+{
+  "src": "src",
+  "mediaIds": [
+    "841bd989-a1a9-4746-ab38-8e438dbf47cf",
+    "8077f9a5-2471-49e1-94ce-995b9024ad69",
+    "883c19af-6bfe-4e48-96e4-249ecb24a68b",
+    "26834f66-985d-4bdf-8b8f-8dae956da763",
+    "828cf184-b744-4d81-90de-88edcfd8c5e3",
+    "3049322c-fe6a-4922-a209-e390cf42e5ee",
+    "d290d459-fbd1-49b7-be9e-9a319d477dea"
+  ],
+  "fixtures": {
+    "goodBytes": 68918,
+    "truncatedBytes": 44796
+  },
+  "results": [
+    {
+      "name": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+      "status": "PASS",
+      "detail": {
+        "published": false,
+        "status": "failed",
+        "attempts": 1,
+        "storageKey": "841bd989-a1a9-4746-ab38-8e438dbf47cf/source.mp4",
+        "errorCode": "STORED_CLIP_INVALID",
+        "metadataBytes": null,
+        "objects": [
+          {
+            "name": "841bd989-a1a9-4746-ab38-8e438dbf47cf/clip.mp4",
+            "bytes": 44796
+          },
+          {
+            "name": "841bd989-a1a9-4746-ab38-8e438dbf47cf/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 220562,
+        "chargedBytes": 100000000,
+        "unaccountedBytes": -99779438
+      }
+    },
+    {
+      "name": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 1,
+        "storageKey": "8077f9a5-2471-49e1-94ce-995b9024ad69/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 68918,
+        "objects": [
+          {
+            "name": "8077f9a5-2471-49e1-94ce-995b9024ad69/clip.mp4",
+            "bytes": 68918
+          },
+          {
+            "name": "8077f9a5-2471-49e1-94ce-995b9024ad69/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 244684,
+        "chargedBytes": 244684,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 corrida real: tentativa antiga retida na leitura do objeto não altera a mídia que outra instância já publicou",
+      "status": "PASS",
+      "detail": {
+        "freshStatus": 200,
+        "staleStatus": 202,
+        "publishedRowUnchanged": true,
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "883c19af-6bfe-4e48-96e4-249ecb24a68b/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "883c19af-6bfe-4e48-96e4-249ecb24a68b/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "883c19af-6bfe-4e48-96e4-249ecb24a68b/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "afterFault": "503 STORAGE_UNAVAILABLE, linha processing, reserva retida",
+        "whileLeaseActive": 202,
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "26834f66-985d-4bdf-8b8f-8dae956da763/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "26834f66-985d-4bdf-8b8f-8dae956da763/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "26834f66-985d-4bdf-8b8f-8dae956da763/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 falha única no DOWNLOAD do objeto (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "828cf184-b744-4d81-90de-88edcfd8c5e3/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "828cf184-b744-4d81-90de-88edcfd8c5e3/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "828cf184-b744-4d81-90de-88edcfd8c5e3/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 resposta ambígua do info (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 3,
+        "storageKey": "3049322c-fe6a-4922-a209-e390cf42e5ee/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 55820,
+        "objects": [
+          {
+            "name": "3049322c-fe6a-4922-a209-e390cf42e5ee/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "3049322c-fe6a-4922-a209-e390cf42e5ee/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 231586,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 esgotamento: falhas temporárias repetidas terminam em ATTEMPTS_EXHAUSTED sem novo objeto e com a reserva retida",
+      "status": "PASS",
+      "detail": {
+        "faultHits": 2,
+        "attempts": 3,
+        "status": "failed",
+        "storageKey": "d290d459-fbd1-49b7-be9e-9a319d477dea/source.mp4",
+        "errorCode": "ATTEMPTS_EXHAUSTED",
+        "metadataBytes": null,
+        "objects": [
+          {
+            "name": "d290d459-fbd1-49b7-be9e-9a319d477dea/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "d290d459-fbd1-49b7-be9e-9a319d477dea/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 100000000,
+        "unaccountedBytes": -99768414
+      }
+    },
+    {
+      "name": "forma real do erro de info para objeto inexistente (classificação \"não existe\")",
+      "status": "PASS",
+      "detail": {
+        "name": "StorageApiError",
+        "message": "Object not found",
+        "status": 400,
+        "statusCode": "404",
+        "classifiedAsNotFound": true
+      }
+    }
+  ]
+}

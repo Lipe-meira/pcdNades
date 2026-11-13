@@ -1,0 +1,105 @@
+{
+  "project": "pcdn-pr19-352c-20261112-r72",
+  "internal": true,
+  "publishedPorts": 0,
+  "containers": [
+    {
+      "id": "925f4a073de92fee4ce1b79edf89d4ad8789dea45d92edd49bebaf7d0482a964",
+      "name": "/pcdn-pr19-352c-20261112-r72-storage-1",
+      "image": "sha256:a0420573837ee08c0afdc9cd01f90b4b8027579da99e0b9a159fe912ef756c99",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r72-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "pcdn-pr19-352c-20261112-r72-objects",
+          "destination": "/var/lib/storage"
+        }
+      ],
+      "privileged": false
+    },
+    {
+      "id": "802dbaf4da25281afb1e85da49fa92edafbec205469c1c3414dee169f05c9876",
+      "name": "/pcdn-pr19-352c-20261112-r72-auth-1",
+      "image": "sha256:1736a63078f5922b198c4cbe50f80ab9a2d3b54fe8b7b6cfb2e9dc5dbbc12c6b",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r72-internal"
+      ],
+      "ports": {},
+      "mounts": [],
+      "privileged": false
+    },
+    {
+      "id": "d4a66b5a556bc6b1d2a93b4c60fb61024bf9de5641916cdb3206287923759edc",
+      "name": "/pcdn-pr19-352c-20261112-r72-rest-1",
+      "image": "sha256:54000f24847d01a2c2302e0041cf0618b875c57fb48507d743cfa9aaa50bf43c",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r72-internal"
+      ],
+      "ports": {},
+      "mounts": [],
+      "privileged": false
+    },
+    {
+      "id": "a4c993454037167124eda6c93fd4dd72c5daa4f77dfbbcc1dd6d50aa4b98fd68",
+      "name": "/pcdn-pr19-352c-20261112-r72-db-1",
+      "image": "sha256:3b0cda93be7c8dba2ed484d19393d93845dc3dafb88973e248ba8e6d99d784e1",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r72-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/docker-entrypoint-initdb.d/00-lab.sql"
+        },
+        {
+          "type": "volume",
+          "name": "pcdn-pr19-352c-20261112-r72-db",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ],
+      "privileged": false
+    },
+    {
+      "id": "d777d403f9fef429593953e6ea893cec4eae89f1a2c6e58cb6bcae9f29e66eb1",
+      "name": "/pcdn-pr19-352c-20261112-r72-gateway-1",
+      "image": "sha256:580f9b46220b71083012e43b30b3bd04396b1a5103520150703c8873eb0ee833",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r72-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/results"
+        }
+      ],
+      "privileged": false
+    },
+    {
+      "id": "51910853d33603bed3b369f9df6bd6daa55de74a332a3dcaac06fa86a4dda454",
+      "name": "/pcdn-pr19-352c-20261112-r72-runner-1",
+      "image": "sha256:580f9b46220b71083012e43b30b3bd04396b1a5103520150703c8873eb0ee833",
+      "networks": [
+        "pcdn-pr19-352c-20261112-r72-internal"
+      ],
+      "ports": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/results"
+        }
+      ],
+      "privileged": false
+    }
+  ],
+  "egress": "BLOCKED ENETUNREACH",
+  "baselineContainersPreserved": 103,
+  "baselineVolumesPreserved": 52
+}

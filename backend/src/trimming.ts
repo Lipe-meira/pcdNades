@@ -3,7 +3,21 @@ const run=promisify(execFile),require=createRequire(import.meta.url);
 export const sourceLimits={maxDurationSeconds:180,maxBytes:50000000} as const;
 export function ffmpegBinaryPath(){if(process.platform==='linux'&&process.arch==='x64')return require.resolve('ffmpeg-static/ffmpeg');if(process.platform==='win32'&&process.arch==='x64')return require.resolve('ffmpeg-static/ffmpeg.exe');throw new Error('UNSUPPORTED_FFMPEG_PLATFORM');}
 export function checkClip(clip:Clip,sourceDuration:number,finalLimit:number){const duration=clip.endSeconds-clip.startSeconds;if(!Number.isFinite(sourceDuration)||sourceDuration>180)throw new MediaError('SOURCE_DURATION_EXCEEDED');if(clip.startSeconds<0||clip.endSeconds>sourceDuration||duration<0.1-1e-8||duration>finalLimit)throw new MediaError('CLIP_OUT_OF_RANGE');return duration;}
-export async function decodeVideo(path:string,signal:AbortSignal){try{await run(ffmpegBinaryPath(),['-nostdin','-v','error','-xerror','-err_detect','explode','-protocol_whitelist','file','-threads','1','-i',path,'-map','0:v:0','-map','0:a:0?','-threads','1','-f','null','-'],{signal,timeout:20000,maxBuffer:65536});}catch{throw new MediaError(signal.aborted?'PROCESSING_TIMEOUT':'INVALID_MEDIA');}}
+// Decodificação integral e limitada (1 thread, 20 s, 64 KiB de saída, cancelável). `ok` = decodificou tudo; `invalid` = o FFmpeg rodou e
+// recusou o conteúdo (ou saturou a saída de erros); `transient` = não dá para concluir (cancelamento, tempo esgotado, binário/execução).
+export type DecodeOutcome='ok'|'invalid'|'transient';
+export async function decodeVideoOutcome(path:string,signal:AbortSignal):Promise<DecodeOutcome>{
+ let binary:string;try{binary=ffmpegBinaryPath();}catch{return 'transient';}
+ try{await run(binary,['-nostdin','-v','error','-xerror','-err_detect','explode','-protocol_whitelist','file','-threads','1','-i',path,'-map','0:v:0','-map','0:a:0?','-threads','1','-f','null','-'],{signal,timeout:20000,maxBuffer:65536});return 'ok';}
+ catch(error){
+  const e=error as {code?:unknown;killed?:boolean};
+  if(e.code==='ERR_CHILD_PROCESS_STDIO_MAXBUFFER')return 'invalid';
+  if(signal.aborted||e.killed||typeof e.code==='string')return 'transient'; // ETIMEDOUT/ENOENT/EACCES/ABORT_ERR...: o código de saída do FFmpeg é numérico
+  return 'invalid';
+ }
+}
+// Contrato anterior preservado: qualquer resultado que não seja `ok` continua lançando INVALID_MEDIA (ou PROCESSING_TIMEOUT se cancelado).
+export async function decodeVideo(path:string,signal:AbortSignal){if(await decodeVideoOutcome(path,signal)!=='ok')throw new MediaError(signal.aborted?'PROCESSING_TIMEOUT':'INVALID_MEDIA');}
 export async function trimVideo(input:string,output:string,clip:Clip,limits:MediaLimits,signal:AbortSignal){
  let source;try{source=await probeOriginal(input,{maxBytes:sourceLimits.maxBytes,maxDurationSeconds:sourceLimits.maxDurationSeconds},signal);}catch(error){if(error instanceof MediaError&&error.code==='DURATION_EXCEEDED')throw new MediaError('SOURCE_DURATION_EXCEEDED');throw error;}
  const duration=checkClip(clip,source.durationSeconds,limits.maxDurationSeconds);

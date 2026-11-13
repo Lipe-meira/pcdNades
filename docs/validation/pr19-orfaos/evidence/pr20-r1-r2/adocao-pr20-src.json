@@ -1,0 +1,90 @@
+{
+  "src": "pr20-src",
+  "mediaIds": [
+    "c16a8f78-a596-4312-be82-59b6bf1a477c",
+    "1097f6a6-2724-4961-90a6-a6fb17f23adf",
+    "ead0060b-be31-46f2-925b-fb22ede88baa"
+  ],
+  "fixtures": {
+    "goodBytes": 68918,
+    "truncatedBytes": 44796
+  },
+  "results": [
+    {
+      "name": "R1 MP4 de cabeçalho válido e conteúdo truncado, já gravado no Storage real como <id>/clip.mp4",
+      "status": "PASS",
+      "detail": {
+        "published": true,
+        "status": "ready",
+        "attempts": 1,
+        "storageKey": "c16a8f78-a596-4312-be82-59b6bf1a477c/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 44796,
+        "objects": [
+          {
+            "name": "c16a8f78-a596-4312-be82-59b6bf1a477c/clip.mp4",
+            "bytes": 44796
+          },
+          {
+            "name": "c16a8f78-a596-4312-be82-59b6bf1a477c/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 220562,
+        "chargedBytes": 220562,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R1 controle positivo: MP4 íntegro já gravado como <id>/clip.mp4 é adotado e cobrado pelos bytes do objeto",
+      "status": "PASS",
+      "detail": {
+        "status": "ready",
+        "attempts": 1,
+        "storageKey": "1097f6a6-2724-4961-90a6-a6fb17f23adf/clip.mp4",
+        "errorCode": null,
+        "metadataBytes": 68918,
+        "objects": [
+          {
+            "name": "1097f6a6-2724-4961-90a6-a6fb17f23adf/clip.mp4",
+            "bytes": 68918
+          },
+          {
+            "name": "1097f6a6-2724-4961-90a6-a6fb17f23adf/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 244684,
+        "chargedBytes": 244684,
+        "unaccountedBytes": 0
+      }
+    },
+    {
+      "name": "R2 falha única ao ASSINAR a leitura do objeto (503 real injetado) e retomada",
+      "status": "PASS",
+      "detail": {
+        "defeitoR2Reproduzido": true,
+        "afterFault": "STORAGE_UNAVAILABLE",
+        "afterRecovery": "failed",
+        "status": "failed",
+        "attempts": 2,
+        "storageKey": "ead0060b-be31-46f2-925b-fb22ede88baa/source.mp4",
+        "errorCode": "STORAGE_UNAVAILABLE",
+        "metadataBytes": null,
+        "objects": [
+          {
+            "name": "ead0060b-be31-46f2-925b-fb22ede88baa/clip.mp4",
+            "bytes": 55820
+          },
+          {
+            "name": "ead0060b-be31-46f2-925b-fb22ede88baa/source.mp4",
+            "bytes": 175766
+          }
+        ],
+        "dbPhysicalBytes": 231586,
+        "chargedBytes": 100000000,
+        "unaccountedBytes": -99768414
+      }
+    }
+  ]
+}
