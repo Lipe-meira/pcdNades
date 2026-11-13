@@ -1,3 +1,48 @@
+# Checkpoint — orchestrator: README atualizado — 13/11/2026
+
+Estado: concluído. Fuso: America/Sao_Paulo.
+
+## Objetivo e pedido atual
+Pedido: atualizar o README do repositório Lipe-meira/pcdNades. Entrega exclusivamente documental na main, sem integrar PR19 nem alterar configuração de serviços.
+
+## Localização do trabalho
+- Branch codex/readme-20261113; worktree C:/Users/felip/.codex/worktrees/pcdnades-readme-20261113/nadesCs2.
+- Base8776ddf4d3658b1d5ecf8d91a5e13760047d8f50 (main). Commit documental desta entrega: consultar git log -1 nesta branch; sem autorreferência.
+- Push de entrega para origin/codex/readme-20261113 e origin/main com o mesmo commit, sem force push; confirmação remota no fechamento do chat.
+- Arquivos da entrega: README.md e este checkpoint. Nenhuma alteração de implementação. Worktree de validação PR19 preservada.
+
+## Feito
+- README reestruturado: funcionalidades integradas, tecnologias, execução demo/API/backend, configuração, testes, mídia, mapas/atribuição e documentação.
+- Removidos avisos contraditórios e propostas antigas de outubro. Documentados HE/Solo Exec/Nuke/reedição e disponibilidade por capabilities.
+- Regra20s diferenciada do padrão/teto90s ainda presente no código; orientação explícita MEDIA_MAX_DURATION_SECONDS=20, sem alterar runtime/constraints.
+- Créditos PNG separados de setpos CC BY4.0; lacunas de procedência dos PNGs/Nuke preservadas. Catálogo demo7 mapas separado do seed inicial3/API.
+- PR19 consultado: aberto, fora da main, head3596428942e51b526b75af7de23e842961ee3451. Validação anterior352c0e vinculada por commit e identificada como histórica/específica do SHA, sem extrapolar ao head novo.
+- Apenas README/checkpoint preparados a partir da main; nenhum código das branches de colaboração/validação incluído. Sem solicitação de deploy manual, migrations ou uso de credenciais produtivas.
+
+## Em andamento
+Nada em implementação. Fechamento de commit/push e conferência dos arquivos publicados.
+
+## Retomar daqui
+1. Conferir Git/status/branch e a main remota antes de nova tarefa.
+2. Alinhamento completo do limite20s e validação do novo headPR19 permanecem tarefas separadas; esta atualização documental não os resolve.
+
+## Decisões e contrato
+- README distingue implementação integrada, configuração de ambiente e trabalho em PR.
+- Não declara saúde/configuração atual de produção a partir de documentos. Links do projeto são referências de acesso.
+- Históricos detalhados permanecem nos checkpoints/documentos; nenhum relatório de teste é apresentado como prova de versão diferente.
+
+## Validação
+- PASS:19 links locais existentes, nomes dos scripts npm documentados conferidos com package.json, fences Markdown fechadas, diff limitado aos dois documentos e git diff --check.
+- Comandos comparados com scripts/fontes/env examples/atribuições da main; nenhuma suíte de aplicação executada por se tratar somente de documentação.
+- Conferência final: mesmo SHA em main/branch própria e conteúdo remoto do README no fechamento.
+
+## Bloqueios e dependências
+Nenhum para esta entrega. Pendências de produto/ativação apontadas no README, sem aplicação de alterações operacionais.
+
+## Entrega e histórico curto
+-13/11: README atualizado e publicado com checkpoint na mesma entrega documental. Repositório https://github.com/Lipe-meira/pcdNades.
+
+---
 # Migration map_levels APLICADA em produção — 11/11/2026 03:13 UTC
 
 Autorizada pelo responsável e aplicada uma única vez com apply_migration no projeto kdyzxxgzvgiffluyjjxu; registrada pelo Supabase como 20261111031252 map_levels (arquivos da migration e do rollback renomeados no repositório, conteúdo idêntico). Pré e pós-checagens aprovadas: 15 granadas, 21 mídias, 17 objetos, hash das linhas de grenades, policies, grants, triggers e RLS iguais ao backup release-20261111-nuke-premigration; colunas origin_level/target_level criadas e vazias; checks validados. Sem alterar dados nem limpar Storage. PR #14 segue aberto, SEM merge e SEM deploy (frontend/backend publicados ainda ignoram as colunas novas). Próximo: autorização para o merge do PR #14, conferência dos deployments pcdnades e pcdnades-api e smoke na Nuke.

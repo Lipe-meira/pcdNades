@@ -1,205 +1,147 @@
-> **Estado de desenvolvimento — 02/11/2026:** a `dev` integra Solo Exec, backend de Reels e prévia privada de fonte TikTok/Reels. Reels e prévia ficam desligados por padrão; dependem de migrations e, para prévia, coleta externa monitorada. Isso não altera a produção. Leia [checkpoint atual](docs/continuity/orchestrator.md), [contrato da prévia](docs/preview-contract.md) e [sequência de publicação](docs/continuity/PRODUCTION-HANDOFF.md). Os avisos históricos abaixo sobre TikTok ainda não aplicado/desligado foram superados: o teste privado em produção e a migration TikTok já foram registrados; não reaplicar. Não presumir o estado remoto atual sem verificá-lo.
-
-> Auditoria pré-preview local concluída: [relatório e plano](backend/IMPORT-PREVIEW-AUDIT.md). Payload Linux de204,13MB, Node24/120s; execução real na Vercel e autorização dos recursos de teste ainda pendentes.
-
-> Piloto local atual (31/10/2026): TikTok com fonte até50MB e trecho até30s, sem alterar upload/histórico90s. Implementação, testes e checklist de preview em [IMPORT-PILOT-30.md](backend/IMPORT-PILOT-30.md). Flags continuam desativadas por padrão; nenhuma publicação em produção foi autorizada.
-
 # pcdNades
 
-## Checkout consolidado para desenvolvimento — 31/10/2026
+Biblioteca compartilhada de lineups de **Counter-Strike 2**. Encontre uma granada no radar, assista ao vídeo e consulte as instruções para treinar com o time.
 
-A branch `dev` reúne a main e todo o trabalho das branches de frontend e backend, incluindo a implementação experimental de importação TikTok. O importador permanece desativado por padrão. O modo experimental `temporary` passou no fluxo TikTok autorizado → recorte → Supabase local real → player. A evidência completa e as pendências de tempo/hospedagem estão em [IMPORT-LOCAL-E2E.md](backend/IMPORT-LOCAL-E2E.md). Produção/Vercel não foram habilitadas. O relay antigo recebeu HTTP403. Nada desta consolidação foi publicado em produção.
+[Abrir aplicação](https://pcdnades.vercel.app) · [API](https://pcdnades-api.vercel.app/health) · [Repositório](https://github.com/Lipe-meira/pcdNades)
 
-Para continuar, leia primeiro [o resumo para a próxima sessão](docs/continuity/NEXT-SESSION.md), [o roteiro de validação isolada](backend/IMPORT-VALIDATION.md), [o checkpoint do orquestrador](docs/continuity/orchestrator.md), [o contrato e a arquitetura TikTok](backend/TIKTOK-IMPLEMENTATION.md) e [as evidências e limitações](backend/IMPORTS.md). A migration de sessões de importação ainda não foi aplicada no Supabase. Não é necessário aplicá-la para inspecionar o código ou executar os testes locais controlados.
+## Funcionalidades
 
+- Consulta por mapa, tipo de granada e lado T/CT, com lista e marcadores no radar.
+- Smokes, flashbangs, molotovs e HE; **Solo Exec** com origem e múltiplos destinos.
+- Seleção dos andares superior e inferior da **Nuke**, inclusive para origem e destino em andares diferentes.
+- Vídeos com reprodução sem áudio por padrão, instruções e interface em português para desktop e celular.
+- Administração com login, cadastro, edição e exclusão; controle de revisão evita sobrescrever uma edição concorrente.
+- Upload de MP4, seleção de trecho e reedição do corte de vídeos importados, conforme as capacidades anunciadas pela API.
+- Persistência compartilhada em PostgreSQL e vídeos próprios no Supabase Storage, disponíveis entre dispositivos no modo API.
 
-Biblioteca compartilhada de granadas de Counter-Strike 2 para ajudar um time a aprender e treinar lineups.
+A disponibilidade de upload, recorte, importadores e prévia depende da configuração do ambiente. A interface consulta `GET /api/v1/media/capabilities`; a presença do código na `main` não habilita automaticamente esses recursos.
 
-- Repositório: https://github.com/Lipe-meira/pcdNades
-- Chat orquestrador: **Criar site de lineups para CS2**
-- Chat de frontend: **frontEnd CS2**
-- Chat de backend: **backend CS2**
+## Estado do projeto
 
-Este documento reúne contexto de produto e coordenação. Confira `AGENTS.md` e `docs/continuity/` antes de retomar trabalho: os checkpoints registram o estado atual de cada área. Atualizado em 29/10/2026.
+O frontend e a API têm projetos separados na Vercel. A `main` reúne a biblioteca, o editor, Solo Exec, HE, os andares da Nuke e a reedição de cortes. O acesso de escrita nessa versão é administrativo.
 
-## Executar e acompanhar
+**Publicação colaborativa por apelido está em desenvolvimento no [PR #19](https://github.com/Lipe-meira/pcdNades/pull/19), ainda fora da `main`.** A validação isolada de 12/11 examinou o SHA `352c0e1`: [relatório e evidências](https://github.com/Lipe-meira/pcdNades/blob/2db411718ecbdd1efdaf282e89c5f59573b97fb4/docs/validation/pr19/REPORT.md). Esse parecer é específico daquela versão e não comprova versões posteriores do PR ou prontidão para ativação pública.
 
-- Site publicado: https://pcdnades.vercel.app em modo API, consultando o Supabase dedicado por https://pcdnades-api.vercel.app . A conta administrativa provisória foi autorizada e o upload de MP4 original foi liberado para teste do usuário, sem outro host. Implementação pausada por pedido dele; o teste real completo de cadastro e reprodução continua pendente. O modo demo continua disponível para desenvolvimento, com cadastros apenas em memória.
-- Frontend: `npm --prefix frontend ci`, `npm --prefix frontend run dev`. Operação e testes em `frontend/README.md`.
-- Backend: `npm --prefix backend ci`, `npm --prefix backend run build`. Contrato, variáveis e worker em `backend/README.md`.
-- Continuidade: `docs/continuity/orchestrator.md`, `frontend.md` e `backend.md`; cada responsável atualiza seu checkpoint durante o trabalho.
+O histórico de operação e as pendências estão nos [checkpoints de continuidade](docs/continuity/README.md). Configuração, migrations aplicadas e estado dos serviços devem ser conferidos antes de qualquer implantação.
 
-## Objetivo
+## Tecnologias
 
-O responsável cadastra uma smoke, flashbang ou molotov, marca no radar onde ela cai e associa um vídeo demonstrando a execução. Um amigo abre o site em outro dispositivo e encontra o mesmo conteúdo salvo.
-
-A necessidade chamada inicialmente de “salvar sessão” significa **persistência compartilhada dos cadastros**. Não exige sala ao vivo, transmissão da tela, cursores compartilhados ou sincronização instantânea do mapa selecionado.
-
-Exemplo de uso: cadastrar “Smoke janela — Mirage”, marcar o destino na janela e adicionar o vídeo. Depois, outro integrante abre Mirage, filtra por smoke e toca no ponto para assistir e treinar.
-
-## Requisitos confirmados pelo usuário
-
-- Frontend em **React com TypeScript**, por familiaridade do usuário.
-- Biblioteca para o time treinar granadas de CS2.
-- Cadastro de smokes, flashbangs e molotovs com vídeo curto demonstrativo.
-- Duração máxima de cada vídeo final: **90 segundos**, respeitando eventual limite menor configurado no backend.
-- Upload de vídeo `.mp4` e fluxo desejado de importação por link do YouTube Shorts ou TikTok: baixar e armazenar uma cópia no projeto, em vez de apenas incorporar o player externo. O suporte de importação por plataforma depende de validação técnica.
-- Marcação do destino da granada no mapa.
-- Conteúdo salvo disponível para outras pessoas que abrirem o site, inclusive em outro dispositivo.
-- Chats separados para frontend e backend, coordenados pelo orquestrador.
-- Cada chat deve fazer commits e pushes do seu trabalho, usando Conventional Commits com descrição em português.
-- Planejamento de táticas fica para uma fase futura e deve ser ignorado nesta versão.
-
-## Proposta de primeira versão
-
-Os itens desta seção detalham a proposta para o MVP; a política de acesso e a viabilidade dos importadores ainda precisam do alinhamento indicado adiante.
-
-### Consulta
-
-1. Selecionar um mapa.
-2. Visualizar seu radar e os destinos das granadas cadastradas.
-3. Filtrar por smoke, flashbang, molotov ou HE; filtro por lado T/CT também proposto.
-4. Clicar ou tocar em um destino para abrir vídeo e instruções.
-5. Consultar uma lista de granadas como alternativa aos pontos, inclusive quando houver destinos sobrepostos.
-
-A interface deve ser em português e funcionar em PC e celular. O vídeo precisa preservar a visibilidade da mira e dos detalhes de execução. A lista e os marcadores devem permitir navegação acessível, sem depender apenas de cor.
-
-### Administração
-
-- Cadastrar, editar e excluir lineups.
-- Informar título, mapa, tipo de granada, lado T/CT, instruções e vídeo.
-- Selecionar o destino clicando ou tocando no radar.
-- Validar os dados e mostrar os erros de forma compreensível.
-
-### Persistência
-
-O banco compartilhado é a fonte dos cadastros. Salvar apenas no navegador de quem cadastrou não atende ao requisito. Estado local pode ser usado para filtros, formulários e cache, mas não como armazenamento principal da biblioteca.
-
-Não precisamos de WebSockets para atender ao caso inicial: abrir ou atualizar a consulta deve buscar o conteúdo persistido no backend.
-
-### Vídeos: upload e importação por link
-
-O usuário escolheu **baixar e guardar**. O objetivo é assistir pelo player do pcdNades a um arquivo persistido no armazenamento do projeto. Um embed do YouTube ou TikTok não substitui esse requisito.
-
-- Permitir upload direto de `.mp4`.
-- No fluxo de importação, receber um link de Shorts ou TikTok e criar uma tarefa de processamento no servidor.
-- Mostrar estados de espera, processamento, sucesso e falha; só disponibilizar o vídeo como pronto após armazenar e validar o arquivo.
-- Guardar referência ao arquivo e metadados no banco; guardar o vídeo em armazenamento de objetos, fora do Git.
-- Preservar a URL de origem para referência. Não depender dela para reproduzir uma importação concluída.
-- Antes de assumir suporte a uma plataforma, validar a forma de obtenção, as permissões aplicáveis e as limitações operacionais. Não prometer importação universal nem contornar login, conteúdo privado, DRM ou bloqueios.
-- Se uma importação não puder ser concluída, informar o motivo e oferecer upload direto; não trocar silenciosamente por embed.
-
-Proposta técnica: processamento fora da requisição HTTP, com limites de tamanho/duração/tempo, limpeza de arquivos temporários e proteção contra URLs que apontem para serviços internos. Ferramentas, hospedagem, limites e contrato das tarefas ainda serão definidos.
-
-Referências oficiais para a investigação: [políticas da API do YouTube](https://developers.google.com/youtube/terms/developer-policies), [embed do TikTok](https://developers.tiktok.com/doc/embed-videos/). O YouTube restringe download/armazenamento de conteúdo pela API sem aprovação prévia. A documentação de embed não constitui uma API de download. Essas limitações devem ser consideradas na proposta de importação.
-
-## Referências
-
-As referências servem para estudar organização, navegação e consulta de lineups. O produto terá identidade própria; não presumir autorização para copiar vídeos, imagens, radares, marcas ou outros assets desses serviços.
-
-| Referência | Link | O que estudar |
-| --- | --- | --- |
-| CSNADES.gg | https://csnades.gg/ | Organização da biblioteca por mapas e tipos de granada. Principal referência indicada pelo usuário. |
-| CSNADES.gg — Mirage | https://csnades.gg/mirage | Radar, destinos, filtros por granada e lado, consulta das lineups. |
-| CSNades.app | https://csnades.app/ | Combinação de vídeo com imagens de posicionamento e mira para consulta rápida; coleções de granadas. |
-| NadeIQ | https://nadeiq.app/ | Apresentação de execução e resultado; agrupamentos por origem ou destino e apoio ao treinamento. |
-| nadeguide | https://www.nadeguide.com/ | Consulta direta por mapas e lineups, com foco em encontrar rapidamente o conteúdo. |
-
-As páginas foram consultadas durante a pesquisa inicial. Recursos desses sites são inspiração, não requisitos automáticos do pcdNades.
-
-## Fora do escopo inicial
-
-- Criação e execução de táticas.
-- Salas e colaboração em tempo real.
-- Análise ou extração automática de demos de partidas.
-- Estatísticas competitivas, rankings ou monetização.
-- Copiar ou importar automaticamente a biblioteca dos sites de referência.
-
-Favoritos, coleções de treino, marcação de origem e comandos de prática podem ser avaliados depois; não devem bloquear a primeira entrega.
-
-## Decisões pendentes
-
-1. **Acesso:** a proposta é consulta pública pelo link e escrita restrita a administrador. O usuário ainda não confirmou se a leitura deve ser restrita ao time.
-2. **Importadores de vídeo:** upload de MP4 e a intenção de baixar/guardar por link estão confirmados. Validar quais plataformas podem ser suportadas e definir processamento, armazenamento, limites e tratamento de falhas. Embed não é a solução escolhida.
-3. **Integração:** backend autorizado em TypeScript/Fastify/PostgreSQL/Supabase. Projeto dedicado `pcdNades` criado com autorização do usuário na organização Lipe-meira's Org, região São Paulo. Configuração e validação reais ainda em andamento.
-4. **Mapas e assets:** Mirage, Inferno e Ancient usam plantas vetoriais setpos.gg, com licença CC BY 4.0, atribuição e snapshot em `frontend/public/maps/`. Não são as texturas oficiais extraídas do jogo. Catálogo da API deve preservar a versão/enquadramento dessas imagens.
-5. **Publicação:** frontend e API na Vercel, leitura real validada e `main` como branch padrão. Para o MVP, a API validará MP4 H.264/yuv420p com áudio AAC ou sem áudio e guardará o original, sem reconversão nem host extra. Falta concluir o teste real do fluxo de mídia. Não inserir segredos no Git.
-
-## Alinhamento técnico proposto
-
-### Estrutura e responsabilidades
-
-```text
-frontend/    React + TypeScript; responsabilidade do chat de frontend
-backend/     API e persistência; responsabilidade do chat de backend
-docs/        Especificações e contrato de integração; coordenação do orquestrador
-README.md    Contexto geral; coordenação do orquestrador
-```
-
-Arquivos de raiz e configurações compartilhadas devem ser coordenados pelo orquestrador para evitar mudanças conflitantes. Frontend e backend já possuem implementação inicial; consulte os checkpoints para distinguir código entregue de fluxos validados com serviços reais.
-
-### Dados de uma lineup
-
-Modelo de discussão, sujeito ao contrato final:
-
-| Campo | Finalidade |
+| Camada | Tecnologias |
 | --- | --- |
-| `id` | Identificador gerado pelo servidor. |
-| `title` | Nome reconhecível, como “Smoke janela — Mirage”. |
-| `mapId` | Mapa ao qual pertence. |
-| `type` | `smoke`, `flashbang`, `molotov` ou `he` (HE Grenade; `solo_exec` também aceito pelo cadastro). |
-| `side` | `T` ou `CT`, conforme proposta inicial. |
-| `instructions` | Orientações para executar a granada. |
-| `video` | Referência ao arquivo armazenado, estado de processamento e metadados; formato a definir no contrato. |
-| `sourceUrl` | URL de origem, quando o vídeo for importado por link. |
-| `target` | Destino no radar, com coordenadas `x` e `y`. |
-| `createdAt`, `updatedAt` | Datas geradas pelo servidor. |
+| Frontend | React, TypeScript e Vite |
+| API | TypeScript, Fastify e validação com Zod |
+| Dados e autenticação | Supabase Auth, PostgreSQL e políticas RLS |
+| Vídeos | Supabase Storage privado, FFmpeg e ffprobe |
+| Verificação | Vitest, Playwright, testes do backend e GitHub Actions |
+| Hospedagem | Vercel, com projetos separados para frontend e API |
 
-O mapa deve fornecer identificador, nome, URL do radar, dimensões e uma referência de versão da imagem. Endpoints, envelopes de resposta, validações e autenticação serão definidos em um contrato próprio antes da integração.
+## Executar localmente
 
-### Coordenadas do radar
+Use **Node.js 24.x** e npm. O backend declara Node 24; o frontend aceita Node 22.12 ou superior. Execute os comandos a partir da raiz do repositório, exceto onde indicado.
 
-Alinhamento técnico proposto pelos dois chats:
+### Demonstração sem servidor
 
-- `x` e `y` normalizados entre `0` e `1`, inclusive.
-- Origem no canto superior esquerdo da imagem; `x` cresce para a direita e `y` para baixo.
-- Calcular a posição relativa à imagem efetivamente exibida, excluindo padding e faixas vazias de `object-fit`.
-- Renderizar o marcador proporcionalmente, para preservar a posição no celular e no desktop.
-- Não trocar enquadramento ou orientação de um radar existente sem avaliar a migração dos pontos cadastrados.
-
-## Fluxo de trabalho dos chats
-
-1. Ler este documento e inspecionar o repositório.
-2. Alinhar escopo, contrato e decisões pendentes com o orquestrador.
-3. Trabalhar em worktree próprio, fornecido ou combinado com o orquestrador, antes de editar ou trocar branches.
-4. Branches previstas: `feat/frontend` e `feat/backend`. O orquestrador deve confirmar os caminhos e a base antes do início.
-5. Fazer commits pequenos e coesos, incluindo apenas arquivos sob sua responsabilidade.
-6. Executar as verificações pertinentes e registrar seus resultados.
-7. Fazer push para a própria branch e informar branch, commits, verificações e pendências ao entregar.
-
-Chats de frontend/backend não fazem push direto na `main` nem merge; integração e publicação ficam com o orquestrador. Não fazer force push. Não assumir que branches diferentes tornam seguro trabalhar simultaneamente no mesmo diretório: cada chat precisa de seu worktree.
-
-### Conventional Commits
-
-Tipo convencional em inglês, descrição em português. Exemplos:
-
-```text
-feat(frontend): adiciona seleção de mapas
-feat(backend): implementa cadastro de granadas
-fix(frontend): corrige posição dos pontos no radar
-docs: documenta escopo e referências do projeto
+```powershell
+git clone https://github.com/Lipe-meira/pcdNades.git
+cd pcdNades
+npm --prefix frontend ci
+npm --prefix frontend run dev
 ```
 
-## Critérios de aceite da primeira versão
+Abra [http://127.0.0.1:5173](http://127.0.0.1:5173). Sem configuração adicional, o frontend usa `demo`: dados e alterações ficam em memória e desaparecem ao recarregar. Os exemplos da demonstração são fictícios; não representam lineups validadas.
 
-- Uma granada cadastrada permanece disponível após fechar e reabrir o site.
-- Outra pessoa, em outro dispositivo, consegue consultar o mesmo cadastro conforme a política de acesso definida.
-- O destino permanece na posição correta em tamanhos de tela diferentes.
-- Selecionar a granada abre o vídeo correspondente e suas instruções.
-- Os filtros mostram os resultados esperados e há tratamento de carregamento, erro e lista vazia.
-- Apenas usuários autorizados conseguem criar, editar ou excluir dados; a restrição deve existir no backend/banco.
-- Frontend e backend passam nas verificações pertinentes e a integração é exercitada com dados reais de teste.
+### Frontend conectado à API
 
-## Situação atual
+Crie `frontend/.env.local` com base em [frontend/.env.example](frontend/.env.example):
 
-Frontend conectado e API publicados, com mapas licenciados, Supabase dedicado provisionado e conta provisória autorizada. Permissões do banco, testes desktop/mobile e integração controlada passaram. O processamento inline do MP4 original evita um worker externo no MVP; testes de binário e deploy estão registrados no checkpoint. Mídia remota e persistência de um cadastro completo entre dispositivos ainda exigem teste real. Importadores de links permanecem indisponíveis.
+```dotenv
+VITE_DATA_MODE=api
+VITE_API_URL=http://127.0.0.1:3001/api/v1
+VITE_SUPABASE_URL=<URL do ambiente de desenvolvimento>
+VITE_SUPABASE_PUBLISHABLE_KEY=<chave pública do ambiente>
+```
+
+Preencha os valores e reinicie o Vite. O prefixo `/api/v1` faz parte de `VITE_API_URL`. O modo API exige configuração completa; falhas de conexão não são substituídas por dados da demonstração.
+
+Variáveis `VITE_*` são públicas no navegador. Nunca coloque nelas `service_role`, chaves secretas, senha administrativa ou tokens de sessão. A origem do frontend precisa constar no CORS do backend.
+
+### Backend
+
+Prepare um **ambiente de desenvolvimento próprio** com Supabase Auth, banco, bucket privado e usuário administrador. Revise a sequência de migrations e o histórico do ambiente; não reaplique migrations em um banco existente sem conferência.
+
+Crie `backend/.env` a partir de [backend/.env.example](backend/.env.example). Configure as credenciais do servidor, `FRONTEND_URL` e `CORS_ORIGINS`. Para respeitar a regra de produto de 20 s, defina `MEDIA_MAX_DURATION_SECONDS=20` explicitamente.
+
+```powershell
+npm --prefix backend ci --ignore-scripts
+npm --prefix backend run build
+cd backend
+node --env-file=.env dist/server.js
+```
+
+A API usa [http://127.0.0.1:3001](http://127.0.0.1:3001); saúde em `/health` e contrato em `/api/v1`. O build prepara os binários de mídia necessários à plataforma. Uploads ficam desabilitados por padrão e só devem ser ligados depois de configurar e validar banco, Storage e processamento.
+
+O modo padrão `inline-original` valida o MP4 original e processa o recorte solicitado durante o complete. O modo opcional `worker-transcode` exige worker, FFmpeg/ffprobe, `DATABASE_URL` e execução em host adequado; publicar a API não inicia esse worker.
+
+Veja [frontend/README.md](frontend/README.md) e [backend/README.md](backend/README.md) para contratos e detalhes operacionais. Esses documentos também contêm registros históricos; confira configuração e checkpoints antes de seguir instruções antigas.
+
+## Vídeos e importação
+
+Os vídeos ficam armazenados no projeto. Uma importação suportada baixa e guarda uma cópia; não troca silenciosamente para um embed externo.
+
+| Fluxo | Comportamento |
+| --- | --- |
+| Upload MP4 | Até 50.000.000 bytes; no modo original, vídeo H.264/yuv420p com áudio AAC ou sem áudio |
+| Recorte | Quando habilitado, seleção de trecho em fonte de até 180 s/50 MB; saída validada pelo servidor |
+| TikTok | Importador experimental, com habilitação explícita, administrador autorizado e limites próprios |
+| Instagram Reels | Implementação com habilitação independente; depende de runtime, migrations e validação operacional |
+| YouTube Shorts | Download não habilitado; o fluxo oferece upload de MP4 |
+| Prévia de fonte importada | Recurso separado, condicionado à configuração e disponibilidade do coletor |
+
+**Duração final de produto: 20 segundos.** Existe uma divergência conhecida: o código/configuração de exemplo ainda adota 90 s como padrão/teto técnico. Configure o backend com 20 s e confira as capacidades retornadas à interface; a atualização deste README não altera código, constraints do banco nem ambientes publicados. O alinhamento completo desses padrões permanece pendente.
+
+Mídias só podem ser publicadas quando estão `ready`. Assinaturas de upload e de leitura têm validade própria; desligar uma flag não revoga URLs já emitidas. Arquivos físicos e metadados precisam de reconciliação para tratar abandonos e órfãos. Não habilite importadores ou execute limpeza com base apenas em testes simulados.
+
+## Mapas e atribuição
+
+O catálogo da demonstração inclui **Mirage, Inferno, Ancient, Cache, Nuke, Dust II e Anubis**. No modo API, o catálogo vem do banco; a migration inicial de mapas contém somente Mirage, Inferno e Ancient, por isso o catálogo completo depende do provisionamento do ambiente.
+
+- Os PNGs em `frontend/public/maps/valve/` têm origem/licença com lacunas documentadas. Os dois radares atuais da Nuke foram fornecidos pelo usuário e adaptados para preservar a calibração; sua procedência ainda precisa ser confirmada. Consulte a [atribuição dos radares PNG](frontend/public/maps/valve/ATTRIBUTION.md).
+- As plantas vetoriais de Mirage, Inferno e Ancient por setpos.gg têm licença **CC BY 4.0**, com snapshot e créditos em [frontend/public/maps/ATTRIBUTION.md](frontend/public/maps/ATTRIBUTION.md). Essa licença não se estende aos PNGs.
+- Os ícones têm [créditos próprios](frontend/public/maps/icons/ATTRIBUTION.md).
+
+As coordenadas são normalizadas entre 0 e 1 sobre a imagem de referência. Mudar enquadramento ou orientação exige revisar os pontos existentes. Counter-Strike 2 é marca da Valve; o projeto não declara afiliação ou endosso.
+
+## Verificações
+
+```powershell
+npm --prefix frontend run typecheck
+npm --prefix frontend test
+npm --prefix frontend run build
+npm --prefix frontend run test:browser
+
+npm --prefix backend run typecheck
+npm --prefix backend test
+npm --prefix backend run build
+```
+
+Os testes de navegador exigem o Chromium do Playwright; veja o guia do frontend para instalação. As suítes verificam camadas diferentes: respostas controladas ou CI verde não comprovam Auth, PostgREST, Storage, FFmpeg, provedores externos e persistência entre dispositivos. Consulte os relatórios de cada validação para conhecer o ambiente e a cobertura.
+
+## Organização e documentação
+
+```text
+frontend/          Interface React, autenticação, biblioteca, editor e assets
+backend/           API, processamento de mídia, migrations e testes
+docs/              Contratos, operação, relatórios e continuidade
+.github/workflows/ Verificações automatizadas do frontend e backend
+```
+
+Para continuar o desenvolvimento, leia [AGENTS.md](AGENTS.md), o [guia de continuidade](docs/continuity/README.md) e o [checkpoint do orquestrador](docs/continuity/orchestrator.md). Cada chat usa branch/worktree próprios, registra o trabalho em disco e entrega commits pequenos com descrição em português. Integração e publicação são coordenadas pelo orquestrador.
+
+Documentos úteis:
+
+- [Operação](docs/operations.md) e [implantação/processamento de mídia](docs/media-inline-mvp.md).
+- [Importações e limitações](backend/IMPORTS.md), [validação de importação](backend/IMPORT-VALIDATION.md) e [contrato de prévia](docs/preview-contract.md).
+- [HE e reprodução sem áudio](docs/HE-VIDEO-MUTED-20261110.md) e [Nuke com dois andares](docs/NUKE-FLOORS-20261111.md).
+- [Checklist de publicação](docs/continuity/PRODUCTION-HANDOFF.md), com registros históricos que exigem conferência do ambiente atual.
+
+Planejamento de táticas, colaboração em tempo real, análise de demos e cópia de bibliotecas de terceiros ficam fora do escopo desta versão.
