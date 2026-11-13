@@ -1,3 +1,31 @@
+# Checkpoint — orchestrator: preflight operacional do backup (PR #19) — 13/11/2026
+
+Estado: preparado, aguardando autorização específica. NO-GO para executar até pré-requisitos. Fuso: America/Sao_Paulo.
+
+## Objetivo e pedido atual
+Preparar backup completo e verificável (banco + Storage) e restauração isolada antes das migrations/merge do PR #19. Sem exportar dados reais, merge, deploy, migrations, flags, Cron, exclusões.
+
+## Feito
+- Lidos AGENTS/README/relatório de preflight/checkpoints. Branch codex/preflight-pr19-20261113, worktree pcdnades-readme-20261113, base 8b9d1ca; PR19 53686d2, main e0ad980 (conforme pedido, não rechecados remotamente).
+- Inspecionados por metadados backups em F:/BackupsPrivados/pcdnades (4 pastas, preservadas). Ferramentas: Docker ativo, imagens postgres:17 e supabase/postgres:17.11.0.006; sem pg_dump/psql/Supabase CLI no host; 413 GB livres.
+- Runbook: docs/preflight/backup-pr19-20261113/RUNBOOK.md (escopo, barreira PRE==POST, restauração em contêiner novo sem rede, gates, falhas).
+
+## Não feito / limites
+- Inventário remoto NÃO executado: sem conector Supabase nem login da CLI nesta sessão; backup.env local tem service-role key e não foi usada. 19/25/21 segue como fotografia antiga.
+- Nenhum dado real lido/copiado; nenhum contêiner criado.
+
+## Achados
+- F:/BackupsPrivados herda ACL com Usuários (leitura) e Autenticados (modificar); pasta nova deve ter herança desativada.
+- Contêineres de lab existentes rodando; não usar para dados reais.
+
+## Retomar daqui
+1. git status/branch. 2. Aguardar autorização do responsável; pedir login da CLI via `!` (nunca credenciais no chat). 3. Executar a sequência 0–9 do RUNBOOK e parar.
+
+## Git
+Commit local documental nesta branch; push não feito (aguarda reconfirmação de segurança/decisão).
+
+---
+
 # Checkpoint — orchestrator: candidato de integração do PR #19 pronto — 13/11/2026
 
 Estado: concluído; aguardando autorização para a próxima etapa (backup atualizado e restauração verificada). Fuso: America/Sao_Paulo.
