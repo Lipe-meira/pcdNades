@@ -1,3 +1,52 @@
+# PR #20 MERGED no #19 — encerramento definitivo — 13/11/2026
+
+Estado: concluído; merge apenas em feat/colaboracao-identidade, sem rollout. Parar após confirmar entrega.
+
+## Objetivo e pedido atual
+Usuário autorizou exclusivamente merge normal do #20 f6dc314 no #19/base352c0e1 após preflight de SHAs/GO/CI/conflitos/políticas e comprovação de ausência de deploy. Pedido retomado por "tenta dnv". Sem main/deploy/migrations/flags/produção, sem PR B/C.
+
+## Localização do trabalho
+- Branch/worktree documental próprios codex/registro-integracao-pr20-20261113, F:/projetos/nadesCs2-integrated-pr20; base de implementação1689f66789f5e0386dc0774136ae7e1ac10c90ab.
+- Merge normal1689f66, pais352c0e177602fc1e6e79fe817960f92c76286f43 e f6dc3143b84d0e5bc521205e1efa0bb8160acd7a; tree9f295089a834fc924ce041718bc3d0011f0b8310 idêntica ao aprovado.
+- HEAD final do #19: commit documental `docs(continuidade): encerra integração do PR 20 no PR 19`; consultar SHA em git log -1/ref remota feat/colaboracao-identidade (sem autorreferência no conteúdo).
+- Push: somente documentação por fast-forward à branch do #19, igualdade HEAD/ref remota conferida na entrega. Main não recebeu push.
+- Arquivos desta entrega: docs/ENCERRAMENTO-PR20-20261113.md, docs/continuity/backend.md, este checkpoint. Nenhuma alteração local pendente ao encerrar; código/config/workflows preservados.
+- Branch local de tentativa anterior codex/encerramento-pr20-20261113/fe7c855 e96c2288 preserva o bloqueio inicial e a retomada; esses commits de status não foram enviados ao produto. Worktrees de outros chats preservados, inclusive untracked de laboratório.
+
+## Feito
+- README/AGENTS/continuidade/GO independente lidos e SHAs/CI exatos reconfirmados; #20 CLEAN/MERGEABLE e merge commit permitido, base sem proteção/rulesets, repo hooks=[] e dois Actions só CI.
+- Bloqueio anterior resolvido pelo navegador integrado IAB autenticado (sem contornar restrição do Firefox). Nos dois projetos Vercel: Git Lipe-meira/pcdNades, produção main, Preview Disabled e Branch Tracking desmarcado/Save disabled, zero Deploy Hooks; custom environments vazios. Auxiliar pcdnades-preview-api sem Git e sem hooks. Nenhuma configuração alterada.
+- Merge com expected headf6dc314 às12:39:49UTC/09:39:49Brasília: PR20 MERGED1689f66; PR19 OPEN/integração1689f66. Ancestralidade e árvore confirmadas, sem mudança de código.
+- Main8776ddf4d3658b1d5ecf8d91a5e13760047d8f50 permaneceu intacta. Nenhum deploy, migration, configuração produtiva, flag ou objeto Supabase alterado.
+- Metadados env da API sem CONTRIBUTOR* e hiddenProductionEnvCount=0; padrões false preservados. Não houve ativação.
+- Vercel desde preflight sem deployments novos; produção permaneceu em dpl_4Cx4CaU4v4s5tEwrcFG8kDBYMeSL (frontend) e dpl_FzbX7WDngPU3YZHwqJUz5SuVPNhq (API), ambos main8776ddf.
+- Relatório final registra guardas, commits, CI, limitações e próximo passo; checkpoint backend atualizado no #19 sem editar worktree alheio.
+
+## Validação
+- CI aprovado f6dc314 run43332518278 success; GO independente em e16b1fc, testes focados44/44 e laboratório-r72 anteriores reaproveitados.
+- CI pós-merge1689f66 run43427094800: PASS — 322/322, 0 falhas, 0 pulos; build/bootstrap/trace/MP4 aprovados, https://github.com/Lipe-meira/pcdNades/actions/runs/43427094800 .
+- Checks do HEAD documental final acompanhados em https://github.com/Lipe-meira/pcdNades/pull/19/checks; código idêntico, sem testes locais extensos repetidos.
+- Pais/tree/ancestralidade/diff completos, metadados PR20 MERGED/PR19 OPEN, main/ref remota e deployments conferidos. git diff --check PASS; diff de backend/frontend/.github/migrations/configs contra merge vazio.
+
+## Em andamento
+Nada de implementação, infraestrutura ou novas features. Encerramento documental e verificações finais concluídos; parar.
+
+## Retomar daqui
+1. Se houver novo pedido, conferir git status/log/ref remota e este checkpoint, ler docs/ENCERRAMENTO-PR20-20261113.md. #20 está integrado; não repetir merge.
+2. Para integrar #19 à main, obter autorização específica e preparar plano separado de backup/restauração, migrations coordenadas, deploy e gates/flags. Este encerramento não autoriza nenhuma dessas ações.
+
+## Decisões e contrato
+Preservados chave determinística, upsert false, decode integral, lease/fencing, tentativas, bytes e inventário read-only. Nenhuma alteração de implementação nesta entrega. Documentação do estado final enviada ao #19 conforme pedido; main e worktrees alheios preservados.
+
+## Bloqueios e dependências
+Sem bloqueio remanescente para este encerramento. Riscos públicos continuam: TTL/tokens históricos, backfill migration2, importador/worker por tentativa, recuperação UI/ffprobe, decode lento, duas instâncias hospedadas e gates de capacidade/antiabuso/gateway/provedores. Ativação pública permanece tarefa separada com autorização própria.
+
+## Entrega e histórico curto
+- PR20 https://github.com/Lipe-meira/pcdNades/pull/20 MERGED1689f66; PR19 https://github.com/Lipe-meira/pcdNades/pull/19 OPEN e contendo integralmente o SHA aprovado.
+- Commit merge1689f66789f5e0386dc0774136ae7e1ac10c90ab; commit final de documentação identificado no git log -1 e na ref remota do #19. Relatório docs/ENCERRAMENTO-PR20-20261113.md; checkpoints backend/orchestrator.
+- Sem push na main, deploy/migrations/flags/produção e sem PR B/C. Histórico anterior preservado abaixo e não representa estado remoto atual.
+
+---
 # Publicação colaborativa — PR A (backend/banco) — 12/11/2026
 
 Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.

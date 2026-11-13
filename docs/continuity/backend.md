@@ -1,3 +1,40 @@
+# PR #20 INTEGRADO ao PR #19 — 13/11/2026 — encerramento autorizado
+
+Estado: correção incorporada exclusivamente em feat/colaboracao-identidade; PR20 MERGED, PR19 OPEN. Sem main/deploy/migration/flags/produção.
+
+## Objetivo e pedido atual
+Encerrar #20 com merge normal no #19, preservar código validado e registrar CI/ancestralidade/ausência de deploy. Não iniciar PR B/C nem rollout.
+
+## Localização do trabalho
+- Worktree documental próprio F:/projetos/nadesCs2-integrated-pr20; branch codex/registro-integracao-pr20-20261113; base de implementação1689f66789f5e0386dc0774136ae7e1ac10c90ab.
+- Merge1689f66 tem pais352c0e177602fc1e6e79fe817960f92c76286f43 e f6dc3143b84d0e5bc521205e1efa0bb8160acd7a. Tree idêntica ao aprovado9f295089a834fc924ce041718bc3d0011f0b8310.
+- HEAD final documental do #19: commit `docs(continuidade): encerra integração do PR 20 no PR 19`; obter SHA na ref remota feat/colaboracao-identidade/git log -1. Evita autorreferência neste checkpoint.
+- Push desta entrega: documentação enviada por fast-forward à feat/colaboracao-identidade; igualdade HEAD/ref remota conferida no fechamento. Nenhuma alteração pendente local; nenhum arquivo de implementação modificado.
+- Arquivos: docs/ENCERRAMENTO-PR20-20261113.md, docs/continuity/orchestrator.md, este checkpoint. Worktrees dos implementadores preservados; untracked de laboratório não tocados.
+
+## Feito e decisões
+- GO independente de f6dc314 e CI43332518278 conferidos; preflight Vercel resolvido via IAB autenticado: produção=main, Preview Branch Tracking desligado e nenhum deploy hook em frontend/API; auxiliar sem Git; custom environments vazios. GitHub workflows só CI, repo hooks=[]; nenhuma configuração alterada.
+- Merge API com expected_head_sha e método merge; #20 MERGED às12:39:49UTC/09:39:49Brasília. #19 continua aberto. Main8776ddf4d3658b1d5ecf8d91a5e13760047d8f50 intacta.
+- R1/R2 encerrados: decode integral do adotado, recuperação transitória com lease/fencing/tentativas; chave/upsert/contabilidade/inventário intactos. Nenhuma mutation Supabase ou migration remota.
+- Flags colaborativas ausentes nos metadados de env API (zero produção oculta) e padrões false no código; não ativadas.
+- Produção nos mesmos dpl_4Cx4CaU4v4s5tEwrcFG8kDBYMeSL e dpl_FzbX7WDngPU3YZHwqJUz5SuVPNhq. Lista de deployments desde preflight vazia após merge/entrega.
+
+## Validação
+- CI do merge1689f66: PASS — 322/322, 0 falhas, 0 pulos; build/bootstrap/trace/MP4 aprovados, run43427094800 https://github.com/Lipe-meira/pcdNades/actions/runs/43427094800 .
+- CI do HEAD documental final acompanhado nos checks do PR19; não repetir testes locais extensos porque código/config/workflows são idênticos. Evidências anteriores 322/322,44/44 e lab-r72 preservadas.
+- Ancestralidade, pais/tree exatos, diff f6dc314→merge vazio, main/PRs e ausência de novos deployments conferidos. Documentação final só docs, git diff --check aprovado.
+
+## Em andamento / retomar daqui
+Nada de implementação. Após conferir status/branch/log e relatório, aguardar nova instrução. Para #19→main: autorização específica e plano separado de backup/restauração, migrations, deploy e gates/flags, sem inferir permissão deste encerramento.
+
+## Riscos residuais
+TTL produtivo/tokens históricos, backfill após reaplicar migration2, órfãos importador/worker por tentativa, recuperação UI/ffprobe, decode lento, processos hospedados independentes e capacidade/antiabuso/gateway/provedores. Integração não remove esses gates e não ativa colaboração pública.
+
+## Entrega e histórico curto
+- PR20 https://github.com/Lipe-meira/pcdNades/pull/20 MERGED1689f66; PR19 https://github.com/Lipe-meira/pcdNades/pull/19 OPEN, contendo o #20 integralmente mais esta documentação.
+- Relatório docs/ENCERRAMENTO-PR20-20261113.md; parar após entrega. O histórico abaixo antecede o merge e não é o estado atual.
+
+---
 # PR #20 — correções finais R1/R2 da revisão independente (SHA revisado e5add82) — 12/11/2026 23:50 (America/Sao_Paulo), IMPLEMENTADO, VALIDADO E ENVIADO (aguardando aprovação)
 
 Entrega: PR #20 atualizado (https://github.com/Lipe-meira/pcdNades/pull/20, sem merge). Código R1/R2 em 7e2fb4f; SHA validado pelo CI f85493e, CI Linux "Build, testes e ffprobe empacotado" PASS (run 43332085109: 322/322, 0 pulados, testes com FFmpeg real executados). Commits posteriores só tocam o checkpoint.
