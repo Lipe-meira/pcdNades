@@ -1,3 +1,70 @@
+# Checkpoint — orquestrador / revalidação FINAL do PR #20
+
+Atualizado em: 13/11/2026 08:50 (America/Sao_Paulo)
+Estado: concluído — GO para integração do HEAD revisado; R1/R2 encerrados. Parar após entrega documental.
+
+## Objetivo e pedido atual
+
+Revalidar exclusivamente R1/R2 no HEAD atual do PR #20, ausência de regressões em chave/upsert/contabilidade, CI e riscos residuais. Não repetir auditoria completa, alterar código/PRs, fazer merge, deploy, migrations ou mudanças em produção. Atualizar checkpoint em branch própria e parar.
+
+## Localização do trabalho
+
+- Branch: `codex/revalidacao-pr20-20261113`; worktree `F:/projetos/nadesCs2-review-pr20-final`.
+- Base e último commit de implementação revisado: `f6dc3143b84d0e5bc521205e1efa0bb8160acd7a` (HEAD do PR #20).
+- Base empilhada/merge-base do #19: `352c0e177602fc1e6e79fe817960f92c76286f43` (inalterada).
+- Delta de revisão: `e5add82..f6dc314`; código corrigido `7e2fb4f`, documentação/evidências `f85493e`, checkpoint `f6dc314`.
+- Revisão anterior preservada em `codex/revisao-pr20-20261112`, commit `d306266`, worktree `F:/projetos/nadesCs2-review-pr20`; nada alterado lá nesta retomada.
+- Entrega documental: commit identificado por `git log -1`, mensagem `docs(revisao): conclui revalidação final do PR 20` (sem autorreferência de SHA).
+- Push: branch própria `origin/codex/revalidacao-pr20-20261113`; igualdade HEAD/upstream conferida no fechamento. Nenhum PR novo, nenhum push às branches #19/#20/main.
+- Arquivos relevantes: `docs/REVALIDACAO-PR20-20261113.md` e este checkpoint. Nenhuma mudança não commitada ao encerrar; dependências/binaries são locais e ignorados.
+
+## Feito
+
+- Lidos README/continuidade, relatório original/checkpoint, delta real de inline/trimming/testes e §11 com evidências novas.
+- R1 encerrado: arquivo adotado precisa decodificar integralmente antes de ready. Teste físico com FFmpeg/ffprobe passou (truncado recusado; íntegro adotado), sem sobrescrever/apagar objeto.
+- R2 encerrado: assinatura/download/info ambíguo/decode transitório e prazo durante adoção não gravam failed; processing/reserva/lease preservados; 202 com lease ativo; retomada consome tentativa; limite de três e fencing mantidos; antigo não altera titular novo.
+- Chave determinística, upsert false, inventário/TTL, migrations e frontend inalterados no delta; suíte focada de bytes/replay/lease/codificação diferente continua passando.
+- Evidências do -r72 conferidas: cinco hashes de fonte contra HEAD, dez somas físicas iguais a storage.objects/resumo; corrigido 8/8, baseline 3/3 reproduz defeitos; fluxo documentado 29 PASS. Rodada -r71 falhou por orçamento ao criar fixture da corrida, preservada/documentada; -r72 passou.
+- CI do HEAD atual, run 43332518278/job 131580457393, consultado em metadados/logs: success; 322/322, 0 fail, 0 skip, build/bootstrap/trace/validação MP4 empacotada PASS.
+- Parecer objetivo: GO técnico para encerrar revisão do #20 como pronto para integração neste HEAD/base. Não autoriza integração/ativação pública.
+
+## Em andamento
+
+Nenhuma ação de implementação ou infraestrutura. Revalidação encerrada com entrega documental; parar.
+
+## Retomar daqui
+
+1. Somente se houver novo pedido, conferir status/branch/log/upstream, este checkpoint e `docs/REVALIDACAO-PR20-20261113.md`; verificar se #20 ainda aponta para f6dc314 e #19 para 352c0e1.
+2. Se o HEAD mudar, avaliar só o novo delta antes de reutilizar este GO. Integração/publicação exigem instrução própria; não agir por inferência deste parecer.
+
+## Decisões e contrato
+
+- Sem novos bloqueadores no delta. R1/R2 anteriores deixam de bloquear f6dc314; não reinterpretar como aprovação do SHA antigo e5add82.
+- Preservados chave `<id>/clip.mp4`, upsert false, bytes reais, reservas em falha, seleção imutável e confirmação fenciada.
+- Riscos residuais separados: 503 não reenviado automaticamente pela interface; ffprobe inalterado pode classificar falha local como INVALID_MEDIA; decode lento pode esgotar tentativas; dois processos hospedados ainda não demonstrados; TTL produtivo/tokens históricos, backfill e importador/worker por tentativa/gates públicos continuam pendentes. Não impedem encerrar os dois bloqueadores pontuais.
+
+## Validação
+
+- Neste worktree: `npm ci --ignore-scripts`; FFmpeg b6.1.1 Windows preparado pelo script existente com hash verificado; `npm run typecheck` PASS.
+- `npx tsx --test tests/clip-adoption-hardening.test.ts tests/clip-retry-accounting.test.ts tests/inline.test.ts tests/trimming.test.ts`: 44 PASS, 0 FAIL, 0 SKIP (inclui os 18 novos testes e os três casos com FFmpeg real).
+- Nenhum teste novo escrito; existentes bastam para os casos necessários. PGlite/triggers em processo com adaptadores Storage/rede/trim simulados onde descrito; não chamar de Supabase E2E independente.
+- Evidências reais do laboratório reaproveitadas, sem iniciar Docker/repetir harness; nove JSONs novos lidos, cinco hashes e dez somas físicas conferidos. A corrida real registrada usa dois módulos no mesmo processo com serviços reais, não processos hospedados separados.
+- Não repetidos: auditoria geral, grafo/PDG, suíte inteira, inventário/TTL/admin/frontend. CI cobre 322 testes no HEAD atual.
+- `git diff --check` PASS; implementação/backend/tests/scripts/migrations/frontend idênticos a f6dc314 nesta branch documental; status/upstream verificados no fechamento.
+
+## Bloqueios e dependências
+
+- Nenhum bloqueador remanescente de R1/R2 para integração deste SHA/base.
+- Ativação pública permanece decisão separada com requisitos operacionais anteriores. Nada de produção consultado ou alterado nesta retomada; nenhum segredo registrado.
+
+## Entrega e histórico curto
+
+- 13/11/2026: GO da revalidação FINAL — https://github.com/Lipe-meira/pcdNades/pull/20, f6dc314, R1/R2 encerrados.
+- Relatório final `docs/REVALIDACAO-PR20-20261113.md`; revisão original em d306266/branch própria anterior preservada.
+- CI: https://github.com/Lipe-meira/pcdNades/actions/runs/43332518278 . Sem merge/deploy/migrations/flags/PRs ou mudanças em produção.
+- Histórico do orquestrador preservado abaixo, sem tratá-lo como estado remoto recém-verificado.
+
+---
 # Publicação colaborativa — PR A (backend/banco) — 12/11/2026
 
 Branch feat/colaboracao-identidade (base main 8776ddf). Contrato da API ampliado de forma ADITIVA: granadas ganham `author:{nickname}|null`; capabilities ganha `contributors`; rotas novas `/contributors`, `/me`, `/me/grenades`. Tudo desligado por padrão (`CONTRIBUTORS_ENABLED`). Migration `20261112120000_contributors_authorship.sql` NÃO aplicada em nenhum Supabase; ordem de publicação: backup → migration → backend → (PR B) frontend. Sem merge, deploy nem alteração em produção. Detalhes, matriz, riscos e plano do PR C: docs/COLABORACAO-IDENTIDADE-20261112.md; checkpoint: docs/continuity/backend.md. PR B (interface) e PR C (recuperação) aguardam aprovação do usuário.
