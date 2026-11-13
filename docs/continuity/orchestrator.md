@@ -1,3 +1,55 @@
+# Checkpoint — orchestrator: preflight final PR19/PR20 — 13/11/2026
+
+Estado: concluído; NO-GO para merge imediato. Aguardar autorização. Fuso: America/Sao_Paulo.
+
+## Objetivo e pedido atual
+Apenas análise/verificações/plano para integrar PR19 contendo PR20 à main com as três flags colaborativas desligadas. Proibidos merge/deploy/migrations/alterações produtivas/flags/exclusões/PR B-C/alteração de implementação. Push apenas documental nesta branch não-main, depois de comprovar ausência de acionador conhecido.
+
+## Localização do trabalho
+- Branch codex/preflight-pr19-20261113; worktree C:/Users/felip/.codex/worktrees/pcdnades-readme-20261113/nadesCs2. Branch README anterior preservada.
+- Base main e0ad9806804a3d554e03ff540b99d86d5319b3e4; PR19 head3596428942e51b526b75af7de23e842961ee3451; PR20 aprovadof6dc3143b84d0e5bc521205e1efa0bb8160acd7a e merge1689f66789f5e0386dc0774136ae7e1ac10c90ab.
+- Entrega: este checkpoint, docs/preflight/pr19-main-20261113/REPORT.md e evidence.json. Commit: git log -1 desta branch, sem autorreferência. Push exclusivamente origin/codex/preflight-pr19-20261113, conferido no fechamento; main/PR19 preservados.
+- Sem alterações de código/config/workflows/env. Cópias temporárias de3 versões do checkpoint para comparação textual em TEMP/pcdn-preflight-text-*; não são merge de branches nem dados produtivos.
+
+## Feito
+- Lidos pedido, README/AGENTS/continuidade/template, encerramentoPR20, colaboração, órfãos/retentativas, GO independentee16b1fc e checkpoints do head3596428.
+- PR20 MERGED; ancestralidade/árvore aprovada e código completo preservados no19. CI3596428 run43427675942 success; CI merge43427094800 success; revisão44/44 e322/322/lab-r72 reaproveitados sem baterias extensas novas.
+- Main mudou somente README/checkpoint; conflito único no checkpoint (1 bloco de comparação textual, sem resolver). GitHub19 mergeable=false/dirty. Nenhum outro PR aberto.
+- SQL remoto exclusivamente READ ONLY/catálogos/agregados:13 migrations, duas novas ausentes; RPC3/colunas/tabelas colaborativas ausentes.19 granadas/25 mídias/21 registros Storage,104741093 bytes declarados; nenhum dado pessoal ou MP4 copiado para lab.
+- Zero pending/leases/slot/fontes válidas no instante; não é barreira contra novas operações. Biblioteca publicada sem referência ready/Storage faltante;2 mídias ready não publicadas sem objeto continuam pendência histórica, sem alteração.
+- Backup manual conhecido mais recente11/11 tem15/21/17 e não cobre novos cadastros12/11. Nenhum backup novo, dump produtivo lido/importado ou restauração real executados.
+- Vercel por conector+IAB autenticado somente leitura: produção main+auto-assign nos dois; previewtracking desmarcado, zero hooks, zero custom environments. Auxiliar semGit/hooks. GitHub hooks=[]; Actions sóCI. Publicação main automática confirmada inclusive pelo históricoe0ad980.
+- Deployments atuais READY: frontenddpl_BQ1Eab5mSsadoqfGqByS8jDRG5JW e APIdpl_ArRES8ns9g2R7tce63HxbMGWQ3Sg, ambosmain e0ad980. Não chamados deploy/promote/rollback.
+- Flags colaborativas ausentes, padrõesfalse no config. Flags administrativas upload/recorte/TikTok/prévia true, inline-original, temporary, duração90s observados sem ler/decriptar segredos. Divergência20s é anterior e não foi alterada.
+- Relatório inclui sequência exata/riscoSQL, backup atualizado, gates, smoke e retorno. Código é viável inativo, mas não se pode publicar backend novo no schema atual nem usar backup antigo como ponto de recuperação completo.
+
+## Em andamento
+Apenas fechamento documental e conferências de push/ausência de novo deployment. Nenhuma correção ou operação posterior autorizada.
+
+## Retomar daqui
+1. Conferir status/log/ref remota e ler REPORT.md. Parar para decisão do usuário.
+2. Se autorizado, conciliar conflito documental preservando os dois históricos/README; confirmar código igual ao aprovado e CI do candidato.
+3. Obter janela/backup-destino-restauração/smoke autorizados; depois validar e aplicar migration1→2 ANTES do novo backend/main. Não repetir merge20.
+4. Merge19 em main é autorização de publicação automática; manter três flagsfalse. Workers/backend compatíveis antes de qualquer rollback2→1.
+
+## Decisões e contrato
+- NO-GO para merge agora: conflito documental, schema sem duas migrations/RPC3 e backup conhecido desatualizado. Sem novo bloqueador de implementação encontrado no recorte; fundação inativa tecnicamente viável sob pré-requisitos.
+- Ativação pública NO-GO separado: TTL/tokens/capacidade/antiabuso, importador-worker por tentativa, ffprobe/UI/decode, processos hospedados e demais gates.
+- Nenhuma mudança automática no PR, flags, banco, arquivos reais ou configuração. Nenhuma nova credencial solicitada ou recurso pago contratado.
+- Ausência de acionadores é limitada aos mecanismos conhecidos verificados; não garante inexistência de scripts externos não declarados. Branch não-main/previews desligados/sem hooks permite somente este push documental.
+
+## Validação
+- Executado: Git status/fetch/ancestralidade/diffs,1 conflito textual, hashes dos dois SQLs, CI/GitHub atual, SQL READ ONLY, metadata/env sem segredos e UI Vercel autenticada; documentação/JSON/links/fences e diffcheck.
+- Não executado: merge/deploy/migrations/correções SQL, backup novo, restore real, testes HTTP administrativos produtivos, suites/labs extensos ou PR B/C.
+- Leituras de banco13:20–13:28UTC/10:20–10:28SãoPaulo; estados são fotografia e exigem nova conferência antes da janela.
+
+## Bloqueios e dependências
+Resolver conflito e cumprir backup/schema/autorizações antes da integração. Nenhuma dependência exige credenciais pelo chat. Não inferir autorização operacional deste preflight.
+
+## Entrega e histórico curto
+-13/11: preflight e relatório concluídos, somente documentação em branch própria; confirmação final de refs/deployments no chat. PR19 https://github.com/Lipe-meira/pcdNades/pull/19 segue aberto;20 integrado anteriormente.
+
+---
 # Checkpoint — orchestrator: README atualizado — 13/11/2026
 
 Estado: concluído. Fuso: America/Sao_Paulo.

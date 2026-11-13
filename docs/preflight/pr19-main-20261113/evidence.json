@@ -1,0 +1,208 @@
+{
+  "observed_date": "2026-11-13 America/Sao_Paulo",
+  "scope": "read-only preflight; no merge, deployment, remote DDL or productive writes",
+  "git": {
+    "main": "e0ad9806804a3d554e03ff540b99d86d5319b3e4",
+    "pr19": "3596428942e51b526b75af7de23e842961ee3451",
+    "pr20Approved": "f6dc3143b84d0e5bc521205e1efa0bb8160acd7a",
+    "pr20Merge": "1689f66789f5e0386dc0774136ae7e1ac10c90ab",
+    "commonAncestor": "8776ddf4d3658b1d5ecf8d91a5e13760047d8f50",
+    "pr19Open": true,
+    "pr20Merged": true,
+    "githubMergeable": false,
+    "githubMergeableState": "dirty",
+    "mainDelta": [
+      "README.md",
+      "docs/continuity/orchestrator.md"
+    ],
+    "conflictingPath": "docs/continuity/orchestrator.md",
+    "textualConflictBlocks": 1,
+    "mainCodeUnchanged": true,
+    "pr20CodeIdenticalInPR19": true,
+    "otherOpenPRs": 0
+  },
+  "ci": {
+    "approved": "43332518278",
+    "merge": "43427094800",
+    "head": "43427675942",
+    "headConclusion": "success",
+    "reusedBackendTests": 322,
+    "reusedIndependentFocusedTests": 44,
+    "newExtensiveTests": false
+  },
+  "database": {
+    "observedAt": "2026-11-13T13:20:40.680386Z",
+    "project": "pcdNades",
+    "engine": "PostgreSQL 17.11",
+    "migrations": 13,
+    "latestMigration": "20261111031252_map_levels",
+    "requiredMigrationsAbsent": true,
+    "contributorsTable": false,
+    "linksTable": false,
+    "storageChargeColumn": false,
+    "claimOld": true,
+    "claimNew": false,
+    "counts": {
+      "grenades": 19,
+      "media": 25,
+      "storageMetadataObjects": 21,
+      "storageMetadataDeclaredBytes": 104741093
+    },
+    "newestGrenade": "2026-11-12T23:46:37.14741Z",
+    "pendingMedia": 0,
+    "activeMediaLeases": 0,
+    "activeImportSlot": 0,
+    "liveImportSources": 0,
+    "consistencyAt": "2026-11-13T13:28:15.571756Z",
+    "publishedWithoutReadyMedia": 0,
+    "publishedWithoutStorageMetadata": 0,
+    "unpublishedReadyWithoutStorageMetadata": 2,
+    "unreferencedStorageMetadata": 0,
+    "bucket": {
+      "private": true,
+      "maxBytes": 50000000,
+      "mime": [
+        "video/mp4"
+      ]
+    },
+    "rls": {
+      "grenades": true,
+      "media_assets": true
+    },
+    "serviceRoleBypassRLS": true,
+    "authenticatedDirectGrenadeUpdate": false,
+    "physicalObjectsDownloaded": false
+  },
+  "environments": {
+    "hiddenProductionEnvCount": 0,
+    "contributorFlags": "all three absent, code defaults false",
+    "plainOperationalFlags": [
+      {
+        "key": "MEDIA_SOURCE_PREVIEW_ENABLED",
+        "value": "true",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "MEDIA_TIKTOK_DOWNLOAD_MODE",
+        "value": "temporary",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "MEDIA_TIKTOK_IMPORT_ENABLED",
+        "value": "true",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "MEDIA_TRIMMING_ENABLED",
+        "value": "true",
+        "target": [
+          "production",
+          "preview"
+        ]
+      },
+      {
+        "key": "MEDIA_UPLOAD_ENABLED",
+        "value": "true",
+        "target": [
+          "production",
+          "preview"
+        ]
+      },
+      {
+        "key": "MEDIA_PROCESSOR_MODE",
+        "value": "inline-original",
+        "target": [
+          "production",
+          "preview"
+        ]
+      },
+      {
+        "key": "MEDIA_MAX_DURATION_SECONDS",
+        "value": "90",
+        "target": [
+          "production",
+          "preview"
+        ]
+      }
+    ],
+    "supabaseProjectMatches": true,
+    "secretValuesRequestedOrDecrypted": false
+  },
+  "vercel": {
+    "team": "lipe-s-projects1",
+    "projects": [
+      "pcdnades",
+      "pcdnades-api"
+    ],
+    "productionBranch": "main",
+    "autoAssignProductionDomains": true,
+    "previewBranchTracking": false,
+    "deployHooks": 0,
+    "auxiliary": {
+      "name": "pcdnades-preview-api",
+      "gitConnected": false,
+      "deployHooks": 0
+    },
+    "apiBuild": {
+      "rootDirectory": "backend",
+      "framework": "Fastify",
+      "node": "24.x",
+      "install": "npm ci",
+      "build": "npm run build",
+      "ignoredBuildStep": "Automatic"
+    },
+    "activeProduction": {
+      "frontend": {
+        "id": "dpl_BQ1Eab5mSsadoqfGqByS8jDRG5JW",
+        "sha": "e0ad9806804a3d554e03ff540b99d86d5319b3e4",
+        "state": "READY"
+      },
+      "api": {
+        "id": "dpl_ArRES8ns9g2R7tce63HxbMGWQ3Sg",
+        "sha": "e0ad9806804a3d554e03ff540b99d86d5319b3e4",
+        "state": "READY"
+      }
+    },
+    "settingsObservedInAuthenticatedUI": true,
+    "customEnvironments": {
+      "pcdnades-api": 0,
+      "pcdnades": 0
+    }
+  },
+  "automation": {
+    "githubRepositoryHooks": 0,
+    "actions": [
+      "frontend CI",
+      "backend CI"
+    ],
+    "deploymentOrMigrationStepFound": false,
+    "unknownExternalMechanisms": "cannot exclude undisclosed manual scripts/accounts"
+  },
+  "migrations": [
+    {
+      "file": "20261112120000_contributors_authorship.sql",
+      "sha256": "c8583390cfb0b0fb2306372582a83dd8619d837575562164f6d60c8ae2cbb633"
+    },
+    {
+      "file": "20261112180000_contributor_storage_and_import_pools.sql",
+      "sha256": "70d7dad58f60d6e460cd790c23b02ad08cd710df79fe823ad501506ed784b2fd"
+    }
+  ],
+  "backups": {
+    "newestKnownManualFolder": "release-20261111-nuke-premigration",
+    "newerKnownLocalFolderFound": false,
+    "olderSnapshotCounts": {
+      "grenades": 15,
+      "media": 21,
+      "objects": 17
+    },
+    "newBackupNeeded": true,
+    "platformAutomaticBackupsNotAssessed": true
+  }
+}
